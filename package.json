@@ -1,0 +1,23 @@
+{
+  "name": "maasiso-website",
+  "version": "1.0.0",
+  "description": "Maasiso Website",
+  "scripts": {
+    "minify:css": "cleancss -o ./httpdocs/css/styles.min.css ./css/*.css",
+    "minify:js": "uglifyjs ./js/*.js -o ./httpdocs/js/bundle.min.js",
+    "minify": "npm run minify:css && npm run minify:js",
+    "watch:css": "onchange \"css/*.css\" -- npm run minify:css",
+    "watch:js": "onchange \"js/*.js\" -- npm run minify:js",
+    "watch": "concurrently \"npm run watch:css\" \"npm run watch:js\""
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.2",
+    "concurrently": "^8.2.2",
+    "onchange": "^7.1.0",
+    "uglify-js": "^3.17.4"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
