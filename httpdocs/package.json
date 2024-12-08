@@ -1,0 +1,11 @@
+{
+  "name": "maasiso-website",
+  "version": "1.0.0",
+  "description": "MaasISO website CSS builder",
+  "scripts": {
+    "build-css": "node build-css.js"
+  },
+  "dependencies": {
+    "clean-css": "^5.3.2"
+  }
+}
