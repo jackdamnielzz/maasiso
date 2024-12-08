@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Maasiso Website",
   "scripts": {
-    "minify:css": "cleancss -o ./httpdocs/css/styles.min.css ./css/*.css",
-    "minify:js": "uglifyjs ./js/*.js -o ./httpdocs/js/bundle.min.js",
+    "minify:css": "cleancss -o ./css/styles.min.css ./css/*.css",
+    "minify:js": "uglifyjs ./js/*.js -o ./js/bundle.min.js",
     "minify": "npm run minify:css && npm run minify:js",
     "watch:css": "onchange \"css/*.css\" -- npm run minify:css",
     "watch:js": "onchange \"js/*.js\" -- npm run minify:js",
