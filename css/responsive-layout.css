@@ -8,7 +8,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid,
     .missie-visie-grid,
@@ -42,7 +41,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid,
     .missie-visie-grid,
@@ -66,7 +64,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid,
     .missie-visie-grid,
@@ -89,7 +86,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid,
     .missie-visie-grid,
@@ -121,7 +117,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -145,7 +140,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -194,7 +188,6 @@
 
     .diensten-grid,
     .voordelen-grid,
-    .testimonial-grid,
     .benefits-grid,
     .why-maasiso-grid,
     .missie-visie-grid,

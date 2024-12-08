@@ -4,7 +4,6 @@
 @media screen and (max-width: 360px) {
     .dienst,
     .voordeel,
-    .testimonial,
     .benefit-item,
     .why-maasiso-item,
     .missie-visie-item,
@@ -34,7 +33,6 @@
 @media screen and (min-width: 361px) and (max-width: 480px) {
     .dienst,
     .voordeel,
-    .testimonial,
     .benefit-item {
         padding: var(--spacing-lg);
         margin-bottom: var(--spacing-lg);
@@ -56,7 +54,6 @@
 @media screen and (min-width: 481px) and (max-width: 767px) {
     .dienst,
     .voordeel,
-    .testimonial,
     .benefit-item {
         padding: var(--spacing-xl);
         margin-bottom: var(--spacing-xl);
@@ -75,7 +72,6 @@
 @media screen and (min-width: 768px) and (max-width: 1023px) {
     .dienst,
     .voordeel,
-    .testimonial,
     .benefit-item {
         padding: var(--spacing-xl);
     }
@@ -87,8 +83,7 @@
 
     /* Improve hover states for touch devices */
     .dienst:hover,
-    .voordeel:hover,
-    .testimonial:hover {
+    .voordeel:hover {
         transform: translateY(-5px);
         transition: transform var(--transition-normal);
     }
@@ -98,7 +93,6 @@
 @media screen and (min-width: 1024px) {
     .dienst,
     .voordeel,
-    .testimonial,
     .benefit-item {
         padding: var(--spacing-2xl);
         transition: transform var(--transition-normal), 
@@ -106,8 +100,7 @@
     }
 
     .dienst:hover,
-    .voordeel:hover,
-    .testimonial:hover {
+    .voordeel:hover {
         transform: translateY(-10px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
@@ -122,8 +115,7 @@
 @media (hover: none) and (pointer: coarse) {
     /* Remove hover effects on touch devices */
     .dienst:hover,
-    .voordeel:hover,
-    .testimonial:hover {
+    .voordeel:hover {
         transform: none;
         box-shadow: var(--box-shadow);
     }
@@ -140,8 +132,7 @@
 /* High contrast mode */
 @media (prefers-contrast: more) {
     .dienst,
-    .voordeel,
-    .testimonial {
+    .voordeel {
         border: 2px solid var(--primary-color);
     }
 
@@ -155,7 +146,6 @@
 @media (prefers-reduced-motion: reduce) {
     .dienst,
     .voordeel,
-    .testimonial,
     .cta-button,
     .lees-meer {
         transition: none !important;
@@ -165,8 +155,7 @@
 /* Print styles */
 @media print {
     .dienst,
-    .voordeel,
-    .testimonial {
+    .voordeel {
         break-inside: avoid;
         box-shadow: none;
         border: 1px solid #000;
