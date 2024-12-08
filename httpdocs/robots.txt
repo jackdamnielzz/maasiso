@@ -1,5 +1,12 @@
 User-agent: *
 Allow: /
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.svg$
 Disallow: /cline_docs/
 Disallow: /components/
 Disallow: /.git/
