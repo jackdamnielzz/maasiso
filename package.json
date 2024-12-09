@@ -1,0 +1,18 @@
+{
+  "name": "maasiso",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "minify-css-file": "npx cleancss -o",
+    "minify-js-file": "npx uglifyjs -o",
+    "minify": "powershell -Command \"Get-ChildItem -Path ./css -Filter *.css | ForEach-Object { if ($_.Name -notmatch '\\.min\\.css$') { npx cleancss -o ./css/min/$($_.BaseName).min.css $_.FullName } }; Get-ChildItem -Path ./js -Filter *.js | ForEach-Object { if ($_.Name -notmatch '\\.min\\.js$' -and $_.Name -ne 'main.min.js') { npx uglifyjs $_.FullName -o ./js/min/$($_.BaseName).min.js } }\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "uglify-js": "^3.17.4"
+  }
+}
