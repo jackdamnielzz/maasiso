@@ -1,11 +1,12 @@
 User-agent: *
 Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /images/
 Disallow: /cline_docs/
 Disallow: /components/
 Disallow: /error_docs/
 Disallow: /.git/
-Disallow: /css/
-Disallow: /js/
 Disallow: /contact-handler.php
 Disallow: /mail-test.*
 Disallow: /contact-test.*
