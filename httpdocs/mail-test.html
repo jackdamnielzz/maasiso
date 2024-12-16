@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHY9D9XR7G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QHY9D9XR7G');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail Test</title>
+</head>
+<body>
+    <h1>Mail Test Form</h1>
+    <form id="test-form">
+        <button type="submit">Send Test Email</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('test-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Sending test email...');
+
+            try {
+                const response = await fetch('mail-test.php', {
+                    method: 'POST'
+                });
+                console.log('Raw response:', response);
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    console.log('Parsed response:', data);
+                    document.getElementById('result').textContent = data.message;
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    console.log('Raw response text:', responseText);
+                    document.getElementById('result').textContent = 'Error: Invalid response format';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

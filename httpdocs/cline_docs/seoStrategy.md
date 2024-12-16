@@ -1,144 +1,41 @@
-# MaasISO SEO Strategie Document
+# SEO Strategy for avg-compliance.html
 
-## Huidige Status
-De website heeft een basis HTML structuur met enkele SEO elementen, maar mist cruciale optimalisaties voor maximale zoekmachine vindbaarheid.
+## Analysis
 
-## Te Implementeren SEO Verbeteringen
+The `avg-compliance.html` page is generally well-structured for SEO, with good use of semantic HTML, meta tags, and responsive design. However, there are some areas that could be improved.
 
-### 1. Meta Tags Optimalisatie
-- **Meta Descriptions** voor alle pagina's:
-  ```html
-  <meta name="description" content="[unieke beschrijving per pagina]">
-  ```
-- **Open Graph Tags** voor sociale media:
-  ```html
-  <meta property="og:title" content="[titel]">
-  <meta property="og:description" content="[beschrijving]">
-  <meta property="og:image" content="[afbeelding URL]">
-  <meta property="og:url" content="[pagina URL]">
-  ```
-- **Twitter Card Tags**:
-  ```html
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[titel]">
-  <meta name="twitter:description" content="[beschrijving]">
-  <meta name="twitter:image" content="[afbeelding URL]">
-  ```
-- **Canonical URLs**:
-  ```html
-  <link rel="canonical" href="https://www.maasiso.nl/[pagina]">
-  ```
+### HTML Structure
 
-### 2. Technische SEO Implementatie
+*   **Meta Tags:** The page includes essential meta tags like `charset`, `viewport`, `title`, `canonical`, and `description`. The description is well-written and includes relevant keywords.
+*   **Headings:** The page uses `h1` for the main title and `h2` for section titles, which is good for SEO.
+*   **Semantic HTML:** The page uses semantic HTML5 elements like `<header>`, `<nav>`, `<main>`, `<section>`, and `<footer>`, which helps search engines understand the page structure.
+*   **Navigation:** The navigation is well-structured and uses `aria-label` for accessibility.
+*   **Content:** The content is well-organized and uses clear language. The use of bullet points and highlighted text makes it easy to read.
+*   **Images:** The page does not contain any images, so there is no need to check for alt text.
+*   **Mobile-Friendliness:** The page includes a viewport meta tag and uses responsive CSS, which should make it mobile-friendly.
+*   **Canonical URL:** The page includes a canonical URL, which is good for avoiding duplicate content issues.
+*   **Structured Data:** The page does not include any structured data markup (e.g., JSON-LD), which could be added for better search engine understanding.
 
-#### Sitemap.xml
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.maasiso.nl/</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  [overige URLs]
-</urlset>
-```
+### CSS Styling
 
-#### Robots.txt
-```txt
-User-agent: *
-Allow: /
-Sitemap: https://www.maasiso.nl/sitemap.xml
-Disallow: /cline_docs/
-```
+*   **Responsive Design:** The CSS includes media queries for smaller screens, indicating a responsive design.
+*   **Clear Layout:** The CSS provides a clear and readable layout with good use of spacing and typography.
+*   **Consistent Styling:** The page uses a consistent design system, which is good for user experience.
 
-#### Structured Data (Schema.org)
-- **Organization Schema**:
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "MaasISO",
-  "description": "Professionele ISO certificering en implementatie diensten",
-  "url": "https://www.maasiso.nl",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "email": "info@maasiso.nl",
-    "contactType": "customer service"
-  }
-}
-```
+## SEO Issues and Recommendations
 
-- **Service Schema** voor elke dienst:
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "ISO 9001 Certificering",
-  "description": "Professionele begeleiding bij ISO 9001 implementatie en certificering"
-}
-```
+*   **Structured Data:** Add structured data markup (JSON-LD) to the page to help search engines understand the content better. This could include information about the organization, services, and location.
+*   **Image Optimization:** Although there are no images on the page, it's important to optimize images for SEO by using descriptive alt text, compressing images, and using appropriate file names.
+*   **Internal Linking:** The page includes internal links in the navigation and footer, but more contextual internal links within the content could be added to improve SEO.
+*   **Keyword Optimization:** While the description includes relevant keywords, the content could be further optimized by using keywords naturally throughout the text.
+*   **Page Speed:** The page loads multiple CSS files, which could impact page speed. Consider combining CSS files or using a CSS minifier to improve performance.
+*   **Mobile Tooltips:** The tooltips on mobile are not ideal, as they require a click to open. Consider using a different approach for mobile tooltips, such as expanding the content directly or using a modal.
 
-### 3. Content Optimalisatie
+## Next Steps
 
-#### Keyword Strategie
-Primaire keywords per pagina:
-- Homepage: "ISO certificering", "ISO implementatie", "kwaliteitsmanagement"
-- ISO 9001: "ISO 9001 certificering", "kwaliteitsmanagementsysteem", "ISO 9001 implementatie"
-- ISO 27001: "ISO 27001 certificering", "informatiebeveiliging", "ISMS implementatie"
-- AVG: "AVG compliance", "privacy wetgeving", "GDPR implementatie"
-
-#### Image Optimalisatie
-- Alt teksten toevoegen voor alle afbeeldingen
-- Afbeeldingen comprimeren voor snellere laadtijd
-- Beschrijvende bestandsnamen gebruiken
-
-#### URL Structuur
-- Gebruik SEO-vriendelijke URLs (reeds geïmplementeerd)
-- Implementeer breadcrumbs voor betere navigatie
-
-### 4. Performance Optimalisatie
-- Implementeer lazy loading voor afbeeldingen
-- Minimaliseer CSS en JavaScript bestanden (deels geïmplementeerd)
-- Optimaliseer caching
-- Verbeter Core Web Vitals
-
-### 5. Monitoring en Analytics
-- Implementeer Google Analytics 4
-- Implementeer Google Search Console
-- Monitor belangrijke SEO metrics:
-  - Organisch verkeer
-  - Bounce rate
-  - Tijd op pagina
-  - Conversie rates
-
-## Implementatie Prioriteiten
-
-1. Hoge Prioriteit:
-   - Meta descriptions toevoegen
-   - Alt teksten toevoegen
-   - Sitemap.xml creëren
-   - Robots.txt implementeren
-
-2. Medium Prioriteit:
-   - Schema.org markup implementeren
-   - Open Graph tags toevoegen
-   - Image optimalisatie
-
-3. Lage Prioriteit:
-   - Twitter Cards
-   - Extra structured data
-   - Performance optimalisaties
-
-## Onderhoud
-- Regelmatig content updaten
-- SEO metrics monitoren
-- Keyword research bijwerken
-- Technical SEO audits uitvoeren
-
-## Verwachte Resultaten
-- Verbeterde zoekmachine rankings
-- Hogere organische traffic
-- Betere gebruikerservaring
-- Verhoogde conversie rates
+1.  Implement structured data markup (JSON-LD).
+2.  Optimize images for SEO (when added).
+3.  Add more contextual internal links.
+4.  Further optimize content for keywords.
+5.  Optimize CSS for page speed.
+6.  Improve mobile tooltips.

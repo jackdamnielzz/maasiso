@@ -12,212 +12,72 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AVG/GDPR Compliance - MaasISO</title>
-    <link rel="canonical" href="https://www.maasiso.nl/avg-compliance.html">
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="images/icons/favicon.svg">
-    
-    <meta name="description" content="Zorg voor naleving van de AVG/GDPR wetgeving met onze expertise in privacybescherming en gegevensbeheer. Ontdek hoe wij u helpen compliant te worden en te blijven.">
-
-    <!-- CSS Files -->
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/utilities.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/grid.css">
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/buttons.css">
-    <link rel="stylesheet" href="css/forms.css">
-    <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/hero.css">
     <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/forms.css">
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/over-ons.css">
-    <link rel="stylesheet" href="css/contact.css">
-    <link rel="stylesheet" href="css/iso-27001-process.css">
-    <link rel="stylesheet" href="css/utilities.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/responsive-global.css">
-    <link rel="stylesheet" href="css/responsive-navigation.css">
+    <link rel="stylesheet" href="css/scroll-to-top.css">
     <link rel="stylesheet" href="css/responsive-layout.css">
+    <link rel="stylesheet" href="css/responsive-navigation.css">
     <link rel="stylesheet" href="css/responsive-components.css">
-
+    <link rel="stylesheet" href="css/responsive-global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile-diensten.css">
+    <link rel="stylesheet" href="css/cookie-banner.css">
+    <link rel="stylesheet" href="css/blog.css">
+    <link rel="stylesheet" href="css/avg-compliance.css">
+    <link rel="stylesheet" href="css/enhanced-readability.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <style>
-        /* Rest of the styles remain unchanged */
-        .intro-section {
-            padding: 3rem 0;
-        }
-        .intro-section h2 {
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-        .intro-section p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
-            max-width: 800px;
-        }
-        .intro-points {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .intro-point {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            position: relative;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .intro-point:hover {
-            transform: translateX(10px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-        .intro-point i.icon {
-            color: #00875A;
-            font-size: 1.2rem;
-            min-width: 24px;
-            text-align: center;
-        }
-        .intro-point i.chevron {
-            color: #00875A;
-            margin-left: auto;
-            transition: transform 0.3s ease;
-            font-size: 1rem;
-        }
-        .intro-point:hover i.chevron {
-            transform: translateX(5px);
-        }
-        .tooltip {
-            position: absolute;
-            right: -10px;
-            top: 50%;
-            transform: translate(100%, -50%);
-            background: #00875A;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            max-width: 300px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 100;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .tooltip::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-style: solid;
-            border-width: 6px 6px 6px 0;
-            border-color: transparent #00875A transparent transparent;
-        }
-        .intro-point:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-            right: -20px;
-        }
-        .highlighted-text {
-            background-color: rgba(0, 135, 90, 0.05);
-            border: 2px solid #00875A;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 0 15px rgba(0, 135, 90, 0.2);
-        }
-        .highlighted-text p {
-            margin-bottom: 0;
-        }
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.maasiso.nl/">
+    <meta property="og:title" content="MaasISO - ISO Certificering en Implementatie Diensten">
+    <meta property="og:description" content="Versterk uw bedrijf met professionele begeleiding bij ISO 9001, ISO 27001 en AVG-implementatie. Expertise in kwaliteitsmanagement en informatiebeveiliging.">
+    <meta property="og:image" content="https://www.maasiso.nl/images/og-image.jpg">
 
-        /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
-            .intro-point {
-                flex-wrap: wrap;
-                padding: 1rem;
-            }
-            
-            .intro-point i.icon {
-                min-width: 20px;
-            }
-            
-            .intro-point i.chevron {
-                display: none; /* Hide chevron on mobile */
-            }
-            
-            .tooltip {
-                position: static;
-                transform: none;
-                opacity: 0;
-                visibility: hidden;
-                max-height: 0;
-                padding: 0;
-                margin-top: 0;
-                width: 100%;
-                transition: all 0.3s ease;
-                box-shadow: none;
-                background: rgba(0, 135, 90, 0.1);
-                color: #333;
-                border-radius: 4px;
-                margin-left: calc(20px + 1rem); /* Align with text */
-            }
-            
-            .tooltip::before {
-                display: none; /* Remove arrow on mobile */
-            }
-            
-            .intro-point.active .tooltip {
-                opacity: 1;
-                visibility: visible;
-                max-height: 200px;
-                padding: 1rem;
-                margin-top: 0.5rem;
-            }
-            
-            .intro-point:hover {
-                transform: none;
-            }
-        }
-    </style>
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.maasiso.nl/">
+    <meta name="twitter:title" content="MaasISO - ISO Certificering en Implementatie Diensten">
+    <meta name="twitter:description" content="Versterk uw bedrijf met professionele begeleiding bij ISO 9001, ISO 27001 en AVG-implementatie. Expertise in kwaliteitsmanagement en informatiebeveiliging.">
+    <meta name="twitter:image" content="https://www.maasiso.nl/images/og-image.jpg">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile tooltip handling
-            const introPoints = document.querySelectorAll('.intro-point');
-            
-            introPoints.forEach(point => {
-                point.addEventListener('click', function() {
-                    // Remove active class from all points
-                    introPoints.forEach(p => p.classList.remove('active'));
-                    
-                    // Toggle active class on clicked point
-                    this.classList.toggle('active');
-                });
-            });
-
-            // Close tooltip when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.intro-point')) {
-                    introPoints.forEach(point => point.classList.remove('active'));
-                }
-            });
-        });
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.maasiso.nl/">
+    
+    <link rel="icon" type="image/svg+xml" href="images/icons/favicon.svg">
+    <title>AVG Compliance Check | MaasISO</title>
+    <!-- Schema.org markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MaasISO",
+        "description": "Professionele ISO certificering en implementatie diensten",
+        "url": "https://www.maasiso.nl",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "info@maasiso.nl",
+            "contactType": "customer service"
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/maasiso",
+            "https://twitter.com/maasiso"
+        ]
+    }
     </script>
 </head>
 <body>
-    <!-- Rest of the HTML remains unchanged -->
     <header>
         <nav class="main-nav" aria-label="Hoofdnavigatie">
             <div class="container">
@@ -228,9 +88,9 @@
                     <span></span>
                 </button>
                 <ul class="nav-links" id="nav-links">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html" aria-current="page">Home</a></li>
                     <li><a href="diensten.html">Diensten</a></li>
-                    <li><a href="waarom-maasiso.html">Waarom MaasISO</a></li>
+                    <li><a href="waarom-maasiso.html">Onze Voordelen</a></li>
                     <li><a href="over-ons.html">Over Ons</a></li>
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
@@ -238,148 +98,268 @@
         </nav>
     </header>
 
-    <main>
-        <section id="hero" class="avg-hero" aria-label="Introductie">
+    <main id="main-content" class="blog-content">
+        <section id="hero" class="hero" aria-label="Introductie">
             <div class="container">
-                <h1>AVG/GDPR Compliance</h1>
-                <p>Bescherm persoonsgegevens, waarborg privacy en voldoe aan de AVG/GDPR wetgeving met onze expertise</p>
-                <a href="contact.html" class="cta-button">VRAAG EEN GRATIS CONSULT AAN</a>
+                <h1 class="fade-in">AVG Compliance Check: Versterk Uw Privacy Beleid</h1>
+                <p class="lead fade-in">Zorg voor een effectieve bescherming van persoonsgegevens met een professionele AVG compliance check. Wij helpen u met het waarborgen van uw privacy management.</p>
+                <a href="contact.html" class="cta-button fade-in">Start vandaag met uw compliance check</a>
             </div>
         </section>
 
-        <section id="avg-intro" class="intro-section" aria-label="Wat is AVG/GDPR">
-            <div class="container">
-                <h2>Wat is AVG/GDPR?</h2>
-                <div class="highlighted-text">
-                    <p>De Algemene Verordening Gegevensbescherming (AVG) of GDPR is de Europese privacywetgeving die organisaties verplicht zorgvuldig om te gaan met persoonsgegevens. Door AVG-compliant te worden, zorgt u ervoor dat uw organisatie:</p>
-                </div>
-                <div class="intro-points">
-                    <div class="intro-point">
-                        <i class="fas fa-user-shield icon"></i>
-                        <div>Persoonsgegevens rechtmatig en transparant verwerkt</div>
-                        <i class="fas fa-chevron-right chevron"></i>
-                        <div class="tooltip">Zorg voor een correcte en transparante verwerking van persoonsgegevens volgens de AVG-richtlijnen</div>
+        <article class="blog-article container">
+            <div class="content-wrapper">
+                <section class="blog-section">
+                    <div class="table-of-contents">
+                        <h3>Inhoudsopgave</h3>
+                        <ul>
+                            <li><a href="#impact">De Impact van de AVG op Uw Bedrijf</a></li>
+                            <li><a href="#maasiso">Wat Maakt MaasISO Uw Ideale Partner?</a></li>
+                            <li><a href="#whatis">Wat is een AVG Compliance Check?</a></li>
+                            <li><a href="#benefits">Voordelen van Regelmatige Controles</a></li>
+                            <li><a href="#crucial">Waarom is AVG Compliance Cruciaal voor Uw Organisatie?</a></li>
+                            <li><a href="#components">Belangrijkste Componenten van een AVG Compliance Check</a></li>
+                             <li><a href="#how">Hoe MaasISO Uw AVG Compliance Check Uitvoert</a></li>
+                             <li><a href="#challenges">Veelvoorkomende Uitdagingen bij AVG Naleving</a></li>
+                             <li><a href="#culture">Interne Cultuur van Privacy</a></li>
+                        </ul>
                     </div>
-                    <div class="intro-point">
-                        <i class="fas fa-clipboard-check icon"></i>
-                        <div>Voldoet aan alle wettelijke privacyvereisten</div>
-                        <i class="fas fa-chevron-right chevron"></i>
-                        <div class="tooltip">Implementeer alle noodzakelijke maatregelen om te voldoen aan de strenge eisen van de privacywetgeving</div>
-                    </div>
-                    <div class="intro-point">
-                        <i class="fas fa-lock icon"></i>
-                        <div>De privacy van betrokkenen effectief beschermt</div>
-                        <i class="fas fa-chevron-right chevron"></i>
-                        <div class="tooltip">Waarborg de privacy van uw klanten en medewerkers met effectieve beschermingsmaatregelen</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    <h2 id="impact" class="section-title">De Impact van de AVG op Uw Bedrijf</h2>
+                    <p class="blog-paragraph">De Algemene Verordening Gegevensbescherming (AVG) stelt strenge eisen aan organisaties. Niet-naleving kan leiden tot hoge boetes, reputatieschade en verlies van klantvertrouwen. Een AVG compliance check is dé manier om risico's te identificeren en uw processen te optimaliseren.</p>
 
-        <section id="avg-process" class="section-padding bg-light" aria-label="Het AVG Compliance Proces">
-            <div class="container">
-                <h2 class="section-title">Het AVG Compliance Proces</h2>
-                <p class="section-intro">Bij MaasISO begeleiden we u door het hele AVG compliance traject:</p>
-                <div class="aanpak-stappen">
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">1</div>
-                        <div class="stap-inhoud">
-                            <h3>Privacy Assessment</h3>
-                            <p>We brengen in kaart welke persoonsgegevens u verwerkt en hoe u deze gebruikt.</p>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">2</div>
-                        <div class="stap-inhoud">
-                            <h3>Gap-analyse</h3>
-                            <p>We identificeren waar uw huidige processen nog niet voldoen aan de AVG-eisen.</p>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">4</div>
-                        <div class="stap-inhoud">
-                            <h3>Implementatie</h3>
-                            <p>We implementeren de benodigde maatregelen en procedures voor AVG-compliance.</p>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">5</div>
-                        <div class="stap-inhoud">
-                            <h3>Training</h3>
-                            <p>We trainen uw medewerkers in privacybewustzijn en AVG-compliance.</p>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">6</div>
-                        <div class="stap-inhoud">
-                            <h3>Privacy Impact Analyses</h3>
-                            <p>We voeren DPIA's uit voor risicovolle verwerkingen van persoonsgegevens.</p>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">7</div>
-                        <div class="stap-inhoud">
-                            <h3>Compliance Check</h3>
-                            <p>We controleren of alle maatregelen effectief zijn geïmplementeerd.</p>
-                        </div>
-                    </div>
-                    <div class="aanpak-stap">
-                        <div class="stap-nummer">8</div>
-                        <div class="stap-inhoud">
-                            <h3>Continue Ondersteuning</h3>
-                            <p>We blijven u ondersteunen bij het behouden van AVG-compliance.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    <h3 class="subsection-title">Een AVG compliance check biedt de volgende voordelen:</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Vermijd boetes en juridische problemen</span></li>
+                        <li class="feature-item"><span>Bescherm persoonsgegevens effectief</span></li>
+                        <li class="feature-item"><span>Versterk het vertrouwen van klanten en partners</span></li>
+                    </ul>
 
-        <section id="avg-industries" class="section-padding bg-light" aria-label="AVG Toegepast in Uw Sector">
-            <div class="container">
-                <h2 class="section-title">AVG Toegepast in Uw Sector</h2>
-                <div class="voordelen-grid">
-                    <div class="voordeel">
-                        <i class="fas fa-hospital" aria-hidden="true" loading="lazy"></i>
-                        <h3>Gezondheidszorg</h3>
-                        <p>Bescherm medische gegevens en waarborg patiëntprivacy volgens AVG-richtlijnen.</p>
-                    </div>
-                    <div class="voordeel">
-                        <i class="fas fa-graduation-cap" aria-hidden="true" loading="lazy"></i>
-                        <h3>Onderwijs</h3>
-                        <p>Beheer studentgegevens veilig en zorg voor privacy in het onderwijs.</p>
-                    </div>
-                    <div class="voordeel">
-                        <i class="fas fa-store" aria-hidden="true" loading="lazy"></i>
-                        <h3>Retail</h3>
-                        <p>Bescherm klantgegevens en zorg voor AVG-compliant klantrelatiebeheer.</p>
-                    </div>
-                    <div class="voordeel">
-                        <i class="fas fa-building" aria-hidden="true" loading="lazy"></i>
-                        <h3>Zakelijke Dienstverlening</h3>
-                        <p>Waarborg privacy in HR-processen en klantrelaties.</p>
-                    </div>
-                    <div class="voordeel">
-                        <i class="fas fa-chart-line" aria-hidden="true" loading="lazy"></i>
-                        <h3>Marketing</h3>
-                        <p>Zorg voor privacyvriendelijke marketing en compliant gebruik van klantdata.</p>
-                    </div>
-                    <div class="voordeel">
-                        <i class="fas fa-university" aria-hidden="true" loading="lazy"></i>
-                        <h3>Financiële Sector</h3>
-                        <p>Bescherm financiële klantgegevens en voldoe aan strenge privacyeisen.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    <h2 id="maasiso" class="section-title">Wat Maakt MaasISO Uw Ideale Partner?</h2>
+                    <p class="blog-paragraph">Bij MaasISO combineren we jarenlange ervaring met een praktische aanpak. Met onze AVG compliance check krijgt u inzicht in uw naleving én concrete verbeterpunten. Wij zijn uw partner in het bereiken van volledige naleving van de AVG.</p>
 
-        <section id="cta" class="section-padding bg-primary" aria-label="Contact Oproep">
-            <div class="container">
-                <h2>Klaar om uw privacybescherming naar het hoogste niveau te tillen?</h2>
-                <p>Neem contact met ons op voor een gratis consult en ontdek hoe wij u kunnen helpen AVG-compliant te worden en te blijven.</p>
-                <a href="contact.html" class="cta-button">Start Uw AVG Compliance Traject</a>
+                    <h2 id="whatis" class="section-title">Wat is een AVG Compliance Check?</h2>
+                    <p class="blog-paragraph">Een AVG compliance check is een systematische en uitgebreide beoordeling van uw organisatie om te bepalen in hoeverre u voldoet aan de eisen van de Algemene Verordening Gegevensbescherming (AVG). Het proces richt zich op het analyseren van hoe persoonsgegevens worden verzameld, verwerkt, opgeslagen en beveiligd binnen uw organisatie. Het doel is om niet alleen eventuele tekortkomingen aan het licht te brengen, maar ook te zorgen dat uw dataverwerking volledig in lijn is met de wetgeving. Dit voorkomt niet alleen juridische problemen, maar versterkt ook het vertrouwen van uw klanten en partners.</p>
+
+                    <h3 class="subsection-title">Definitie en Doel</h3>
+                    <p class="blog-paragraph">Een AVG compliance check is ontworpen om:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Inzicht te bieden in dataverwerking: Door een overzicht te creëren van welke gegevens worden verwerkt, waarom, en hoe deze worden beveiligd.</span></li>
+                        <li class="feature-item"><span>Risico's te identificeren: Zoals onveilige opslag, ongeautoriseerde toegang of onvolledige procedures.</span></li>
+                        <li class="feature-item"><span>Een actieplan te leveren: Concrete aanbevelingen voor verbeteringen om risico's te mitigeren en naleving te garanderen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het primaire doel van een AVG compliance check is dus niet alleen om problemen te signaleren, maar ook om uw organisatie te begeleiden naar volledige naleving. Dit omvat zowel technische als organisatorische maatregelen, van IT-beveiliging tot personeelsbeleid.</p>
+
+                    <h2 id="benefits" class="section-title">Voordelen van Regelmatige Controles</h2>
+                    <p class="blog-paragraph">Hoewel één enkele AVG compliance check waardevol is, ligt de echte kracht in regelmatige controles. Dit helpt uw organisatie om:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Actueel te blijven met wetgeving: De privacywetgeving evolueert, en regelmatige checks zorgen ervoor dat u altijd aan de nieuwste normen voldoet.</span></li>
+                        <li class="feature-item"><span>Datalekken te voorkomen: Door continu zwakke plekken in uw systemen te identificeren en aan te pakken.</span></li>
+                        <li class="feature-item"><span>Het vertrouwen van klanten te versterken: Door te laten zien dat u privacy serieus neemt, bouwt u een solide reputatie op.</span></li>
+                        <li class="feature-item"><span>Boetes en sancties te vermijden: Door problemen vroegtijdig te signaleren, voorkomt u hoge boetes die kunnen oplopen tot 20 miljoen euro of 4% van uw jaarlijkse omzet.</span></li>
+                        <li class="feature-item"><span>Procesverbetering te stimuleren: Het optimaliseren van dataverwerking leidt vaak tot efficiëntere en effectievere bedrijfsprocessen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Regelmatige checks bieden daarmee niet alleen compliance, maar ook een concurrentievoordeel.</p>
+
+                    <h2 id="crucial" class="section-title">Waarom is AVG Compliance Cruciaal voor Uw Organisatie?</h2>
+                    <p class="blog-paragraph">Het voldoen aan de Algemene Verordening Gegevensbescherming (AVG) is niet langer optioneel; het is een essentiële pijler voor elke organisatie die persoonsgegevens verwerkt. De impact van niet-naleving reikt verder dan alleen juridische gevolgen. Het kan leiden tot financiële verliezen, beschadigde reputaties en zelfs het verlies van klanten. Tegelijkertijd biedt naleving tal van zakelijke voordelen die uw organisatie sterker en concurrerender maken.</p>
+
+                    <h3 class="subsection-title">Juridische Gevolgen van Niet-Naleving</h3>
+                    <p class="blog-paragraph">De AVG kent strenge sancties voor organisaties die de regels overtreden. Deze gevolgen kunnen enorm zijn:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Hoge boetes: Niet-naleving kan leiden tot boetes van maximaal €20 miljoen of 4% van de jaarlijkse wereldwijde omzet, afhankelijk van welke hoger is.</span></li>
+                        <li class="feature-item"><span>Sancties en beperkingen: Overheidsinstanties kunnen eisen dat uw organisatie stopt met bepaalde verwerkingsactiviteiten, wat uw bedrijfsvoering ernstig kan verstoren.</span></li>
+                        <li class="feature-item"><span>Kosten van juridische procedures: Niet-naleving kan ook leiden tot rechtszaken van klanten of medewerkers wiens gegevens niet goed zijn beschermd.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het financiële risico van niet voldoen aan de AVG benadrukt waarom een AVG compliance check van cruciaal belang is. Door preventief te handelen, voorkomt u deze kosten en risico's.</p>
+
+                    <h3 class="subsection-title">Reputatierisico's</h3>
+                    <p class="blog-paragraph">In een tijd waarin privacy en gegevensbescherming steeds belangrijker worden, kan een datalek of AVG-overtreding desastreus zijn voor uw reputatie. Klanten willen erop kunnen vertrouwen dat hun gegevens in veilige handen zijn. Niet-naleving kan het vertrouwen ernstig schaden:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Verlies van klanten: Studies tonen aan dat consumenten minder snel zaken doen met bedrijven die niet transparant en veilig omgaan met gegevens.</span></li>
+                        <li class="feature-item"><span>Negatieve publiciteit: Een schandaal rond gegevensbescherming kan leiden tot slechte pers, wat uw merk blijvend kan beschadigen.</span></li>
+                        <li class="feature-item"><span>Impact op samenwerkingen: Zakenpartners en leveranciers willen samenwerken met betrouwbare organisaties. Een slechte reputatie kan deze relaties in gevaar brengen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Door proactief te investeren in een AVG compliance check, laat u zien dat u privacy serieus neemt, wat niet alleen risico's vermindert, maar ook vertrouwen opbouwt.</p>
+
+                    <h3 class="subsection-title">Zakelijke Voordelen van Naleving</h3>
+                    <p class="blog-paragraph">Het voldoen aan de AVG is niet alleen een wettelijke verplichting, maar biedt ook strategische voordelen:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Verbeterde processen: Het optimaliseren van dataverwerking en beveiliging leidt vaak tot efficiëntere bedrijfsprocessen en lagere operationele kosten.</span></li>
+                        <li class="feature-item"><span>Concurrentievoordeel: Klanten kiezen steeds vaker voor bedrijven die privacy hoog in het vaandel hebben staan. Naleving positioneert uw organisatie als betrouwbaar en professioneel.</span></li>
+                        <li class="feature-item"><span>Risicobeheer: Door uw gegevensverwerking te stroomlijnen en te beveiligen, verkleint u de kans op incidenten zoals datalekken.</span></li>
+                        <li class="feature-item"><span>Innovatie stimuleren: Het inzicht in uw datastromen dat een AVG compliance check oplevert, kan nieuwe zakelijke kansen blootleggen, zoals gepersonaliseerde diensten en betere klantrelaties.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het resultaat? Niet alleen vermindert u risico's, maar u versterkt ook de positie van uw bedrijf op lange termijn.</p>
+
+                    <h2 id="components" class="section-title">Belangrijkste Componenten van een AVG Compliance Check</h2>
+                    <p class="blog-paragraph">Een AVG compliance check omvat verschillende essentiële stappen om de naleving van de privacywetgeving binnen uw organisatie te waarborgen. Het proces richt zich op het in kaart brengen van gegevensstromen, het identificeren van risico's en het verbeteren van beleid en procedures. Hieronder bespreken we de belangrijkste onderdelen.</p>
+
+                    <h3 class="subsection-title">1. Data Mapping en Inventarisatie</h3>
+                    <p class="blog-paragraph">De eerste stap in een AVG compliance check is het inventariseren van alle persoonsgegevens binnen uw organisatie. Dit proces omvat het:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Identificeren van gegevensstromen: Welke gegevens verzamelt u, waar worden deze opgeslagen, en wie heeft er toegang toe?</span></li>
+                        <li class="feature-item"><span>Classificeren van persoonsgegevens: Het onderscheiden van gewone persoonsgegevens en gevoelige gegevens zoals medische informatie of financiële data.</span></li>
+                        <li class="feature-item"><span>In kaart brengen van verwerkingsactiviteiten: Hoe en waarom worden deze gegevens verwerkt?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het resultaat is een volledig overzicht van uw gegevensstromen, dat fungeert als basis voor verdere evaluatie. Dit inzicht is essentieel om hiaten of inefficiënties te identificeren.</p>
+
+                    <h3 class="subsection-title">2. Beoordeling van Beveiligingsmaatregelen</h3>
+                    <p class="blog-paragraph">Een cruciaal onderdeel van AVG-naleving is het waarborgen van de veiligheid van persoonsgegevens. Tijdens de compliance check wordt gekeken naar:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Technische maatregelen: Zijn er adequate systemen zoals encryptie, firewalls en toegangscontroles geïmplementeerd?</span></li>
+                        <li class="feature-item"><span>Organisatorische maatregelen: Hoe worden medewerkers geïnformeerd en getraind over databeveiliging? Zijn er duidelijke rollen en verantwoordelijkheden gedefinieerd?</span></li>
+                        <li class="feature-item"><span>Beheer van toegang: Worden gegevens alleen toegankelijk gemaakt voor geautoriseerde personen, en hoe wordt dit gecontroleerd?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het doel is om te waarborgen dat persoonsgegevens beschermd zijn tegen ongeautoriseerde toegang, verlies of misbruik.</p>
+
+                    <h3 class="subsection-title">3. Analyse van Verwerkingsactiviteiten</h3>
+                    <p class="blog-paragraph">Bij deze stap wordt gekeken naar de manier waarop persoonsgegevens worden verzameld, gebruikt en gedeeld binnen en buiten uw organisatie:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Juridische grondslag: Heeft u een geldige reden voor het verwerken van gegevens, zoals toestemming of een wettelijke verplichting?</span></li>
+                        <li class="feature-item"><span>Dataminimalisatie: Worden er alleen gegevens verzameld die strikt noodzakelijk zijn voor het doel?</span></li>
+                        <li class="feature-item"><span>Delen van gegevens: Hoe worden gegevens gedeeld met externe partijen zoals leveranciers of partners, en zijn er verwerkersovereenkomsten afgesloten?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Deze analyse helpt om te beoordelen of de dataverwerking binnen uw organisatie in overeenstemming is met de AVG-principes.</p>
+
+                    <h3 class="subsection-title">4. Controle op Rechten van Betrokkenen</h3>
+                    <p class="blog-paragraph">De AVG geeft individuen uitgebreide rechten met betrekking tot hun persoonsgegevens. Een compliance check onderzoekt in hoeverre uw organisatie deze rechten faciliteert, waaronder:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Recht op inzage: Kunnen betrokkenen eenvoudig zien welke gegevens u van hen heeft?</span></li>
+                        <li class="feature-item"><span>Recht op correctie: Biedt u de mogelijkheid om onjuiste gegevens te corrigeren?</span></li>
+                        <li class="feature-item"><span>Recht op verwijdering (recht op vergetelheid): Hoe verwerkt u verzoeken om gegevens te verwijderen?</span></li>
+                        <li class="feature-item"><span>Recht op dataportabiliteit: Kunnen betrokkenen hun gegevens in een bruikbare vorm ontvangen?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het naleven van deze rechten is niet alleen wettelijk verplicht, maar draagt ook bij aan een positieve klantrelatie en vertrouwen.</p>
+
+                    <h3 class="subsection-title">5. Datalekkenbeleid en -procedures</h3>
+                    <p class="blog-paragraph">Een goed datalekkenbeleid is essentieel om te voldoen aan de AVG. Tijdens de compliance check wordt beoordeeld:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Meldprocedures: Is er een protocol voor het snel en effectief melden van datalekken, zowel intern als bij de autoriteiten?</span></li>
+                        <li class="feature-item"><span>Training en bewustzijn: Zijn medewerkers op de hoogte van hoe ze een datalek kunnen herkennen en rapporteren?</span></li>
+                        <li class="feature-item"><span>Documentatie: Worden alle incidenten goed gedocumenteerd, inclusief de genomen maatregelen en lessen voor de toekomst?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het doel is om ervoor te zorgen dat uw organisatie voorbereid is op eventuele incidenten en snel kan handelen om schade te beperken.</p>
+
+                    <p class="blog-paragraph">Door deze componenten grondig te evalueren, biedt een AVG compliance check een compleet beeld van de huidige stand van zaken en geeft het duidelijke richtlijnen voor verbetering.</p>
+
+                    <h2 id="how" class="section-title">Hoe MaasISO Uw AVG Compliance Check Uitvoert</h2>
+                    <p class="blog-paragraph">Bij MaasISO begrijpen we dat geen enkele organisatie hetzelfde is. Onze AVG compliance check is ontworpen om volledig op maat te zijn, zodat deze aansluit bij de unieke behoeften en uitdagingen van uw bedrijf. Hieronder vindt u een overzicht van hoe ons proces verloopt, van de eerste kennismaking tot een uitgebreid rapport met concrete adviezen.</p>
+
+                    <h3 class="subsection-title">Stap 1: Voorbereidend Onderzoek</h3>
+                    <p class="blog-paragraph">Het proces begint met een grondig voorbereidend onderzoek. We voeren een intakegesprek om uw organisatie en haar processen beter te begrijpen. Tijdens deze fase:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Inventariseren van documentatie: We bekijken bestaande beleidsdocumenten, zoals verwerkingsregisters, datalekkenbeleid en beveiligingsprotocollen.</span></li>
+                        <li class="feature-item"><span>Analyseren van huidige processen: We krijgen inzicht in hoe persoonsgegevens worden verwerkt, wie verantwoordelijk is, en welke risico's er mogelijk zijn.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Dit stelt ons in staat om een duidelijk beeld te krijgen van de huidige situatie en een aanpak op maat te ontwikkelen.</p>
+
+                    <h3 class="subsection-title">Stap 2: Uitvoeren van de Check</h3>
+                    <p class="blog-paragraph">In deze fase voeren we een grondige analyse uit van al uw relevante processen en systemen. Dit omvat:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Technische beoordeling: Analyse van IT-systemen, gegevensopslag, toegangsbeveiliging en andere technische maatregelen.</span></li>
+                        <li class="feature-item"><span>Juridische naleving: Controleren of alle verwerkingsactiviteiten voldoen aan de AVG, inclusief toestemming en dataminimalisatie.</span></li>
+                        <li class="feature-item"><span>Organisatorische analyse: Evalueren van bewustwording en training binnen uw organisatie. Zijn medewerkers goed geïnformeerd over hun verantwoordelijkheden onder de AVG?</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Deze stap brengt niet alleen zwakke punten aan het licht, maar identificeert ook kansen om uw processen te verbeteren.</p>
+
+                    <h3 class="subsection-title">Stap 3: Rapportage en Advies</h3>
+                    <p class="blog-paragraph">Na de uitvoerige check ontvangt u een gedetailleerd rapport met:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Overzicht van bevindingen: Een duidelijke samenvatting van waar uw organisatie aan de AVG voldoet en waar verbeteringen nodig zijn.</span></li>
+                        <li class="feature-item"><span>Risicoanalyse: Identificatie van de meest kritieke gebieden die aandacht vereisen.</span></li>
+                        <li class="feature-item"><span>Concreet actieplan: Praktische en haalbare aanbevelingen om uw compliance te verbeteren, inclusief prioriteiten en tijdslijnen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Ons rapport is meer dan een lijst van verbeterpunten; het is een stappenplan waarmee u direct aan de slag kunt.</p>
+
+                    <h2 id="challenges" class="section-title">Veelvoorkomende Uitdagingen bij AVG Naleving</h2>
+                    <p class="blog-paragraph">Hoewel de voordelen van AVG-naleving duidelijk zijn, komen veel organisaties obstakels tegen bij het implementeren en handhaven van de vereisten. Hieronder belichten we enkele van de meest voorkomende uitdagingen en hoe u deze kunt overwinnen.</p>
+
+                    <h3 class="subsection-title">1. Gebrek aan Bewustzijn binnen de Organisatie</h3>
+                    <p class="blog-paragraph">Een van de grootste uitdagingen bij AVG-naleving is het gebrek aan kennis en bewustzijn onder medewerkers. Zonder duidelijke richtlijnen en training kunnen fouten snel gemaakt worden, zoals:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Het onbedoeld delen van gevoelige gegevens.</span></li>
+                        <li class="feature-item"><span>Onvoldoende aandacht voor dataveiligheid bij dagelijkse taken.</span></li>
+                        <li class="feature-item"><span>Het niet herkennen en rapporteren van datalekken.</span></li>
+                    </ul>
+
+                    <h4 class="subsection-title">Oplossing:</h4>
+                    <p class="blog-paragraph">Investeren in training en educatie is essentieel. Medewerkers moeten weten:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Welke verantwoordelijkheden zij hebben onder de AVG.</span></li>
+                        <li class="feature-item"><span>Hoe ze veilig omgaan met persoonsgegevens.</span></li>
+                        <li class="feature-item"><span>Welke stappen ze moeten nemen bij een potentieel datalek.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Bij MaasISO bieden we niet alleen een AVG compliance check, maar ook trainingen om uw team bewust en goed geïnformeerd te maken.</p>
+
+                    <h3 class="subsection-title">2. Onvolledige Documentatie</h3>
+                    <p class="blog-paragraph">Een ander veelvoorkomend probleem is het niet bijhouden van een volledig en actueel verwerkingsregister, wat een wettelijke verplichting is onder de AVG. Het ontbreken hiervan kan leiden tot:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Onduidelijkheid over welke gegevens worden verwerkt en waarom.</span></li>
+                        <li class="feature-item"><span>Problemen bij het aantonen van naleving aan toezichthouders.</span></li>
+                        <li class="feature-item"><span>Onnodige risico's door slecht georganiseerde dataverwerking.</span></li>
+                    </ul>
+
+                    <h4 class="subsection-title">Oplossing:</h4>
+                    <p class="blog-paragraph">Onze AVG compliance check helpt bij:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Het opstellen en actualiseren van een volledig verwerkingsregister.</span></li>
+                        <li class="feature-item"><span>Het identificeren van verwerkingsactiviteiten die niet voldoen aan de AVG.</span></li>
+                        <li class="feature-item"><span>Het stroomlijnen van uw documentatieprocessen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Met een goed georganiseerd verwerkingsregister bent u beter voorbereid op controles en vragen van betrokkenen.</p>
+
+                    <h3 class="subsection-title">3. Technologische Beperkingen</h3>
+                    <p class="blog-paragraph">Verouderde systemen en technologie die niet voldoen aan de AVG-vereisten vormen een groot obstakel. Veelvoorkomende problemen zijn:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Gebrek aan encryptie of andere basisbeveiliging.</span></li>
+                        <li class="feature-item"><span>Geen mogelijkheden om gegevens effectief te beheren, zoals het corrigeren of verwijderen van gegevens.</span></li>
+                        <li class="feature-item"><span>Onvoldoende bescherming tegen cyberdreigingen, waardoor datalekken sneller kunnen optreden.</span></li>
+                    </ul>
+
+                    <h4 class="subsection-title">Oplossing:</h4>
+                    <p class="blog-paragraph">Tijdens onze compliance check beoordelen we de technische infrastructuur van uw organisatie en geven we praktische aanbevelingen om:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Uw systemen te updaten naar AVG-conforme standaarden.</span></li>
+                        <li class="feature-item"><span>IT-processen te optimaliseren voor betere beveiliging.</span></li>
+                        <li class="feature-item"><span>Toekomstbestendig te worden door de nieuwste technologieën te implementeren.</span></li>
+                    </ul>
+
+                    <h2 id="culture" class="section-title">Interne Cultuur van Privacy</h2>
+                    <p class="blog-paragraph">Het creëren van een privacybewuste cultuur binnen uw organisatie is essentieel om AVG-naleving te borgen. Maar wat houdt dat precies in? Een privacybewuste cultuur betekent dat:</p>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span>Medewerkers begrijpen waarom gegevensbescherming belangrijk is: Ze zien het niet alleen als een wettelijke verplichting, maar ook als een manier om klanten en de organisatie te beschermen.</span></li>
+                        <li class="feature-item"><span>Privacy onderdeel wordt van de dagelijkse werkroutine: Medewerkers nemen automatisch maatregelen om gegevens veilig te verwerken, zoals het controleren van e-mailadressen voordat gevoelige informatie wordt verstuurd.</span></li>
+                        <li class="feature-item"><span>Datalekken worden herkend en gemeld: Medewerkers weten hoe ze een datalek moeten signaleren en welke stappen ze moeten nemen om verdere schade te voorkomen.</span></li>
+                    </ul>
+
+                    <p class="blog-paragraph">Het bevorderen van deze cultuur vraagt om duidelijke communicatie, regelmatige training en betrokkenheid vanuit het management. Wanneer privacy een gedeelde verantwoordelijkheid wordt, verkleint u niet alleen risico's, maar versterkt u ook het vertrouwen van klanten en zakenpartners.</p>
+
+                    <div class="summary-box">
+                        <h3>Samenvatting</h3>
+                        <p>Een AVG compliance check is cruciaal voor het naleven van de Algemene Verordening Gegevensbescherming. Het helpt bij het identificeren van risico's, het beschermen van persoonsgegevens en het versterken van het vertrouwen van klanten. MaasISO biedt op maat gemaakte compliance checks en trainingen om uw organisatie te helpen voldoen aan de AVG.</p>
+                    </div>
+
+                    <div class="cta-container">
+                        <a href="contact.html" class="cta-button">Start vandaag met uw compliance check</a>
+                    </div>
+                </section>
             </div>
-        </section>
+        </article>
     </main>
 
     <footer>
@@ -410,25 +390,4 @@
             </div>
         </div>
         <div class="sub-footer">
-            <div class="container">
-                <div class="social-media">
-                    <a href="https://www.linkedin.com/company/maasiso" target="_blank" rel="noopener noreferrer" aria-label="MaasISO LinkedIn">
-                        <i class="fab fa-linkedin" aria-hidden="true"></i>
-                    </a>
-                    <a href="https://twitter.com/maasiso" target="_blank" rel="noopener noreferrer" aria-label="MaasISO Twitter">
-                        <i class="fab fa-twitter" aria-hidden="true"></i>
-                    </a>
-                </div>
-                <div class="legal-links">
-                    <a href="privacyverklaring.html">Privacyverklaring</a>
-                    <a href="algemene-voorwaarden.html">Algemene Voorwaarden</a>
-                    <a href="cookiebeleid.html">Cookiebeleid</a>
-                </div>
-                <p>&copy; 2024 MaasISO. Alle rechten voorbehouden.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/main.min.js"></script>
-</body>
-</html>
+            <div class="

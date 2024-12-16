@@ -1,0 +1,196 @@
+/* AVG Compliance Page Specific Styles */
+
+/* Section styling */
+.section-padding {
+    padding: 5rem 0;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+/* Content layout */
+.aanpak-stappen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.aanpak-stap {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.aanpak-stap:hover {
+    transform: translateY(-5px);
+}
+
+/* Grid layout for voordelen */
+.voordelen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.voordeel {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.voordeel i {
+    font-size: 2.5rem;
+    color: #00875A;
+    margin-bottom: 1.5rem;
+}
+
+.voordeel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(9, 30, 66, 0.1);
+    transition: all var(--transition-normal);
+}
+
+/* Table of Contents */
+.toc {
+    position: sticky;
+    top: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-list li {
+    margin-bottom: 0.5rem;
+}
+
+.toc-list a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.toc-list a:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.toc-list a.active {
+    background: #0A1F43;
+    border-color: #0A1F43;
+    color: white;
+}
+
+/* Impact Icons */
+.impact-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 50%;
+    color: #00875A;
+}
+
+/* Accordion Styling */
+.accordion-item {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.accordion-header {
+    background: white;
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.accordion-content {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 500px;
+    padding: 1.5rem;
+}
+
+.accordion-toggle {
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-toggle {
+    transform: rotate(180deg);
+}
+
+/* Section Icons */
+.section-icon {
+    color: #00875A;
+    margin-right: 0.5rem;
+}
+
+/* Hero Section */
+.avg-hero {
+    background: linear-gradient(rgba(10, 31, 67, 0.8), rgba(10, 31, 67, 0.8)), url('../images/avg-hero-bg.jpg') center/cover;
+    padding: 8rem 0;
+    color: white;
+    text-align: center;
+}
+
+.avg-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .avg-hero {
+        padding: 6rem 0;
+    }
+
+    .avg-hero h1 {
+        font-size: 2rem;
+    }
+
+    .aanpak-stappen,
+    .voordelen-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .accordion-header h3 {
+        font-size: 1rem;
+    }
+}

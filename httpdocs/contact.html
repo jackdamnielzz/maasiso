@@ -1,35 +1,30 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHY9D9XR7G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QHY9D9XR7G');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact - MaasISO ISO Consultancy</title>
-    
+    <link rel="canonical" href="https://www.maasiso.nl/contact.html">
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/icons/favicon.svg">
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     
     <!-- Meta tags -->
-    <meta name="description" content="Neem contact op met MaasISO voor al uw vragen over ISO-certificering, compliance en onze diensten. We staan klaar om u te helpen.">
-    <meta name="keywords" content="ISO consultancy, contact MaasISO, ISO certificering contact, ISO 9001 advies, ISO 27001 consultancy">
+    <meta name="description" content=" met MaasISO voor al uw vragen over ISO-certificering en compliance.">
+    <meta name="keywords" content="ISO consultancy, contact MaasISO, ISO certificering contact">
     <meta name="author" content="MaasISO">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph meta tags -->
-    <meta property="og:title" content="Contact - MaasISO ISO Consultancy">
-    <meta property="og:description" content="Neem contact op met MaasISO voor al uw vragen over ISO-certificering, compliance en onze diensten. We staan klaar om u te helpen.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.maasiso.nl/contact.html">
-    <meta property="og:image" content="https://www.maasiso.nl/images/contact-og.jpg">
-    
-    <!-- Twitter Card meta tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Contact - MaasISO ISO Consultancy">
-    <meta name="twitter:description" content="Neem contact op met MaasISO voor al uw vragen over ISO-certificering, compliance en onze diensten. We staan klaar om u te helpen.">
-    <meta name="twitter:image" content="https://www.maasiso.nl/images/contact-twitter.jpg">
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/reset.css">
@@ -53,44 +48,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <style>
-        .contact-info {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .contact-method {
-            margin: 1.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .contact-method i {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            width: 2rem;
-            text-align: center;
-        }
-        .contact-method a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .contact-method a:hover {
-            color: var(--secondary-color);
-        }
-        .contact-note {
-            background-color: #fff;
-            border-left: 4px solid var(--secondary-color);
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border-radius: 0 8px 8px 0;
-        }
-    </style>
 </head>
 <body>
     <!-- Skip Link for Keyboard Users -->
@@ -120,35 +77,55 @@
         <section id="hero" class="hero" aria-label="Introductie">
             <div class="container">
                 <h1 class="fade-in">Contact</h1>
-                <p class="lead fade-in">Heeft u vragen over onze diensten of wilt u meer informatie? Neem gerust contact met ons op. We staan klaar om u te helpen.</p>
+                <p class="lead fade-in">Heeft u vragen over onze diensten of wilt u meer informatie? Neem gerust contact met ons op.</p>
             </div>
         </section>
 
-        <section id="contact-content" class="section-padding" aria-label="Contactinformatie">
+        <section id="contact-content" class="section-padding" aria-label="Contactformulier">
             <div class="container">
-                <div class="contact-info fade-in">
-                    <h2>Neem Contact Op</h2>
-                    <p>U kunt ons op verschillende manieren bereiken:</p>
-                    
-                    <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <strong>E-mail</strong><br>
-                            <a href="mailto:info@maasiso.nl">info@maasiso.nl</a>
+                <div class="contact-form-container fade-in">
+                    <form id="contact-experiment-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Naam</label>
+                            <input type="text" id="name" name="name" required placeholder="Uw volledige naam">
                         </div>
-                    </div>
-
-                    <div class="contact-method">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <strong>Telefoon</strong><br>
-                            <a href="tel:+31623578344">06-23578344</a>
+                        
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" required placeholder="uw.email@voorbeeld.com">
                         </div>
-                    </div>
-
-                    <div class="contact-note">
-                        <p>Wij streven ernaar om binnen 24 uur te reageren op uw bericht. Voor dringende zaken raden wij aan om telefonisch contact op te nemen.</p>
-                    </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Telefoonnummer (optioneel)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="06-12345678">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Onderwerp</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Selecteer een onderwerp</option>
+                                <option value="iso-9001">ISO 9001 Advies</option>
+                                <option value="iso-27001">ISO 27001 Advies</option>
+                                <option value="avg-compliance">AVG Compliance</option>
+                                <option value="andere">Andere vraag</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Uw Bericht</label>
+                            <textarea id="message" name="message" rows="5" required placeholder="Typ hier uw bericht..."></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="privacy-consent" name="privacy-consent" required>
+                            <label for="privacy-consent">Ik ga akkoord met de <a href="privacyverklaring.html" target="_blank">privacyverklaring</a></label>
+                        </div>
+                        
+                        <div class="form-group submit-group">
+                            <button type="submit" id="submit-button" class="cta-button" disabled>Verzenden</button>
+                        </div>
+                    </form>
+                    <div id="form-feedback" class="form-feedback" aria-live="polite"></div>
                 </div>
             </div>
         </section>
@@ -201,6 +178,227 @@
         </div>
     </footer>
 
+    <!-- KRITIEKE CONTACT FORMULIER DOCUMENTATIE -->
+    <script type="text/plain" id="contact-form-documentation">
+    🚨 KRITIEKE DOCUMENTATIE - CONTACT FORMULIER IMPLEMENTATIE 🚨
+
+    WAARSCHUWING: DIT DOCUMENT BEVAT ESSENTIËLE TECHNISCHE RICHTLIJNEN
+
+    1. TECHNISCHE INTEGRITEIT
+    -------------------------
+    - JavaScript MOET inline in contact.html blijven
+    - NOOIT externe JavaScript bestanden gebruiken voor form handling
+    - Alle console.log statements zijn CRUCIAAL voor debugging
+    - Oorspronkelijke form ID 'contact-experiment-form' MOET behouden blijven
+    - Feedback div ID MOET 'form-feedback' blijven
+
+    2. VALIDATIE PRINCIPES
+    ----------------------
+    - ALLE verplichte velden (naam, email, onderwerp, bericht) MOETEN gecontroleerd worden
+    - Submit button start ALTIJD uitgeschakeld
+    - Privacy consent checkbox is ABSOLUUT verplicht
+    - Telefoonnummer blijft OPTIONEEL
+    - GEEN email domein restricties toepassen
+
+    3. FAALSCENARIO'S & OPLOSSINGEN
+    -------------------------------
+    A. Form Werkt Niet:
+       - Controleer console logs
+       - Verifieer JavaScript inline locatie
+       - Controleer alle element ID's
+       - Valideer 'required' attributen
+       - Controleer submit button uitschakeling
+
+    B. Geen Form Submission:
+       - ALTIJD button click handler gebruiken
+       - Standaard form submit voorkomen
+       - Alle form data loggen
+       - Fetch naar contact-handler.php controleren
+       - FormData object verifiëren
+
+    C. Validatie Problemen:
+       - validateForm() MOET alle verplichte velden controleren
+       - Privacy checkbox MOET gecontroleerd worden
+       - Geen enkele email domein restrictie toepassen
+
+    4. KRITIEKE REFERENTIE
+    ----------------------
+    BIJ TWIJFEL OF PROBLEMEN:
+    Raadpleeg DIRECT: 
+    D:\Programmeren\maasiso - Copy - Copy - Copy (2)\cline_docs\CRITICAL_ContactForm_Documentation.md
+
+    5. ONDERHOUDS PROTOCOL
+    ----------------------
+    - Maandelijks volledige functionaliteitstest
+    - Logging mechanisme controleren
+    - Backup maken voor wijzigingen
+    - ALLE console.log statements behouden
+    - GEEN externe JavaScript gebruiken
+
+    6. DEBUGGING STAPPEN
+    --------------------
+    - Browser console controleren voor gedetailleerde logs
+    - Verifieer dat ALLE events correct worden getriggerd
+    - Test form submission met verschillende scenario's
+    - Server response in console controleren
+
+    ⚠️ WAARSCHUWING: 
+    Negeren van deze richtlijnen kan leiden tot 
+    VOLLEDIGE VERSTORING VAN HET CONTACTFORMULIER!
+
+    LAATSTE UPDATE: Februari 2024
+    </script>
+
+    <script>
+        console.log('Initial script test - Before loading contact-form.js');
+    </script>
     <script src="js/main.min.js"></script>
+    <script>
+        console.log('After loading contact-form.js - Testing if script is loaded');
+        
+        // Wrap everything in an IIFE to avoid global scope pollution
+        (function() {
+            console.log('Contact form script loaded and executing');
+            console.log('Contact form script IIFE started');
+
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM Content Loaded - Initializing form handling');
+
+                // Get form elements
+                const contactForm = document.getElementById('contact-experiment-form');
+                const formFeedback = document.getElementById('form-feedback');
+                const submitButton = document.getElementById('submit-button');
+                const privacyCheckbox = document.getElementById('privacy-consent');
+                const requiredFields = contactForm.querySelectorAll('input[required], select[required], textarea[required]');
+
+                // Log if form is found
+                if (!contactForm) {
+                    console.error('Contact form not found! Check form ID');
+                    return;
+                }
+                console.log('Contact form found:', contactForm);
+
+                // Add input event listeners to required fields
+                requiredFields.forEach(input => {
+                    input.addEventListener('input', function(e) {
+                        console.log(`Input changed - ${e.target.name}:`, e.target.value);
+                        validateForm();
+                    });
+                });
+
+                // Add change event listener to privacy checkbox
+                privacyCheckbox.addEventListener('change', function(e) {
+                    console.log('Privacy consent changed:', e.target.checked);
+                    validateForm();
+                });
+
+                function validateForm() {
+                    let allFieldsFilled = true;
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            allFieldsFilled = false;
+                        }
+                    });
+
+                    submitButton.disabled = !(allFieldsFilled && privacyCheckbox.checked);
+                }
+
+                // Initial validation
+                validateForm();
+
+                // Add submit button click handler
+                submitButton.addEventListener('click', function(e) {
+                    console.log('Submit button clicked - Manually handling submission');
+                    e.preventDefault();
+                    handleSubmit(e);
+                });
+
+                function handleSubmit(e) {
+                    console.log('Starting form submission handling');
+                    if (e) e.preventDefault();
+                    console.log('Default form submission prevented');
+
+                    // Get form data
+                    const name = document.getElementById('name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value.trim();
+                    const privacyConsent = document.getElementById('privacy-consent').checked;
+
+                    // Log collected form data
+                    console.log('Form data collected:', {
+                        name,
+                        email,
+                        subject,
+                        message,
+                        privacyConsent
+                    });
+
+                    // Validate form
+                    if (!name || !email || !subject || !message) {
+                        console.log('Validation failed: Missing required fields');
+                        formFeedback.textContent = 'Vul alle verplichte velden in.';
+                        return;
+                    }
+
+                    if (!privacyConsent) {
+                        console.log('Validation failed: Privacy consent not checked');
+                        formFeedback.textContent = 'Accepteer de privacyverklaring om door te gaan.';
+                        return;
+                    }
+
+                    console.log('Form validation passed, preparing to send');
+
+                    // Prepare form data
+                    const formData = new FormData(contactForm);
+                    formData.append('recipient', 'info@maasiso.nl');
+
+                    // Log FormData contents
+                    for (let pair of formData.entries()) {
+                        console.log('FormData field:', pair[0], pair[1]);
+                    }
+
+                    console.log('Sending form data to server...');
+
+                    // Send form data
+                    fetch('contact-handler.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log('Raw server response:', response);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Parsed response data:', data);
+                        if (data.status === 'success') {
+                            console.log('Form submitted successfully, redirecting to success page');
+                            window.location.href = 'contact-success.html';
+                        } else {
+                            console.log('Form submission failed:', data.message);
+                            formFeedback.textContent = data.message || 'Er is een fout opgetreden bij het verzenden van het formulier.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        console.error('Error details:', {
+                            message: error.message,
+                            stack: error.stack
+                        });
+                        formFeedback.textContent = 'Er is een fout opgetreden bij het verzenden van het formulier.';
+                    });
+                }
+
+                console.log('Form handler initialization complete');
+            });
+
+            console.log('Contact form script IIFE completed');
+        })();
+
+        console.log('Contact form script execution completed');
+    </script>
 </body>
 </html>

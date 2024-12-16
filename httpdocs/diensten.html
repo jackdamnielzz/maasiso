@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QHY9D9XR7G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QHY9D9XR7G');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onze Diensten - MaasISO</title>
+    <title>ISO Diensten - MaasISO</title>
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self';">
@@ -18,7 +27,7 @@
     <meta name="robots" content="index, follow">
     
     <!-- Open Graph meta tags -->
-    <meta property="og:title" content="Onze Diensten - MaasISO">
+    <meta property="og:title" content="ISO Diensten - MaasISO">
     <meta property="og:description" content="Ontdek de ISO-certificering en compliance diensten van MaasISO. Wij bieden expertise in ISO 9001, ISO 27001 en AVG-naleving.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.maasiso.nl/diensten.html">
@@ -26,7 +35,7 @@
     
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Onze Diensten - MaasISO">
+    <meta name="twitter:title" content="ISO Diensten - MaasISO">
     <meta name="twitter:description" content="Ontdek de ISO-certificering en compliance diensten van MaasISO. Wij bieden expertise in ISO 9001, ISO 27001 en AVG-naleving.">
     <meta name="twitter:image" content="https://www.maasiso.nl/images/diensten-twitter.jpg">
     
@@ -38,29 +47,27 @@
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/utilities.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/grid.css">
     <link rel="stylesheet" href="css/navigation.css">
     <link rel="stylesheet" href="css/buttons.css">
-    <link rel="stylesheet" href="css/forms.css">
-    <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/hero.css">
     <link rel="stylesheet" href="css/sections.css">
-    <link rel="stylesheet" href="css/testimonials.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/forms.css">
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/over-ons.css">
-    <link rel="stylesheet" href="css/contact.css">
-    <link rel="stylesheet" href="css/iso-27001-process.css">
-    <link rel="stylesheet" href="css/utilities.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/iso-blocks.css">
-    <link rel="stylesheet" href="css/responsive-global.css">
-    <link rel="stylesheet" href="css/responsive-navigation.css">
-    <link rel="stylesheet" href="css/responsive-layout.css">
-    <link rel="stylesheet" href="css/responsive-components.css">
     <link rel="stylesheet" href="css/scroll-to-top.css">
+    <link rel="stylesheet" href="css/responsive-layout.css">
+    <link rel="stylesheet" href="css/responsive-navigation.css">
+    <link rel="stylesheet" href="css/responsive-components.css">
+    <link rel="stylesheet" href="css/responsive-global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile-diensten.css">
+    <link rel="stylesheet" href="css/cookie-banner.css">
+    <link rel="stylesheet" href="css/iso-blocks.css">
     
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -287,12 +294,8 @@
                     <article class="voordeel fade-in">
                         <i class="fas fa-cog" aria-hidden="true"></i>
                         <h3>Op Maat Gemaakt</h3>
-                        <p>Volledig aangepast aan uw branche, bedrijfsgrootte en specifieke uitdagingen.</p>
+                        <p>Volledig aangepast aan uw branche, bedrijfsgrootte en specifieke behoeften.</p>
                     </article>
-                </div>
-
-                <div class="text-center" style="margin-top: var(--spacing-2xl);">
-                    <a href="contact.html" class="cta-button fade-in">BESPREEK UW WENSEN</a>
                 </div>
             </div>
         </section>
@@ -345,8 +348,7 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="js/main.js"></script>
-    <script src="js/iso-blocks.js"></script>
+    <script src="js/main.min.js"></script>
+    <script src="js/cookie-banner.js"></script>
 </body>
 </html>

@@ -1,17 +1,14 @@
-## Current Objective
-Implement a responsive and visually appealing design for the MaasISO website
+# Current Task: Review Project and Suggest Custom Tool
 
-## Context
-This task is part of the project roadmap, focusing on creating a professional and user-friendly website. The goal is to ensure that the website looks good and functions well across different devices.
+## Task Description
+Review the entire project and suggest a custom tool that could be built to improve the project.
+
+## Analysis
+The project appears to be a website with standard HTML, CSS, JavaScript, and some PHP files. There's also an SEO scanner and a `cline_docs` directory for documentation. The `httpdocs` directory seems to be a duplicate of the root directory, which is unusual and could lead to inconsistencies.
+
+## Proposed Custom Tool
+A content synchronization tool that ensures the content in the root directory and the `httpdocs` directory are identical. This tool would prevent inconsistencies and errors caused by having duplicate content in different locations. This tool could also be extended to handle other directories in the future.
 
 ## Next Steps
-1. Create wireframes for the website structure.
-2. Implement a basic navigation menu with Home, Diensten, Over Ons, and Contact sections.
-3. Develop a simple footer with contact information and social media links.
-4. Ensure responsiveness on mobile devices by creating a responsive menu.
-5. Test the design across different browsers and devices to ensure compatibility.
-
-## Notes
-- Use a consistent color palette and typography throughout the website.
-- Add relevant images or icons to each page.
-- Implement a dropdown menu system for resources section with animations for smooth interaction.
+1. Create a more detailed plan for the content synchronization tool.
+2. Document the plan in `cline_docs/development_plan.md`.

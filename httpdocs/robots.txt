@@ -2,14 +2,13 @@ User-agent: *
 Allow: /
 Disallow: /cline_docs/
 Disallow: /components/
+Disallow: /error_docs/
 Disallow: /.git/
+Disallow: /css/
+Disallow: /js/
 Disallow: /contact-handler.php
-
-# Block AI crawlers
-User-agent: GPTBot
-Disallow: /
-
-User-agent: ChatGPT-User
-Disallow: /
+Disallow: /mail-test.*
+Disallow: /contact-test.*
+Disallow: /contact-experiment.*
 
 Sitemap: https://www.maasiso.nl/sitemap.xml
