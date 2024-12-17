@@ -67,6 +67,10 @@
     --container-padding-mobile: var(--spacing-md);
     --container-padding-tablet: var(--spacing-xl);
     --container-padding-desktop: var(--spacing-2xl);
+
+    /* Header heights */
+    --header-height: 80px;
+    --mobile-header-height: 60px;
 }
 
 /* Base HTML Elements */
