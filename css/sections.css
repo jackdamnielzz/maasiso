@@ -1,0 +1,361 @@
+/* Section Styles */
+
+/* General Section Styles */
+.section-title {
+    margin-bottom: 2.5rem;
+    color: var(--primary-color);
+    font-size: 2.25rem;
+    text-align: center;
+}
+
+.section-intro {
+    margin: 0 auto 3rem;
+    max-width: 800px;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.bg-light {
+    background-color: var(--background-color);
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+}
+
+.bg-primary h2,
+.bg-primary p {
+    color: var(--text-color-light);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Diensten Sectie */
+.diensten-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 2.5rem auto;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Special alignment for index page diensten section */
+#diensten .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+#diensten .diensten-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    justify-content: center;
+    margin: 2.5rem auto;
+    max-width: 1200px;
+}
+
+#diensten .section-title {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#diensten .text-center {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dienst {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.dienst:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.dienst h3 {
+    color: var(--primary-color);
+    margin: 0 0 1.25rem;
+    font-size: 1.5rem;
+    width: 100%;
+    text-align: center;
+}
+
+.dienst p {
+    color: var(--text-color);
+    margin: 0 0 1.5rem;
+    font-size: 1rem;
+    flex-grow: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.dienst-icon {
+    font-size: 3.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    width: 100%;
+    text-align: center;
+}
+
+.lees-meer {
+    display: inline-block;
+    padding: 0.625rem 1.25rem;
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    text-decoration: none;
+    border-radius: var(--border-radius-sm);
+    transition: background-color var(--transition-normal);
+    margin-top: auto;
+    text-align: center;
+}
+
+.lees-meer:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Aanpak Stappen */
+.aanpak-stappen {
+    max-width: 900px;
+    margin: 3rem auto;
+    position: relative;
+}
+
+.aanpak-stap {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.aanpak-stap:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stap-nummer {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stap-inhoud {
+    flex-grow: 1;
+}
+
+.stap-inhoud h3 {
+    color: var(--primary-color);
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+}
+
+.stap-inhoud p {
+    color: var(--text-color);
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Bekijk al onze diensten button */
+.text-center {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.secondary-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--text-color-light);
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-sm);
+    transition: background-color var(--transition-normal);
+}
+
+.secondary-button:hover {
+    background-color: var(--primary-color);
+}
+
+/* Voordelen Grid */
+.voordelen-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 2.5rem auto;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.voordeel {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: 1.875rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    box-sizing: border-box;
+}
+
+.voordeel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.voordeel i {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.25rem;
+}
+
+.voordeel h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.9375rem;
+    font-size: 1.375rem;
+}
+
+.voordeel p {
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+/* Benefits Grid */
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 2.5rem auto;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.benefit-card {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: 1.875rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    box-sizing: border-box;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.benefit-card img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.25rem;
+}
+
+.benefit-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.9375rem;
+    font-size: 1.375rem;
+}
+
+.benefit-card p {
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .diensten-grid,
+    .voordelen-grid,
+    .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 992px) {
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .aanpak-stap {
+        padding: 1.25rem;
+    }
+    
+    .stap-nummer {
+        width: 35px;
+        height: 35px;
+        font-size: 1.125rem;
+        margin-right: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
+
+    .voordeel {
+        max-width: 100%;
+    }
+    
+    .aanpak-stap {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+    
+    .stap-nummer {
+        margin: 0 0 1rem 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .dienst,
+    .voordeel,
+    .benefit-card {
+        padding: 1.5rem;
+    }
+    
+    .stap-inhoud h3 {
+        font-size: 1.125rem;
+    }
+}

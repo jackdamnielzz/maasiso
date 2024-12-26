@@ -1,0 +1,221 @@
+/* Layout Responsive Styles */
+
+/* Small phones (up to 360px) */
+@media screen and (max-width: 360px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid,
+    .missie-visie-grid,
+    .aanpak-grid,
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    /* Adjust font sizes for better readability on small screens */
+    h1 { font-size: var(--font-size-3xl); }
+    h2 { font-size: var(--font-size-2xl); }
+    h3 { font-size: var(--font-size-xl); }
+    p { font-size: var(--font-size-base); }
+
+    /* Increase touch targets for better usability */
+    .cta-button,
+    .lees-meer,
+    .nav-links a {
+        padding: var(--spacing-md) var(--spacing-lg);
+        min-height: 44px;
+    }
+}
+
+/* Regular phones (361px - 480px) */
+@media screen and (min-width: 361px) and (max-width: 480px) {
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid,
+    .missie-visie-grid,
+    .aanpak-grid,
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    h1 { font-size: var(--font-size-4xl); }
+    h2 { font-size: var(--font-size-3xl); }
+    h3 { font-size: var(--font-size-2xl); }
+}
+
+/* Large phones (481px - 767px) */
+@media screen and (min-width: 481px) and (max-width: 767px) {
+    .container {
+        padding: 0 var(--spacing-lg);
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid,
+    .missie-visie-grid,
+    .aanpak-grid,
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
+/* Tablets (768px - 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        padding: 0 var(--spacing-xl);
+        max-width: 90%;
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid,
+    .missie-visie-grid,
+    .aanpak-grid,
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xl);
+    }
+
+    /* Adjust content for tablet viewing */
+    .process-flow {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .process-step {
+        flex-basis: calc(50% - var(--spacing-lg));
+    }
+}
+
+/* Small laptops and large tablets (1024px - 1365px) */
+@media screen and (min-width: 1024px) and (max-width: 1365px) {
+    .container {
+        padding: 0 var(--spacing-2xl);
+        max-width: 95%;
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-2xl);
+    }
+
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-xl);
+    }
+}
+
+/* Desktops and large laptops (1366px and up) */
+@media screen and (min-width: 1366px) {
+    .container {
+        padding: 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-2xl);
+    }
+
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-2xl);
+    }
+}
+
+/* High-DPI screens (Retina displays) */
+@media screen and (-webkit-min-device-pixel-ratio: 2), 
+       screen and (min-resolution: 192dpi) {
+    /* Ensure text remains sharp on high-DPI displays */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Ensure proper touch targets on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .cta-button,
+    .lees-meer,
+    .nav-links a,
+    .mobile-menu-toggle {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Increase spacing for touch targets */
+    .nav-links li {
+        margin: var(--spacing-md) 0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .diensten-grid,
+    .voordelen-grid,
+    .testimonial-grid,
+    .benefits-grid,
+    .why-maasiso-grid,
+    .missie-visie-grid,
+    .aanpak-grid,
+    .impact-grid,
+    .waarden-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}
+
+/* Orientation specific styles */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    /* Adjust layout for landscape mode on phones */
+    .hero {
+        min-height: auto;
+        padding: var(--spacing-xl) 0;
+    }
+
+    .diensten-grid,
+    .voordelen-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

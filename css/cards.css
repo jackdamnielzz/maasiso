@@ -1,0 +1,256 @@
+/* Card Styles */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.benefit-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal);
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+}
+
+.benefit-item h3 {
+    color: var(--secondary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.why-maasiso-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.why-maasiso-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.why-maasiso-item .icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+}
+
+.why-maasiso-item h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.why-maasiso-item p {
+    color: var(--text-color);
+}
+
+.missie-visie-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.impact-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.impact-item i {
+    font-size: 48px;
+    color: var(--secondary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.impact-item h3 {
+    font-size: 36px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.aanpak-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.aanpak-item:hover {
+    transform: translateY(-5px);
+}
+
+.aanpak-item i {
+    font-size: 48px;
+    color: var(--secondary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.aanpak-item h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.waarde-item {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.waarde-item i {
+    font-size: 48px;
+    color: var(--secondary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Service card styles */
+.service-card {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.service-card .service-icon {
+    font-size: 48px;
+    color: var(--secondary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.service-card h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.service-card p {
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Updated styles for voordeel cards to match the Waarom page styling */
+.voordeel {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.voordeel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.voordeel i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+.voordeel h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.voordeel p {
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Add stagger effect for cards in a grid */
+.services-grid .service-card:nth-child(1) { animation-delay: 0.1s; }
+.services-grid .service-card:nth-child(2) { animation-delay: 0.2s; }
+.services-grid .service-card:nth-child(3) { animation-delay: 0.3s; }
+
+.voordelen-grid .voordeel:nth-child(1) { animation-delay: 0.1s; }
+.voordelen-grid .voordeel:nth-child(2) { animation-delay: 0.2s; }
+.voordelen-grid .voordeel:nth-child(3) { animation-delay: 0.3s; }
+
+.waarden-grid .waarde-item:nth-child(1) { animation-delay: 0.1s; }
+.waarden-grid .waarde-item:nth-child(2) { animation-delay: 0.2s; }
+.waarden-grid .waarde-item:nth-child(3) { animation-delay: 0.3s; }
+.waarden-grid .waarde-item:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .voordeel, .service-card {
+        padding: 2rem;
+        margin-bottom: 0;
+    }
+    
+    .voordeel i, .service-card .service-icon {
+        font-size: 2rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .voordeel h3, .service-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .voordeel p, .service-card p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+}

@@ -1,0 +1,298 @@
+/* ISO 27001 Process Styles */
+
+/* Fade-in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#hero.iso-27001-hero {
+    /* Temporary gradient background until image is available */
+    background: linear-gradient(135deg, 
+        var(--primary-color) 0%,
+        var(--primary-dark) 100%
+    );
+    background-size: cover;
+    background-position: center;
+    color: var(--text-color-light);
+    padding: calc(var(--spacing-xl) * 3) 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional overlay pattern */
+#hero.iso-27001-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(45deg, 
+        rgba(0, 0, 0, 0.1) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(0, 0, 0, 0.1) 50%, 
+        rgba(0, 0, 0, 0.1) 75%, 
+        transparent 75%, 
+        transparent
+    );
+    background-size: 100px 100px;
+    opacity: 0.1;
+}
+
+#hero.iso-27001-hero h1 {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+#hero.iso-27001-hero p {
+    font-size: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto var(--spacing-xl);
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+#iso-27001-intro,
+#iso-27001-benefits,
+#iso-27001-process,
+#testimonials,
+#cta {
+    padding: calc(var(--spacing-xl) * 2) 0;
+}
+
+#iso-27001-intro {
+    background-color: var(--neutral-light);
+}
+
+#iso-27001-intro ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#iso-27001-intro li {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-xl);
+    position: relative;
+}
+
+#iso-27001-intro li i {
+    position: absolute;
+    left: 0;
+    top: 5px;
+    color: var(--primary-color);
+}
+
+.voordelen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.voordeel {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    text-align: center;
+}
+
+.voordeel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.voordeel-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+}
+
+.voordeel h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.voordeel p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.process-steps {
+    counter-reset: step;
+    list-style-type: none;
+    padding: 0;
+    margin-top: calc(var(--spacing-xl) * 1.5);
+}
+
+.process-steps li {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+    padding-left: calc(var(--spacing-xl) * 2);
+    counter-increment: step;
+}
+
+.process-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.process-steps h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.process-steps p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+#testimonials {
+    background-color: var(--neutral-light);
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.testimonial {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.testimonial:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.testimonial p {
+    font-style: italic;
+    margin-bottom: var(--spacing-md);
+}
+
+.testimonial .klant {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+#cta {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    text-align: center;
+}
+
+#cta h2 {
+    font-size: 2.25rem;
+    margin-bottom: var(--spacing-md);
+}
+
+#cta p {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-xl);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#cta .cta-button {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+#cta .cta-button:hover {
+    background-color: var(--neutral-light);
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    #hero.iso-27001-hero {
+        padding: calc(var(--spacing-xl) * 2.5) 0 calc(var(--spacing-xl) * 1.5);
+    }
+
+    #hero.iso-27001-hero h1 {
+        font-size: 2.25rem;
+    }
+
+    #hero.iso-27001-hero p {
+        font-size: 1.125rem;
+    }
+
+    #iso-27001-intro,
+    #iso-27001-benefits,
+    #iso-27001-process,
+    #testimonials,
+    #cta {
+        padding: calc(var(--spacing-xl) * 1.5) 0;
+    }
+
+    .voordeel {
+        padding: var(--spacing-md);
+    }
+
+    .process-steps li {
+        padding-left: calc(var(--spacing-xl) * 1.5);
+    }
+
+    .process-steps li::before {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .process-steps h3 {
+        font-size: 1.25rem;
+    }
+
+    .process-steps p,
+    .voordeel p {
+        font-size: 0.875rem;
+    }
+
+    #cta h2 {
+        font-size: 1.75rem;
+    }
+
+    #cta p {
+        font-size: 1rem;
+    }
+}

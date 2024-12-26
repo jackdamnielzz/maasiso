@@ -1,0 +1,126 @@
+/* Hero Section Styles */
+.hero {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero .lead {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Wie Wij Zijn Section Styles */
+#wie-wij-zijn {
+    background-color: var(--light-bg-color);
+}
+
+.wie-wij-zijn-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.wie-wij-zijn-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.expertise-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.expertise-list li {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.expertise-list li i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+/* Onze Aanpak Section Styles */
+.aanpak-item {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aanpak-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.aanpak-item .dienst-icon {
+    font-size: 64px;
+    color: #4A9B8F;
+    margin-bottom: 25px;
+}
+
+.aanpak-item h3 {
+    color: #1C3D5A;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.aanpak-item p {
+    color: #555555;
+    font-size: 1.1em;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero .lead {
+        font-size: 1rem;
+    }
+
+    .expertise-list {
+        flex-direction: column;
+    }
+
+    .expertise-list li {
+        width: 100%;
+    }
+
+    .aanpak-item {
+        padding: 30px;
+    }
+
+    .aanpak-item .dienst-icon {
+        font-size: 48px;
+    }
+
+    .aanpak-item h3 {
+        font-size: 1.3em;
+    }
+
+    .aanpak-item p {
+        font-size: 1em;
+    }
+}

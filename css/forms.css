@@ -1,0 +1,185 @@
+/* Form Styles */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+/* Required field indicator */
+.required::after {
+    content: '*';
+    color: var(--error-color);
+    margin-left: var(--spacing-xs);
+}
+
+/* Form Controls */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--neutral-medium);
+    border-radius: var(--border-radius-sm);
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: all var(--transition-normal);
+}
+
+/* Focus state */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Hover state */
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="tel"]:hover,
+input[type="number"]:hover,
+input[type="password"]:hover,
+select:hover,
+textarea:hover {
+    border-color: var(--primary-color);
+}
+
+/* Error state */
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: var(--error-color);
+}
+
+.form-group.error .error-message {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+}
+
+/* Success state */
+.form-group.success input,
+.form-group.success select,
+.form-group.success textarea {
+    border-color: var(--success-color);
+}
+
+/* Disabled state */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: var(--neutral-light);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Textarea specific styles */
+textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Select specific styles */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23172B4D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--spacing-sm) center;
+    padding-right: calc(var(--spacing-xl) + var(--spacing-xs));
+}
+
+/* Form layout utilities */
+.form-row {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-col {
+    flex: 1;
+}
+
+/* Help text */
+.help-text {
+    color: var(--neutral-dark);
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+}
+
+/* Form actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+/* Loading state */
+.form-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.form-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Checkbox and Radio styles */
+.checkbox-group,
+.radio-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto;
+    margin-right: var(--spacing-xs);
+}

@@ -1,0 +1,139 @@
+/* Grid Styles */
+
+.benefits-grid,
+.why-maasiso-grid,
+.industries-grid,
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.voordelen-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin: 40px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.missie-visie-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.aanpak-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.waarden-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 0 20px;
+}
+
+.dienst {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dienst:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+}
+
+.dienst-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+}
+
+.dienst h3 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+}
+
+.dienst p {
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 1200px) {
+    .benefits-grid,
+    .why-maasiso-grid,
+    .industries-grid,
+    .services-grid,
+    .voordelen-grid,
+    .aanpak-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .benefits-grid,
+    .why-maasiso-grid,
+    .industries-grid,
+    .services-grid,
+    .voordelen-grid,
+    .aanpak-grid,
+    .missie-visie-grid,
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 20px;
+        margin-top: 30px;
+    }
+
+    /* Remove hover effect on mobile */
+    .dienst:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .section-padding {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .section-title {
+        padding: 0 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+}

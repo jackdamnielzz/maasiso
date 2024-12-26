@@ -1,0 +1,51 @@
+/* CTA Section Styles */
+#cta.cta-section {
+    margin-bottom: 4rem !important;  /* Match spacing from index page */
+    background-color: var(--hero-background);
+    padding: 4rem 0;  /* Maintain vertical padding */
+}
+
+#cta .section-title {
+    color: var(--text-color-light);
+    margin-bottom: 1.5rem;
+}
+
+#cta .section-intro {
+    color: var(--text-color-light);
+    margin-bottom: 2rem;
+}
+
+#cta .text-center {
+    text-align: center;
+}
+
+#cta .cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--text-color-light);
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-sm);
+    transition: background-color var(--transition-normal);
+}
+
+#cta .cta-button:hover {
+    background-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #cta.cta-section {
+        padding: 3rem 0;
+        margin-bottom: 3rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #cta.cta-section {
+        padding: 2rem 0;
+        margin-bottom: 2rem !important;
+    }
+}

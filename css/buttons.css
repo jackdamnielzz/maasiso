@@ -1,0 +1,115 @@
+/* Button Styles */
+.cta-button {
+    display: inline-block;
+    padding: calc(var(--spacing-sm) + 6px) calc(var(--spacing-xl) - 4px);
+    background-color: var(--button-primary-bg) !important; /* Force the orange color */
+    color: var(--button-primary-text) !important; /* Force the text color */
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-normal);
+    font-weight: 700;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+    background-color: var(--button-primary-hover) !important; /* Force the hover color */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.cta-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero CTA Button - ensure it uses the same styling */
+.hero .cta-button {
+    font-size: 1.1rem;
+    padding: var(--spacing-md) var(--spacing-xl);
+    position: relative;
+    z-index: 3;
+    background-color: #FF8B00 !important; /* Force exact hex color */
+    mix-blend-mode: normal;
+    isolation: isolate;
+    /* Add a subtle glow to make it stand out */
+    box-shadow: 0 2px 4px rgba(255, 139, 0, 0.2);
+}
+
+.hero .cta-button:hover {
+    background-color: #E67E00 !important; /* Force exact hex color */
+    box-shadow: 0 4px 8px rgba(255, 139, 0, 0.3);
+}
+
+/* Secondary Button */
+.secondary-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color-light);
+    transition: background-color var(--transition-normal);
+}
+
+.secondary-button:hover {
+    background-color: var(--success-color);
+}
+
+/* Text Button */
+.text-button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+    transition: color var(--transition-normal);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.text-button:hover {
+    color: var(--primary-dark);
+}
+
+/* Outline Button */
+.outline-button {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: all var(--transition-normal);
+}
+
+.outline-button:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-dark);
+    color: var(--primary-dark);
+}
+
+/* Disabled State */
+.cta-button:disabled,
+.secondary-button:disabled,
+.text-button:disabled,
+.outline-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Focus State */
+.cta-button:focus,
+.secondary-button:focus,
+.text-button:focus,
+.outline-button:focus {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .cta-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+}

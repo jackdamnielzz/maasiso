@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /error_docs/
+
+Sitemap: https://maasiso.nl/sitemaps/sitemap.xml

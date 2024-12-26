@@ -1,0 +1,166 @@
+/* ISO 9001 Specific Styles */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/iso-9001-hero.jpg') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 6rem 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.hero .lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.avg-section-title {
+    color: #333;
+    font-size: 2rem;
+    margin: 2.5rem 0 1.5rem;
+    font-weight: 700;
+}
+
+.avg-subsection-title {
+    color: #444;
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    font-weight: 600;
+}
+
+.avg-toc {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.avg-toc h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.avg-toc ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.avg-toc ul li {
+    margin-bottom: 0.5rem;
+}
+
+.avg-toc ul li a {
+    color: #0056b3;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.avg-toc ul li a:hover {
+    color: #003d82;
+    text-decoration: underline;
+}
+
+.feature-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.feature-item {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.feature-item:before {
+    content: "•";
+    color: #0056b3;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.avg-features {
+    margin: 1.5rem 0;
+    padding-left: 0;
+}
+
+.avg-features .feature-item {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    position: relative;
+}
+
+.avg-features .feature-item:before {
+    content: "•";
+    color: #0056b3;
+    position: absolute;
+    left: 0.5rem;
+    top: 1rem;
+}
+
+.avg-features .feature-item span {
+    color: #444;
+    line-height: 1.6;
+}
+
+.avg-text {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.avg-text strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.cta-section {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2.5rem 0;
+    text-align: center;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cta-section .avg-subsection-title {
+    color: #0056b3;
+    margin-top: 0;
+}
+
+.cta-button-container {
+    margin-top: 1.5rem;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #0056b3;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.cta-button:hover {
+    background-color: #003d82;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
