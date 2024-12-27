@@ -109,9 +109,6 @@ RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
     Header set Content-Type "text/css"
 </FilesMatch>
 
-# Redirect old sitemap to new location
-RewriteRule ^sitemap\.xml$ /sitemaps/sitemap.xml [L,R=301]
-
 # Force HTTPS (uncomment if you have SSL)
 # RewriteEngine On
 # RewriteCond %{HTTPS} off
