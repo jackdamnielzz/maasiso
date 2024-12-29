@@ -1,105 +1,163 @@
-# MaasISO Website Technologie Stack
+# Technology Stack Documentation
 
-## Huidige Stack
+## Current Stack
+### Frontend
 - HTML5
-- CSS3 (vanilla CSS, geen preprocessor)
-- JavaScript (ES6+, vanilla JS)
-- Git voor versiebeheer
-- GitHub Pages voor hosting
+- CSS3 (with modular architecture)
+- JavaScript (Vanilla)
+- Responsive Design
+- Progressive Enhancement
 
-## Frontend Features
+### Backend
+- PHP (Contact Form Handler)
+- Apache Server
+- .htaccess Configuration
 
-### Bestaand
-- Vanilla HTML/CSS/JS
-- Component-gebaseerde structuur
-- Responsive design
+### Development Tools
+- CSS Minification
+- JavaScript Minification
+- Version Control (Git)
 
-### Cookie Management Systeem
-- Vanilla JavaScript cookie consent manager
-- Modulair ontwerp
-- Configureerbare cookie types:
-  - Noodzakelijke cookies
-  - Analytische cookies (Google Analytics)
-  - Functionele cookies
-- Features:
-  - Consent opslag (1 jaar)
-  - Granulaire cookie controle
-  - Settings modal
-  - Responsive design
-  - Toegankelijkheid
+## Planned Stack (With Strapi Integration)
+### Content Management
+- Strapi CMS (Headless)
+- PostgreSQL/MySQL Database
+- Strapi Media Library
+- Content API
 
-### Nieuwe Features (Gepland)
-- Dynamisch content laden
-- Client-side routing
-- Content caching
-- Lazy loading voor media
+### Frontend
+- HTML5
+- CSS3 (modular architecture)
+- JavaScript
+  - Fetch API for Strapi integration
+  - Dynamic content rendering
+  - Enhanced interactivity
+- SEO Optimization
+- Responsive Design
+- Progressive Enhancement
 
-## Voorgestelde CMS Integratie
+### Backend
+- Node.js (Strapi runtime)
+- PostgreSQL/MySQL (Database)
+- RESTful API
+- JWT Authentication
+- PHP (maintained for legacy contact form)
 
-### Primaire Optie: Headless CMS
-- Strapi
-  - Node.js gebaseerd
-  - Open-source
-  - Flexibel content model
-  - RESTful API
-  - GraphQL ondersteuning
-  - Zelf te hosten
+### Development Tools
+- CSS Minification
+- JavaScript Minification
+- Version Control (Git)
+- Strapi Admin Panel
+- API Documentation Tools
+- Performance Monitoring
+- Error Tracking
 
-Voordelen:
-- Gebruiksvriendelijke admin interface
-- Aanpasbare content types
-- Uitgebreide API mogelijkheden
-- Sterke beveiliging
-- Active community
+### Infrastructure
+- Apache Server (Frontend)
+- Node.js Server (Strapi)
+- Database Server
+- Media Storage
+- CDN (optional)
+- SSL/TLS Security
 
-### Alternatieve Opties
-1. WordPress (headless mode)
-   - Bekend admin interface
-   - Groot ecosysteem
-   - WordPress REST API
+### Testing Tools
+- API Testing
+- Performance Testing
+- Security Testing
+- Content Validation
 
-2. NetlifyCMS
-   - Git-gebaseerd
-   - Markdown files
-   - Eenvoudige setup
+### Monitoring & Analytics
+- Server Monitoring
+- Performance Metrics
+- Error Tracking
+- User Analytics
+- SEO Monitoring
 
-## Backend Vereisten
+## Technology Decisions
+### Database Choice
+PostgreSQL preferred for:
+- Robust JSON support
+- Data integrity
+- Complex queries
+- Scalability
 
-### API Laag
-- RESTful endpoints
-- Content type definities
-- Media handling
-- Authenticatie
+### API Architecture
+RESTful API chosen for:
+- Simplicity
+- Caching capabilities
+- Wide tool support
+- Easy integration
 
-### Database
-- Document-based storage
-- Content relaties
-- Media assets beheer
+### Authentication
+JWT implementation for:
+- Stateless authentication
+- Scalability
+- Security
+- Easy integration with frontend
 
-## Content Hub Architectuur
-- Nieuws systeem
-- Blog platform
-- Whitepapers repository
-- Kennisbank
-- Zoekfunctionaliteit
-- Categorisatie systeem
+## Development Practices
+### Version Control
+- Git for source control
+- Feature branch workflow
+- Pull request reviews
+- Automated testing
 
-## Prestaties en SEO
-- Statische site generatie
-- CDN integratie
-- Cache management
-- Meta tags optimalisatie
+### Code Quality
+- Linting
+- Code formatting
+- Documentation
+- Code reviews
+- Performance optimization
 
-## Ontwikkeltools
-- VS Code als primaire editor
-- Git voor versiebeheer
-- GitHub voor repository hosting
-
-## Beveiliging
-- Cookie consent management
-- SSL certificaat
-- API authenticatie
-- CSRF bescherming
+### Security Measures
+- HTTPS everywhere
+- API authentication
+- Input validation
+- XSS prevention
+- CSRF protection
 - Rate limiting
 
-Deze tech stack combineert de bestaande lichtgewicht aanpak met moderne content management mogelijkheden, waarbij de focus ligt op gebruiksgemak voor content beheerders zonder in te leveren op prestaties of beveiliging.
+### Performance Optimization
+- Content caching
+- Image optimization
+- Code minification
+- Lazy loading
+- Database indexing
+
+## Deployment Strategy
+### Environments
+- Development
+- Staging
+- Production
+
+### Deployment Process
+- Automated builds
+- Testing pipeline
+- Staged rollout
+- Rollback capability
+
+## Maintenance
+### Regular Updates
+- Security patches
+- Dependency updates
+- Performance optimization
+- Feature enhancements
+
+### Monitoring
+- Uptime monitoring
+- Performance metrics
+- Error tracking
+- Security scanning
+
+## Documentation Requirements
+### Technical Documentation
+- API documentation
+- Setup guides
+- Deployment procedures
+- Troubleshooting guides
+
+### User Documentation
+- Content management guides
+- Best practices
+- Style guides
+- Training materials
