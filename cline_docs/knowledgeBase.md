@@ -7,6 +7,16 @@
 - **Rationale:** Separates concerns, enables better scaling, and provides optimal performance
 - **Impact:** Improved maintainability and flexibility for future expansion
 
+### Operating System Selection
+- **Decision:** Ubuntu 22.04 LTS for VPS
+- **Rationale:** 
+  - Long Term Support until 2027
+  - Excellent Node.js and PostgreSQL compatibility
+  - Strong security track record
+  - Large community and documentation
+  - Regular security updates
+- **Impact:** Provides stable, secure foundation for Strapi CMS
+
 ### Self-Hosted Strapi
 - **Decision:** Self-host Strapi instead of using Strapi Cloud
 - **Rationale:** Cost reduction and increased control over infrastructure
