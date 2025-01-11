@@ -4,7 +4,12 @@
 
 ### Production Environment
 - **Frontend:** Vercel (maasiso.nl)
-- **Backend:** Self-hosted VPS (cms.maasiso.nl)
+- **Backend:** Hostinger KVM1 VPS (cms.maasiso.nl)
+  - 1 vCPU
+  - 2GB RAM
+  - 20GB SSD
+  - Unmetered bandwidth
+  - Ubuntu 22.04 LTS
 - **Database:** PostgreSQL
 - **CDN:** Cloudflare (optional)
 

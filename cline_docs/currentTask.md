@@ -24,11 +24,18 @@ This is the first phase of development as outlined in projectRoadmap.md. We need
   - Implemented env validation with TypeScript
 
 ### Strapi CMS Setup
-- [ ] Select and configure VPS for Strapi hosting
+- [x] Select and configure VPS for Strapi hosting (Hostinger KVM1, Ubuntu 22.04 LTS)
 - [ ] Install and configure PostgreSQL
 - [ ] Install and initialize Strapi
 - [ ] Configure basic content types
 - [ ] Set up initial admin account
+
+#### VPS Specifications (Hostinger KVM1)
+- 1 vCPU
+- 2GB RAM
+- 20GB SSD
+- Unmetered bandwidth
+- Ubuntu 22.04 LTS selected for optimal Strapi support
 
 ### Database Architecture
 - [ ] Design database schema
@@ -43,10 +50,11 @@ This is the first phase of development as outlined in projectRoadmap.md. We need
 - [ ] Configure CORS policies
 
 ## Dependencies
-- VPS provider selection
+- [x] VPS provider selection (Hostinger)
 - Domain name configuration
 - SSL certificate acquisition
 - Development environment requirements
+- PostgreSQL installation requirements
 
 ## Next Steps
 1. ~~Initialize Git repository~~ ✓
@@ -77,4 +85,7 @@ This is the first phase of development as outlined in projectRoadmap.md. We need
 - **Author:** AI
 - **Date:** 2025-01-11
 - **Description:** Completed environment variable configuration
+- **Author:** AI
+- **Date:** 2025-01-11
+- **Description:** Selected and documented VPS provider and specifications
 - **Author:** AI
