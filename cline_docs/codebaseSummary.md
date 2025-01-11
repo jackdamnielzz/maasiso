@@ -3,19 +3,32 @@
 ## Project Structure
 
 ### Frontend (Next.js)
+Current structure (Next.js 14 with App Router):
 ```
-src/
-├── components/         # Reusable UI components
-│   ├── layout/        # Layout components (Header, Footer, etc.)
-│   ├── common/        # Common UI elements
-│   └── features/      # Feature-specific components
-├── pages/             # Next.js pages and routing
-├── styles/            # Global styles and Tailwind config
-├── lib/              # Utility functions and helpers
-├── hooks/            # Custom React hooks
-├── context/          # React Context providers
-└── types/            # TypeScript type definitions
+frontend/
+├── src/
+│   ├── app/          # Next.js 14 App Router pages and layouts
+│   │   ├── layout.tsx    # Root layout with metadata
+│   │   ├── page.tsx     # Home page component
+│   │   └── globals.css  # Global styles
+│   ├── components/   # [To be implemented] Reusable UI components
+│   │   ├── layout/      # Layout components (Header, Footer, etc.)
+│   │   ├── common/      # Common UI elements
+│   │   └── features/    # Feature-specific components
+│   ├── lib/         # [To be implemented] Utility functions and helpers
+│   ├── hooks/       # [To be implemented] Custom React hooks
+│   ├── context/     # [To be implemented] React Context providers
+│   └── types/       # [To be implemented] TypeScript type definitions
+├── public/         # Static assets
+└── config/        # [To be implemented] Configuration files
 ```
+
+Planned additions:
+- Components directory for reusable UI elements
+- Lib directory for utility functions
+- Hooks directory for custom React hooks
+- Context directory for state management
+- Types directory for TypeScript definitions
 
 ### Backend (Strapi)
 ```
@@ -105,10 +118,12 @@ strapi/
 - Database monitoring
 
 ## Recent Changes
-- Initial project setup
-- Basic documentation structure
-- Technology stack decisions
-- Architecture planning
+- Initial project setup completed
+- Next.js 14 project created with TypeScript
+- Tailwind CSS configured for styling
+- ESLint set up for code quality
+- Git repository initialized
+- Project structure established with src directory pattern
 
 ## Planned Improvements
 - SaaS infrastructure
@@ -128,4 +143,7 @@ strapi/
 ## Revision History
 - **Date:** 2025-01-11
 - **Description:** Initial codebase structure documentation
+- **Author:** AI
+- **Date:** 2025-01-11
+- **Description:** Updated with actual Next.js project structure
 - **Author:** AI
