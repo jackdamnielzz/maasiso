@@ -74,6 +74,56 @@ sudo ufw enable
 sudo ufw status
 ```
 
+## PostgreSQL Installation
+
+1. Install PostgreSQL
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+
+2. Verify installation
+```bash
+sudo systemctl status postgresql
+```
+
+3. Configure PostgreSQL
+```bash
+# Switch to postgres user
+sudo -i -u postgres
+
+# Create database user for Strapi
+createuser --interactive --pwprompt
+# Enter username: strapi
+# Set strong password
+# Grant superuser privileges (required for Strapi)
+
+# Create database
+createdb strapi_db
+
+# Exit postgres user
+exit
+```
+
+4. Configure remote access (if needed)
+```bash
+sudo nano /etc/postgresql/14/main/pg_hba.conf
+# Add line:
+host    all             all             0.0.0.0/0               md5
+
+sudo nano /etc/postgresql/14/main/postgresql.conf
+# Set:
+listen_addresses = '*'
+
+# Restart PostgreSQL
+sudo systemctl restart postgresql
+```
+
+5. Test connection
+```bash
+psql -h localhost -U strapi -d strapi_db
+```
+
 ## System Updates
 
 Keep the system updated:
@@ -89,11 +139,11 @@ After completing these steps, your VPS will have:
 - A secure non-root user with sudo privileges
 - SSH key authentication enabled
 - Basic firewall protection
+- PostgreSQL installed and configured
 
 The system will be ready for:
-1. PostgreSQL installation
-2. Node.js setup
-3. Strapi deployment
+1. Node.js setup
+2. Strapi deployment
 
 ## Important Notes
 
@@ -102,6 +152,7 @@ The system will be ready for:
   - VPS IP address
   - Admin username
   - SSH key location
+  - PostgreSQL credentials
   - Any custom configurations
 - Keep regular backups of your SSH keys
 - Monitor system logs for any suspicious activity
@@ -114,6 +165,12 @@ If you can't connect via SSH:
 3. Ensure firewall allows SSH (port 22)
 4. Verify SSH key permissions (should be 600)
 
+If PostgreSQL connection fails:
+1. Verify service is running
+2. Check pg_hba.conf configuration
+3. Verify user credentials
+4. Check firewall rules for port 5432
+
 ## Security Best Practices
 
 - Change SSH port from default 22 (optional)
@@ -122,8 +179,13 @@ If you can't connect via SSH:
 - Monitor system logs
 - Use strong passwords
 - Implement rate limiting
+- Restrict PostgreSQL access to specific IPs
+- Regularly backup PostgreSQL databases
 
 ## Revision History
 - **Date:** 2025-01-11
 - **Description:** Initial VPS setup instructions
+- **Author:** AI
+- **Date:** 2025-01-11
+- **Description:** Added PostgreSQL installation and configuration instructions
 - **Author:** AI

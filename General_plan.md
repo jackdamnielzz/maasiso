@@ -421,9 +421,6 @@ Betaalde tools of diensten verkopen via Stripe/PayPal.
 ## Webhook Integraties
 Koppel externe diensten (Slack, Discord, etc.) voor real-time content updates.
 
-## Progressive Web App (PWA)
-Offlinefunctionaliteiten en betere mobiele ervaringen.
-
 ## Content Curation
 Aanbevelingen op basis van interesses of gebruikersgedrag.
 

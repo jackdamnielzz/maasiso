@@ -11,6 +11,7 @@ export interface EnvVariables {
   // Authentication
   authUrl: string;
   authSecret: string;
+  strapiToken: string;
   
   // GraphQL
   graphqlUrl: string;
@@ -33,7 +34,8 @@ function validateEnv(): EnvVariables {
     'NEXT_PUBLIC_SITE_URL',
     'NEXTAUTH_URL',
     'NEXTAUTH_SECRET',
-    'NEXT_PUBLIC_GRAPHQL_URL'
+    'NEXT_PUBLIC_GRAPHQL_URL',
+    'STRAPI_API_TOKEN'
   ];
 
   // Check for missing required environment variables
@@ -57,6 +59,7 @@ function validateEnv(): EnvVariables {
     // Authentication
     authUrl: process.env.NEXTAUTH_URL!,
     authSecret: process.env.NEXTAUTH_SECRET!,
+    strapiToken: process.env.STRAPI_API_TOKEN!,
     
     // GraphQL
     graphqlUrl: process.env.NEXT_PUBLIC_GRAPHQL_URL!,
@@ -83,6 +86,7 @@ export const {
   siteUrl,
   authUrl,
   authSecret,
+  strapiToken,
   graphqlUrl,
   googleAnalyticsId,
   cdnUrl,

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# PostgreSQL backup script with monitoring
+# Created: 2025-01-14
+
+# Configuration
+BACKUP_DIR="/var/backups/postgresql"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+DB_NAME="strapi_db"
+LOG_FILE="/var/log/postgresql/backup.log"
+ALERT_EMAIL="admin@example.com"
+MIN_BACKUP_SIZE=1024  # 1KB minimum size
+
+# Ensure backup directory exists
+if [ ! -d "$BACKUP_DIR" ]; then
+    mkdir -p "$BACKUP_DIR"
+    chown postgres:postgres "$BACKUP_DIR"
+    chmod 700 "$BACKUP_DIR"
+fi
+
+# Ensure log directory exists
+mkdir -p "$(dirname "$LOG_FILE")"
+chown postgres:postgres "$(dirname "$LOG_FILE")"
+
+# Switch to postgres user and perform backup
+su - postgres << 'POSTGRES_SCRIPT'
+BACKUP_FILE="/var/backups/postgresql/full_backup_$(date +%Y%m%d_%H%M%S).sql.gz"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting backup to $BACKUP_FILE" >> "$LOG_FILE"
+
+pg_dump strapi_db | gzip > "$BACKUP_FILE"
+BACKUP_SIZE=$(stat -c%s "$BACKUP_FILE")
+
+if [ "$BACKUP_SIZE" -lt "1024" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ALERT: Backup file too small: $BACKUP_FILE ($BACKUP_SIZE bytes)" >> "$LOG_FILE"
+    rm -f "$BACKUP_FILE"
+    exit 1
+fi
+
+CHECKSUM=$(md5sum "$BACKUP_FILE" | cut -d' ' -f1)
+echo "$CHECKSUM" > "$BACKUP_FILE.md5"
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Backup completed successfully. Size: $BACKUP_SIZE bytes, Checksum: $CHECKSUM" >> "$LOG_FILE"
+
+# Cleanup old backups
+find /var/backups/postgresql -name "full_backup_*.sql.gz" -mtime +30 -delete
+find /var/backups/postgresql -name "full_backup_*.sql.gz.md5" -mtime +30 -delete
+POSTGRES_SCRIPT
+
+# Check if backup was successful
+if [ $? -ne 0 ]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ALERT: Backup failed for $DB_NAME" >> "$LOG_FILE"
+    echo "Backup failed for $DB_NAME" | mail -s "PostgreSQL Backup Alert" "$ALERT_EMAIL"
+    exit 1
+fi

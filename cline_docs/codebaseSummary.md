@@ -1,149 +1,88 @@
 # Codebase Summary
 
 ## Project Structure
-
-### Frontend (Next.js)
-Current structure (Next.js 14 with App Router):
-```
-frontend/
-├── src/
-│   ├── app/          # Next.js 14 App Router pages and layouts
-│   │   ├── layout.tsx    # Root layout with metadata
-│   │   ├── page.tsx     # Home page component
-│   │   └── globals.css  # Global styles
-│   ├── components/   # [To be implemented] Reusable UI components
-│   │   ├── layout/      # Layout components (Header, Footer, etc.)
-│   │   ├── common/      # Common UI elements
-│   │   └── features/    # Feature-specific components
-│   ├── lib/         # [To be implemented] Utility functions and helpers
-│   ├── hooks/       # [To be implemented] Custom React hooks
-│   ├── context/     # [To be implemented] React Context providers
-│   └── types/       # [To be implemented] TypeScript type definitions
-├── public/         # Static assets
-└── config/        # [To be implemented] Configuration files
-```
-
-Planned additions:
-- Components directory for reusable UI elements
-- Lib directory for utility functions
-- Hooks directory for custom React hooks
-- Context directory for state management
-- Types directory for TypeScript definitions
-
-### Backend (Strapi)
-```
-strapi/
-├── api/              # API configurations and controllers
-├── config/           # Strapi configurations
-├── database/         # Database configurations and migrations
-└── public/           # Public assets
-```
+- `/frontend`: Next.js frontend application
+  - `/app`: Page components and routing
+    - `page.tsx`: Root route component (displays home page)
+    - `/home`: Home page route (same content as root)
+  - `/src`: Source code
+    - `/lib`: Shared libraries and types
+    - `/components`: React components
+  - Development server runs on http://localhost:3000
 
 ## Key Components
+- Frontend Development Server
+  - Local development at http://localhost:3000
+  - Auto-reloading enabled
+  - See FRONTEND_ACCESS_GUIDE.md for access details
 
-### Frontend Components
-- **Layout Components**
-  - Header: Site navigation and branding
-  - Footer: Site information and additional links
-  - SubFooter: Extra navigation and newsletter signup
-  - ScrollUpButton: Page navigation helper
+- Backend API
+  - Running at http://153.92.223.23:1337
+  - Provides data for frontend components
+  - Strapi CMS for content management
+  - Comprehensive test content being created
 
-- **Common Components**
-  - Button: Reusable button styles
-  - Card: Content display component
-  - Form: Form input components
-  - Modal: Popup dialogs
-  - Loader: Loading states
+## Content Types and Components
+- Page Components
+  - Hero sections
+  - Text blocks
+  - Image galleries
+  - Feature grids
+  - Buttons
+- Content Types
+  - Blog posts
+  - News articles
+  - Pages
+  - Categories
+  - Tags
+- Navigation
+  - Menu systems
+  - Social links
 
-- **Feature Components**
-  - BlogPost: Blog content display
-  - ToolCard: Tool download cards
-  - WhitepaperPreview: Whitepaper listings
-  - ServiceCard: Service information
-  - TestimonialSlider: Client testimonials
+## Routing Structure
+- Root Route ('/')
+  - Serves as default landing page
+  - Displays content from CMS home page
+  - Component: app/page.tsx
 
-### Backend Components
-- **Content Types**
-  - Pages: Generic page content
-  - Services: ISO consulting services
-  - Blog Posts: Blog articles
-  - News Articles: Company news
-  - Whitepapers: Downloadable resources
-  - Tools: Downloadable tools
-  - Testimonials: Client feedback
-  - Events: Company events
-
-- **API Services**
-  - AuthService: User authentication
-  - MediaService: File handling
-  - SearchService: Content search
-  - DownloadService: Tool distribution
+- Home Route ('/home')
+  - Mirrors root route content
+  - Uses same CMS data source
+  - Component: app/home/page.tsx
 
 ## Data Flow
-1. Client requests page from Next.js
-2. Next.js fetches data from Strapi via GraphQL
-3. Page is rendered server-side
-4. Interactive elements hydrated client-side
-5. Real-time updates via GraphQL subscriptions
+1. Frontend makes API requests to Strapi backend
+2. Backend returns page data with components
+3. Frontend validates and normalizes data:
+   - Validates blog post structure
+   - Handles case-sensitive field names (e.g., 'Content')
+   - Normalizes image data from flat to structured format
+4. Components render normalized data:
+   - BlogCard handles image display
+   - Category filtering
+   - Pagination
 
-## External Dependencies
-- Vercel for frontend hosting
-- VPS for Strapi hosting
-- PostgreSQL for database
-- Cloudflare for CDN (optional)
-- GitHub for version control
-- GitHub Actions for CI/CD
+## Development Environment
+- Frontend runs locally for development
+- Backend runs on remote server
+- See manuals/FRONTEND_ACCESS_GUIDE.md for detailed setup
+- See manuals/CMS_TESTING_GUIDE.md for content testing procedures
 
-## Security Implementation
-- JWT authentication
-- Role-based access control
-- SSL/TLS encryption
-- Security headers
-- API rate limiting
-- CORS policies
+## Testing Infrastructure
+- Comprehensive CMS testing plan in place
+- Test content being created for all components
+- Visual verification procedures established
+- Functional testing guidelines documented
 
-## Performance Optimization
-- Server-side rendering
-- Image optimization
-- Code splitting
-- Cache strategies
-- CDN integration
-- Database indexing
+## Recent Significant Changes
+- [2025-01-24] Working on blog post validation and image handling:
+  - Updated Image interface to match API response structure
+  - Added validation for case-sensitive content fields
+  - Improved error logging and debugging
+- [2025-01-24] Created CMS testing guide and test content plan
+- [2025-01-24] Added component type handling for both raw and normalized formats
+- [2025-01-24] Created frontend access documentation
+- [2025-01-24] Updated type system for component handling
+- [2025-01-24] Configured root and home routes to serve same content
 
-## Monitoring & Logging
-- Error tracking
-- Performance monitoring
-- User analytics
-- Server health checks
-- Database monitoring
-
-## Recent Changes
-- Initial project setup completed
-- Next.js 14 project created with TypeScript
-- Tailwind CSS configured for styling
-- ESLint set up for code quality
-- Git repository initialized
-- Project structure established with src directory pattern
-
-## Planned Improvements
-- SaaS infrastructure
-- Advanced analytics
-- Multi-language support
-- E-commerce integration
-- Client portal
-- Enhanced security measures
-
-## Documentation References
-- Project setup guide (pending)
-- API documentation (pending)
-- Component library (pending)
-- Deployment guide (pending)
-- Security protocols (pending)
-
-## Revision History
-- **Date:** 2025-01-11
-- **Description:** Initial codebase structure documentation
-- **Author:** AI
-- **Date:** 2025-01-11
-- **Description:** Updated with actual Next.js project structure
-- **Author:** AI
+## Last Updated: 2025-01-24

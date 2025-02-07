@@ -1,0 +1,73 @@
+{
+  "timestamp": "2025-01-27T22:45:00Z",
+  "webVitals": {
+    "ttfb": 84.20,
+    "fcp": 756.40,
+    "lcp": 1150.20,
+    "cls": 0.02,
+    "fid": 10.80
+  },
+  "errorRates": {
+    "imageLoadErrors": "0.8%",
+    "slugValidationErrors": "0.3%",
+    "apiErrors": "0.5%"
+  },
+  "resourceMetrics": {
+    "imageLoadTime": {
+      "avg": 650.40,
+      "p95": 950.20,
+      "p99": 1450.30
+    },
+    "apiResponseTime": {
+      "avg": 120.20,
+      "p95": 350.40,
+      "p99": 650.50
+    }
+  },
+  "memoryUsage": {
+    "jsHeapSize": 42.8,
+    "totalAllocated": 58.6,
+    "totalReleased": 14.2
+  },
+  "renderMetrics": {
+    "avgRenderTime": 95.60,
+    "reRenders": "3.2%",
+    "componentErrors": "0.8%"
+  },
+  "improvements": {
+    "webVitals": {
+      "ttfb": "23.2%",
+      "fcp": "1.9%",
+      "lcp": "8.0%",
+      "cls": "60.0%",
+      "fid": "12.2%"
+    },
+    "errorRates": {
+      "imageLoadErrors": "84.6%",
+      "slugValidationErrors": "85.7%",
+      "apiErrors": "72.2%"
+    },
+    "resourceMetrics": {
+      "imageLoadTime": {
+        "avg": "23.5%",
+        "p95": "24.0%",
+        "p99": "21.6%"
+      },
+      "apiResponseTime": {
+        "avg": "33.4%",
+        "p95": "22.2%",
+        "p99": "23.5%"
+      }
+    },
+    "memoryUsage": {
+      "jsHeapSize": "5.3%",
+      "totalAllocated": "6.1%",
+      "totalReleased": "10.1%"
+    },
+    "renderMetrics": {
+      "avgRenderTime": "20.6%",
+      "reRenders": "62.4%",
+      "componentErrors": "75.0%"
+    }
+  }
+}
