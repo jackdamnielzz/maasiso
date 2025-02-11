@@ -1,246 +1,156 @@
-# Memory Bank - Navigation and Search System
+# Memory Bank - System Architecture and Deployment
 
-## System Context
-Our Next.js application requires robust handling of URL parameters and navigation state across multiple page types:
-- Blog pages with pagination
-- Search functionality with filters
-- Whitepaper section with categories
-- Dynamic news articles
+## Current Status (2025-02-11)
 
-## Technical Environment
-- Next.js 15.1.6
-- App Router architecture
-- TypeScript implementation
-- Client/Server component model
+### System Architecture
+1. Two-VPS Architecture:
+   - VPS1 (153.92.223.23):
+     * Purpose: Backend/CMS
+     * Runs Strapi CMS
+     * Handles content management
+     * Located in Netherlands
+     * Accessible through secure proxy
 
-## Implementation History
+   - VPS2 (147.93.62.188):
+     * Purpose: Frontend/Website
+     * Runs Next.js application
+     * Serves public website
+     * Located in Germany
+     * Public-facing with SSL
+     * Implements secure API proxy
 
-### Phase 1: Initial Investigation
-1. Identified Issues
-   - useSearchParams causing build failures
-   - Server components accessing client-side state
-   - Missing Suspense boundaries
-   - Navigation inconsistencies
+2. Domain Configuration:
+   - Primary: https://maasiso.nl
+   - Secondary: https://www.maasiso.nl
+   - DNS Records:
+     * A record → 147.93.62.188 (VPS2)
+     * CNAME www → maasiso.nl
+     * TTL: 300 seconds
 
-2. Affected Components
-   - Blog pagination
-   - Search filters
-   - Category navigation
-   - URL parameter handling
+3. Security Setup:
+   - SSL certificates installed
+   - HTTPS enforced
+   - Security headers configured
+   - Automatic HTTP to HTTPS redirection
+   - Let's Encrypt auto-renewal
+   - API proxy with request validation
+   - Token-based authentication
 
-### Phase 2: Solution Architecture
-1. Navigation Provider
-```typescript
-interface NavigationContextType {
-  pathname: string | null;
-  searchParams: URLSearchParams | null;
-}
+### What We've Done
+1. Frontend Deployment (VPS2):
+   - Next.js application deployed
+   - Nginx reverse proxy configured
+   - SSL certificates installed
+   - Static assets properly served
+   - PM2 process management setup
+   - API proxy implementation
+   - Blog page functionality fixed
 
-const NavigationContext = createContext<NavigationContextType>({
-  pathname: null,
-  searchParams: null
-});
-```
+2. Backend Setup (VPS1):
+   - Strapi CMS installed
+   - Content types configured
+   - API endpoints established
+   - Database configured
+   - Media handling setup
+   - Secure API access
 
-2. Component Pattern
-```
-feature/
-  ├── FeatureContent.tsx (client UI)
-  ├── FeatureClientWrapper.tsx (data + state)
-  └── page.tsx (static server component)
-```
+3. Integration:
+   - Frontend-Backend communication through proxy
+   - API endpoints secured and validated
+   - Content fetching optimized
+   - Media delivery configured
+   - Request caching implemented
 
-### Phase 3: Implementation Details
+### Current State
+1. Website Access:
+   - Fully functional through HTTPS
+   - Proper SSL certification
+   - Working on both www and non-www
+   - All assets loading correctly
+   - Blog page working properly
 
-1. Client Wrapper Template
-```typescript
-export default function FeatureClientWrapper() {
-  const { searchParams } = useNavigation();
-  const [data, setData] = useState<Data | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+2. Content Management:
+   - CMS accessible through secure proxy
+   - Content types properly configured
+   - Media handling working
+   - API endpoints responding
+   - Blog content delivery working
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        // Parameter validation
-        // Data fetching
-        // State updates
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error occurred');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, [searchParams]);
+3. Performance:
+   - Static assets cached
+   - Gzip compression enabled
+   - Browser caching configured
+   - Response times optimized
+   - API responses cached
 
-  if (loading) return <LoadingState />;
-  if (error) return <ErrorState error={error} />;
-  return <FeatureContent data={data} />;
-}
-```
+### Next Steps
+1. Content Implementation:
+   - Complete testimonials frontend
+   - Implement tools section
+   - Add whitepapers (planned)
+   - Develop services section
 
-2. Server Component Pattern
-```typescript
-// Clean, static server components
-export default function Page() {
-  return <ClientWrapper />;
-}
-```
+2. System Improvements:
+   - Set up CI/CD pipeline
+   - Implement monitoring
+   - Configure backups
+   - Enhance error tracking
+   - Optimize API caching
 
-### Phase 4: Specific Implementations
+3. Documentation:
+   - Create content guides
+   - Document deployment process
+   - Update configuration docs
+   - Create maintenance guides
+   - Document API integration patterns
 
-1. Blog System
-- BlogPageClientWrapper for pagination
-- Data fetching with page parameters
-- Loading states for transitions
+## Technical Configuration
+1. VPS2 (Frontend):
+   - IP: 147.93.62.188
+   - Domain: maasiso.nl
+   - SSL: Let's Encrypt
+   - Stack: Next.js, Nginx, PM2
+   - API Proxy: Next.js API routes
 
-2. Search System
-- SearchPageClientWrapper for filters
-- Parameter validation
-- Analytics integration
+2. VPS1 (Backend):
+   - IP: 153.92.223.23
+   - Access through secure proxy
+   - Stack: Strapi, Node.js
+   - Database: PostgreSQL
+   - Token-based authentication
 
-3. Whitepaper System
-- WhitepaperClientWrapper for categories
-- Category-based filtering
-- Pagination handling
+3. Integration:
+   - Secure API communication
+   - Media delivery
+   - Content synchronization
+   - Error handling
+   - Request validation
+   - Response caching
 
-### Phase 5: Performance Optimization
+## Documentation References
+- Nginx configuration documented in systemPatterns.md
+- Deployment process in progress.md
+- SSL setup in vps_credentials.md
+- Architecture details in productContext.md
+- Current state in activeContext.md
+- API patterns in techContext.md
 
-1. Monitoring Service Improvements
-- Disabled monitoring in development environment
-- Reduced buffer size from 1000 to 500 events
-- Implemented batch processing (100 events per batch)
-- Added retry mechanism with exponential backoff
-- Improved cleanup on page unload
-- Added resource timing cleanup
-- Enhanced error handling and shutdown process
+## Maintenance Notes
+1. SSL Certificates:
+   - Auto-renewal configured
+   - Check every 60 days
+   - Monitor Let's Encrypt logs
+   - Verify proxy certificates
 
-2. Development Server Optimization
-- Blocked metrics API endpoint in development
-- Added comprehensive error handling for server startup
-- Implemented graceful shutdown
-- Added specific error messages for common issues
-- Improved startup performance
+2. Backups:
+   - Regular database backups needed
+   - Configuration backups required
+   - Document backup procedures
+   - API configuration backups
 
-3. Production Build Enhancements
-- Using production-specific TypeScript config
-- Optimized bundle size through proper tree shaking
-- Enhanced security headers
-- Improved error handling and recovery
-- Added proper cleanup procedures
-
-## Error Handling Strategy
-1. Parameter Validation
-```typescript
-const validateParams = (params: URLSearchParams) => {
-  // Type checking
-  // Range validation
-  // Sanitization
-};
-```
-
-2. Loading States
-```typescript
-<Suspense fallback={
-  <div className="animate-pulse">
-    {/* Skeleton UI */}
-  </div>
-}>
-  <Component />
-</Suspense>
-```
-
-3. Error Boundaries
-- Client-side error catching
-- Server error handling
-- User feedback mechanisms
-
-## Performance Optimizations
-1. Static Generation
-- Converted server components to static
-- Improved build performance
-- Better caching
-
-2. Client Navigation
-- Reduced server round-trips
-- Smooth transitions
-- State persistence
-
-## Testing Strategy
-1. Build Verification
-- Static generation checks
-- Client hydration testing
-- Navigation state validation
-
-2. Runtime Testing
-- Parameter handling
-- Error scenarios
-- Loading states
-
-## Monitoring Plan
-1. Performance Metrics
-- Client-side navigation timing
-- Server response times
-- Error rates
-- Batch processing metrics
-- Resource timing analysis
-
-2. User Experience
-- Loading state durations
-- Navigation patterns
-- Error frequencies
-- Resource usage optimization
-
-## Future Considerations
-1. Enhancements
-- Route-based code splitting
-- Advanced prefetching
-- Cache invalidation
-- Further monitoring optimizations
-
-2. Scalability
-- More complex filters
-- Additional parameter types
-- Extended validation rules
-- Enhanced monitoring capabilities
-
-## Related Documentation
-- /technical_issues/search_type_system_issues.md
-- /currentTask.md
-- /progress.md
-
-## System Patterns
-1. Navigation Context
-- Centralized state management
-- Type-safe implementations
-- Suspense boundaries
-
-2. Client Wrappers
-- Consistent loading states
-- Error handling
-- Data fetching
-
-3. Static Server Components
-- Clean architecture
-- Build optimization
-- Clear boundaries
-
-## Maintenance Guidelines
-1. Adding New Features
-- Follow client wrapper pattern
-- Implement proper loading states
-- Add type definitions
-
-2. Modifying Existing Features
-- Preserve Suspense boundaries
-- Maintain error handling
-- Update type definitions
-
-3. Performance Considerations
-- Monitor bundle sizes
-- Check navigation metrics
-- Validate build output
-- Regular monitoring service maintenance
+3. Monitoring:
+   - Set up uptime monitoring
+   - Configure error tracking
+   - Implement performance monitoring
+   - Set up alert systems
+   - Monitor API health

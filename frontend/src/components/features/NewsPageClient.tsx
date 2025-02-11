@@ -3,15 +3,14 @@
 import { useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
 import NewsPageContent from './NewsPageServer';
-import { NewsArticle, Category, Page } from '@/lib/types';
+import { NewsArticle, Category } from '@/lib/types';
 
 interface NewsPageClientProps {
-  page: Page;
   categories: Category[];
   articles: NewsArticle[];
 }
 
-export default function NewsPageClient({ page, categories, articles }: NewsPageClientProps) {
+export default function NewsPageClient({ categories, articles }: NewsPageClientProps) {
   const [isPending] = useTransition();
   const searchParams = useSearchParams();
 
@@ -25,11 +24,7 @@ export default function NewsPageClient({ page, categories, articles }: NewsPageC
     }
   };
 
-  const pageParam = getParam('page');
   const category = getParam('category');
-
-  // Parse page number safely
-  const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
   
   if (isPending) {
     return <div className="opacity-50">Loading...</div>;
@@ -37,9 +32,7 @@ export default function NewsPageClient({ page, categories, articles }: NewsPageC
 
   return (
     <NewsPageContent
-      currentPage={currentPage}
       selectedCategory={category || undefined}
-      page={page}
       categories={categories}
       articles={articles}
     />

@@ -31,7 +31,7 @@ interface RetryState {
   }>;
 }
 
-const defaultConfig: Required<RetryConfig> = {
+export const defaultConfig: Required<RetryConfig> = {
   maxAttempts: 3,
   initialDelay: 1000, // 1 second
   maxDelay: 10000, // 10 seconds
@@ -42,7 +42,12 @@ const defaultConfig: Required<RetryConfig> = {
 };
 
 // Cache for stale-while-revalidate strategy
-const responseCache = new Map<string, { data: any; timestamp: number }>();
+interface CacheEntry {
+  data: unknown;
+  timestamp: number;
+}
+
+const responseCache = new Map<string, CacheEntry>();
 
 function calculateDelay(attempt: number, config: Required<RetryConfig>, errorType: RetryErrorType): number {
   let delay = config.initialDelay * Math.pow(config.backoffFactor, attempt - 1);
@@ -329,7 +334,7 @@ export async function fetchWithRetry(
     const cached = responseCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < fullConfig.cacheTime) {
       // Return cached data immediately and revalidate in background
-      revalidateCache(cacheKey, url, options, fullConfig);
+      revalidateCache(cacheKey, url, options);
       return new Response(JSON.stringify(cached.data), {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -377,8 +382,7 @@ export async function fetchWithRetry(
 async function revalidateCache(
   cacheKey: string,
   url: string,
-  options?: RequestInit,
-  config?: RetryConfig
+  options?: RequestInit
 ) {
   try {
     const response = await fetch(url, options);

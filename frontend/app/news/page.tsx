@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import SearchInputWrapper from '@/components/features/SearchInputWrapper';
 import NewsPageClientWrapper from '@/components/features/NewsPageClientWrapper';
-import { getNewsArticles, getPage, getCategories } from '@/lib/api';
+import { getNewsArticles, getCategories } from '@/lib/api';
 
 export default async function NewsPage() {
   // Fetch initial data
@@ -10,8 +10,7 @@ export default async function NewsPage() {
   const currentPage = 1;
 
   try {
-    const [page, categories, articlesResponse] = await Promise.all([
-      getPage('news'),
+    const [categories, articlesResponse] = await Promise.all([
       getCategories(),
       getNewsArticles(currentPage, pageSize)
     ]);
@@ -41,7 +40,6 @@ export default async function NewsPage() {
             <SearchInputWrapper />
             <Suspense fallback={<LoadingSpinner />}>
               <NewsPageClientWrapper
-                page={page}
                 categories={categories}
                 articles={articles}
               />

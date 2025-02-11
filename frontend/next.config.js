@@ -3,14 +3,10 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   typescript: {
-    // During production build, we'll use our more permissive config
     tsconfigPath: process.env.NODE_ENV === 'production' ? './tsconfig.prod.json' : './tsconfig.json',
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
     ignoreBuildErrors: process.env.NODE_ENV === 'production'
   },
   eslint: {
-    // Only run ESLint on non-production builds
     ignoreDuringBuilds: process.env.NODE_ENV === 'production'
   },
   images: {
@@ -29,7 +25,24 @@ const nextConfig = {
   logging: {
     level: 'error',
   },
-  // Production security headers
+  async rewrites() {
+    const strapiUrl = process.env.STRAPI_URL || 'http://153.92.223.23:1337';
+    return {
+      beforeFiles: [
+        {
+          source: '/api/proxy/:path*',
+          destination: `${strapiUrl}/api/:path*`,
+          has: [
+            {
+              type: 'header',
+              key: 'x-skip-proxy',
+              value: '(?!true)',
+            },
+          ],
+        },
+      ],
+    };
+  },
   async headers() {
     return [
       {
@@ -38,10 +51,6 @@ const nextConfig = {
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
           },
           {
             key: 'X-Frame-Options',
@@ -59,7 +68,6 @@ const nextConfig = {
       }
     ]
   },
-  // Exclude test-related paths in production
   webpack: (config, { dev, isServer }) => {
     if (!dev && isServer) {
       config.watchOptions = {

@@ -1,4 +1,5 @@
 import { ButtonComponent } from './types/components';
+export type { ButtonComponent } from './types/components';
 
 /**
  * Type definitions for the MaasISO website
@@ -77,7 +78,7 @@ export interface Image {
   url: string;
   previewUrl?: string;
   provider: string;
-  provider_metadata?: any;
+  provider_metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -182,7 +183,7 @@ export interface StrapiRawBlogPost {
     url: string;
     previewUrl?: string;
     provider: string;
-    provider_metadata?: any;
+    provider_metadata?: Record<string, unknown>;
     createdAt: string;
     updatedAt: string;
     publishedAt: string;
@@ -293,7 +294,7 @@ export interface StrapiRawNewsArticle {
     url: string;
     previewUrl?: string;
     provider: string;
-    provider_metadata?: any;
+    provider_metadata?: Record<string, unknown>;
     createdAt: string;
     updatedAt: string;
     publishedAt: string;
@@ -366,8 +367,8 @@ export interface PaginatedNewsArticles {
 /**
  * Search-specific normalized types
  */
-export interface SearchBlogPost extends BlogPost {}
-export interface SearchNewsArticle extends NewsArticle {}
+export type SearchBlogPost = BlogPost;
+export type SearchNewsArticle = NewsArticle;
 
 /**
  * Search types

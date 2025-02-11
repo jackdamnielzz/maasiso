@@ -5,8 +5,27 @@ import { clientEnv } from './config/client-env';
 import logger from './logger';
 
 const DEBUG = process.env.DEBUG === 'true';
-const ERROR_LOGGING_THRESHOLD = 5 * 60 * 1000; // 5 minutes
-const lastErrorLogTime = 0;
+
+function getFullUrl(url: string): string {
+  if (url.startsWith('http')) {
+    return url;
+  }
+  
+  // If we're on the client side, use the current origin
+  if (typeof window !== 'undefined') {
+    const baseUrl = window.location.origin;
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+  
+  // On the server side, use the Strapi URL directly
+  const strapiUrl = process.env.STRAPI_URL;
+  if (url.startsWith('/api/proxy/')) {
+    const apiPath = url.replace('/api/proxy/', '');
+    return `${strapiUrl}/api/${apiPath}`;
+  }
+  
+  return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+}
 
 /**
  * Wraps fetchWithRetry with performance monitoring
@@ -18,13 +37,14 @@ export async function monitoredFetch(
   retryConfig?: RetryConfig
 ): Promise<Response> {
   const startTime = Date.now();
+  const fullUrl = getFullUrl(url);
 
   try {
     // Log request details in development
     if (process.env.NODE_ENV === 'development') {
       console.log('[API Request]', {
         endpoint,
-        url,
+        url: fullUrl,
         method: options?.method || 'GET',
         headers: {
           ...options?.headers,
@@ -37,7 +57,7 @@ export async function monitoredFetch(
     const token = clientEnv.strapiToken;
     const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
 
-    const response = await fetchWithRetry(url, {
+    const response = await fetchWithRetry(fullUrl, {
       ...options,
       method: options?.method || 'GET',
       mode: 'cors',
@@ -67,7 +87,7 @@ export async function monitoredFetch(
 
     monitoringService.trackRequest({
       method: options?.method || 'GET',
-      url,
+      url: fullUrl,
       duration: Date.now() - startTime,
       status: response.status
     });
@@ -80,12 +100,12 @@ export async function monitoredFetch(
 
     const currentTime = Date.now();
     if (DEBUG) {
-      logUniqueErrors(url, options?.method || 'GET', status, error);
+      logUniqueErrors(fullUrl, options?.method || 'GET', status, error);
     }
 
     monitoringService.trackRequest({
       method: options?.method || 'GET',
-      url,
+      url: fullUrl,
       duration: currentTime - startTime,
       status,
       error: error instanceof Error ? error : new Error(String(error))
