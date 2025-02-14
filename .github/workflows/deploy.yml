@@ -21,26 +21,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      # Temporarily skip tests
-      #- name: Run tests
-      #  run: npm test
-        
       - name: Build
         run: npm run build
         env:
           NODE_ENV: production
           
-      - name: Setup SSH
+      - name: Debug SSH setup
         run: |
           mkdir -p ~/.ssh
+          echo "Setting up SSH key..."
           echo "${{ secrets.VPS2_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          echo "Setting up known_hosts..."
           echo "${{ secrets.VPS2_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          echo "Setting permissions..."
           chmod 600 ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/known_hosts
+          echo "Checking files..."
+          ls -la ~/.ssh/
+          echo "Testing SSH connection..."
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -v root@147.93.62.188 'echo "SSH connection successful"'
           
       - name: Deploy to VPS2
         run: |
           rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p 22" \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -p 22" \
             .next/ \
             public/ \
             package.json \
@@ -50,7 +54,7 @@ jobs:
             
       - name: Restart PM2 service
         run: |
-          ssh -i ~/.ssh/deploy_key -p 22 root@147.93.62.188 '
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -p 22 root@147.93.62.188 '
             cd /var/www/jouw-frontend-website && 
             npm ci --production && 
             pm2 restart frontend || pm2 start npm --name "frontend" -- start
@@ -67,7 +71,7 @@ jobs:
         if: failure()
         run: |
           echo "Deployment failed. Starting rollback..."
-          ssh -i ~/.ssh/deploy_key -p 22 root@147.93.62.188 '
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -p 22 root@147.93.62.188 '
             cd /var/www/jouw-frontend-website && 
             if [ -d "backup" ]; then
               rm -rf .next public package.json package-lock.json next.config.js && 
