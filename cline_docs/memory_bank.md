@@ -1,156 +1,141 @@
-# Memory Bank - System Architecture and Deployment
+# Memory Bank Status
 
-## Current Status (2025-02-11)
+## Current Project State
+The project is a Next.js frontend application deployed on VPS2 (147.93.62.188) that interacts with a Strapi CMS on VPS1 (153.92.223.23). We are currently working on improving the development workflow and resolving authentication issues.
 
-### System Architecture
-1. Two-VPS Architecture:
-   - VPS1 (153.92.223.23):
-     * Purpose: Backend/CMS
-     * Runs Strapi CMS
-     * Handles content management
-     * Located in Netherlands
-     * Accessible through secure proxy
+## Recent Activities
 
-   - VPS2 (147.93.62.188):
-     * Purpose: Frontend/Website
-     * Runs Next.js application
-     * Serves public website
-     * Located in Germany
-     * Public-facing with SSL
-     * Implements secure API proxy
+### Development Workflow Improvements
+1. Created synchronization scripts:
+   - sync.ps1 for downloading production files
+   - deploy.ps1 for deployment
+   - Progress indicators added
+   - Error handling implemented
 
-2. Domain Configuration:
-   - Primary: https://maasiso.nl
-   - Secondary: https://www.maasiso.nl
-   - DNS Records:
-     * A record → 147.93.62.188 (VPS2)
-     * CNAME www → maasiso.nl
-     * TTL: 300 seconds
+2. Environment Management:
+   - Synchronized .env files
+   - Configured build settings
+   - Added production optimizations
 
-3. Security Setup:
-   - SSL certificates installed
-   - HTTPS enforced
-   - Security headers configured
-   - Automatic HTTP to HTTPS redirection
-   - Let's Encrypt auto-renewal
-   - API proxy with request validation
-   - Token-based authentication
+### Authentication Attempts
+1. SSH Key Authentication:
+   - Generated RSA key pair
+   - Attempted key deployment
+   - Faced permission issues
 
-### What We've Done
-1. Frontend Deployment (VPS2):
-   - Next.js application deployed
-   - Nginx reverse proxy configured
-   - SSL certificates installed
-   - Static assets properly served
-   - PM2 process management setup
-   - API proxy implementation
-   - Blog page functionality fixed
+2. Token Management:
+   - Implemented environment variable handling
+   - Added token validation
+   - Experiencing 401 errors
 
-2. Backend Setup (VPS1):
-   - Strapi CMS installed
-   - Content types configured
-   - API endpoints established
-   - Database configured
-   - Media handling setup
-   - Secure API access
+## Current Challenges
 
-3. Integration:
-   - Frontend-Backend communication through proxy
-   - API endpoints secured and validated
-   - Content fetching optimized
-   - Media delivery configured
-   - Request caching implemented
+### Critical Issues
+1. Authentication:
+   - Build process failing with 401 errors
+   - Token validation issues
+   - Environment variable problems
 
-### Current State
-1. Website Access:
-   - Fully functional through HTTPS
-   - Proper SSL certification
-   - Working on both www and non-www
-   - All assets loading correctly
-   - Blog page working properly
+2. File System:
+   - Permission issues during sync
+   - File locking problems
+   - Directory access errors
 
-2. Content Management:
-   - CMS accessible through secure proxy
-   - Content types properly configured
-   - Media handling working
-   - API endpoints responding
-   - Blog content delivery working
+### Attempted Solutions
+1. Authentication:
+   ```powershell
+   # SSH key generation
+   ssh-keygen -t rsa -b 4096
+   
+   # Automated password handling
+   $pinfo.RedirectStandardInput = $true
+   ```
 
-3. Performance:
-   - Static assets cached
-   - Gzip compression enabled
-   - Browser caching configured
-   - Response times optimized
-   - API responses cached
+2. File System:
+   ```powershell
+   # Directory handling
+   Set-Location $LOCAL_PATH
+   Remove-Item -Path $TEMP_DIR -Recurse -Force
+   ```
 
-### Next Steps
-1. Content Implementation:
-   - Complete testimonials frontend
-   - Implement tools section
-   - Add whitepapers (planned)
-   - Develop services section
+## Next Actions
 
-2. System Improvements:
-   - Set up CI/CD pipeline
-   - Implement monitoring
-   - Configure backups
-   - Enhance error tracking
-   - Optimize API caching
+### Immediate Tasks
+1. Authentication:
+   - Implement token refresh
+   - Add retry logic
+   - Improve error handling
 
-3. Documentation:
-   - Create content guides
-   - Document deployment process
-   - Update configuration docs
-   - Create maintenance guides
-   - Document API integration patterns
+2. Build Process:
+   - Add validation steps
+   - Implement progressive deployment
+   - Add rollback capability
 
-## Technical Configuration
-1. VPS2 (Frontend):
-   - IP: 147.93.62.188
-   - Domain: maasiso.nl
-   - SSL: Let's Encrypt
-   - Stack: Next.js, Nginx, PM2
-   - API Proxy: Next.js API routes
+### Future Improvements
+1. Infrastructure:
+   - Load balancing
+   - CDN integration
+   - Monitoring system
 
-2. VPS1 (Backend):
-   - IP: 153.92.223.23
-   - Access through secure proxy
-   - Stack: Strapi, Node.js
-   - Database: PostgreSQL
-   - Token-based authentication
+2. Development:
+   - Automated testing
+   - CI/CD pipeline
+   - Documentation automation
 
-3. Integration:
-   - Secure API communication
-   - Media delivery
-   - Content synchronization
-   - Error handling
-   - Request validation
-   - Response caching
+## Documentation Status
 
-## Documentation References
-- Nginx configuration documented in systemPatterns.md
-- Deployment process in progress.md
-- SSL setup in vps_credentials.md
-- Architecture details in productContext.md
-- Current state in activeContext.md
-- API patterns in techContext.md
+### Updated Documents
+- systemPatterns.md: Architecture and patterns
+- progress.md: Current progress and tasks
+- currentTask.md: Active development focus
+- project_handover.md: Comprehensive project summary
 
-## Maintenance Notes
-1. SSL Certificates:
-   - Auto-renewal configured
-   - Check every 60 days
-   - Monitor Let's Encrypt logs
-   - Verify proxy certificates
+### Pending Updates
+- Troubleshooting guides
+- Error recovery procedures
+- Performance optimization docs
 
-2. Backups:
-   - Regular database backups needed
-   - Configuration backups required
-   - Document backup procedures
-   - API configuration backups
+## Technical Context
 
-3. Monitoring:
-   - Set up uptime monitoring
-   - Configure error tracking
-   - Implement performance monitoring
-   - Set up alert systems
-   - Monitor API health
+### Environment Configuration
+```bash
+NEXT_PUBLIC_API_URL=/api/proxy
+NEXT_PUBLIC_SITE_URL=https://maasiso.nl
+STRAPI_URL=http://153.92.223.23:1337
+```
+
+### Build Configuration
+```javascript
+// next.config.js
+module.exports = {
+  output: 'standalone',
+  typescript: {
+    tsconfigPath: './tsconfig.prod.json'
+  }
+}
+```
+
+## Last Known State
+- Authentication: Failing with 401 errors
+- Build Process: Static generation issues
+- File System: Permission problems
+- Documentation: 90% complete
+- Scripts: Working with manual intervention
+
+## Recovery Points
+1. Working Configuration:
+   - Basic file synchronization
+   - Environment variable handling
+   - Build process automation
+
+2. Failed Attempts:
+   - SSH key authentication
+   - Automated password handling
+   - Token refresh mechanism
+
+## Next Steps After Reset
+1. Review authentication logs
+2. Check token validity
+3. Verify environment variables
+4. Test build process
+5. Update documentation

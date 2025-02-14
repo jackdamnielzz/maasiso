@@ -16,8 +16,6 @@
 # misc
 .DS_Store
 *.pem
-.env*
-!.env.example
 
 # debug
 npm-debug.log*
@@ -26,6 +24,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -34,17 +33,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Strapi
-/strapi/.cache
-/strapi/build
-/strapi/.tmp
-/strapi/.env
-
-# System Files
-Thumbs.db
+# backups
+scripts/latest_backup/
