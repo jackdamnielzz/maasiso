@@ -89,7 +89,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     }
 
     // Fetch categories for filters
-    const { categories } = await getCategories();
+    const categories = await getCategories();
 
     // Convert validated search params to API params with proper type checking
     const contentType = searchParams.type as 'blog' | 'news' | undefined;

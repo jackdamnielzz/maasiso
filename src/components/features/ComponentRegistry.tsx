@@ -6,7 +6,8 @@ import {
   HeroComponent as HeroComponentType,
   TextBlockComponent,
   ImageGalleryComponent,
-  FeatureGridComponent
+  FeatureGridComponent,
+  ButtonComponent
 } from '@/lib/types';
 import { ImageGallerySkeleton } from './ImageGallerySkeleton';
 import { HeroComponentSkeleton } from './HeroComponentSkeleton';
@@ -71,7 +72,7 @@ const FeatureGrid = dynamic(() => import('./FeatureGrid').then(mod => mod.Featur
 });
 
 interface ComponentRegistryProps {
-  component: HeroComponentType | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent;
+  component: HeroComponentType | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent;
   className?: string;
 }
 
@@ -125,7 +126,7 @@ export function ComponentRegistry({ component, className }: ComponentRegistryPro
         </ErrorBoundary>
       );
     case 'button': {
-      const buttonData = component as unknown as { text: string; link: string; style: 'primary' | 'secondary' };
+      const buttonData = component as ButtonComponent;
       return (
         <button 
           className={`${className} px-4 py-2 ${

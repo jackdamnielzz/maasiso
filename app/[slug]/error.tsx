@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { monitoringService } from '../../src/lib/monitoring/service';
+import { monitoringService } from '@/lib/monitoring/service';
 
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000; // 1 second

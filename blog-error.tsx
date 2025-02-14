@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { ErrorFallback } from '@/components/common/ErrorFallback';
+import React, { useEffect } from 'react';
+import { ErrorFallback } from './src/components/common/ErrorFallback';
 
 /**
  * Props for the ErrorBoundary component
@@ -25,7 +25,7 @@ export default function BlogErrorBoundary({
     console.error('Blog Error Boundary caught error:', {
       name: error.name,
       message: error.message,
-      stack: error.stack,
+      stack: error.stack
     });
   }, [error]);
 
@@ -35,8 +35,7 @@ export default function BlogErrorBoundary({
         <ErrorFallback
           error={error}
           resetError={reset}
-          message="We konden de blog artikelen niet laden. Dit kan komen door een tijdelijk probleem met de verbinding of de server."
-          actionLabel="Probeer opnieuw"
+          message="An error occurred while loading the blog"
         />
       </div>
     </div>

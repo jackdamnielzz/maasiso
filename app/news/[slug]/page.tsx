@@ -4,7 +4,8 @@ import NewsArticleContent from '@/components/features/NewsArticleContent';
 import ContentAnalytics from '@/components/features/ContentAnalytics';
 import { notFound } from 'next/navigation';
 import { NewsArticle } from '@/lib/types';
-import { isPromise, getExcerpt } from '@/lib/utils';
+import { isPromise } from '@/lib/utils';
+import { getExcerpt } from '@/lib/utils';
 
 type PageParams = {
   slug: string;
@@ -49,16 +50,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const description = newsArticle.summary || getExcerpt(newsArticle.content || '');
+    const description = newsArticle.summary || getExcerpt(newsArticle.content || '', 155);
     const mainCategory = newsArticle.categories?.[0]?.name;
     const imageUrl = newsArticle.featuredImage?.url;
 
     return {
-      title: `${newsArticle.title} | MaasISO`,
-      description,
+      title: `${newsArticle.seoTitle || newsArticle.title} | MaasISO`,
+      description: newsArticle.seoDescription || description,
       openGraph: {
-        title: newsArticle.title,
-        description,
+        title: newsArticle.seoTitle || newsArticle.title,
+        description: newsArticle.seoDescription || description,
         type: 'article',
         publishedTime: newsArticle.publishedAt,
         modifiedTime: newsArticle.updatedAt,

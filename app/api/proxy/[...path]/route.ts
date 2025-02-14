@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(request: NextRequest, context: any) {
   try {
     const strapiUrl = process.env.STRAPI_URL;
     if (!strapiUrl) {
@@ -8,7 +11,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
     }
 
     // Get the path parameters and search params
-    const path = params.path.join('/');
+    const path = context.params.path.join('/');
     const searchParams = request.nextUrl.searchParams.toString();
     const url = `${strapiUrl}/api/${path}${searchParams ? `?${searchParams}` : ''}`;
 
@@ -20,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: 'no-store'
     });
 
     if (!response.ok) {
@@ -43,14 +46,14 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function POST(request: NextRequest, context: any) {
   try {
     const strapiUrl = process.env.STRAPI_URL;
     if (!strapiUrl) {
       throw new Error('STRAPI_URL environment variable is not set');
     }
 
-    const path = params.path.join('/');
+    const path = context.params.path.join('/');
     const searchParams = request.nextUrl.searchParams.toString();
     const url = `${strapiUrl}/api/${path}${searchParams ? `?${searchParams}` : ''}`;
 
@@ -65,6 +68,7 @@ export async function POST(request: NextRequest, { params }: { params: { path: s
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      cache: 'no-store'
     });
 
     if (!response.ok) {

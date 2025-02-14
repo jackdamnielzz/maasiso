@@ -18,14 +18,20 @@ export async function generateMetadata(
   try {
     const page = await getPage(slug);
     
-    return {
+    const metadata: Metadata = {
       title: page.seoMetadata?.metaTitle || page.title,
       description: page.seoMetadata?.metaDescription,
       keywords: page.seoMetadata?.keywords,
-      openGraph: page.seoMetadata?.ogImage ? {
-        images: [{ url: page.seoMetadata.ogImage.data.attributes.url }],
-      } : undefined,
     };
+
+    // Only add OpenGraph image if it exists
+    if (page.seoMetadata?.ogImage?.url) {
+      metadata.openGraph = {
+        images: [{ url: page.seoMetadata.ogImage.url }],
+      };
+    }
+
+    return metadata;
   } catch (error: unknown) {
     return {
       title: 'Page Not Found',

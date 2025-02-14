@@ -3,17 +3,20 @@ import BlogPostContent from '../../../src/components/features/BlogPostContent';
 import RelatedPosts from '../../../src/components/features/RelatedPosts';
 import ContentAnalytics from '../../../src/components/features/ContentAnalytics';
 import { Metadata } from 'next';
+import { Category } from '@/lib/types';
+import { ReactNode } from 'react';
 
-type PageParams = { slug: string };
+interface PageParams {
+  slug: string;
+}
 
-type BlogPostPageProps = {
-  params: Promise<PageParams>;
-};
+interface BlogPostPageProps {
+  params: PageParams;
+}
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const resolvedParams = await params;
   try {
-    const { blogPost } = await getBlogPostBySlug(resolvedParams.slug);
+    const { blogPost } = await getBlogPostBySlug(params.slug);
 
     if (!blogPost) {
       return {
@@ -48,20 +51,19 @@ function getExcerpt(content: string): string {
   return content
     .replace(/[#*`]/g, '') // Remove Markdown syntax
     .split('\n')
-    .map(line => line.trim())
+    .map((line: string): string => line.trim())
     .filter(Boolean)[0] || '';
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const resolvedParams = await params;
+export default async function BlogPostPage({ params }: BlogPostPageProps): Promise<ReactNode> {
   try {
-    const { blogPost } = await getBlogPostBySlug(resolvedParams.slug);
+    const { blogPost } = await getBlogPostBySlug(params.slug);
 
     if (!blogPost) {
       throw new Error('Blog post niet gevonden');
     }
 
-    const categoryIds = blogPost.categories.map(cat => cat.id);
+    const categoryIds: string[] = blogPost.categories.map((cat: Category): string => cat.id);
 
     return (
       <main className="flex min-h-screen flex-col">
@@ -72,7 +74,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               contentId={blogPost.id}
               title={blogPost.title}
               metadata={{
-                categories: blogPost.categories.map(cat => cat.name),
+                categories: blogPost.categories.map((cat: Category): string => cat.name),
                 author: blogPost.author,
                 publishedAt: blogPost.publishedAt,
                 readingTime: Math.ceil(blogPost.content.split(/\s+/).length / 200) // Estimate reading time (words/200 per minute)

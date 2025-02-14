@@ -1,31 +1,34 @@
-# Deployment Scripts
+# Deployment Scripts (Archived)
 
-## Fast Deploy (Aanbevolen)
-`fast-deploy.ps1` is het aanbevolen script voor deployments. Dit script gebruikt een Git-achtige aanpak voor snelle en efficiënte deployments.
+**IMPORTANT: These deployment scripts are no longer in use as of February 2025.**
 
-### Gebruik
+We have transitioned to an SFTP-based deployment process using VS Code's SFTP extension. The following scripts are kept for historical reference but should not be used:
 
-```powershell
-# Normale deployment (alleen gewijzigde bestanden)
-./fast-deploy.ps1
+- cleanup-vps.sh
+- deploy-to-vps.sh
+- deploy.js
+- deploy.ps1
+- fast-deploy.ps1
+- prepare-vps.sh
+- quick-deploy.sh
+- sync-from-prod.js
+- sync.ps1
 
-# Force deployment (alle bestanden)
-./fast-deploy.ps1 -force
-```
+## New Deployment Process
 
-Voor volledige documentatie, zie: `cline_docs/manuals/deployment_workflow.md`
+For the current deployment process, please refer to:
+1. `cline_docs/vps_deployment_setup.md` - Main SFTP deployment documentation
+2. `cline_docs/manuals/deployment_workflow.md` - Detailed deployment workflows
 
-## Legacy Scripts
+The new SFTP-based deployment process offers:
+- Direct file synchronization through VS Code
+- Simpler deployment workflow
+- No Git dependencies
+- Real-time file updates
+- Visual deployment interface
 
-- `deploy.ps1` - Oud deployment script (niet aanbevolen)
-- `deploy.js` - Node.js wrapper voor deploy.ps1
-- `sync.ps1` - Script voor het synchroniseren van bestanden
+## Historical Note
 
-⚠️ Deze legacy scripts worden behouden voor backward compatibility maar worden niet meer actief onderhouden.
+These scripts were part of our previous Git-based deployment system that used GitHub Actions and automated scripts for deployment. We switched to SFTP deployment after resetting VPS2 to simplify our deployment process and reduce complexity.
 
-  - D:\Programmeren\MaasISONEW\New without errors\maasiso - Copy - Copy - Copy\src\__tests__\utils\test-utils.ts
-
-📤 Preparing files for deployment...
-
-❌ Deployment failed: The filename, directory name, or volume label syntax is incorrect. : 'C:\Users\niels\AppData\Local\Temp\deploy-2040208835\D:\Programmeren\MaasISONEW\New without errors'.
-PS D:\Programmeren\MaasISONEW\New without errors\maasiso - Copy - Copy - Copy> ssh root@147.93.62.188 "cat /var/www/maasiso/app/.env"
+For any questions about the new deployment process, consult the documentation mentioned above.

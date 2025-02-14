@@ -1,0 +1,74 @@
+[2025-02-15 00:06:41] Starting health monitoring for http://147.93.62.188
+[2025-02-15 00:06:41] Checking every 60 seconds
+[2025-02-15 00:06:41] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:06:41] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:07:41] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:07:41] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:08:41] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:08:41] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:09:41] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:09:41] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:10:41] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:10:41] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:11:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:11:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:12:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:12:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:13:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:13:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:14:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:14:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:15:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:15:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:16:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:16:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:17:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:17:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:18:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:18:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:19:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:19:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:20:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:20:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:21:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:21:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:22:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:22:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:23:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:23:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:24:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:24:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:25:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:25:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:26:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:26:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:27:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:27:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:28:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:28:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:29:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:29:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:30:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:30:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:31:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:31:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:32:42] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:32:42] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:33:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:33:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:34:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:34:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:35:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:35:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:36:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:36:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:37:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:37:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:38:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:38:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:39:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:39:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:40:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:40:43] Error: Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:41:43] ALERT: Health Check Error - Response status code does not indicate success: 502 (Bad Gateway).
+[2025-02-15 00:41:43] Error: Response status code does not indicate success: 502 (Bad Gateway).

@@ -7,14 +7,14 @@ import { Suspense } from 'react';
 import { prefetch } from '../../lib/prefetch';
 
 // Prefetch function for next page
-async function prefetchNextPage(currentPage: number, pageSize: number, categorySlug?: string) {
+async function prefetchNextPage(currentPage: number, pageSize: number) {
   const nextPage = currentPage + 1;
-  await prefetch(() => getBlogPosts(nextPage, pageSize, categorySlug));
+  await prefetch(() => getBlogPosts(nextPage, pageSize));
 }
 
 // Prefetch function for category data
-async function prefetchCategory(categorySlug: string, pageSize: number) {
-  await prefetch(() => getBlogPosts(1, pageSize, categorySlug));
+async function prefetchCategory(pageSize: number) {
+  await prefetch(() => getBlogPosts(1, pageSize));
 }
 
 interface BlogPageProps {
@@ -29,13 +29,9 @@ async function BlogContent({ searchParams }: BlogPageProps) {
     const currentPage = typeof searchParams.page === 'string' 
       ? parseInt(searchParams.page) 
       : 1;
-    
-    const selectedCategory = typeof searchParams.category === 'string'
-      ? searchParams.category
-      : undefined;
 
     const [response, categoriesResponse] = await Promise.all([
-      getBlogPosts(currentPage, 6, selectedCategory),
+      getBlogPosts(currentPage, 6),
       getCategories()
     ]).catch(() => {
       throw new Error(
@@ -69,7 +65,7 @@ async function BlogContent({ searchParams }: BlogPageProps) {
 
     // Prefetch next page in the background
     if (response.blogPosts.meta.pagination.page < response.blogPosts.meta.pagination.pageCount) {
-      prefetchNextPage(currentPage, 6, selectedCategory).catch(() => {
+      prefetchNextPage(currentPage, 6).catch(() => {
         // Ignore prefetch errors
       });
     }
@@ -87,9 +83,9 @@ async function BlogContent({ searchParams }: BlogPageProps) {
           
           <CategoryFilter 
             categories={categoriesResponse.categories}
-            selectedCategory={selectedCategory}
+            selectedCategory={searchParams.category}
             onHover={(category) => {
-              prefetchCategory(category, 6).catch(() => {
+              prefetchCategory(6).catch(() => {
                 // Ignore prefetch errors
               });
             }}
@@ -109,7 +105,7 @@ async function BlogContent({ searchParams }: BlogPageProps) {
               totalPages={response.blogPosts.meta.pagination.pageCount}
               onHover={(page) => {
                 if (page > currentPage) {
-                  prefetchNextPage(page - 1, 6, selectedCategory).catch(() => {
+                  prefetchNextPage(page - 1, 6).catch(() => {
                     // Ignore prefetch errors
                   });
                 }
