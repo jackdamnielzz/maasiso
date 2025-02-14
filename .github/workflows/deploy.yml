@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           
       - name: Install dependencies
@@ -26,20 +26,13 @@ jobs:
         env:
           NODE_ENV: production
           
-      - name: Debug SSH setup
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "Setting up SSH key..."
           echo "${{ secrets.VPS2_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          echo "Setting up known_hosts..."
           echo "${{ secrets.VPS2_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          echo "Setting permissions..."
           chmod 600 ~/.ssh/deploy_key
           chmod 600 ~/.ssh/known_hosts
-          echo "Checking files..."
-          ls -la ~/.ssh/
-          echo "Testing SSH connection..."
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -v root@147.93.62.188 'echo "SSH connection successful"'
           
       - name: Deploy to VPS2
         run: |

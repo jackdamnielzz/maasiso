@@ -11,12 +11,14 @@ interface PageParams {
 }
 
 interface BlogPostPageProps {
-  params: PageParams;
+  params: Promise<PageParams>;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   try {
-    const { blogPost } = await getBlogPostBySlug(params.slug);
+    const resolvedParams = await params;
+    const { blogPost } = await getBlogPostBySlug(resolvedParams.slug);
 
     if (!blogPost) {
       return {
@@ -57,7 +59,8 @@ function getExcerpt(content: string): string {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps): Promise<ReactNode> {
   try {
-    const { blogPost } = await getBlogPostBySlug(params.slug);
+    const resolvedParams = await params;
+    const { blogPost } = await getBlogPostBySlug(resolvedParams.slug);
 
     if (!blogPost) {
       throw new Error('Blog post niet gevonden');
