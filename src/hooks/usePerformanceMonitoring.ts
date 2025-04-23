@@ -79,7 +79,8 @@ export function usePerformanceMonitoring() {
       value,
       delta,
       rating: getRating(name, value),
-      entries: performance.getEntriesByName(name)
+      entries: performance.getEntriesByName(name),
+      timestamp: Date.now()
     };
 
     monitoringService.updateWebVital(metric);

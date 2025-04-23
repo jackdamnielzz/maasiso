@@ -1,13 +1,5 @@
 import type { AnalyticsEvent, NavigationEvent, ContentEvent } from './types';
 
-interface NetworkInformation {
-  effectiveType: '4g' | '3g' | '2g' | 'slow-2g';
-  [key: string]: unknown;
-}
-
-interface NavigatorWithConnection extends Navigator {
-  connection?: NetworkInformation;
-}
 
 // Event Creation Helpers
 export function createNavigationEvent(
@@ -138,7 +130,7 @@ export function getClientInfo() {
       height: window.innerHeight,
     },
     connection: 'connection' in navigator
-      ? (navigator as NavigatorWithConnection).connection?.effectiveType
+      ? navigator.connection?.effectiveType
       : null,
   };
 }

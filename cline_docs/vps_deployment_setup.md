@@ -1,164 +1,377 @@
-# SFTP Deployment Setup for VPS2
+# Two-Server Deployment Setup Guide
 
-This document details the setup and usage of SFTP deployment for the frontend website to Hostinger VPS2 (IP: 147.93.62.188) using VS Code's SFTP extension.
+This document details the deployment setup for both VPS instances in our infrastructure: VPS1 (Strapi Backend) and VPS2 (Next.js Frontend).
 
-## Overview
+## Infrastructure Overview
 
-We use VS Code's SFTP extension to directly deploy frontend files to VPS2. This method replaces the previous Git-based deployment process, offering a simpler and more direct deployment workflow.
+### VPS1 - Backend Server
+- IP: 153.92.223.23
+- Hostname: srv692111.hstgr.cloud
+- Location: Netherlands
+- Purpose: Strapi CMS Backend
 
-## Prerequisites
+### VPS2 - Frontend Server
+- IP: 147.93.62.188
+- Hostname: srv718842.hstgr.cloud
+- Location: Germany
+- Purpose: Next.js Frontend Application
 
-### Local Machine Setup
+## Access Configuration
 
-1. VS Code Installation
-   - Ensure VS Code is installed and running
+### VPS1 (Backend) Access
+1. SSH Configuration:
+   ```bash
+   Host maasiso-backend
+       HostName 153.92.223.23
+       User root
+       Port 22
+       IdentityFile ~/.ssh/maasiso_vps1
+   ```
 
-2. SFTP Extension Installation
-   - Open VS Code
-   - Go to Extensions (Ctrl+Shift+X)
-   - Search for "SFTP" by liximomo
-   - Click Install
-   - Reload VS Code if prompted
+2. SSH Key Setup:
+   ```bash
+   # Generate SSH key
+   ssh-keygen -t ed25519 -f ~/.ssh/maasiso_vps1
+   
+   # Copy key to VPS1
+   ssh-copy-id -i ~/.ssh/maasiso_vps1.pub root@153.92.223.23
+   ```
 
-### VPS2 Requirements
+### VPS2 (Frontend) Access
+1. SSH Configuration:
+   ```bash
+   Host maasiso-frontend
+       HostName 147.93.62.188
+       User root
+       Port 22
+       IdentityFile ~/.ssh/maasiso_vps2
+   ```
 
-- SSH Access:
-  - IP: 147.93.62.188
-  - Username: root
-  - Port: 22
-  - Hostname: srv718842.hstgr.cloud
+2. SSH Key Setup:
+   ```bash
+   # Generate SSH key
+   ssh-keygen -t ed25519 -f ~/.ssh/maasiso_vps2
+   
+   # Copy key to VPS2
+   ssh-copy-id -i ~/.ssh/maasiso_vps2.pub root@147.93.62.188
+   ```
 
-## Configuration Steps
+## Backend Deployment (VPS1)
 
-### 1. SFTP Project Configuration
+### Initial Setup
+1. System Requirements:
+   ```bash
+   # Update system
+   apt update && apt upgrade -y
+   
+   # Install Node.js 20
+   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+   apt install -y nodejs
+   
+   # Install PM2
+   npm install -p pm2@latest
+   ```
 
-Create an SFTP configuration file in your project:
+2. Directory Structure:
+   ```
+   /var/www/strapi/
+   ├── config/
+   ├── public/
+   ├── src/
+   └── package.json
+   ```
 
-1. Open Command Palette in VS Code (Ctrl+Shift+P)
-2. Type "SFTP: Config" and select it
-3. This creates `.vscode/sftp.json`
-4. Configure with the following settings:
+3. Environment Configuration:
+   ```bash
+   # Create .env file
+   nano /var/www/strapi/.env
+   ```
+   
+   Content:
+   ```
+   HOST=0.0.0.0
+   PORT=1337
+   APP_KEYS=your-app-keys
+   API_TOKEN_SALT=your-token-salt
+   ADMIN_JWT_SECRET=your-jwt-secret
+   JWT_SECRET=your-jwt-secret
+   ```
 
-```json
-{
-    "name": "Deploy to VPS2 (Hostinger SFTP)",
-    "host": "147.93.62.188",
-    "protocol": "sftp",
-    "port": 22,
-    "username": "root",
-    "remotePath": "/var/www/jouw-frontend-website/",
-    "uploadOnSave": false,
-    "syncOption": {
-        "delete": false
-    }
-}
-```
+### Deployment Process
+1. Application Setup:
+   ```bash
+   cd /var/www/strapi
+   npm install
+   npm run build
+   ```
 
-**Important Security Note**: Never commit passwords in sftp.json. Use SSH keys for authentication.
+2. PM2 Configuration:
+   ```bash
+   pm2 start npm --name "strapi" -- run start
+   pm2 save
+   pm2 startup
+   ```
 
-### 2. SSH Key Setup (Recommended)
+3. CORS Configuration:
+   ```javascript
+   // config/middlewares.js
+   module.exports = [
+     'strapi::errors',
+     {
+       name: 'strapi::security',
+       config: {
+         contentSecurityPolicy: {
+           useDefaults: true,
+           directives: {
+             'connect-src': ["'self'", 'https:', 'http:'],
+             'img-src': ["'self'", 'data:', 'blob:', 'https:', 'http:'],
+             'media-src': ["'self'", 'data:', 'blob:', 'https:', 'http:'],
+             upgradeInsecureRequests: null,
+           },
+         },
+         frameguard: false,
+       },
+     },
+     {
+       name: 'strapi::cors',
+       config: {
+         enabled: true,
+         origin: ['http://147.93.62.188', 'http://147.93.62.188:3000'],
+         credentials: true,
+         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+         headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+         keepHeaderOnError: true,
+       },
+     },
+     'strapi::poweredBy',
+     'strapi::logger',
+     'strapi::query',
+     'strapi::body',
+     'strapi::session',
+     'strapi::favicon',
+     'strapi::public',
+   ]
+   ```
 
-For enhanced security, set up SSH key authentication:
+## Frontend Deployment (VPS2)
 
-1. Generate SSH key if needed:
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
+### Initial Setup
+1. System Requirements:
+   ```bash
+   # Update system
+   apt update && apt upgrade -y
+   
+   # Install Node.js 20
+   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+   apt install -y nodejs
+   
+   # Install PM2
+   npm install -g pm2
+   
+   # Install Nginx
+   apt install -y nginx
+   ```
 
-2. Copy public key to VPS2:
-```bash
-ssh-copy-id -i ~/.ssh/id_ed25519.pub root@147.93.62.188
-```
+2. Directory Structure:
+   ```
+   /var/www/jouw-frontend-website/
+   ├── .next/
+   ├── public/
+   ├── src/
+   └── package.json
+   ```
 
-3. Update sftp.json to use SSH key:
-```json
-{
-    // ... other settings ...
-    "privateKeyPath": "~/.ssh/id_ed25519"
-}
-```
+### SFTP Deployment Configuration
+1. VS Code SFTP Setup:
+   ```json
+   {
+       "name": "Deploy to VPS2 (Hostinger SFTP)",
+       "host": "147.93.62.188",
+       "protocol": "sftp",
+       "port": 22,
+       "username": "root",
+       "remotePath": "/var/www/jouw-frontend-website/",
+       "uploadOnSave": false,
+       "syncOption": {
+           "delete": false
+       },
+       "privateKeyPath": "~/.ssh/maasiso_vps2"
+   }
+   ```
 
-## Deployment Workflow
+2. Nginx Configuration:
+   ```nginx
+   server {
+       listen 80;
+       server_name 147.93.62.188;
+   
+       location / {
+           proxy_pass http://localhost:3000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+   ```
 
-### Initial Deployment
+### Deployment Process
+1. Application Setup:
+   ```bash
+   cd /var/www/jouw-frontend-website
+   npm install
+   npm run build
+   ```
 
-1. Open your project in VS Code
-2. Open Command Palette (Ctrl+Shift+P)
-3. Run "SFTP: List Remote Directory"
-4. Right-click your project folder
-5. Select "SFTP: Upload Folder"
-6. Choose the remote directory (/var/www/jouw-frontend-website/)
+2. Environment Setup (Critical):
+   ```bash
+   # Create a production .env file with correct settings
+   cat > /var/www/jouw-frontend-website/.env << EOL
+   NODE_ENV=production
+   NEXT_PUBLIC_API_URL=http://147.93.62.188:3000
+   NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
+   EMAIL_PASSWORD=your-email-password-here
+   EOL
 
-### Regular Updates
+   # Make sure the file has correct permissions
+   chmod 600 /var/www/jouw-frontend-website/.env
+   ```
 
-#### Manual Method (Recommended for Production)
-1. Make changes locally
-2. Test changes
-3. Right-click changed files/folders
-4. Select "SFTP: Upload"
+3. PM2 Configuration:
+   ```bash
+   pm2 start npm --name "frontend" -- run start
+   pm2 save
+   pm2 startup
+   ```
 
-#### Automatic Method (Development Only)
-1. Set "uploadOnSave": true in sftp.json
-2. Files will automatically upload when saved
-3. **Note**: Use with caution, not recommended for production
+4. Automated Deployment Script:
+   The `scripts/direct-deploy.ps1` PowerShell script automates deployment including:
+   - Setting up environment variables
+   - Packaging application into a tarball
+   - Transferring to VPS via SCP
+   - Creating production .env file on server
+   - Restarting the application with PM2
 
-## Verification
+   **Important Note**: When modifying the deployment script, ensure environment variables are properly set in production. The script uses a cat command to explicitly create the .env file rather than preserving existing files, which ensures all required variables are included.
 
-After deployment:
-1. Access your website via VPS2 IP or domain
-2. Check if changes are reflected
-3. Test functionality
-4. Review browser console for errors
+## Monitoring and Maintenance
+
+### Health Checks
+1. Backend Health:
+   ```bash
+   curl http://153.92.223.23:1337/api/health
+   ```
+
+2. Frontend Health:
+   ```bash
+   curl http://147.93.62.188/api/health
+   ```
+
+### Log Management
+1. Backend Logs:
+   ```bash
+   # Strapi logs
+   pm2 logs strapi
+   
+   # System logs
+   tail -f /var/log/syslog
+   ```
+
+2. Frontend Logs:
+   ```bash
+   # Next.js logs
+   pm2 logs frontend
+   
+   # Nginx logs
+   tail -f /var/log/nginx/access.log
+   tail -f /var/log/nginx/error.log
+   ```
+
+### Backup Procedures
+1. Backend Backup:
+   ```bash
+   cd /var/www
+   tar -czf strapi-backup-$(date +%Y%m%d).tar.gz strapi/
+   ```
+
+2. Frontend Backup:
+   ```bash
+   cd /var/www
+   tar -czf frontend-backup-$(date +%Y%m%d).tar.gz jouw-frontend-website/
+   ```
+
+## Security Considerations
+
+1. Firewall Configuration:
+   ```bash
+   # Backend (VPS1)
+   ufw allow 22/tcp
+   ufw allow 1337/tcp
+   
+   # Frontend (VPS2)
+   ufw allow 22/tcp
+   ufw allow 80/tcp
+   ufw allow 443/tcp
+   ```
+
+2. SSL/TLS Setup (TODO):
+   - Implement SSL certificates
+   - Configure HTTPS
+   - Update Nginx configuration
+
+3. Security Best Practices:
+   - Regular system updates
+   - Security patch management
+   - Access control monitoring
+   - Regular backup verification
 
 ## Troubleshooting
 
 ### Common Issues
+1. Connection Issues:
+   - Verify SSH key permissions
+   - Check firewall settings
+   - Validate network connectivity
 
-1. Connection Errors
-   - Verify VPS2 IP and credentials
-   - Check SSH service is running
-   - Confirm firewall settings
+2. Deployment Failures:
+   - Check disk space
+   - Verify file permissions
+   - Review PM2 logs
 
-2. Permission Denied
-   - Check remote directory permissions
-   - Verify SSH key/password authentication
+3. Performance Issues:
+   - Monitor resource usage
+   - Check application logs
+   - Verify network latency
 
-3. Upload Failures
-   - Ensure sufficient disk space
-   - Check file permissions
-   - Verify network connectivity
+## Contact Information
 
-### Recovery Steps
+For deployment issues:
+- System Administrator: [Contact Info]
+- Backend Developer: [Contact Info]
+- Frontend Developer: [Contact Info]
 
-1. If deployment fails:
-   - Check VS Code's SFTP output panel
-   - Verify remote directory exists
-   - Check file permissions
-   - Review error messages in Output panel
+## SSH Key Configuration
 
-2. To revert changes:
-   - Keep local backups before major uploads
-   - Use SFTP: Sync Local → Remote for full synchronization
+### Frontend Server (frontend.maasiso.cloud)
+- SSH Key Name: maasiso_vps
+- Location: `~/.ssh/maasiso_vps` (local) and added to authorized_keys on server
+- Purpose: Used for deployment and maintenance of the frontend application
+- Added to server via provider interface
 
-## Security Considerations
+### Backend Server (strapicms.maasiso.cloud)
+- SSH Key Name: maasiso_vps
+- Location: `~/.ssh/maasiso_vps` (local) and added to authorized_keys on server
+- Purpose: Used for API communication and maintenance of the Strapi backend
+- Added to server via provider interface
 
-1. Always use SSH keys instead of passwords
-2. Regularly update SSH keys and remove unused ones
-3. Keep VS Code and SFTP extension updated
-4. Never commit sftp.json with sensitive data
-5. Use .gitignore to exclude sftp.json
+### Key Generation
+The SSH key was generated using:
+```powershell
+ssh-keygen -t rsa -b 4096 -f "$env:USERPROFILE\.ssh\maasiso_vps" -N '""'
+```
 
-## Best Practices
-
-1. Always test locally before deployment
-2. Use uploadOnSave with caution
-3. Maintain regular backups
-4. Document all configuration changes
-5. Monitor deployment logs
-
-## Support
-
-For issues or questions:
-1. Check VS Code's SFTP extension documentation
-2. Review Hostinger VPS documentation
-3. Contact system administrator for VPS-specific issues
+### Public Key
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDHaLtH+nrONBIH5/gLVaBlEitFYQUx8BWuZDU5HLh9kCu9eq7pzg5Yo3R3gZDsmDgo6L/k9JYMuvVWHUPxHLyJBU0nPM1fBRYyyIoEqzHpfYl9Ry1VC+Rlrw+7pe0tg2xPJ/2RyChhEnUO8zOZPXIpP4I+P4liVnn3f3LA4RjK8oYZ/fBBo714wRkZqDlhNWhBBrbTfh75fwoEO1xl0EV+FAc5YaybSPvSbyU6hISS6+a+Ns01mJlUGA/pmd0o8LFV1ejdQ9KHwv9WK4tWY/TcwDNOfJ28oroQaoq8zJsg9zO3OijlU8DnUZ9pDndkzQYkOL426hp5lZHpk/hzkpUQKRPLQv8w3D23
+```

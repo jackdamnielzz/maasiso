@@ -111,127 +111,83 @@ describe('Search and Pagination', () => {
   describe('Search Results Type Validation', () => {
     it('should validate a complete search results structure', () => {
       const searchResults: SearchResults = {
-        blogPosts: {
-          data: [
-            {
-              id: 'blog1',
-              title: 'Blog Post 1',
-              content: 'Content 1',
-              slug: 'blog-post-1',
-              categories: [],
-              tags: [],
-              seoTitle: '',
-              seoDescription: '',
-              seoKeywords: '',
-              createdAt: '2024-01-26T20:30:00.000Z',
-              updatedAt: '2024-01-26T20:30:00.000Z'
-            }
-          ],
-          meta: {
-            pagination: {
-              total: 1,
-              page: 1,
-              pageSize: 10,
-              pageCount: 1
-            }
+        items: [
+          {
+            id: 'blog1',
+            title: 'Blog Post 1',
+            content: 'Content 1',
+            slug: 'blog-post-1',
+            categories: [],
+            tags: [],
+            seoTitle: '',
+            seoDescription: '',
+            seoKeywords: '',
+            createdAt: '2024-01-26T20:30:00.000Z',
+            updatedAt: '2024-01-26T20:30:00.000Z'
           }
-        },
-        newsArticles: {
-          data: [
-            {
-              id: 'news1',
-              title: 'News Article 1',
-              content: 'Content 1',
-              slug: 'news-article-1',
-              categories: [],
-              tags: [],
-              seoTitle: '',
-              seoDescription: '',
-              seoKeywords: '',
-              createdAt: '2024-01-26T20:30:00.000Z',
-              updatedAt: '2024-01-26T20:30:00.000Z'
-            }
-          ],
-          meta: {
-            pagination: {
-              total: 1,
-              page: 1,
-              pageSize: 10,
-              pageCount: 1
-            }
-          }
-        }
+        ],
+        total: 1,
+        page: 1,
+        pageSize: 10,
+        pageCount: 1
       };
 
-      // Type check should pass (this is a compile-time check)
-      expect(searchResults.blogPosts.data).toHaveLength(1);
-      expect(searchResults.newsArticles.data).toHaveLength(1);
+      expect(searchResults.items).toHaveLength(1);
+      expect(searchResults.total).toBe(1);
     });
 
     it('should validate paginated blog posts structure', () => {
       const paginatedPosts: PaginatedBlogPosts = {
-        blogPosts: {
-          data: [
-            {
-              id: 'blog1',
-              title: 'Blog Post 1',
-              content: 'Content 1',
-              slug: 'blog-post-1',
-              categories: [],
-              tags: [],
-              seoTitle: '',
-              seoDescription: '',
-              seoKeywords: '',
-              createdAt: '2024-01-26T20:30:00.000Z',
-              updatedAt: '2024-01-26T20:30:00.000Z'
-            }
-          ],
-          meta: {
-            pagination: {
-              total: 1,
-              page: 1,
-              pageSize: 10,
-              pageCount: 1
-            }
+        posts: [
+          {
+            id: 'blog1',
+            title: 'Blog Post 1',
+            content: 'Content 1',
+            slug: 'blog-post-1',
+            categories: [],
+            tags: [],
+            seoTitle: '',
+            seoDescription: '',
+            seoKeywords: '',
+            createdAt: '2024-01-26T20:30:00.000Z',
+            updatedAt: '2024-01-26T20:30:00.000Z'
           }
-        }
+        ],
+        total: 1,
+        page: 1,
+        pageSize: 10,
+        pageCount: 1
       };
 
-      // Type check should pass (this is a compile-time check)
-      expect(paginatedPosts.blogPosts.data[0].title).toBe('Blog Post 1');
+      expect(paginatedPosts.posts[0].title).toBe('Blog Post 1');
+      expect(paginatedPosts.total).toBe(1);
     });
 
     it('should validate paginated news articles structure', () => {
       const paginatedNews: PaginatedNewsArticles = {
-        newsArticles: {
-          data: [
-            {
-              id: 'news1',
-              title: 'News Article 1',
-              content: 'Content 1',
-              slug: 'news-article-1',
-              categories: [],
-              tags: [],
-              seoTitle: '',
-              seoDescription: '',
-              seoKeywords: '',
-              createdAt: '2024-01-26T20:30:00.000Z',
-              updatedAt: '2024-01-26T20:30:00.000Z'
-            }
-          ],
-          meta: {
-            pagination: {
-              total: 1,
-              page: 1,
-              pageSize: 10,
-              pageCount: 1
-            }
+        articles: [
+          {
+            id: 'news1',
+            title: 'News Article 1',
+            content: 'Content 1',
+            slug: 'news-article-1',
+            categories: [],
+            tags: [],
+            seoTitle: '',
+            seoDescription: '',
+            seoKeywords: '',
+            createdAt: '2024-01-26T20:30:00.000Z',
+            updatedAt: '2024-01-26T20:30:00.000Z'
           }
-        }
+        ],
+        total: 1,
+        page: 1,
+        pageSize: 10,
+        pageCount: 1
       };
 
-      // Type check should pass (this is a compile-time check)
-      expect(paginatedNews.newsArticles.data[0].title).toBe('News Article 1');
+      expect(paginatedNews.articles[0].title).toBe('News Article 1');
+      expect(paginatedNews.total).toBe(1);
     });
   });
 });

@@ -4,7 +4,7 @@ This guide explains how to deploy and maintain the frontend application on VPS2,
 
 ## Infrastructure Overview
 
-- VPS1 (147.93.62.187): Runs the backend (Strapi)
+- VPS1 (153.92.223.23): Runs the backend (Strapi)
 - VPS2 (147.93.62.188): Runs the frontend (Next.js)
 
 ## Initial Setup
@@ -58,7 +58,7 @@ This guide explains how to deploy and maintain the frontend application on VPS2,
    - Key variables:
      ```
      NEXT_PUBLIC_API_URL=http://147.93.62.188:3000
-     NEXT_PUBLIC_BACKEND_URL=http://147.93.62.187:1337
+     NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
      ```
 
 2. Nginx Configuration:
@@ -102,7 +102,7 @@ This guide explains how to deploy and maintain the frontend application on VPS2,
 1. Connection Issues:
    - Check VPS2 status: `ssh root@147.93.62.188 "systemctl status frontend"`
    - Verify Nginx: `ssh root@147.93.62.188 "nginx -t"`
-   - Check backend connectivity: `curl http://147.93.62.187:1337/api/health`
+   - Check backend connectivity: `curl http://153.92.223.23:1337/api/health`
 
 2. Deployment Failures:
    - Check application logs

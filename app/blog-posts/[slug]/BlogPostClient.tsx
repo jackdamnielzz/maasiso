@@ -6,8 +6,21 @@ import { Category } from '@/lib/types';
 import { useParams } from 'next/navigation';
 import { Suspense, useState, useEffect } from 'react';
 
+function processInternalLinks(content: string): string {
+  // Updated regex to match both INTERNAL LINK and CTA placeholders and handle variations in spacing/slash before the path
+  const regex = /\[(INTERNAL LINK|CTA) PLACEHOLDER: (.*?) (.*?)\]/g;
+  return content.replace(regex, (match, placeholderType, text, url) => {
+    // Ensure the URL starts with a slash if it doesn't already
+    const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+    return `<a href="${cleanUrl}">${text}</a>`;
+  });
+}
+
 function BlogPostContent() {
   const params = useParams();
+  if (!params?.slug) {
+    notFound();
+  }
   const slug = params.slug as string;
 
   const [blogPost, setBlogPost] = useState<any>(null);
@@ -47,6 +60,8 @@ function BlogPostContent() {
       </div>
     );
   }
+
+  const processedContent = processInternalLinks(blogPost.content);
 
   return (
     <article className="max-w-4xl mx-auto px-4 py-8">
@@ -89,9 +104,9 @@ function BlogPostContent() {
       )}
 
       {/* Content */}
-      <div 
+      <div
         className="prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: blogPost.content }}
+        dangerouslySetInnerHTML={{ __html: processedContent }}
       />
     </article>
   );

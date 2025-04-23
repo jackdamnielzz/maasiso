@@ -28,6 +28,33 @@
 [Strapi CMS (VPS1)] -> [API Proxy (VPS2)] -> [Next.js Frontend (VPS2)] -> [Client Browser]
 ```
 
+### Content Management Patterns
+1. Tag System
+   ```
+   [Article]
+   └── [Tags]
+       ├── Multiple Selection
+       ├── Count Aggregation
+       └── Filter Combination
+   ```
+   - URL-based filtering
+   - Tag state persistence
+   - Combined filtering with categories
+   - Count-based sorting
+
+2. Image Handling
+   ```
+   [Image URL]
+   └── [URL Processing]
+       ├── API URL Prefixing
+       ├── Protocol Validation
+       └── Error Fallback
+   ```
+   - Automatic URL construction
+   - Progressive loading
+   - Error state management
+   - Fallback UI patterns
+
 ### Deployment Pattern
 1. Local Development
    - Environment sync from production
@@ -39,11 +66,12 @@
    - Progressive deployment
    - Rollback capabilities
 
-### Caching Strategy
-- Static page generation
-- Incremental Static Regeneration (ISR)
-- API response caching
-- Browser-level caching
+### Content Fetching Strategy
+- Dynamic page rendering
+- Direct Strapi API calls
+- Real-time content updates
+- No server-side caching
+- Browser-level caching only
 
 ## Technical Implementation
 
@@ -58,13 +86,24 @@
    [Page Component]
    └── [Server Component]
        └── [Client Component]
-           └── [UI Components]
+           ├── [UI Components]
+           └── [Feature Components]
+               ├── TagList
+               ├── NewsCard
+               └── LazyImage
    ```
+
+3. Feature Components
+   - Modular design
+   - State isolation
+   - URL-based state management
+   - Error boundary integration
 
 ### API Integration
 1. Direct Strapi Integration
    - REST API endpoints
    - GraphQL queries
+   - Dynamic rendering
    - Media handling
 
 2. Proxy Layer
@@ -109,6 +148,12 @@
 
 ## Future Improvements
 
+### Recent Changes
+1. Content Fetching
+   - Removed caching layer
+   - Implemented direct API calls
+   - Added dynamic rendering configuration
+
 ### Short Term
 1. Authentication
    - Token management system
@@ -120,13 +165,108 @@
    - Rollback mechanism
    - Health checks
 
+3. Performance
+   - Monitor page load times
+   - Analyze server load
+   - Optimize API calls
+
 ### Long Term
 1. Infrastructure
-   - Load balancing
-   - CDN integration
-   - Monitoring system
+    - Load balancing
+    - CDN integration
+    - Monitoring system
 
 2. Development
-   - Automated testing
-   - CI/CD pipeline
-   - Documentation automation
+    - Automated testing
+    - CI/CD pipeline
+    - Documentation automation
+
+## TypeScript Patterns (Added March 18, 2025)
+
+### Next.js App Router Type Patterns
+1. Dynamic Route Pages
+```typescript
+// Correct pattern for dynamic routes
+type PageParams = { slug: string };
+
+export async function generateMetadata(
+  { params }: { params: PageParams },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Implementation
+}
+
+export default async function Page({ params }: { params: PageParams }) {
+  // Implementation
+}
+```
+
+### Component Type Patterns
+1. Props Typing
+```typescript
+interface ComponentProps {
+  required: string;
+  optional?: number;
+  children?: React.ReactNode;
+}
+
+function Component({ required, optional, children }: ComponentProps) {
+  // Implementation
+}
+```
+
+2. Event Handlers
+```typescript
+interface EventHandlerProps {
+  onEvent: (data: EventData) => void;
+  onError?: (error: Error) => void;
+}
+```
+
+### API Integration Types
+1. Response Types
+```typescript
+interface ApiResponse<T> {
+  data: T;
+  meta?: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      total: number;
+    };
+  };
+}
+```
+
+2. Error Types
+```typescript
+interface ApiError {
+  code: string;
+  message: string;
+  details?: unknown;
+}
+```
+
+### Current TypeScript Challenges
+1. Page Props Types
+   - Mismatch between expected and provided types
+   - Promise type requirements in App Router
+   - Metadata generation type constraints
+
+2. Solutions in Progress
+   - Using ResolvingMetadata type
+   - Proper typing for dynamic routes
+   - Handling Promise types in server components
+
+### Type Safety Guidelines
+1. Best Practices
+   - Use explicit types
+   - Avoid type assertions
+   - Implement type guards
+   - Document complex types
+
+2. Common Anti-patterns to Avoid
+   - Using 'any' type
+   - Type assertions without validation
+   - Incomplete interface definitions
+   - Missing error type handling

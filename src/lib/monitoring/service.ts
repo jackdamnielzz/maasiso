@@ -8,23 +8,19 @@ import {
   RequestEventData,
   NavigationTiming,
   ResourceTiming,
-  WebVitalMetric
+  WebVitalMetric,
+  MonitoringService,
+  MonitoringEventType,
+  MonitoringEventDataMap,
+  PerformanceMetric
 } from './types';
 
-interface RequestTrackingData {
-  method: string;
-  url: string;
-  duration?: number;
-  status?: number;
-  error?: Error;
-}
-
-class PerformanceMonitor {
+class PerformanceMonitor implements MonitoringService {
   private metrics: Map<string, number> = new Map();
   private eventBuffer: MonitoringEventData[] = [];
-  private readonly BUFFER_SIZE = 500; // Reduced buffer size
-  private readonly BATCH_SIZE = 100; // Maximum events per API call
-  private readonly FLUSH_INTERVAL = 180000; // 3 minutes
+  private readonly BUFFER_SIZE = 500;
+  private readonly BATCH_SIZE = 100;
+  private readonly FLUSH_INTERVAL = 180000;
   private readonly RETRY_ATTEMPTS = 3;
   private readonly RETRY_DELAY = 1000;
   private flushInterval?: NodeJS.Timeout;
@@ -34,8 +30,8 @@ class PerformanceMonitor {
   private requestCount = 0;
   private errorCount = 0;
   private lastFlushTime = Date.now();
-  private readonly MIN_FLUSH_INTERVAL = 5000; // Reduced to 5 seconds
-  private readonly METRICS_ENABLED = process.env.NODE_ENV === 'production';
+  private readonly MIN_FLUSH_INTERVAL = 5000;
+  private readonly METRICS_ENABLED = true;
   private isShuttingDown = false;
 
   constructor() {
@@ -44,17 +40,14 @@ class PerformanceMonitor {
     }
   }
 
-  private setupMonitoring() {
-    // Set up flush interval
+  private setupMonitoring(): void {
     this.flushInterval = setInterval(() => this.flushMetrics(), this.FLUSH_INTERVAL);
 
-    // Handle page unload
     window.addEventListener('beforeunload', () => {
       this.isShuttingDown = true;
       this.cleanup();
     });
 
-    // Clear old resource timings periodically
     setInterval(() => {
       if (typeof performance !== 'undefined') {
         performance.clearResourceTimings();
@@ -63,86 +56,31 @@ class PerformanceMonitor {
     }, 60000);
   }
 
-  trackRequest(data: RequestTrackingData) {
+  trackEvent<T extends MonitoringEventType>(
+    eventType: T,
+    data: MonitoringEventDataMap[T]
+  ): void {
     if (!this.METRICS_ENABLED) return;
 
-    const requestData: RequestEventData = {
-      method: data.method,
-      url: data.url,
-      duration: data.duration,
-      status: data.status,
-      error: data.error ? {
-        name: data.error.name,
-        message: data.error.message,
-        stack: data.error.stack
-      } : undefined
-    };
-
     this.bufferEvent({
-      eventType: MonitoringEventTypes.REQUEST,
-      data: requestData,
+      eventType,
+      data,
       timestamp: Date.now()
     });
 
-    if (data.duration) {
-      this.responseTimeSum += data.duration;
-      this.requestCount++;
-    }
-
-    if (data.error) {
-      this.errorCount++;
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('[Request Error]', {
-          method: data.method,
-          url: data.url,
-          status: data.status,
-          error: data.error.message
-        });
-      }
-    }
-  }
-
-  track<K extends keyof PerformanceMetrics>(
-    type: K,
-    payload: PerformanceMetrics[K]
-  ) {
-    if (!this.METRICS_ENABLED) return;
-
-    const event: MonitoringEvent = {
-      type,
-      timestamp: Date.now(),
-      payload
-    };
-
-    this.bufferEvent({
-      eventType: type as typeof MonitoringEventTypes[keyof typeof MonitoringEventTypes],
-      data: payload,
-      timestamp: event.timestamp
-    });
-
     if (process.env.NODE_ENV !== 'production' && process.env.DEBUG === 'true') {
-      console.log('[Perf]', {
-        type: event.type,
-        timestamp: event.timestamp
+      console.log('[Event]', {
+        type: eventType,
+        data,
+        timestamp: Date.now()
       });
     }
   }
 
-  increment(metric: string) {
+  trackError(error: Error, context: ErrorContext): void {
     if (!this.METRICS_ENABLED) return;
 
-    const currentValue = this.metrics.get(metric) || 0;
-    this.metrics.set(metric, currentValue + 1);
-
-    if (process.env.NODE_ENV !== 'production' && process.env.DEBUG === 'true') {
-      console.log('[Metric]', { name: metric, value: currentValue + 1 });
-    }
-  }
-
-  trackError(error: Error, context: ErrorContext) {
-    if (!this.METRICS_ENABLED) return;
-
-    const errorEvent = {
+    const errorEvent: MonitoringEventData<typeof MonitoringEventTypes.ERROR> = {
       eventType: MonitoringEventTypes.ERROR,
       data: {
         error: {
@@ -166,7 +104,15 @@ class PerformanceMonitor {
     }
   }
 
-  trackNavigationTiming(timing: NavigationTiming) {
+  trackPerformanceMetric(metric: PerformanceMetric): void {
+    this.bufferEvent({
+      eventType: MonitoringEventTypes.PERFORMANCE,
+      data: metric,
+      timestamp: Date.now()
+    });
+  }
+
+  trackNavigationTiming(timing: NavigationTiming): void {
     if (!this.METRICS_ENABLED) return;
 
     this.bufferEvent({
@@ -174,57 +120,32 @@ class PerformanceMonitor {
       data: timing,
       timestamp: Date.now()
     });
-
-    if (process.env.NODE_ENV !== 'production' && process.env.DEBUG === 'true') {
-      console.log('[Navigation]', {
-        type: 'timing',
-        timestamp: Date.now()
-      });
-    }
   }
 
-  trackResourceTiming(timing: PerformanceResourceTiming) {
+  trackResourceTiming(timing: ResourceTiming): void {
     if (!this.METRICS_ENABLED) return;
-
-    const timestamp = Date.now();
-    const resourceTiming: ResourceTiming = {
-      name: timing.name,
-      value: timing.duration,
-      timestamp,
-      initiatorType: timing.initiatorType,
-      duration: timing.duration,
-      startTime: timing.startTime,
-      responseEnd: timing.responseEnd,
-      transferSize: timing.transferSize,
-      decodedBodySize: timing.decodedBodySize,
-      encodedBodySize: timing.encodedBodySize
-    };
 
     this.resourceTimings.set(timing.name, timing.duration);
     this.bufferEvent({
       eventType: MonitoringEventTypes.RESOURCE,
-      data: resourceTiming,
-      timestamp
+      data: timing,
+      timestamp: Date.now()
     });
   }
 
-  updateWebVital(name: string, value: number) {
+  updateWebVital(metric: WebVitalMetric): void {
     if (!this.METRICS_ENABLED) return;
 
-    this.webVitals.set(name, value);
-    const webVital: WebVitalMetric = {
-      id: crypto.randomUUID(),
-      name,
-      value,
-      rating: this.getRating(name, value),
-      delta: value - (this.webVitals.get(name) || 0)
-    };
-
+    this.webVitals.set(metric.name, metric.value);
     this.bufferEvent({
       eventType: MonitoringEventTypes.WEB_VITAL,
-      data: webVital,
+      data: metric,
       timestamp: Date.now()
     });
+  }
+
+  getMetrics(): Record<string, number> {
+    return Object.fromEntries(this.webVitals.entries());
   }
 
   getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
@@ -242,7 +163,7 @@ class PerformanceMonitor {
     return 'poor';
   }
 
-  cleanup() {
+  cleanup(): void {
     if (this.flushInterval) {
       clearInterval(this.flushInterval);
     }
@@ -258,19 +179,7 @@ class PerformanceMonitor {
     this.errorCount = 0;
   }
 
-  getMetrics() {
-    return Object.fromEntries(this.webVitals);
-  }
-
-  getAverageResponseTime() {
-    return this.requestCount > 0 ? this.responseTimeSum / this.requestCount : 0;
-  }
-
-  getErrorRate() {
-    return this.requestCount > 0 ? this.errorCount / this.requestCount : 0;
-  }
-
-  private bufferEvent(event: MonitoringEventData) {
+  private bufferEvent(event: MonitoringEventData): void {
     if (!this.METRICS_ENABLED) return;
 
     this.eventBuffer.push(event);
@@ -309,7 +218,7 @@ class PerformanceMonitor {
     }
   }
 
-  async flushMetrics() {
+  async flushMetrics(): Promise<void> {
     if (!this.METRICS_ENABLED || this.eventBuffer.length === 0) return;
 
     const now = Date.now();
@@ -317,7 +226,6 @@ class PerformanceMonitor {
       return;
     }
 
-    // Process events in batches
     while (this.eventBuffer.length > 0 && !this.isShuttingDown) {
       const batchEvents = this.eventBuffer.splice(0, this.BATCH_SIZE);
       const batch: MetricsBatch = {
@@ -329,21 +237,12 @@ class PerformanceMonitor {
       const success = await this.sendBatch(batch);
       
       if (!success && !this.isShuttingDown) {
-        // If send failed, put events back at the start of the buffer
         this.eventBuffer.unshift(...batchEvents);
         break;
       }
     }
 
     this.lastFlushTime = now;
-  }
-
-  getMetricValue(metric: string): number {
-    return this.metrics.get(metric) || 0;
-  }
-
-  resetMetric(metric: string) {
-    this.metrics.set(metric, 0);
   }
 }
 

@@ -85,10 +85,13 @@ const useComponentMetrics = (componentName: string) => {
       const duration = performance.now() - startTime;
       
       // Log performance metrics
-      monitoringService.updateWebVital(
-        `${componentName}_load`,
-        duration
-      );
+      monitoringService.updateWebVital({
+        id: crypto.randomUUID(),
+        name: `${componentName}_load`,
+        value: duration,
+        rating: monitoringService.getRating('LCP', duration),
+        timestamp: Date.now()
+      });
 
       if (process.env.NODE_ENV === 'development') {
         console.debug(`Component ${componentName} loaded in ${duration}ms`);

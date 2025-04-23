@@ -1,11 +1,11 @@
 import { apiClient } from '../api/client';
 import { performanceLog } from './service';
-import { CircuitBreakerState } from './types';
+import { CircuitBreakerState, MonitoringEventTypes } from './types';
 
 export const initMonitoring = () => {
   // Track batch processing metrics
   apiClient.onBatchProcessed(({ duration, successCount, errorCount, queueSize }) => {
-    performanceLog.track('batch_processing', {
+    performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, {
       duration,
       success_count: successCount,
       error_count: errorCount,
@@ -15,7 +15,7 @@ export const initMonitoring = () => {
 
   // Monitor circuit breaker states
   apiClient.onCircuitBreakerStateChange((service, state, stats) => {
-    performanceLog.track('circuit_breaker', {
+    performanceLog.trackEvent(MonitoringEventTypes.CIRCUIT_BREAKER, {
       service,
       state,
       failure_count: stats.failures
@@ -24,7 +24,7 @@ export const initMonitoring = () => {
 
   // Track network quality changes
   apiClient.onNetworkQualityChange(({ quality, throughput, latency }) => {
-    performanceLog.track('network_quality', {
+    performanceLog.trackEvent(MonitoringEventTypes.NETWORK_QUALITY, {
       quality,
       throughput,
       latency
@@ -33,11 +33,19 @@ export const initMonitoring = () => {
 
   // Monitor cache performance
   apiClient.onCacheHit((key) => {
-    performanceLog.increment('cache_hits');
+    performanceLog.trackPerformanceMetric({
+      name: 'cache_hits',
+      value: 1,
+      timestamp: Date.now()
+    });
   });
 
   apiClient.onCacheMiss((key) => {
-    performanceLog.increment('cache_misses');
+    performanceLog.trackPerformanceMetric({
+      name: 'cache_misses',
+      value: 1,
+      timestamp: Date.now()
+    });
   });
 };
 

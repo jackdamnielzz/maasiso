@@ -41,9 +41,8 @@ export default function Analytics() {
   // Track page views
   useEffect(() => {
     if (state.initialized) {
-      const url = searchParams.toString()
-        ? `${pathname}?${searchParams.toString()}`
-        : pathname;
+      const params = searchParams?.toString();
+      const url = params ? `${pathname}?${params}` : pathname;
 
       console.log('Page view:', url);
     }

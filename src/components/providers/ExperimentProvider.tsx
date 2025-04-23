@@ -16,7 +16,7 @@ export function ExperimentProvider({ children }: ExperimentProviderProps) {
     initializeExperiments({
       userId: 'anonymous', // Use anonymous ID for non-authenticated users
       userAttributes: {
-        path: pathname,
+        path: pathname ?? '/',
         language: navigator.language,
         platform: navigator.platform,
       }

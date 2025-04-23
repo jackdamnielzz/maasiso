@@ -2,7 +2,7 @@
 
 import { useExperimentVariant } from '@/hooks/useExperimentVariant';
 import { SEARCH_LAYOUT_EXPERIMENT, SEARCH_FILTERS_EXPERIMENT } from '@/lib/experiments/config';
-import { BlogPost, Category, NewsArticle } from '@/lib/types';
+import { BlogPost, NewsArticle } from '@/lib/types';
 import SearchResultItem from './SearchResultItem';
 import { SearchResultsGrid } from './SearchResultsGrid';
 import SearchFiltersWrapper from './SearchFiltersWrapper';
@@ -10,24 +10,18 @@ import { TopSearchFilters } from './TopSearchFilters';
 
 interface SearchResultsProps {
   query: string;
-  categories: Category[];
   blogPosts: BlogPost[];
   newsArticles: NewsArticle[];
   blogTotal: number;
   newsTotal: number;
-  selectedCategory?: string;
-  onCategoryHover?: (categorySlug: string) => void;
 }
 
 export function SearchResults({
   query,
-  categories,
   blogPosts,
   newsArticles,
   blogTotal,
-  newsTotal,
-  selectedCategory,
-  onCategoryHover
+  newsTotal
 }: SearchResultsProps) {
   // Get experiment variants
   const layoutVariant = useExperimentVariant(SEARCH_LAYOUT_EXPERIMENT, { trackExposure: true });
@@ -39,20 +33,9 @@ export function SearchResults({
   // Render filters based on experiment variant
   const renderFilters = () => {
     if (filtersVariant === 'top') {
-      return (
-        <TopSearchFilters
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onHover={onCategoryHover}
-        />
-      );
+      return <TopSearchFilters />;
     }
-    return (
-      <SearchFiltersWrapper
-        categories={categories}
-        onHover={onCategoryHover}
-      />
-    );
+    return <SearchFiltersWrapper />;
   };
 
   // Render results based on experiment variant
@@ -60,43 +43,29 @@ export function SearchResults({
     if (layoutVariant === 'grid') {
       return (
         <SearchResultsGrid
-          results={items.map(item => {
-            const category = type === 'blog' 
-              ? (item as BlogPost).categories?.[0]
-              : (item as NewsArticle).categories?.[0];
-            
-            return {
-              ...item,
-              type,
-              category: category || categories[0], // Fallback to first category if none found
-              content: item.content || '', // Ensure content is never undefined
-              query
-            };
-          })}
+          results={items.map(item => ({
+            ...item,
+            type,
+            content: item.content || '', // Ensure content is never undefined
+            query
+          }))}
         />
       );
     }
     return (
       <div className="space-y-6">
-        {items.map(item => {
-          const category = type === 'blog' 
-            ? (item as BlogPost).categories?.[0]
-            : (item as NewsArticle).categories?.[0];
-
-          return (
-            <SearchResultItem
-              key={item.id}
-              id={item.id}
-              title={item.title || ''}
-              content={item.content || ''}
-              slug={item.slug}
-              publishedAt={item.publishedAt}
-              category={category || categories[0]} // Fallback to first category if none found
-              type={type}
-              query={query}
-            />
-          );
-        })}
+        {items.map(item => (
+          <SearchResultItem
+            key={item.id}
+            id={item.id}
+            title={item.title || ''}
+            content={item.content || ''}
+            slug={item.slug}
+            publishedAt={item.publishedAt}
+            type={type}
+            query={query}
+          />
+        ))}
       </div>
     );
   };

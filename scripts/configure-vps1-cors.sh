@@ -6,7 +6,7 @@ set -e
 echo "Configuring CORS settings on VPS1 (Strapi backend)..."
 
 # SSH into VPS1 and update Strapi configuration
-ssh root@147.93.62.187 "cat > /var/www/strapi/config/middlewares.js << 'EOL'
+ssh root@153.92.223.23 "cat > /var/www/strapi/config/middlewares.js << 'EOL'
 module.exports = [
   'strapi::errors',
   {
@@ -46,7 +46,7 @@ module.exports = [
 EOL"
 
 # Restart Strapi to apply changes
-ssh root@147.93.62.187 "cd /var/www/strapi && pm2 restart strapi"
+ssh root@153.92.223.23 "cd /var/www/strapi && pm2 restart strapi"
 
 echo "CORS configuration on VPS1 complete!"
 echo "The Strapi backend will now accept requests from VPS2"

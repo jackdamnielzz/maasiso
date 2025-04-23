@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initializePerformanceMonitoring, measurePageLoad } from '@/lib/monitoring/performance';
+import { initPerformanceMonitoring, measurePageLoad } from '@/lib/monitoring/performance';
 import { BlogPost } from '@/lib/types';
 import BlogPostContent from './BlogPostContent';
 import RelatedPosts from './RelatedPosts';
@@ -15,16 +15,13 @@ interface BlogPostPerformanceProps {
 export default function BlogPostPerformance({ post }: BlogPostPerformanceProps) {
   useEffect(() => {
     // Initialize performance monitoring
-    initializePerformanceMonitoring();
+    initPerformanceMonitoring();
 
     // Measure initial page load
     measurePageLoad(`blog-${post.slug}`);
 
     // Clean up is handled by the monitoring utilities
   }, [post.slug]);
-
-  // Ensure category IDs are strings
-  const categoryIds = post.categories.map(cat => String(cat.id));
 
   return (
     <div className="bg-white py-24">
@@ -41,7 +38,8 @@ export default function BlogPostPerformance({ post }: BlogPostPerformanceProps) 
             contentId={String(post.id)}
             title={post.title}
             metadata={{
-              categories: post.categories.map(cat => cat.name),
+              tags: post.tags?.map(tag => tag.name) || [],
+              categories: post.categories?.map(category => category.name) || [],
               author: post.author,
               publishedAt: post.publishedAt,
               readingTime: Math.ceil(post.content.split(/\s+/).length / 200)
@@ -59,10 +57,7 @@ export default function BlogPostPerformance({ post }: BlogPostPerformanceProps) 
               </div>
             }
           >
-            <RelatedPosts 
-              currentSlug={post.slug}
-              categoryIds={categoryIds}
-            />
+            <RelatedPosts currentSlug={post.slug} />
           </ErrorBoundary>
         </div>
       </div>

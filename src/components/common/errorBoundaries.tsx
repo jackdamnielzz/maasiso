@@ -1,6 +1,20 @@
 import React from 'react';
-import { ErrorBoundary, withErrorBoundary } from './ErrorBoundary';
+import ErrorBoundary from './ErrorBoundary';
 import { ErrorFallback } from './ErrorFallback';
+
+// Higher-order component for error boundary
+function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  fallback: React.ReactNode
+) {
+  return function WithErrorBoundaryWrapper(props: P) {
+    return (
+      <ErrorBoundary fallback={fallback}>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
+}
 
 // API error boundary with specific message and retry action
 export function ApiErrorBoundary({ children }: { children: React.ReactNode }) {

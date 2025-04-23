@@ -18,7 +18,7 @@ export default function PrefetchingPagination({
   const handleHover = async (page: number) => {
     if (page > currentPage) {
       try {
-        await prefetch(() => getBlogPosts(page - 1, 6, selectedCategory));
+        await prefetch(() => getBlogPosts(page - 1, 6));
       } catch {
         // Ignore prefetch errors
       }

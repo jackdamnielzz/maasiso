@@ -20,9 +20,9 @@ export default function Loading() {
         </div>
 
         {/* Feature grid skeleton */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-3 w-full max-w-[90%] md:max-w-4xl mx-auto">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="rounded-lg bg-gray-100 p-6">
+            <div key={i} className="rounded-lg bg-gray-100 p-6 md:p-8">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-200" />
               <div className="mb-2 h-6 w-2/3 rounded bg-gray-200" />
               <div className="h-4 w-full rounded bg-gray-200" />

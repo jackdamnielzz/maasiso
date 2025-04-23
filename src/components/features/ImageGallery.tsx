@@ -19,14 +19,14 @@ export function ImageGallery({ data, className }: ImageGalleryProps) {
   const renderGrid = () => (
     <div className={cn('grid gap-4', gridCols)}>
       {data.images.map((image, index) => (
-        <div 
-          key={`${image.data.id}-${index}`}
+        <div
+          key={`${image.id}-${index}`}
           className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
           onClick={() => setSelectedImage(index)}
         >
           <Image
-            src={image.data.attributes.url}
-            alt={image.data.attributes.alternativeText || ''}
+            src={image.url}
+            alt={image.alternativeText || ''}
             fill
             className="object-cover transition-transform hover:scale-105"
           />
@@ -39,13 +39,13 @@ export function ImageGallery({ data, className }: ImageGalleryProps) {
     <div className="relative w-full">
       <div className="flex snap-x snap-mandatory overflow-x-auto">
         {data.images.map((image, index) => (
-          <div 
-            key={`${image.data.id}-${index}`}
+          <div
+            key={`${image.id}-${index}`}
             className="relative h-[300px] w-full flex-none snap-center md:h-[400px]"
           >
             <Image
-              src={image.data.attributes.url}
-              alt={image.data.attributes.alternativeText || ''}
+              src={image.url}
+              alt={image.alternativeText || ''}
               fill
               className="object-cover"
             />
@@ -70,14 +70,14 @@ export function ImageGallery({ data, className }: ImageGalleryProps) {
   const renderMasonry = () => (
     <div className="columns-1 gap-4 md:columns-2 lg:columns-3">
         {data.images.map((image, index) => (
-          <div 
-            key={`${image.data.id}-${index}`}
+          <div
+            key={`${image.id}-${index}`}
             className="relative mb-4 cursor-pointer overflow-hidden rounded-lg"
             onClick={() => setSelectedImage(index)}
           >
           <Image
-            src={image.data.attributes.url}
-            alt={image.data.attributes.alternativeText || ''}
+            src={image.url}
+            alt={image.alternativeText || ''}
             width={400}
             height={400}
             className="w-full object-cover transition-transform hover:scale-105"
@@ -99,8 +99,8 @@ export function ImageGallery({ data, className }: ImageGalleryProps) {
       >
         <div className="relative h-[90vh] w-[90vw]">
           <Image
-            src={image.data.attributes.url}
-            alt={image.data.attributes.alternativeText || ''}
+            src={image.url}
+            alt={image.alternativeText || ''}
             fill
             className="object-contain"
           />

@@ -227,10 +227,14 @@ export interface FetchOptions extends RequestInit {
 
 // Fetch options for static content (rarely changes)
 export function getStaticFetchOptions(contentType: string): FetchOptions {
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (!token) {
+    throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
+  }
   return {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${clientEnv.strapiToken}`,
+      'Authorization': `Bearer ${token}`,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
@@ -265,10 +269,14 @@ export function getListFetchOptions(contentType: string): FetchOptions {
 
 // Fetch options for dynamic content (changes frequently)
 export function getDynamicFetchOptions(): FetchOptions {
+  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  if (!token) {
+    throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
+  }
   return {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${clientEnv.strapiToken}`,
+      'Authorization': `Bearer ${token}`,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },

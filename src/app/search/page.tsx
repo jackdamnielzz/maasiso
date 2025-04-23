@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { search, getCategories } from "@/lib/api";
+import { search } from "@/lib/api";
 import { SearchResults } from "@/components/features/SearchResults";
 import SearchAnalytics from "@/components/features/SearchAnalytics";
 import { SearchParams } from "@/lib/types";
@@ -8,7 +8,6 @@ import { validateSearchQuery, validateUrlParam } from "@/lib/validation";
 interface SearchPageProps {
   searchParams: {
     q?: string;
-    category?: string;
     type?: string;
     dateFrom?: string;
     dateTo?: string;
@@ -30,15 +29,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       throw new Error(queryValidation.error || 'Invalid search query');
     }
     const query = queryValidation.sanitized;
-
-    // Validate category
-    if (searchParams.category) {
-      const categoryValidation = validateUrlParam(searchParams.category);
-      if (!categoryValidation.isValid) {
-        throw new Error('Invalid category parameter');
-      }
-      searchParams.category = categoryValidation.sanitized;
-    }
 
     // Validate content type
     if (searchParams.type) {
@@ -88,9 +78,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       searchParams.page = pageValidation.sanitized;
     }
 
-    // Fetch categories for filters
-    const categories = await getCategories();
-
     // Convert validated search params to API params with proper type checking
     const contentType = searchParams.type as 'blog' | 'news' | undefined;
     const sortField = searchParams.sort as 'date' | 'relevance' | 'title' | undefined;
@@ -98,7 +85,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     const apiParams: SearchParams = {
       query,
       filters: {
-        categories: searchParams.category ? [searchParams.category] : undefined,
         contentType: contentType ? [contentType] : undefined,
         dateFrom: searchParams.dateFrom,
         dateTo: searchParams.dateTo,
@@ -130,11 +116,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     return (
       <main className="container mx-auto px-4 py-8 mt-[72px]">
-        <SearchAnalytics 
+        <SearchAnalytics
           query={query}
           totalResults={totalResults}
           filters={{
-            category: searchParams.category,
             contentType: searchParams.type as 'blog' | 'news' | undefined,
             dateFrom: searchParams.dateFrom,
             dateTo: searchParams.dateTo,
@@ -157,23 +142,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {hasResults && (
           <SearchResults
             query={query}
-            categories={categories}
             blogPosts={results.blogPosts.data}
             newsArticles={results.newsArticles.data}
             blogTotal={results.blogPosts.meta.pagination.total}
             newsTotal={results.newsArticles.meta.pagination.total}
-            selectedCategory={searchParams.category}
-            onCategoryHover={(categorySlug) => {
-              // Prefetch results for this category
-              const prefetchParams: SearchParams = {
-                ...apiParams,
-                filters: {
-                  ...apiParams.filters,
-                  categories: [categorySlug],
-                },
-              };
-              search(prefetchParams);
-            }}
           />
         )}
       </main>

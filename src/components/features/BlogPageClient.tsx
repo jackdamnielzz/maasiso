@@ -1,67 +1,110 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
-import BlogCard from './BlogCard';
-import PrefetchingPagination from '@/components/common/PrefetchingPagination';
-import { BlogPost } from '@/lib/types';
+import React from 'react';
+import useSWRInfinite from 'swr/infinite';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import BlogPostCard from './BlogPostCard';
+import { BlogPost, Page } from '@/lib/types';
+
+export const PAGE_SIZE = 10;
 
 interface BlogPageClientProps {
-  blogPosts: BlogPost[];
-  pagination: {
-    page: number;
-    pageCount: number;
-  };
+  page: Page;
+  initialPosts: BlogPost[];
 }
 
-export default function BlogPageClient({ blogPosts, pagination }: BlogPageClientProps) {
-  const [isPending] = useTransition();
-  const searchParams = useSearchParams();
+export const BlogPageClient: React.FC<BlogPageClientProps> = ({ page, initialPosts }) => {
+  const getKey = (pageIndex: number) => {
+    // Skip first page if we have initial data
+    if (pageIndex === 0 && initialPosts?.length > 0) {
+      return null;
+    }
+    
+    return `/api/blog-posts?page=${pageIndex + 1}&pageSize=${PAGE_SIZE}`;
+  };
+
+  const { data, error, size, setSize, isLoading } = useSWRInfinite<{
+    posts: BlogPost[];
+    total: number;
+  }>(getKey);
+
+  // Process and validate merged posts
+  const posts = React.useMemo(() => {
+    // Start with initial posts
+    let mergedPosts = [...initialPosts];
+    
+    // Add SWR data if available
+    if (data) {
+      const swrPosts = data.flatMap(page => page.posts);
+      
+      // Deduplicate posts based on ID
+      const seenIds = new Set(mergedPosts.map(post => post.id));
+      const uniqueNewPosts = swrPosts.filter(post => !seenIds.has(post.id));
+      
+      mergedPosts = [...mergedPosts, ...uniqueNewPosts];
+    }
+    
+    // Validate and filter posts
+    const validatedPosts = mergedPosts.filter(post => {
+      const isValid = !!(
+        post &&
+        post.id &&
+        post.title &&
+        post.createdAt &&
+        !isNaN(new Date(post.createdAt).getTime()) &&
+        post.updatedAt &&
+        !isNaN(new Date(post.updatedAt).getTime())
+      );
+      
+      return isValid;
+    });
+    
+    return validatedPosts;
+  }, [data, initialPosts]);
+
+  const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+  const isEmpty = data?.[0]?.posts.length === 0;
+  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.posts.length < PAGE_SIZE);
+
+  if (error) {
+    return (
+      <ErrorMessage
+        message="Er is een fout opgetreden bij het laden van meer blog posts"
+        retry={() => setSize(size)}
+      />
+    );
+  }
+
+  if (isLoading && !posts.length) {
+    return <LoadingSpinner />;
+  }
 
   return (
-    <main className="flex-1">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="container-custom">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Blog van <span className="text-[#FF8B00]">MaasISO</span>
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Ontdek onze laatste inzichten, tips en best practices op het gebied van
-              informatiebeveiliging, ISO-certificering en privacywetgeving.
-            </p>
-          </div>
+    <div className="space-y-8">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <BlogPostCard key={post.id} post={post} />
+        ))}
+      </div>
+      
+      {!isReachingEnd && (
+        <div className="flex justify-center">
+          <button
+            onClick={() => setSize(size + 1)}
+            disabled={isLoadingMore}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          >
+            {isLoadingMore ? 'Laden...' : 'Meer laden'}
+          </button>
         </div>
-      </section>
-
-      {/* Blog Content Section */}
-      <section className={`bg-gray-50 py-16 ${isPending ? 'opacity-70' : ''}`}>
-        <div className="container-custom">
-          {blogPosts.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {blogPosts.map((post: BlogPost) => (
-                  <div key={post.id}>
-                    <BlogCard post={post} />
-                  </div>
-                ))}
-              </div>
-
-              {pagination.pageCount > 1 && (
-                <PrefetchingPagination
-                  currentPage={pagination.page}
-                  totalPages={pagination.pageCount}
-                />
-              )}
-            </>
-          ) : (
-            <p className="text-[#091E42]/70">
-              Geen blog artikelen gevonden.
-            </p>
-          )}
+      )}
+      
+      {isLoadingMore && (
+        <div className="flex justify-center">
+          <LoadingSpinner size="sm" />
         </div>
-      </section>
-    </main>
+      )}
+    </div>
   );
-}
+};

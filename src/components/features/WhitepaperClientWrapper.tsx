@@ -37,10 +37,13 @@ export default function WhitepaperClientWrapper() {
         }
 
         setData({
-          whitepapers: response.whitepapers.data,
+          whitepapers: response.whitepapers.data.map(item => ({
+            ...item.attributes,
+            id: String(item.id)
+          })),
           pagination: {
-            page: response.whitepapers.meta.pagination.page,
-            pageCount: response.whitepapers.meta.pagination.pageCount
+            page: response.whitepapers.meta.pagination?.page ?? 1,
+            pageCount: response.whitepapers.meta.pagination?.pageCount ?? 1
           }
         });
         setError(null);

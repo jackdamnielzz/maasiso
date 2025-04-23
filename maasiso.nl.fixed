@@ -1,0 +1,43 @@
+server {
+    listen 80;
+    server_name maasiso.nl www.maasiso.nl;
+
+    # Serve uploads directory with high priority
+    location ^~ /uploads/ {
+        alias /var/www/strapi/public/uploads/;
+        try_files $uri $uri/ =404;
+        add_header Cache-Control "public, max-age=31536000";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Methods "GET, OPTIONS";
+        add_header Access-Control-Allow-Headers "*";
+        expires 1y;
+        access_log off;
+
+        if ($request_method = "OPTIONS") {
+            return 204;
+        }
+    }
+
+    # Proxy API requests to Strapi backend
+    location /api/ {
+        proxy_pass http://127.0.0.1:1337/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    # Proxy other requests to Next.js frontend
+    location / {
+        proxy_pass http://147.93.62.188:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
