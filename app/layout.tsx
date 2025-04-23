@@ -12,11 +12,6 @@ import fs from 'fs';
 import path from 'path';
 import "./globals.css";
 
-// Read critical CSS
-const criticalCSS = fs.readFileSync(
-  path.join(process.cwd(), 'app/critical.css'),
-  'utf-8'
-);
 
 // Configure Inter font with display swap and proper preloading
 const inter = Inter({
@@ -56,7 +51,6 @@ export default function RootLayout({
   return (
     <html lang="nl" className={inter.variable}>
       <head>
-        <style id="critical-css" dangerouslySetInnerHTML={{ __html: criticalCSS }} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
