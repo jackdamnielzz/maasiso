@@ -29,6 +29,19 @@ const validSubjects = [
   'Anders'
 ];
 
+// Create a nodemailer transporter once, reuse for all requests
+const transporter = nodemailer.createTransport({
+  host: 'smtp.hostinger.com', // Hostinger SMTP server
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: 'info@maasiso.nl', // Your email address
+    pass: process.env.EMAIL_PASSWORD, // Email password from environment variables
+  },
+  debug: true, // Enable debug output
+  logger: true // Log information about the mail
+});
+
 export async function POST(request: NextRequest) {
   try {
     // Parse the request body
@@ -71,54 +84,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log the form submission and environment variables (password masked for security)
+    // Log the form submission (avoid logging environment variables in production)
     console.log('Contact form submission:', body);
-    console.log('EMAIL_PASSWORD set:', process.env.EMAIL_PASSWORD ? 'Yes (value hidden)' : 'No');
-    console.log('Environment variables:', {
-      NODE_ENV: process.env.NODE_ENV,
-      // Add other relevant env vars here, but DON'T log the actual password
-    });
-
-    // Create a nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.hostinger.com', // Hostinger SMTP server
-      port: 465,
-      secure: true, // true for 465, false for other ports
-      auth: {
-        user: 'info@maasiso.nl', // Your email address
-        pass: process.env.EMAIL_PASSWORD, // Email password from environment variables
-      },
-      debug: true, // Enable debug output
-      logger: true // Log information about the mail
-    });
-
-    // Test SMTP connection before sending
-    try {
-      console.log('Testing SMTP connection...');
-      await transporter.verify();
-      console.log('SMTP connection successful!');
-    } catch (error) {
-      const smtpError = error as SMTPError;
-      console.error('SMTP connection failed:', smtpError);
-
-      // Include detailed error in response (only in development)
-      const isDev = process.env.NODE_ENV === 'development';
-
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Er is een fout opgetreden bij de verbinding met de mailserver.',
-          error: isDev ? {
-            code: smtpError.code,
-            message: smtpError.message,
-            responseCode: smtpError.responseCode,
-            command: smtpError.command,
-            stack: smtpError.stack
-          } : 'Details alleen zichtbaar in development mode'
-        },
-        { status: 500 }
-      );
+    if (process.env.NODE_ENV === 'development') {
+      console.log('EMAIL_PASSWORD set:', process.env.EMAIL_PASSWORD ? 'Yes (value hidden)' : 'No');
+      console.log('Environment variables:', {
+        NODE_ENV: process.env.NODE_ENV,
+        // Add other relevant env vars here, but DON'T log the actual password
+      });
     }
+
+    // Removed transporter.verify() call to avoid overhead on every request
 
     // Send the email
     const mailOptions = {
@@ -128,7 +104,18 @@ export async function POST(request: NextRequest) {
       text: `Name: ${body.name}\nEmail: ${body.email}\nMessage:\n${body.message}`
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (sendError) {
+      console.error('Error sending email:', sendError);
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Er is een fout opgetreden bij het verzenden van de e-mail. Probeer het later opnieuw.'
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true, message: 'Bericht succesvol verzonden.' });
   } catch (error) {

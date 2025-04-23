@@ -30,15 +30,19 @@ interface RetryState {
 }
 
 const defaultConfig: Required<RetryConfig> = {
-  maxAttempts: 3,
-  initialDelay: 1000, // 1 second
-  maxDelay: 10000, // 10 seconds
+  maxAttempts: process.env.RETRY_MAX_ATTEMPTS ? parseInt(process.env.RETRY_MAX_ATTEMPTS) : 3,
+  initialDelay: process.env.RETRY_INITIAL_DELAY ? parseInt(process.env.RETRY_INITIAL_DELAY) : 1000, // 1 second
+  maxDelay: process.env.RETRY_MAX_DELAY ? parseInt(process.env.RETRY_MAX_DELAY) : 10000, // 10 seconds
   backoffFactor: 2,
   retryableStatuses: [401, 408, 429, 500, 502, 503, 504]
 };
 
 function calculateDelay(attempt: number, config: Required<RetryConfig>, errorType: RetryErrorType): number {
   let delay = config.initialDelay * Math.pow(config.backoffFactor, attempt - 1);
+
+  // Add jitter to avoid thundering herd problem
+  const jitter = Math.random() * 0.1 * delay; // up to 10% jitter
+  delay += jitter;
   
   // Adjust delay based on error type
   switch (errorType) {
@@ -94,7 +98,13 @@ function categorizeError(error: Error | Response): RetryErrorType {
 
 function isRetryableError(error: Error): boolean {
   const errorType = categorizeError(error);
-  const isRetryableType = ['network', 'server', 'throttle', 'timeout', 'auth'].includes(errorType);
+  // For auth errors, retry only if token refresh is handled externally
+  if (errorType === 'auth') {
+    // Consider not retrying auth errors here to avoid unnecessary retries
+    // or integrate token refresh logic before retrying
+    return false;
+  }
+  const isRetryableType = ['network', 'server', 'throttle', 'timeout'].includes(errorType);
   const isRetryableMessage = error.message && (
     error.message.includes('ERR_INSUFFICIENT_RESOURCES') ||
     error.message.includes('Failed to fetch')
