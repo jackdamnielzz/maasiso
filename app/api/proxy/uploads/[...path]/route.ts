@@ -56,6 +56,11 @@ export async function GET(
     
     // Remove any 'api' prefix from the path and ensure proper uploads path
     const cleanPath = path.replace(/^api\//, '');
+    
+    // IMPORTANT: do NOT strip prefixes like large_/small_/thumbnail_.
+    // Strapi actually stores the variant files on disk with those prefixes
+    // (e.g. /uploads/large_Gemini_..., /uploads/small_Gemini_...).
+    // We must forward the path exactly as provided so Strapi can find them.
     const url = `${strapiUrl}/uploads/${cleanPath}`;
     logRequest(request.method, url, cleanPath);
 

@@ -1,6 +1,6 @@
 # MaasISO Progress Tracker
 
-**Last Updated:** 2025-12-11 22:08 UTC
+**Last Updated:** 2025-12-11 22:37 UTC
 
 ---
 
@@ -26,6 +26,22 @@
 ---
 
 ## Recent Milestones
+
+### December 11, 2025 - BLOG IMAGE POPULATE FIX ✅ (22:37 UTC)
+Fixed blog post images not displaying. The `getBlogPosts()` function used explicit populate fields that were missing `provider` and `provider_metadata` - fields required for Cloudinary URL detection.
+
+**Root Cause:** The `mapImage()` function checks `attrs.provider === 'cloudinary' && attrs.provider_metadata?.public_id` but these fields weren't being requested in the API call.
+
+**Solution:** Added `provider` and `provider_metadata` to the `populateParams` array in `src/lib/api.ts`.
+
+### December 11, 2025 - VERCEL CRITICAL.CSS FIX ✅ (22:26 UTC)
+Fixed critical Vercel deployment failure where ALL pages returned 500 errors due to missing `critical.css` file.
+
+**Root Cause:** `app/layout.tsx` used `fs.readFileSync()` to load CSS at runtime, but the file wasn't bundled in Vercel's serverless functions.
+
+**Solution:** Inlined the critical CSS content directly in `app/layout.tsx` as a template literal string, removing the runtime file dependency.
+
+**Result:** New deployment `https://maasiso-copy-2-8f3ztrz0j-tunuxs-projects.vercel.app` is now Ready ✅
 
 ### December 11, 2025 - CLOUDINARY URL FIX ✅ (22:08 UTC)
 Fixed broken Cloudinary images in the frontend. Strapi with Cloudinary provider returns local `/uploads/` paths instead of Cloudinary URLs, causing 404 errors.

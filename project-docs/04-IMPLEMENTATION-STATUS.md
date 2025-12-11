@@ -1,6 +1,6 @@
 # Implementation Status
 
-**Last Updated**: 2025-12-11 22:09 UTC
+**Last Updated**: 2025-12-11 22:37 UTC
 **Project**: MaasISO - ISO Certification Consultancy Website
 
 ---
@@ -332,7 +332,35 @@ De comprehensive migratie via [`scripts/migrate-all-content.js`](../scripts/migr
 | Tags | Created | 40 | ✅ Uit seo_keywords geëxtraheerd |
 | Blog Posts | Verified | 36 | ✅ Reeds aanwezig |
 
-### ✅ Cloudinary URL Fix (Dec 11, 2025 22:08 UTC) - NEW
+### ✅ Blog Image Populate Fix (Dec 11, 2025 22:37 UTC) - NEW
+
+Fixed blog post images not displaying due to missing populate fields.
+
+**Problem:** `getBlogPosts()` used explicit populate fields for `featuredImage` but was missing `provider` and `provider_metadata` fields needed for Cloudinary URL detection.
+
+**Root Cause:** The `mapImage()` function checks `attrs.provider === 'cloudinary' && attrs.provider_metadata?.public_id` to construct Cloudinary URLs. Without these fields in the API response, images fell back to `/uploads/` URLs that were proxied to Strapi where files don't exist (they're on Cloudinary).
+
+**Solution:** Added `provider` (field index 10) and `provider_metadata` (field index 11) to the `populateParams` array in [`getBlogPosts()`](../src/lib/api.ts:1056).
+
+**Files Modified:**
+- [`src/lib/api.ts`](../src/lib/api.ts:1056) - Added missing populate fields
+
+### ✅ Vercel Critical.CSS Fix (Dec 11, 2025 22:26 UTC)
+
+Fixed critical Vercel deployment failure where ALL pages returned 500 errors due to missing `critical.css` file in serverless functions.
+
+**Problem:** `app/layout.tsx` used `fs.readFileSync(path.join(process.cwd(), 'app/critical.css'))` to load CSS at runtime. On Vercel serverless functions, `process.cwd()` points to `/var/task`, where the file wasn't bundled.
+
+**Error:** `Error: ENOENT: no such file or directory, open '/var/task/app/critical.css'`
+
+**Solution:** Inlined the critical CSS content directly in `app/layout.tsx` as a template literal string, removing the runtime file dependency. CSS is now bundled at build time.
+
+**Files Modified:**
+- [`app/layout.tsx`](../app/layout.tsx:1) - Replaced `fs.readFileSync()` with inlined CSS
+
+**Deployment:** `https://maasiso-copy-2-8f3ztrz0j-tunuxs-projects.vercel.app` ✅ Ready
+
+### ✅ Cloudinary URL Fix (Dec 11, 2025 22:08 UTC)
 
 Fixed broken Cloudinary images in the frontend. When Strapi uses Cloudinary as upload provider, it stores:
 - `url`: Local path like `/uploads/image.jpg` (doesn't work - file is on Cloudinary)

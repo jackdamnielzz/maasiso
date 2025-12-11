@@ -1054,6 +1054,7 @@ export async function getBlogPosts(
     
     // Strapi v5 REST collection - use explicit populate for featuredImage
     // Using indexed populate to ensure images are properly populated
+    // IMPORTANT: provider and provider_metadata are required for Cloudinary URL detection
     const populateParams = [
       'populate[featuredImage][fields][0]=url',
       'populate[featuredImage][fields][1]=alternativeText',
@@ -1065,6 +1066,8 @@ export async function getBlogPosts(
       'populate[featuredImage][fields][7]=ext',
       'populate[featuredImage][fields][8]=mime',
       'populate[featuredImage][fields][9]=size',
+      'populate[featuredImage][fields][10]=provider',
+      'populate[featuredImage][fields][11]=provider_metadata',
       'populate[tags][fields][0]=id',
       'populate[tags][fields][1]=name',
       'populate[categories][fields][0]=id',

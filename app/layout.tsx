@@ -9,15 +9,90 @@ import { NavigationProvider } from "@/components/providers/NavigationProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { MonitoringProvider } from "@/providers/MonitoringProvider";
 import WebVitalsReporter from "@/components/common/WebVitalsReporter";
-import fs from 'fs';
-import path from 'path';
 import "./globals.css";
 
-// Read critical CSS
-const criticalCSS = fs.readFileSync(
-  path.join(process.cwd(), 'app/critical.css'),
-  'utf-8'
-);
+// Critical CSS inlined at build time (fixes Vercel serverless function bundling issue)
+const criticalCSS = `/* Critical CSS for above-the-fold content */
+:root {
+  --primary-color: #091E42;
+  --secondary-color: #00875A;
+  --accent-color: #FF8B00;
+  --text-color: #172B4D;
+}
+
+/* Container */
+.container-custom {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header Styles */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: #071631;
+  transition: background-color 0.3s ease;
+  border-bottom: 3px solid var(--accent-color);
+}
+
+.site-header .container-custom {
+  height: 80px;
+}
+
+/* Main Content Padding for Fixed Header */
+main {
+  padding-top: 80px;
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 3rem 0;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  margin-top: -80px;
+}
+
+.primary-button {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: background-color 0.2s;
+}
+
+/* Service Cards */
+.service-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid #E5E7EB;
+  transition: all 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  gap: 1.5rem;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}`;
 
 // Configure Inter font with display swap and proper preloading
 const inter = Inter({

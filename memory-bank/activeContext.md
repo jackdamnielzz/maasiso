@@ -1,12 +1,53 @@
 # Active Context - MaasISO Migration
 
-**Last Updated:** 2025-12-11 22:08 UTC
+**Last Updated:** 2025-12-11 22:37 UTC
 **Current Phase:** Phase 5 - Vercel Frontend Deployment ✅ COMPLETE
-**Status:** Strapi Deployed to Railway ✅ LIVE ✅ Content Fixed ✅ Media Uploaded ✅ Frontend Deployed ✅ Backend-migratie naar Railway technisch afgerond ✅ **CONTENT MIGRATION COMPLETE** ✅ **CLOUDINARY URL FIX COMPLETE** ✅
+**Status:** Strapi Deployed to Railway ✅ LIVE ✅ Content Fixed ✅ Media Uploaded ✅ Frontend Deployed ✅ Backend-migratie naar Railway technisch afgerond ✅ **CONTENT MIGRATION COMPLETE** ✅ **CLOUDINARY URL FIX COMPLETE** ✅ **VERCEL CRITICAL.CSS FIX COMPLETE** ✅ **BLOG IMAGE POPULATE FIX COMPLETE** ✅
 
 ---
 
 ## Current Work
+
+### ✅ BLOG IMAGE POPULATE FIX (Dec 11, 2025 22:37 UTC)
+
+Fixed blog post images not displaying. The root cause was that the explicit `populate` parameters in `getBlogPosts()` were missing the `provider` and `provider_metadata` fields needed for Cloudinary URL detection.
+
+**Root Cause:**
+- [`getBlogPosts()`](src/lib/api.ts:1056) used explicit field list for `featuredImage` populate
+- Fields included: `url`, `alternativeText`, `width`, `height`, `formats`, `name`, `hash`, `ext`, `mime`, `size`
+- **Missing fields:** `provider` and `provider_metadata`
+- Without these fields, [`mapImage()`](src/lib/api.ts:269) couldn't detect Cloudinary images
+- Result: Images fell back to `/uploads/` URLs which were proxied to Strapi where files don't exist
+
+**Solution Implemented:**
+- Added `provider` (field index 10) and `provider_metadata` (field index 11) to the `populateParams` array in [`getBlogPosts()`](src/lib/api.ts:1056)
+
+**Files Modified:**
+- `src/lib/api.ts` - Added `provider` and `provider_metadata` to `featuredImage` populate fields
+
+**Note:** Other API functions (`getNewsArticles`, `getNewsArticleBySlug`, `getBlogPostBySlug`) use `populate=*` which already includes all fields.
+
+### ✅ VERCEL CRITICAL.CSS FIX (Dec 11, 2025 22:26 UTC)
+
+Fixed critical Vercel deployment failure where ALL pages returned 500 errors. The root cause was the `critical.css` file not being bundled in Vercel's serverless functions.
+
+**Root Cause:**
+- [`app/layout.tsx`](app/layout.tsx:17) used `fs.readFileSync(path.join(process.cwd(), 'app/critical.css'))` to load CSS at runtime
+- Vercel serverless functions have `process.cwd()` pointing to `/var/task`, where `critical.css` wasn't bundled
+- Result: `Error: ENOENT: no such file or directory, open '/var/task/app/critical.css'` on ALL pages
+
+**Solution Implemented:**
+- Inlined the critical CSS content directly in [`app/layout.tsx`](app/layout.tsx:1) as a template literal string
+- Removed `fs` and `path` imports that were causing the runtime file read
+- CSS is now bundled at build time and included in the serverless function
+
+**Files Modified:**
+- `app/layout.tsx` - Replaced `fs.readFileSync()` with inlined CSS content
+
+**Deployment Verified:**
+- New deployment: `https://maasiso-copy-2-8f3ztrz0j-tunuxs-projects.vercel.app` ✅ Ready
+- Build time: 1 minute
+- Status: Production ✅
 
 ### ✅ CLOUDINARY IMAGE URL FIX (Dec 11, 2025 22:08 UTC)
 
