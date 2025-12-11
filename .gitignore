@@ -33,5 +33,29 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# backups
-scripts/latest_backup/
+# Security - Sensitive Files (DO NOT COMMIT!)
+**/BACKUP-ENCRYPTION-KEY*.txt
+**/backup-encryption-key*
+**/.backup-encryption-key
+**/server-access-credentials.md
+**/*-credentials*.txt
+**/*-password*.txt
+**/*-secret*.txt
+**/ssh-keys/
+**/*.pem
+**/*.key
+**/*.crt
+**/*.p12
+**/*.pfx
+
+# Security logs with sensitive data
+logs/security-verification-*.log
+
+# Large backup files
+backups/*.tar.gz
+backups/*.zip
+backups/*.sql
+backups/*.dump
+
+# Test deployment directory
+test-deploy/

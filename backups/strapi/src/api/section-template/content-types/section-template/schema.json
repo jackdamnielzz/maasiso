@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "section_templates",
+  "info": {
+    "singularName": "section-template",
+    "pluralName": "section-templates",
+    "displayName": " Section Template"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "page-blocks.text-block",
+        "page-blocks.image-gallery",
+        "page-blocks.hero",
+        "page-blocks.feature-grid",
+        "page-blocks.button"
+      ]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "header",
+        "content",
+        "footer"
+      ]
+    },
+    "isReusable": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

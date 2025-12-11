@@ -1,0 +1,62 @@
+# ==============================================================================
+# MAASISO SECURITY TEST TEMPLATE
+# Template: sshds_miner.service
+# 
+# This is a TEMPLATE file for attack simulation testing.
+# Based on the December 2025 cryptocurrency mining incident.
+# 
+# Original malware disguised itself as an SSH daemon service ("sshds")
+# running a Monero miner from a hidden directory in /root/.sshds/
+# ==============================================================================
+
+[Unit]
+Description=MAASISO SECURITY TEST - Simulated SSHDS Miner Service
+Documentation=https://maasiso.nl/security-testing
+# NOTE: This is a SECURITY TEST - Not a real malicious service
+# Original malware mimicked SSH daemon naming convention
+
+# Original attack pattern:
+# Description=OpenSSH Daemon Service
+# After=network.target sshd.service
+
+After=network.target
+
+[Service]
+Type=simple
+
+# SAFE: This command only echoes - does nothing harmful
+ExecStart=/bin/echo 'SIMULATION: This would run sshds miner'
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# ExecStart=/root/.sshds/sshds --config=/root/.sshds/config.json
+# ExecStart=/root/.sshds/sshds -o stratum+ssl://pool.hashvault.pro:443
+
+# SAFE: No restart enabled
+Restart=no
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# Restart=always
+# RestartSec=10
+# StartLimitInterval=0
+# StartLimitBurst=0
+
+# Process settings (original malware ran as root)
+User=root
+Group=root
+
+# Working directory where miner config was stored
+# WorkingDirectory=/root/.sshds
+
+[Install]
+# DISABLED FOR SAFETY - Do not enable this service
+# WantedBy=multi-user.target
+
+# ==============================================================================
+# DETECTION INDICATORS:
+# - Service name similar to sshd but different (sshds)
+# - Binary location in hidden directory (/root/.sshds/)
+# - Config file specifying mining pool connections
+# - Connects to stratum mining pools (port 443 for SSL)
+# - High CPU usage from mining operations
+# - Network connections to pool.hashvault.pro, c3pool.org
+# ==============================================================================

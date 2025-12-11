@@ -1,3 +1,5 @@
+import { Tag } from '../types';
+
 // Common types
 export interface BaseModel {
   id: string;
@@ -27,11 +29,11 @@ export interface Image {
   data?: ImageData;
 }
 
-// Category types
+// Category type
 export interface Category extends BaseModel {
   name: string;
-  description: string;
   slug: string;
+  description: string;
 }
 
 // Blog post types
@@ -40,7 +42,12 @@ export interface BlogPost extends BaseModel {
   slug: string;
   content: string;
   author: string | undefined;
-  categories: Category[];
+  tags: Tag[];
+  categories?: Category[];
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  featuredImage?: Image;
 }
 
 export interface PaginatedBlogPosts {
@@ -138,7 +145,6 @@ export interface SocialLink extends BaseModel {
 export interface SearchParams {
   query: string;
   filters?: {
-    categories?: string[];
     dateFrom?: string;
     dateTo?: string;
     contentType?: ('blog' | 'news')[];

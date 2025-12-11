@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "global_content_blocks",
+  "info": {
+    "singularName": "global-content-block",
+    "pluralName": "global-content-blocks",
+    "displayName": "Global Content Block"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "naam": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "shared.feature",
+        "shared.cta-button",
+        "page-blocks.text-block",
+        "page-blocks.image-gallery",
+        "page-blocks.hero",
+        "page-blocks.feature-grid",
+        "page-blocks.button"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "contentStatus": {
+      "type": "enumeration",
+      "enum": [
+        "draft",
+        "active",
+        "archived"
+      ]
+    },
+    "usageLocations": {
+      "type": "json"
+    }
+  }
+}

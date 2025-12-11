@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_page_blocks_feature_grids",
+  "info": {
+    "displayName": "feature-grid"
+  },
+  "options": {},
+  "attributes": {
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.feature"
+    }
+  }
+}

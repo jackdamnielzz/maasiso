@@ -1,0 +1,156 @@
+{
+    "_comment": "MAASISO SECURITY TEST TEMPLATE - NOT REAL MINER CONFIG",
+    "_description": "This is a SAFE template showing what a malicious XMRig config looks like",
+    "_purpose": "Security testing and Guardian monitoring validation",
+    "_incident": "Based on December 2025 cryptocurrency mining attack",
+    "_warning": "This file contains NO functional mining configuration",
+    
+    "SIMULATION_MARKER": "MAASISO-ATTACK-SIMULATION-TEST",
+    "IS_TEST_FILE": true,
+    
+    "autosave": true,
+    "cpu": {
+        "_comment": "Original malware used high CPU priority",
+        "enabled": false,
+        "huge-pages": false,
+        "hw-aes": null,
+        "priority": null,
+        "memory-pool": false,
+        "yield": true,
+        "max-threads-hint": 100,
+        "asm": true,
+        "argon2-impl": null,
+        "astrobwt-max-size": 550,
+        "astrobwt-avx2": false,
+        "cn/0": false,
+        "cn-lite/0": false
+    },
+    
+    "opencl": {
+        "enabled": false,
+        "cache": true,
+        "loader": null,
+        "platform": "AMD",
+        "adl": true
+    },
+    
+    "cuda": {
+        "enabled": false,
+        "loader": null,
+        "nvml": true
+    },
+    
+    "donate-level": 0,
+    "donate-over-proxy": 0,
+    
+    "log-file": null,
+    "pools": [
+        {
+            "_comment": "PRIMARY POOL - This is what the malware connected to",
+            "algo": null,
+            "coin": "monero",
+            "url": "pool.hashvault.pro:443",
+            "user": "FAKE_WALLET_ADDRESS_FOR_TESTING_ONLY_NOT_REAL",
+            "pass": "x",
+            "rig-id": "MAASISO-SIMULATION-TEST",
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": false,
+            "tls": true,
+            "tls-fingerprint": null,
+            "daemon": false,
+            "socks5": null,
+            "self-select": null,
+            "submit-to-origin": false,
+            "_NOTE": "SIMULATION - This pool entry is DISABLED and has FAKE wallet"
+        },
+        {
+            "_comment": "BACKUP POOL - Secondary connection target",
+            "algo": null,
+            "coin": "monero",
+            "url": "c3pool.org:443",
+            "user": "FAKE_WALLET_ADDRESS_FOR_TESTING_ONLY_NOT_REAL",
+            "pass": "x",
+            "rig-id": "MAASISO-SIMULATION-TEST",
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": false,
+            "tls": true,
+            "tls-fingerprint": null,
+            "daemon": false,
+            "_NOTE": "SIMULATION - This pool entry is DISABLED and has FAKE wallet"
+        }
+    ],
+    
+    "print-time": 60,
+    "health-print-time": 60,
+    "dmi": true,
+    "retries": 5,
+    "retry-pause": 5,
+    
+    "syslog": false,
+    "tls": {
+        "enabled": false,
+        "protocols": null,
+        "cert": null,
+        "cert_key": null,
+        "ciphers": null,
+        "ciphersuites": null,
+        "dhparam": null
+    },
+    
+    "dns": {
+        "ipv6": false,
+        "ttl": 30
+    },
+    
+    "user-agent": null,
+    "verbose": 0,
+    "watch": true,
+    "pause-on-battery": false,
+    "pause-on-active": false,
+    
+    "_DETECTION_INDICATORS": {
+        "pool_domains": [
+            "pool.hashvault.pro",
+            "c3pool.org",
+            "supportxmr.com",
+            "minexmr.com",
+            "nanopool.org"
+        ],
+        "suspicious_ports": [
+            443,
+            3333,
+            5555,
+            7777,
+            9999
+        ],
+        "wallet_patterns": [
+            "^4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$",
+            "^8[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$"
+        ],
+        "config_locations": [
+            "/root/.sshds/config.json",
+            "/etc/de/config.json",
+            "/tmp/config.json",
+            "~/.config/xmrig.json"
+        ]
+    },
+    
+    "_INCIDENT_REFERENCE": {
+        "date": "December 5-10, 2025",
+        "target": "MaasISO VPS Infrastructure",
+        "malware_type": "Cryptocurrency miner (XMRig-based)",
+        "primary_pool": "pool.hashvault.pro:443",
+        "backup_pool": "c3pool.org",
+        "persistence_methods": [
+            "systemd services",
+            "cron jobs",
+            "hidden directories"
+        ],
+        "binary_locations": [
+            "/etc/de/cX86",
+            "/root/.sshds/sshds"
+        ]
+    }
+}

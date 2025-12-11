@@ -15,8 +15,8 @@ export function HeroComponent({ data, className }: HeroProps) {
       {/* Background Image */}
       {data.backgroundImage && (
         <Image
-          src={data.backgroundImage.data.attributes.url}
-          alt={data.backgroundImage.data.attributes.alternativeText || ''}
+          src={data.backgroundImage.url}
+          alt={data.backgroundImage.alternativeText || ''}
           fill
           className="object-cover"
           priority

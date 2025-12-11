@@ -1,0 +1,62 @@
+# ==============================================================================
+# MAASISO SECURITY TEST TEMPLATE
+# Template: supdate.service
+# 
+# This is a TEMPLATE file for attack simulation testing.
+# Based on the December 2025 cryptocurrency mining incident.
+# 
+# Original malware used "supdate" (system update) as an auto-restart
+# wrapper service to ensure the cX86 miner stayed running.
+# ==============================================================================
+
+[Unit]
+Description=MAASISO SECURITY TEST - Simulated Supdate Service
+Documentation=https://maasiso.nl/security-testing
+# NOTE: This is a SECURITY TEST - Not a real malicious service
+# Original malware used innocuous names like "supdate" = "system update"
+
+# Original attack pattern:
+# Description=System Update Daemon
+# After=network.target system-update-service.service
+
+After=network.target
+
+[Service]
+Type=simple
+
+# SAFE: This command only echoes - does nothing harmful
+ExecStart=/bin/echo 'SIMULATION: This would restart the miner'
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# ExecStart=/etc/de/./cX86
+# ExecStartPre=/bin/sleep 30
+# ExecStopPost=/bin/systemctl restart supdate.service
+
+# SAFE: No restart enabled
+Restart=no
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# Restart=always
+# RestartSec=5
+# StartLimitInterval=0
+# StartLimitBurst=0
+
+# The original service was designed to:
+# 1. Wait for network connectivity
+# 2. Start the miner binary
+# 3. Automatically restart if killed
+# 4. Have no restart limits (infinite retries)
+
+[Install]
+# DISABLED FOR SAFETY - Do not enable this service
+# WantedBy=multi-user.target
+
+# ==============================================================================
+# DETECTION INDICATORS:
+# - Service name appears to be "system update" abbreviated
+# - Executes directly from /etc/de/ (unusual location)
+# - Uses "./" prefix to potentially evade detection
+# - Configured for infinite auto-restart
+# - Short restart interval (5 seconds)
+# - May have pre/post scripts for resilience
+# ==============================================================================

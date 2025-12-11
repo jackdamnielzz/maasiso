@@ -1,0 +1,59 @@
+# Dependencies (handled by Vercel)
+node_modules/
+
+# Build output
+.next/
+out/
+build/
+
+# Documentation and backup folders
+backups/
+cline_docs/
+docs/
+html5up-hyperspace/
+latest_manuals_may_2025/
+logs/
+memory-bank/
+my-rooflow-project/
+project-docs/
+
+# Scripts not needed for deployment
+scripts/
+
+# Security and sensitive files
+.env
+.env.local
+*.pem
+*.key
+*.crt
+ssh-keys/
+
+# Development files
+.cursor/
+.roo/
+.vscode/
+*.log
+
+# Test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+__tests__/
+
+# Old/backup config files
+*.bak
+*.fixed
+*.tmp
+nginx.conf
+nginx.conf.tmp
+
+# Large image folders that are likely duplicates
+favicon_io/
+favicon_io (1)/
+images/
+
+# Misc
+.DS_Store
+*.pem
+.git/

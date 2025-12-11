@@ -53,10 +53,38 @@
   .hero-text {
     @apply text-xl text-white/90 leading-relaxed;
   }
+
+  .primary-button {
+    @apply inline-block bg-[#FF8B00] text-white px-8 py-4 rounded-lg font-bold 
+           hover:bg-[#FF9B20] transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+
+  /* New animation classes */
+  .animate-pulse-slow {
+    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .delay-700 {
+    animation-delay: 700ms;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Custom animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.3;
   }
 }

@@ -2,11 +2,11 @@
 
 ## Overview
 
-This guide explains how to quickly deploy local frontend changes to VPS2 (147.93.62.188) using VS Code's SFTP extension. The frontend application communicates with our Strapi CMS backend running on VPS1 (147.93.62.187).
+This guide explains how to quickly deploy local frontend changes to VPS2 (147.93.62.188) using VS Code's SFTP extension. The frontend application communicates with our Strapi CMS backend running on VPS1 (153.92.223.23).
 
 ## System Architecture
 
-- **VPS1 (147.93.62.187)**: Runs our Strapi CMS backend
+- **VPS1 (153.92.223.23)**: Runs our Strapi CMS backend
   - Port: 1337
   - Purpose: Content management and API
   - Note: This server is managed separately and not part of our deployment process
@@ -155,7 +155,7 @@ The script automatically manages these connections:
 
 ```env
 NEXT_PUBLIC_API_URL=http://147.93.62.188:3000
-NEXT_PUBLIC_BACKEND_URL=http://147.93.62.187:1337
+NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 ```
 
 This ensures your frontend properly communicates with:

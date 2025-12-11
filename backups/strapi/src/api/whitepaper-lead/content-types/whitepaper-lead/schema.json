@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "whitepaper_leads",
+  "info": {
+    "singularName": "whitepaper-lead",
+    "pluralName": "whitepaper-leads",
+    "displayName": "Whitepaper Lead"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "Company": {
+      "type": "string",
+      "required": true
+    },
+    "subscribeNewsletter": {
+      "type": "boolean",
+      "default": false
+    },
+    "whitepaperTitle": {
+      "type": "string",
+      "required": true
+    },
+    "downloadDate": {
+      "type": "datetime"
+    },
+    "leadStatus": {
+      "type": "enumeration",
+      "enum": [
+        "new",
+        "contacted",
+        "qualified",
+        "converted"
+      ],
+      "default": "new"
+    },
+    "notes": {
+      "type": "blocks"
+    }
+  }
+}

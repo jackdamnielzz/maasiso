@@ -169,6 +169,7 @@ export interface WebVitalMetric {
   rating: 'good' | 'needs-improvement' | 'poor';
   delta?: number;
   entries?: PerformanceEntry[];
+  timestamp: number;
 }
 
 export interface PerformanceMetric {
@@ -212,6 +213,9 @@ export interface MonitoringService {
   trackResourceTiming(timing: ResourceTiming): void;
   trackNavigationTiming(timing: NavigationTiming): void;
   flushMetrics(): Promise<void>;
+  getMetrics(): Record<string, number>;
+  getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor';
+  cleanup(): void;
 }
 
 export type MonitoringEventType = typeof MonitoringEventTypes[keyof typeof MonitoringEventTypes];

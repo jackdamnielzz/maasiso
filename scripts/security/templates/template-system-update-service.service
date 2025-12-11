@@ -1,0 +1,56 @@
+# ==============================================================================
+# MAASISO SECURITY TEST TEMPLATE
+# Template: system-update-service.service
+# 
+# This is a TEMPLATE file for attack simulation testing.
+# Based on the December 2025 cryptocurrency mining incident.
+# 
+# Original malware disguised itself as a system update service to persist
+# on the system and restart the mining process after reboots.
+# ==============================================================================
+
+[Unit]
+Description=MAASISO SECURITY TEST - Simulated System Update Service
+Documentation=https://maasiso.nl/security-testing
+# NOTE: This is a SECURITY TEST - Not a real malicious service
+# Original malware used generic names to avoid detection
+
+# Original attack pattern:
+# Description=System Update Service
+# After=network.target
+
+After=network.target
+
+[Service]
+Type=simple
+
+# SAFE: This command only echoes - does nothing harmful
+ExecStart=/bin/echo 'SIMULATION: This would run the miner'
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# ExecStart=/etc/de/cX86
+# ExecStart=/etc/de/./cX86 -c /etc/de/config.json
+
+# SAFE: No restart enabled
+Restart=no
+
+# ORIGINAL MALICIOUS PATTERN (DO NOT USE):
+# Restart=always
+# RestartSec=10
+# StartLimitInterval=0
+
+# Process settings (original malware hid resource usage)
+# Nice=19
+# CPUWeight=10
+
+[Install]
+# DISABLED FOR SAFETY - Do not enable this service
+# WantedBy=multi-user.target
+
+# ==============================================================================
+# DETECTION INDICATORS:
+# - Generic service name mimicking system services
+# - Executes binary from /etc/de/ directory
+# - Auto-restart on failure with no limit
+# - May run with reduced priority to avoid detection
+# ==============================================================================

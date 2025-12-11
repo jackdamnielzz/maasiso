@@ -14,8 +14,6 @@ export interface RetryConfig {
   maxDelay?: number;
   backoffFactor?: number;
   retryableStatuses?: number[];
-  useCache?: boolean;
-  cacheTime?: number;
 }
 
 interface RetryState {
@@ -36,13 +34,8 @@ const defaultConfig: Required<RetryConfig> = {
   initialDelay: 1000, // 1 second
   maxDelay: 10000, // 10 seconds
   backoffFactor: 2,
-  retryableStatuses: [401, 408, 429, 500, 502, 503, 504],
-  useCache: true,
-  cacheTime: 5 * 60 * 1000 // 5 minutes
+  retryableStatuses: [401, 408, 429, 500, 502, 503, 504]
 };
-
-// Cache for stale-while-revalidate strategy
-const responseCache = new Map<string, { data: any; timestamp: number }>();
 
 function calculateDelay(attempt: number, config: Required<RetryConfig>, errorType: RetryErrorType): number {
   let delay = config.initialDelay * Math.pow(config.backoffFactor, attempt - 1);
@@ -111,10 +104,6 @@ function isRetryableError(error: Error): boolean {
 
 function isRetryableStatus(status: number, retryableStatuses: number[]): boolean {
   return retryableStatuses.includes(status);
-}
-
-function getCacheKey(url: string, options?: RequestInit): string {
-  return `${options?.method || 'GET'}:${url}:${JSON.stringify(options?.body || '')}`;
 }
 
 export async function withRetry<T>(
@@ -322,19 +311,6 @@ export async function fetchWithRetry(
   retryConfig?: RetryConfig
 ): Promise<Response> {
   const fullConfig = { ...defaultConfig, ...retryConfig };
-  const cacheKey = getCacheKey(url, options);
-
-  // Try to return cached data while revalidating
-  if (fullConfig.useCache) {
-    const cached = responseCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < fullConfig.cacheTime) {
-      // Return cached data immediately and revalidate in background
-      revalidateCache(cacheKey, url, options, fullConfig);
-      return new Response(JSON.stringify(cached.data), {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  }
 
   return withRetry(async () => {
     const response = await fetch(url, {
@@ -361,35 +337,6 @@ export async function fetchWithRetry(
       throw response;
     }
 
-    // Cache successful response
-    if (fullConfig.useCache && response.ok) {
-      const data = await response.clone().json();
-      responseCache.set(cacheKey, {
-        data,
-        timestamp: Date.now()
-      });
-    }
-
     return response;
   }, fullConfig);
-}
-
-async function revalidateCache(
-  cacheKey: string,
-  url: string,
-  options?: RequestInit,
-  config?: RetryConfig
-) {
-  try {
-    const response = await fetch(url, options);
-    if (response.ok) {
-      const data = await response.json();
-      responseCache.set(cacheKey, {
-        data,
-        timestamp: Date.now()
-      });
-    }
-  } catch (error) {
-    console.warn('Background revalidation failed:', error);
-  }
 }

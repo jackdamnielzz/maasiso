@@ -1,6 +1,6 @@
 export default function NewsLoading() {
   return (
-    <div className="bg-white py-24">
+    <div className="bg-white py-16 md:py-24">
       <div className="container-custom">
         {/* Skeleton for title */}
         <div className="h-12 w-32 bg-[#091E42]/10 rounded-lg mb-8 animate-pulse" />
@@ -13,13 +13,13 @@ export default function NewsLoading() {
         <div className="h-10 w-64 bg-[#091E42]/10 rounded-md mb-8 animate-pulse" />
         
         {/* Skeleton grid for news articles */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-[90%] md:max-w-5xl mx-auto">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col min-h-[400px]">
               {/* Skeleton for image */}
               <div className="h-48 bg-[#091E42]/10 animate-pulse" />
               
-              <div className="p-6">
+              <div className="p-6 md:p-8 flex-grow">
                 {/* Skeleton for title */}
                 <div className="h-7 w-full bg-[#091E42]/10 rounded mb-4 animate-pulse" />
                 
@@ -28,7 +28,7 @@ export default function NewsLoading() {
                 <div className="h-4 w-3/4 bg-[#091E42]/10 rounded mb-4 animate-pulse" />
                 
                 {/* Skeleton for metadata */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mt-auto pt-4">
                   <div className="h-4 w-24 bg-[#091E42]/10 rounded animate-pulse" />
                   <div className="h-4 w-20 bg-[#091E42]/10 rounded animate-pulse" />
                 </div>

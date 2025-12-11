@@ -1,0 +1,41 @@
+# Strapi Environment Variables Backup
+# Date: December 10, 2025
+# Server: Backend VPS (153.92.223.23)
+# IMPORTANT: These credentials should be regenerated for the new Railway deployment
+
+# =============================================================================
+# BACKEND STRAPI CONFIGURATION
+# =============================================================================
+
+HOST=0.0.0.0
+PORT=1337
+
+# App Keys (REGENERATE THESE FOR RAILWAY)
+APP_KEYS=t8P7F6dZuYjQ4ygUcoe3Rw==,9pIzjHGLjibgYI4YZ1DTDw==,Bl6uZXX0kxTRBgit+YgQWQ==,ABws390O2RTwN56PtSMYWw==
+
+# JWT Secrets (REGENERATE THESE FOR RAILWAY)
+API_TOKEN_SALT=b426c033d17b1e9c6725e2f6
+ADMIN_JWT_SECRET=ehkO3f5SoSuCfaeZhVtprQ==
+JWT_SECRET=d9c8b7a6f5e4d3c2b1a0
+TRANSFER_TOKEN_SALT=c537d144e8f2a9d3b5c4n6m7
+
+# Database Config (Will change for Railway PostgreSQL)
+DATABASE_CLIENT=postgres
+DATABASE_HOST=127.0.0.1
+DATABASE_PORT=5432
+DATABASE_NAME=strapi_db
+DATABASE_USERNAME=strapi
+DATABASE_PASSWORD=Niekties@100
+DATABASE_SSL=false
+DATABASE_SCHEMA=public
+
+# =============================================================================
+# NOTES FOR RAILWAY MIGRATION
+# =============================================================================
+# 1. Railway will provide new DATABASE_* values
+# 2. Generate new APP_KEYS, JWT secrets for security
+# 3. Set DATABASE_SSL=true for Railway
+# 4. Add Cloudinary credentials for media storage:
+#    - CLOUDINARY_NAME=your_cloud_name
+#    - CLOUDINARY_KEY=your_api_key
+#    - CLOUDINARY_SECRET=your_api_secret

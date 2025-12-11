@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@/components/providers/NavigationProvider';
-import { search, getCategories } from '@/lib/api';
-import { SearchParams, Category, BlogPost, NewsArticle } from '@/lib/types';
+import { search } from '@/lib/api';
+import { SearchParams, BlogPost, NewsArticle } from '@/lib/types';
 import { validateSearchQuery, validateUrlParam } from '@/lib/validation';
 import { SearchResults } from './SearchResults';
 import SearchAnalytics from './SearchAnalytics';
@@ -15,7 +15,6 @@ interface SearchData {
     blogTotal: number;
     newsTotal: number;
   };
-  categories: Category[];
 }
 
 export default function SearchPageClientWrapper() {
@@ -40,7 +39,6 @@ export default function SearchPageClientWrapper() {
 
         // Validate and collect all parameters
         const paramValidations = {
-          category: params.get('category'),
           type: params.get('type'),
           dateFrom: params.get('dateFrom'),
           dateTo: params.get('dateTo'),
@@ -81,7 +79,6 @@ export default function SearchPageClientWrapper() {
         const apiParams: SearchParams = {
           query,
           filters: {
-            categories: validatedParams.category ? [validatedParams.category] : undefined,
             contentType: validatedParams.type ? [validatedParams.type as 'blog' | 'news'] : undefined,
             dateFrom: validatedParams.dateFrom,
             dateTo: validatedParams.dateTo,
@@ -95,10 +92,7 @@ export default function SearchPageClientWrapper() {
         };
 
         // Fetch data
-        const [categories, results] = await Promise.all([
-          getCategories(),
-          search(apiParams)
-        ]);
+        const results = await search(apiParams);
 
         setData({
           blogPosts: results.blogPosts.data,
@@ -106,8 +100,7 @@ export default function SearchPageClientWrapper() {
           pagination: {
             blogTotal: results.blogPosts.meta.pagination.total,
             newsTotal: results.newsArticles.meta.pagination.total
-          },
-          categories
+          }
         });
         setError(null);
       } catch (err) {
@@ -159,7 +152,6 @@ export default function SearchPageClientWrapper() {
         query={query}
         totalResults={totalResults}
         filters={{
-          category: searchParams?.get('category') || undefined,
           contentType: (searchParams?.get('type') as 'blog' | 'news' | undefined) || undefined,
           dateFrom: searchParams?.get('dateFrom') || undefined,
           dateTo: searchParams?.get('dateTo') || undefined,
@@ -179,12 +171,10 @@ export default function SearchPageClientWrapper() {
       ) : (
         <SearchResults
           query={query}
-          categories={data.categories}
           blogPosts={data.blogPosts}
           newsArticles={data.newsArticles}
           blogTotal={data.pagination.blogTotal}
           newsTotal={data.pagination.newsTotal}
-          selectedCategory={searchParams?.get('category') || undefined}
         />
       )}
     </main>

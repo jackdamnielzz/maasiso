@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import BlogPostPerformance from './BlogPostPerformance';
-import { initializePerformanceMonitoring, measurePageLoad } from '@/lib/monitoring/performance';
+import { initPerformanceMonitoring, measurePageLoad } from '@/lib/monitoring/performance';
 
 // Mock performance monitoring functions
 jest.mock('@/lib/monitoring/performance', () => ({
-  initializePerformanceMonitoring: jest.fn(),
+  initPerformanceMonitoring: jest.fn(),
   measurePageLoad: jest.fn()
 }));
 
@@ -46,7 +46,7 @@ describe('BlogPostPerformance', () => {
   it('initializes performance monitoring on mount', () => {
     render(<BlogPostPerformance post={mockPost} />);
 
-    expect(initializePerformanceMonitoring).toHaveBeenCalledTimes(1);
+    expect(initPerformanceMonitoring).toHaveBeenCalledTimes(1);
     expect(measurePageLoad).toHaveBeenCalledWith(`blog-${mockPost.slug}`);
   });
 
@@ -93,7 +93,7 @@ describe('BlogPostPerformance', () => {
     const { rerender } = render(<BlogPostPerformance post={mockPost} />);
 
     // Initial render calls
-    expect(initializePerformanceMonitoring).toHaveBeenCalledTimes(1);
+    expect(initPerformanceMonitoring).toHaveBeenCalledTimes(1);
     expect(measurePageLoad).toHaveBeenCalledTimes(1);
 
     // Update with new post
@@ -105,7 +105,7 @@ describe('BlogPostPerformance', () => {
     rerender(<BlogPostPerformance post={newPost} />);
 
     // Should be called again
-    expect(initializePerformanceMonitoring).toHaveBeenCalledTimes(2);
+    expect(initPerformanceMonitoring).toHaveBeenCalledTimes(2);
     expect(measurePageLoad).toHaveBeenCalledTimes(2);
     expect(measurePageLoad).toHaveBeenLastCalledWith('blog-new-test-post');
   });

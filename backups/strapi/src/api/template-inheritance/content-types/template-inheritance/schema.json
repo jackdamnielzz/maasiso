@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "template_inheritances",
+  "info": {
+    "singularName": "template-inheritance",
+    "pluralName": "template-inheritances",
+    "displayName": "Template Inheritance"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "richtext",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "parentTemplate": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::page-template.page-template"
+    },
+    "childTemplate": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::page-template.page-template"
+    },
+    "overrides": {
+      "type": "json"
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_shared_cta_buttons",
+  "info": {
+    "displayName": "cta-button"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": [
+        "primary",
+        "secondary"
+      ]
+    }
+  }
+}

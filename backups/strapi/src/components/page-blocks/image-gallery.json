@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_page_blocks_image_galleries",
+  "info": {
+    "displayName": "image-gallery"
+  },
+  "options": {},
+  "attributes": {
+    "images": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "layout": {
+      "type": "enumeration",
+      "enum": [
+        "grid",
+        "carousel",
+        "masonry"
+      ]
+    }
+  }
+}

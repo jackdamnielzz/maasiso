@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_page_blocks_heroes",
+  "info": {
+    "displayName": "Hero",
+    "description": "Hero section component for pages"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "ctaButton": {
+      "type": "component",
+      "component": "page-blocks.button",
+      "required": false
+    }
+  }
+}

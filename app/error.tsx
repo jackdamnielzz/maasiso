@@ -1,6 +1,6 @@
 'use client';
 
-import ErrorContentWrapper from '@/components/error/ErrorContentWrapper';
+import ErrorContentWrapper from '../src/components/error/ErrorContentWrapper';
 
 export default function Error({
   error,

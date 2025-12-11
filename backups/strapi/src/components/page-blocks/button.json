@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_page_blocks_buttons",
+  "info": {
+    "displayName": "Button",
+    "description": "CTA button component"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary"],
+      "default": "primary"
+    }
+  }
+}

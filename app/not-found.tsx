@@ -1,4 +1,4 @@
-import NotFoundContentWrapper from '@/components/error/NotFoundContentWrapper';
+import NotFoundContentWrapper from '../src/components/error/NotFoundContentWrapper';
 
 export default function NotFound() {
   return <NotFoundContentWrapper />;

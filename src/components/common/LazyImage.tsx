@@ -116,6 +116,11 @@ export default function LazyImage({
     loading: priority ? ('eager' as const) : ('lazy' as const),
     decoding: 'async' as const,
     fetchPriority: priority ? ('high' as const) : ('auto' as const),
+    // Add preload 'as' attribute for priority images
+    ...(priority && {
+      rel: 'preload' as const,
+      as: 'image' as const,
+    })
   }), [src, alt, width, height, fill, priority, imageClass, sizes, quality]);
 
   return (

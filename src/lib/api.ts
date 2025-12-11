@@ -54,16 +54,19 @@ const getBaseUrl = () => {
 };
 
 const API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-
-// Ensure proper Bearer token format and handle missing token
-const getAuthHeaders = () => {
+ 
+// Ensure proper Bearer token format and handle missing token.
+// Return a HeadersInit-compatible object. We cast to HeadersInit to satisfy
+// TypeScript when spreading into fetch headers.
+const getAuthHeaders = (): HeadersInit => {
   if (!API_TOKEN) {
-    throw new APIError('API token is missing', 401);
+    console.warn('[getAuthHeaders] NEXT_PUBLIC_STRAPI_TOKEN is not set — proceeding without Authorization header');
+    return { 'Content-Type': 'application/json' } as HeadersInit;
   }
   return {
-    'Authorization': `Bearer ${API_TOKEN}`,
+    Authorization: `Bearer ${API_TOKEN}`,
     'Content-Type': 'application/json'
-  };
+  } as HeadersInit;
 };
 
 async function fetchWithBaseUrl<T>(

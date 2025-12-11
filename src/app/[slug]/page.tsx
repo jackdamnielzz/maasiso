@@ -18,6 +18,13 @@ export async function generateMetadata(
   try {
     const page = await getPage(slug);
     
+    if (!page) {
+      return {
+        title: 'Page Not Found',
+        description: 'The requested page could not be found.',
+      };
+    }
+
     const metadata: Metadata = {
       title: page.seoMetadata?.metaTitle || page.title,
       description: page.seoMetadata?.metaDescription,
@@ -48,6 +55,10 @@ export default async function DynamicPage(
   
   try {
     const page = await getPage(slug);
+
+    if (!page) {
+      notFound();
+    }
 
     return (
       <main className="min-h-screen">
