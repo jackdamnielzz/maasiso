@@ -5,6 +5,7 @@ import { BlogPost } from '../../lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatDate } from '../../lib/utils';
+import { getImageUrl } from '@/lib/utils/imageUtils';
 
 interface RelatedPostsProps {
   currentSlug: string;
@@ -90,7 +91,7 @@ export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsP
               {post.featuredImage && (
                 <div className="relative w-full h-48">
                   <Image
-                    src={post.featuredImage.url}
+                    src={getImageUrl(post.featuredImage, 'small')}
                     alt={post.featuredImage.alternativeText || post.title}
                     fill
                     className="object-cover"

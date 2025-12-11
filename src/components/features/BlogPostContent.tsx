@@ -10,6 +10,7 @@ import ErrorBoundary from '../common/ErrorBoundary';
 import ScrollToTop from '../common/ScrollToTop';
 import BackToBlog from '../common/BackToBlog';
 import remarkGfm from 'remark-gfm';
+import { getImageUrl } from '@/lib/utils/imageUtils';
 
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false
@@ -96,7 +97,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
           {post.featuredImage && (
             <div className="relative aspect-[2/1] w-full mb-10 rounded-lg overflow-hidden shadow-lg">
               <LazyImage
-                src={`/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`}
+                src={getImageUrl(post.featuredImage, 'large')}
                 alt={post.featuredImage.alternativeText || post.title}
                 fill
                 priority
@@ -163,7 +164,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
                   {post.featuredImage && (
                     <div className="relative aspect-[2/1] w-full mb-4 overflow-hidden">
                       <LazyImage
-                        src={`/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`}
+                        src={getImageUrl(post.featuredImage, 'small')}
                         alt={post.featuredImage.alternativeText || post.title}
                         fill
                         className="object-cover transition-all duration-200 group-hover:scale-102 group-hover:brightness-102"

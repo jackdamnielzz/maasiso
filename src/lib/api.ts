@@ -38,19 +38,23 @@ class APIError extends Error {
   }
 }
 
-// Always use the API URL for requests
+// Always route content requests through the Next.js proxy so that
+// authentication is handled server-side with STRAPI_TOKEN.
 const getBaseUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   
   console.log('[getBaseUrl] Environment Debug:', {
     NEXT_PUBLIC_API_URL: apiUrl,
     NEXT_PUBLIC_SITE_URL: siteUrl,
     isServer: typeof window === 'undefined',
-    nodeEnv: process.env.NODE_ENV
+    nodeEnv: process.env.NODE_ENV,
+    baseUrl: '/api/proxy'
   });
   
-  return apiUrl || '/api/proxy';
+  // Force all frontend calls through the proxy. The proxy will forward to
+  // `${STRAPI_URL}/api/...` with the correct server-side token.
+  return '/api/proxy';
 };
 
 const API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
@@ -223,30 +227,85 @@ function mapWhitepaper(data: any | null): Whitepaper | null {
   };
 }
 
+/**
+ * Cloudinary cloud name for this project
+ */
+const CLOUDINARY_CLOUD_NAME = 'dseckqnba';
+
+/**
+ * Constructs a Cloudinary URL from provider metadata
+ * @param publicId The Cloudinary public_id
+ * @param extension The file extension (e.g., '.jpg', '.png')
+ * @returns Full Cloudinary URL
+ */
+function buildCloudinaryUrl(publicId: string, extension: string = ''): string {
+  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${publicId}${extension}`;
+}
+
+/**
+ * Maps raw Strapi image data to our Image type.
+ * Handles Cloudinary images by constructing proper URLs from provider_metadata.
+ *
+ * When Strapi uses Cloudinary as the upload provider, it stores:
+ * - url: Local path like "/uploads/image_abc123.jpg" (which doesn't work)
+ * - provider: "cloudinary"
+ * - provider_metadata: { public_id: "maasiso/image_abc123", ... }
+ *
+ * This function detects Cloudinary images and constructs the correct URL.
+ */
 function mapImage(data: any): Image | undefined {
   if (!data) {
     return undefined;
   }
-  // Handle flat image structure
+  
+  // Handle nested attributes structure (Strapi v4/v5)
+  const attrs = data.attributes || data;
+  const imageId = data.id || attrs.id;
+  
+  // Determine the correct URL for this image
+  let imageUrl = attrs.url || '';
+  
+  // Check if this is a Cloudinary image with provider metadata
+  if (attrs.provider === 'cloudinary' && attrs.provider_metadata?.public_id) {
+    const publicId = attrs.provider_metadata.public_id;
+    const extension = attrs.ext || '';
+    imageUrl = buildCloudinaryUrl(publicId, extension);
+    
+    console.log('[mapImage] Constructed Cloudinary URL:', {
+      originalUrl: attrs.url,
+      publicId,
+      extension,
+      newUrl: imageUrl
+    });
+  }
+  // Also check if URL is already a Cloudinary URL (no transformation needed)
+  else if (imageUrl && (imageUrl.includes('res.cloudinary.com') || imageUrl.includes('cloudinary.com'))) {
+    console.log('[mapImage] Image already has Cloudinary URL:', imageUrl);
+  }
+  // For non-Cloudinary images, keep the original URL (will be proxied)
+  else {
+    console.log('[mapImage] Non-Cloudinary image, keeping original URL:', imageUrl);
+  }
+  
   return {
-    id: String(data.id),
-    name: data.name || '',
-    alternativeText: data.alternativeText || '',
-    caption: data.caption || '',
-    width: data.width || 0,
-    height: data.height || 0,
-    formats: data.formats || {},
-    hash: data.hash || '',
-    ext: data.ext || '',
-    mime: data.mime || '',
-    size: data.size || 0,
-    url: data.url || '',
-    previewUrl: data.previewUrl,
-    provider: data.provider || '',
-    provider_metadata: data.provider_metadata,
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
-    publishedAt: data.publishedAt || new Date().toISOString()
+    id: String(imageId),
+    name: attrs.name || '',
+    alternativeText: attrs.alternativeText || '',
+    caption: attrs.caption || '',
+    width: attrs.width || 0,
+    height: attrs.height || 0,
+    formats: attrs.formats || {},
+    hash: attrs.hash || '',
+    ext: attrs.ext || '',
+    mime: attrs.mime || '',
+    size: attrs.size || 0,
+    url: imageUrl,
+    previewUrl: attrs.previewUrl,
+    provider: attrs.provider || '',
+    provider_metadata: attrs.provider_metadata,
+    createdAt: attrs.createdAt || new Date().toISOString(),
+    updatedAt: attrs.updatedAt || new Date().toISOString(),
+    publishedAt: attrs.publishedAt || new Date().toISOString()
   };
 }
 
@@ -304,44 +363,68 @@ function validatePageComponent(component: RawStrapiComponent, index: number): bo
   return isValid;
 }
 
-function mapPage(data: any | null): Page | null {
-  if (!data) {
+function mapPage(rawData: any | null): Page | null {
+  if (!rawData) {
     console.log('mapPage received null data');
     return null;
   }
-  
+
+  // Normalize Strapi data/attributes nesting so we always work with a flat object
+  let data: any = rawData;
+
+  try {
+    // Unwrap any number of nested `attributes` layers (e.g. StrapiData<T>, StrapiRawPage, etc.)
+    while (data && typeof data === 'object' && 'attributes' in data && (data as any).attributes) {
+      const current = data as any;
+      const attrs = current.attributes;
+      data = {
+        id: current.id ?? attrs.id,
+        ...attrs
+      };
+    }
+  } catch (e) {
+    console.warn('[mapPage] Failed to normalize Strapi page data structure:', e);
+  }
+
+  if (!data) {
+    console.log('mapPage received empty data after normalization');
+    return null;
+  }
+
   console.log('Page data structure:', {
     id: data.id,
     availableFields: Object.keys(data),
     hasLayout: Array.isArray(data.layout),
     layoutLength: Array.isArray(data.layout) ? data.layout.length : 0
   });
-  
+
   const seoMetadata: SEOMetadata = {
     metaTitle: data.seoTitle || '',
     metaDescription: data.seoDescription || '',
     keywords: data.seoKeywords || ''
   };
-  
-  if (Array.isArray(data.layout)) {
+
+  const layout = Array.isArray(data.layout) ? data.layout : [];
+
+  if (layout.length > 0) {
     let validationIssues = false;
-    data.layout.forEach((component: RawStrapiComponent, index: number) => {
+    layout.forEach((component: RawStrapiComponent, index: number) => {
       if (!validatePageComponent(component, index)) {
         validationIssues = true;
       }
     });
-    
+
     if (validationIssues) {
       console.warn('[API Validation] Some components have validation issues. Check logs above for details.');
     }
   }
-  
+
   return {
     id: String(data.id),
     title: data.title || data.Title || '',
     slug: data.slug || '',
     seoMetadata,
-    layout: data.layout?.map((component: RawStrapiComponent) => {
+    layout: layout.map((component: RawStrapiComponent) => {
       const baseComponent = {
         id: component.id,
         __component: component.__component
@@ -374,7 +457,7 @@ function mapPage(data: any | null): Page | null {
             hasFeatures: 'features' in component,
             componentKeys: Object.keys(component)
           });
-          
+
           return {
             ...baseComponent,
             features: extractFeatures(component)
@@ -389,7 +472,7 @@ function mapPage(data: any | null): Page | null {
         default:
           return baseComponent;
       }
-    }) || [],
+    }),
     publishedAt: data.publishedAt,
     createdAt: data.createdAt || new Date().toISOString(),
     updatedAt: data.updatedAt || new Date().toISOString()
@@ -411,6 +494,8 @@ export async function getPage(slug: string): Promise<Page | null> {
       'populate[4]=layout.ctaButton'
     ].join('&');
 
+    // Strapi v5 REST endpoints are all prefixed with /api, so make sure we
+    // call /api/pages here instead of the bare /pages collection path.
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<StrapiRawPage>>(
       `/pages?filters[slug][$eq]=${validatedSlug}&${indexedPopulate}`,
       { next: { revalidate: 60 } }
@@ -727,20 +812,11 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
             updatedAt: category.attributes?.updatedAt || new Date().toISOString()
           }))
         : [],
+      // Use mapImage to properly handle Cloudinary URLs from provider_metadata
       featuredImage: article.featuredImage?.data?.attributes
-        ? {
-            ...article.featuredImage.data.attributes,
-            url: article.featuredImage.data.attributes.url.startsWith('http')
-              ? article.featuredImage.data.attributes.url
-              : `${getBaseUrl()}${article.featuredImage.data.attributes.url}`
-          }
-        : article.featuredImage // Handle direct image data
-          ? {
-              ...article.featuredImage,
-              url: article.featuredImage.url.startsWith('http')
-                ? article.featuredImage.url
-                : `${getBaseUrl()}${article.featuredImage.url}`
-            }
+        ? mapImage({ id: article.featuredImage.data.id, ...article.featuredImage.data.attributes })
+        : article.featuredImage
+          ? mapImage(article.featuredImage)
           : undefined,
       seoTitle: article.seoTitle || article.title,
       seoDescription: article.seoDescription || article.summary || '',
@@ -852,6 +928,7 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
     const validatedSlug = validateSlug(slug);
     console.log('Fetching blog post with slug:', validatedSlug);
 
+    // Strapi v5 REST collection is exposed at /api/blog-posts
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
       `/blog-posts?filters[slug][$eq]=${validatedSlug}&populate=*`,
       {
@@ -906,7 +983,7 @@ export async function search(params: SearchParams): Promise<{
     const sort = params.sort ? `sort=${params.sort.field}:${params.sort.direction}` : 'sort=publishedAt:desc';
 
     const blogData = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
-      `/api/proxy/blog-posts?${filters.join('&')}&${sort}&pagination[page]=${params.page}&pagination[pageSize]=${params.pageSize}&populate=*`,
+      `/blog-posts?${filters.join('&')}&${sort}&pagination[page]=${params.page}&pagination[pageSize]=${params.pageSize}&populate=*`,
       { next: { revalidate: 60 } }
     );
 
@@ -943,8 +1020,8 @@ export async function search(params: SearchParams): Promise<{
 }
 
 export async function getBlogPosts(
-  page = 1, 
-  pageSize = 10, 
+  page = 1,
+  pageSize = 10,
   searchQuery?: string,
   categoryId?: string,
   tagIds?: string[]
@@ -975,8 +1052,28 @@ export async function getBlogPosts(
     
     const filters = filterParts.length > 0 ? `&${filterParts.join('&')}` : '';
     
+    // Strapi v5 REST collection - use explicit populate for featuredImage
+    // Using indexed populate to ensure images are properly populated
+    const populateParams = [
+      'populate[featuredImage][fields][0]=url',
+      'populate[featuredImage][fields][1]=alternativeText',
+      'populate[featuredImage][fields][2]=width',
+      'populate[featuredImage][fields][3]=height',
+      'populate[featuredImage][fields][4]=formats',
+      'populate[featuredImage][fields][5]=name',
+      'populate[featuredImage][fields][6]=hash',
+      'populate[featuredImage][fields][7]=ext',
+      'populate[featuredImage][fields][8]=mime',
+      'populate[featuredImage][fields][9]=size',
+      'populate[tags][fields][0]=id',
+      'populate[tags][fields][1]=name',
+      'populate[categories][fields][0]=id',
+      'populate[categories][fields][1]=name',
+      'populate[categories][fields][2]=slug'
+    ].join('&');
+    
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
-      `/blog-posts?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*&sort=publishedAt:desc${filters}`,
+      `/blog-posts?pagination[page]=${page}&pagination[pageSize]=${pageSize}&${populateParams}&sort=publishedAt:desc${filters}`,
       {
         next: { revalidate: 60 },
         headers: {
@@ -992,12 +1089,19 @@ export async function getBlogPosts(
       dataLength: data?.data?.length,
       meta: data?.meta,
       firstPost: data?.data?.[0],
+      firstPostImage: (data?.data?.[0] as any)?.featuredImage,
+      firstPostImageKeys: (data?.data?.[0] as any)?.featuredImage ? Object.keys((data.data[0] as any).featuredImage) : 'no image'
     });
 
     const posts = data.data
       .map(post => {
         const mappedPost = mapBlogPost(post);
-        console.log('Mapped post:', mappedPost);
+        console.log('Mapped post:', {
+          id: mappedPost?.id,
+          title: mappedPost?.title,
+          hasFeaturedImage: !!mappedPost?.featuredImage,
+          featuredImageUrl: mappedPost?.featuredImage?.url
+        });
         return mappedPost;
       })
       .filter((post): post is BlogPost => post !== null);
@@ -1007,7 +1111,7 @@ export async function getBlogPosts(
       total: data.meta.pagination?.total || 0
     };
     
-    console.log('Final posts result:', result);
+    console.log('Final posts result:', { postsCount: result.posts.length, total: result.total });
     return result;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
@@ -1019,6 +1123,7 @@ export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepa
   try {
     console.log('Fetching whitepapers with params:', { page, pageSize });
     
+    // Whitepaper collection is exposed as /api/whitepapers in Strapi v5
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
       `/whitepapers?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*`,
       {

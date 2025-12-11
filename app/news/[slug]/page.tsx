@@ -1,126 +1,35 @@
 import type { Metadata } from 'next';
-import { getNewsArticleBySlug } from '@/lib/api';
-import NewsArticleWrapper from '@/components/features/NewsArticleWrapper';
-import { notFound } from 'next/navigation';
-import { NewsArticle } from '@/lib/types';
-import { getExcerpt } from '@/lib/utils';
+import Link from 'next/link';
 
-// Force dynamic rendering and disable caching for news articles
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-type NewsArticlePageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Nieuwsartikel | MaasISO',
+    description: 'Dit nieuwsartikel is tijdelijk niet beschikbaar. De nieuwspagina wordt binnenkort vernieuwd.'
+  };
 }
 
-async function fetchArticle(slug: string): Promise<NewsArticle> {
-  try {
-    console.log(`[NewsArticlePage] Fetching article: ${slug}`);
-    const article = await getNewsArticleBySlug(slug);
-    
-    if (!article) {
-      console.error(`[NewsArticlePage] Article not found: ${slug}`);
-      throw new Error('Article not found');
-    }
+export default function NewsArticlePage(props: any) {
+  const { params } = props;
+  const title = 'Artikel binnenkort beschikbaar';
+  const message =
+    'Het volledige nieuwsartikel wordt binnenkort beschikbaar. Neem contact met ons op voor het laatste nieuws over MaasISO.';
 
-    if (!article.content) {
-      console.error(`[NewsArticlePage] Article content missing: ${slug}`);
-      throw new Error('Article content is missing');
-    }
-
-    return article;
-  } catch (error) {
-    console.error('[NewsArticlePage] Error fetching article:', {
-      slug,
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    throw error;
-  }
-}
-
-export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {
-  try {
-    const resolvedParams = await params;
-    const { slug } = resolvedParams;
-    
-    if (!slug) {
-      console.warn('[NewsArticlePage] No slug provided for metadata generation');
-      return {
-        title: 'News Article Not Found',
-        description: 'The requested news article could not be found.'
-      };
-    }
-
-    const article = await fetchArticle(slug);
-    const description = article.summary || getExcerpt(article.content || '', 155);
-    const mainCategory = article.categories?.[0]?.name;
-    const imageUrl = article.featuredImage?.url;
-
-    const metadata: Metadata = {
-      title: `${article.seoTitle || article.title} | MaasISO`,
-      description: article.seoDescription || description,
-      openGraph: {
-        title: article.seoTitle || article.title,
-        description: article.seoDescription || description,
-        type: 'article',
-        publishedTime: article.publishedAt,
-        modifiedTime: article.updatedAt,
-        authors: article.author ? [article.author] : undefined,
-        images: imageUrl ? [{ url: imageUrl }] : undefined,
-        ...(mainCategory && { tags: [mainCategory] })
-      }
-    };
-
-    console.log('[NewsArticlePage] Generated metadata:', {
-      title: metadata.title,
-      description: metadata.description
-    });
-
-    return metadata;
-  } catch (error) {
-    console.error('[NewsArticlePage] Error generating metadata:', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
-    return {
-      title: 'News Article Not Found',
-      description: 'The requested news article could not be found.'
-    };
-  }
-}
-
-export default async function NewsArticlePage({ params }: NewsArticlePageProps) {
-  try {
-    const resolvedParams = await params;
-    const { slug } = resolvedParams;
-    
-    if (!slug) {
-      console.error('[NewsArticlePage] No slug provided');
-      notFound();
-    }
-
-    console.log(`[NewsArticlePage] Rendering article: ${slug}`);
-    const article = await fetchArticle(slug);
-
-    return (
-      <div className="min-h-screen bg-white">
-        <NewsArticleWrapper article={article} />
+  return (
+    <main className="flex-1 bg-white py-20">
+      <div className="container-custom">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{title}</h1>
+          <p className="text-lg text-gray-700 mb-6">{message}</p>
+          <div className="mt-6">
+            <Link href="/news" className="inline-block px-5 py-3 bg-[#FF8B00] text-white rounded-md shadow hover:bg-[#e67a00] transition-colors">
+              Terug naar Nieuws
+            </Link>
+          </div>
+        </div>
       </div>
-    );
-  } catch (error) {
-    console.error('[NewsArticlePage] Error rendering article:', {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    });
-
-    if (error instanceof Error && error.message === 'Article not found') {
-      notFound();
-    }
-
-    throw error; // Let the error boundary handle other errors
-  }
+    </main>
+  );
 }

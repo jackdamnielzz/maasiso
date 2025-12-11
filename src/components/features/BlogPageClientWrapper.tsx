@@ -54,15 +54,36 @@ export default function BlogPageClientWrapper({
     !isNaN(new Date(post.createdAt).getTime())
   ));
 
-  if (!page || !page.id) {
-    console.error('[BlogPageClientWrapper] Invalid page data');
-    return <ErrorMessage message="Ongeldige pagina-informatie" />;
+  // The blog listing page should remain usable even if the Strapi "blog" page
+  // document is missing or temporarily invalid. In that case we fall back to a
+  // minimal, hard-coded Page object while still rendering the posts.
+  const hasValidPage = !!(page && page.id);
+
+  if (!hasValidPage) {
+    console.warn('[BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration');
   }
+
+  const safePage: Page = hasValidPage
+    ? page
+    : {
+        id: 'blog-fallback',
+        title: 'Blog',
+        slug: 'blog',
+        seoMetadata: {
+          metaTitle: 'Blog | MaasISO',
+          metaDescription: 'Ontdek onze laatste inzichten over ISO certificering en kwaliteitsmanagement.',
+          keywords: 'blog, ISO, certificering, kwaliteitsmanagement'
+        },
+        layout: [],
+        publishedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
   return (
     <BlogErrorBoundary>
       <BlogPageClient
-        page={page}
+        page={safePage}
         initialPosts={validatedPosts}
       />
     </BlogErrorBoundary>

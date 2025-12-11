@@ -32,24 +32,58 @@ export default function WhitepaperClientWrapper() {
 
         const response = await getWhitepapers(currentPage, 6);
 
-        if (!response) {
-          throw new Error('Geen data ontvangen van de server.');
+        // Handle case where response is empty or has no data - this is not an error,
+        // just means no whitepapers are available yet
+        if (!response || !response.whitepapers) {
+          console.log('[WhitepaperClientWrapper] No whitepapers response, showing empty state');
+          setData({
+            whitepapers: [],
+            pagination: {
+              page: 1,
+              pageCount: 1
+            }
+          });
+          setError(null);
+          return;
         }
 
+        // Handle the case where response.whitepapers.data might be empty or undefined
+        const whitepaperData = response.whitepapers.data || [];
+        
         setData({
-          whitepapers: response.whitepapers.data.map(item => ({
+          whitepapers: whitepaperData.map(item => ({
             ...item.attributes,
             id: String(item.id)
           })),
           pagination: {
-            page: response.whitepapers.meta.pagination?.page ?? 1,
-            pageCount: response.whitepapers.meta.pagination?.pageCount ?? 1
+            page: response.whitepapers.meta?.pagination?.page ?? 1,
+            pageCount: response.whitepapers.meta?.pagination?.pageCount ?? 1
           }
         });
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching whitepapers');
-        setData(null);
+        // Log the error for debugging but don't show error to user for 404s
+        // (404 just means no whitepapers exist yet in the CMS)
+        console.error('[WhitepaperClientWrapper] Error fetching whitepapers:', err);
+        
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        
+        // If the error indicates a 404, treat it as "no whitepapers" rather than an error
+        if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+          console.log('[WhitepaperClientWrapper] 404 response - treating as empty whitepapers list');
+          setData({
+            whitepapers: [],
+            pagination: {
+              page: 1,
+              pageCount: 1
+            }
+          });
+          setError(null);
+        } else {
+          // For real errors (500, network issues, etc.), show error state
+          setError('Er is een fout opgetreden bij het laden van de whitepapers. Probeer het later opnieuw.');
+          setData(null);
+        }
       } finally {
         setLoading(false);
       }

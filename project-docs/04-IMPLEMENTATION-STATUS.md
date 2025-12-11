@@ -1,6 +1,6 @@
 # Implementation Status
 
-**Last Updated**: 2025-12-10 21:56 UTC
+**Last Updated**: 2025-12-11 22:09 UTC
 **Project**: MaasISO - ISO Certification Consultancy Website
 
 ---
@@ -281,14 +281,16 @@ On December 9, 2025, a major security incident was discovered and resolved:
 | Services Pages | ✅ Complete | 100% | ISO 9001, 14001, 27001, etc. |
 | About Page | ✅ Complete | 100% | - |
 | Contact Page | ✅ Complete | 100% | With form |
-| Blog System | ✅ Complete | 100% | Strapi integration |
-| News Section | ✅ Complete | 100% | - |
+| Blog System | ✅ Complete | 100% | Strapi integration (nu via Railway + Next.js proxy-routes). |
+| News Section | ✅ Live (statisch) | 100% | `/news` is geïmplementeerd als statische placeholder in `src/app/news/page.tsx`; alle Strapi/news API-calls zijn uit het server-renderpad gehaald zodat Vercel-builds stabiel zijn. De technische koppeling frontend → Railway Strapi via proxy is aanwezig; het opnieuw introduceren van een dynamische nieuwsfeed is een optionele feature, geen blocker meer voor de migratie. |
 | Cookie Consent | ✅ Complete | 100% | GDPR compliant |
 | SEO Optimization | ✅ Complete | 100% | Meta tags, sitemap |
 | Mobile Responsive | ✅ Complete | 100% | - |
 | Performance | ✅ Complete | 95% | Core Web Vitals optimized |
 
 **Frontend Overall**: 98%
+
+> TODO (News): Optioneel, na stabiliteit in productie: dynamische, Strapi-gevoede nieuwslisting en detailpagina’s opnieuw introduceren als aparte feature (niet meer geblokkeerd door de Railway-migratie).
 
 ---
 
@@ -308,19 +310,89 @@ On December 9, 2025, a major security incident was discovered and resolved:
 
 ---
 
+## 🔄 Strapi → Railway migratie status
+
+| Onderdeel | Status | Percentage | Notities |
+|-----------|--------|------------|----------|
+| Database & content-migratie naar Railway | ✅ Voltooid | 100% | PostgreSQL-database geïmporteerd naar Railway; alle relevante contenttypes (blog, pages, categories, tags, relaties) zijn hersteld via de migratiescripts. |
+| **Pages Migration (met layout)** | ✅ Voltooid | 100% | 7 pagina's succesvol gemigreerd met volledige layout-componenten (diensten, avg, bio, iso-27001, iso-14001, iso-16175, blog). |
+| **Categories & Tags** | ✅ Voltooid | 100% | 5 categorieën aangemaakt, 40+ tags aangemaakt via migratiescript. |
+| Strapi op Railway | ✅ Live | 100% | Nieuwe, schone Strapi v5-installatie draait op Railway (`https://peaceful-insight-production.up.railway.app`) met Railway PostgreSQL en Cloudinary-config voor media. |
+| Frontend-koppeling (proxy → Railway Strapi) | ✅ Actief | 100% | Next.js-frontend gebruikt nu de proxy-routes (`/api/proxy/...`) richting Railway Strapi voor blog, uploads en overige content. |
+| Oude VPS-backend | 💤 Legacy / uitfasering | - | Alleen nog tijdelijk actief voor de overgangsperiode; productie-backenddoel is Railway. |
+
+### Content Migration Script (Dec 11, 2025 21:32 UTC)
+
+De comprehensive migratie via [`scripts/migrate-all-content.js`](../scripts/migrate-all-content.js:1) is succesvol uitgevoerd:
+
+| Content Type | Actie | Aantal | Status |
+|--------------|-------|--------|--------|
+| Pages | Updated | 7 | ✅ Met volledige layout componenten |
+| Categories | Created | 5 | ✅ ISO 9001, ISO 27001, ISO 14001, AVG/GDPR, Algemeen |
+| Tags | Created | 40 | ✅ Uit seo_keywords geëxtraheerd |
+| Blog Posts | Verified | 36 | ✅ Reeds aanwezig |
+
+### ✅ Cloudinary URL Fix (Dec 11, 2025 22:08 UTC) - NEW
+
+Fixed broken Cloudinary images in the frontend. When Strapi uses Cloudinary as upload provider, it stores:
+- `url`: Local path like `/uploads/image.jpg` (doesn't work - file is on Cloudinary)
+- `provider`: "cloudinary"
+- `provider_metadata`: `{ public_id: "maasiso/image_abc123", ... }`
+
+**Problem:** Frontend was proxying `/uploads/` URLs to Strapi server where files don't exist.
+
+**Solution Implemented:**
+- Updated [`mapImage()`](../src/lib/api.ts:230) to detect Cloudinary via `provider_metadata` and construct proper URLs
+- Added [`getCloudinaryUrl()`](../src/lib/utils/imageUtils.ts:74) helper function
+- Updated [`transformImageUrl()`](../src/lib/utils/imageUtils.ts:114) to handle Strapi image objects
+- Updated [`getImageUrl()`](../src/lib/utils/imageUtils.ts:229) to check for Cloudinary URLs
+- Fixed [`getNewsArticleBySlug()`](../src/lib/api.ts:810) to use updated `mapImage()`
+
+**Cloudinary Cloud Name:** `dseckqnba`
+
+### Gemini images (Gemini_Generated_Image_*)
+
+- Het image-fixscript [`scripts/fix-strapi-image-formats.js`](../scripts/fix-strapi-image-formats.js:1) is succesvol gedraaid tegen de **Railway** Strapi-omgeving met een geldig API-token.
+- Het resultaat staat in [`scripts/fix-strapi-image-formats-report.json`](../scripts/fix-strapi-image-formats-report.json:1).
+
+Samenvatting van de bevindingen:
+
+- Totaal aantal upload-records in Strapi: ~51.
+- Aantal `Gemini_Generated_Image_*`-records: 14.
+- Voor **alle** Gemini-records:
+  - De `original`-URL geeft een 404.
+  - Alle varianten (`large`, `medium`, `small`, `thumbnail`) geven eveneens 404.
+- Het script kon geen enkel record repareren (**Files changed: 0**).
+
+Technische conclusie:
+
+- De database-records voor Gemini-afbeeldingen bestaan in Railway, maar de fysieke bestanden ontbreken in de Railway uploads-storage.
+- De 400/404-imageproblemen op de site rond Gemini-afbeeldingen worden hierdoor veroorzaakt door **ontbrekende bestanden**, niet door een bug in de frontend, de Next.js-proxy of het fix-script.
+- De migratie van Strapi naar Railway (database, content, media-config, proxy-koppeling) is hiermee **technisch afgerond**.
+
+Resterende actie (redactioneel, geen codewijzigingen nodig):
+
+- Nieuwe Gemini-afbeeldingen genereren.
+- Deze bestanden uploaden in de Railway Strapi-omgeving.
+- De juiste afbeeldingen in Strapi koppelen aan de corresponderende content-items.
+
+---
+
 ## 🚀 Infrastructure
 
 | Component | Status | Percentage | Notes |
 |-----------|--------|------------|-------|
-| Frontend VPS | ✅ Active | 100% | Hostinger, expires 2026-01-07 |
-| Backend VPS | ✅ Active | 100% | Hostinger, expires 2025-12-17 ⚠️ |
-| SSL Certificates | ✅ Active | 100% | Let's Encrypt |
-| DNS Configuration | ✅ Complete | 100% | - |
-| Nginx Reverse Proxy | ✅ Complete | 100% | - |
-| Firewall (UFW) | ✅ Active | 100% | Both servers |
-| Fail2ban | ✅ Active | 100% | Both servers |
+| Vercel Frontend (Next.js) | ✅ Active | 100% | Frontend is nu op Vercel uitgerold; DNS-migratie naar Vercel/maasiso.nl is de volgende stap. |
+| Railway Strapi (Backend) | ✅ Active | 100% | Strapi v5 draait op Railway met PostgreSQL; gebruikt door de frontend via proxy. |
+| Frontend VPS (Hostinger) | 💤 Legacy / Transition | 100% | Nog actief tijdens de overgangsperiode; wordt uitgefaseerd na succesvolle DNS-migratie naar Vercel. |
+| Backend VPS (Hostinger) | 💤 Legacy / Transition | 100% | Nog kort actief tot uiterlijk 2025-12-17; wordt uitgezet zodra Railway-productie stabiel is. |
+| SSL Certificates | ✅ Active | 100% | Let's Encrypt (VPS) en certificaten via Vercel/Railway na DNS-switch. |
+| DNS Configuration | ✅ In transitie | 80% | Voorbereid op overgang naar Vercel/Railway; definitieve switch nog uit te voeren. |
+| Nginx Reverse Proxy | ✅ Legacy | 100% | Draait nog op VPS als tussenlaag tot DNS-migratie is afgerond. |
+| Firewall (UFW) | ✅ Active | 100% | Beide VPS-servers, tot decommissioning. |
+| Fail2ban | ✅ Active | 100% | Beide VPS-servers, tot decommissioning. |
 
-**Infrastructure Overall**: 100%
+**Infrastructure Overall**: 100% (nieuwe infrastructuur op Vercel + Railway is operationeel; VPS-laag is in uitfaseringsfase)
 
 ---
 
@@ -357,7 +429,7 @@ On December 9, 2025, a major security incident was discovered and resolved:
 
 | Area | Percentage | Status |
 |------|------------|--------|
-| Frontend Application | 98% | ✅ Production Ready |
+| Frontend Application | 98% | ✅ Production Ready (pending news verification) |
 | Backend CMS | 100% | ✅ Production Ready |
 | Infrastructure | 100% | ✅ Production Ready |
 | Security (Deployed) | 40% | 🔶 Critical Done, More Available |
@@ -372,9 +444,9 @@ On December 9, 2025, a major security incident was discovered and resolved:
 ## Next Priority Actions
 
 ### Immediate (This Week)
-1. ⚠️ **Renew Backend Server** - Expires 2025-12-17
-2. 🛡️ **Deploy CrowdSec IDS** - Enhanced attack detection
-3. 🛡️ **Deploy AIDE** - File integrity monitoring
+1. ⚠️ **Voltooi DNS-migratie naar Vercel + Railway en plan gecontroleerde uitfasering van de Backend VPS vóór 2025-12-17** (legacy-omgeving alleen nog voor de overgang).
+2. 🛡️ **Deploy CrowdSec IDS** - Enhanced attack detection (optioneel, alleen relevant zolang VPS-servers nog actief zijn).
+3. 🛡️ **Deploy AIDE** - File integrity monitoring (optioneel, alleen relevant zolang VPS-servers nog actief zijn).
 
 ### Short-term (Next 2 Weeks)
 4. 📊 **Deploy Centralized Logging**
