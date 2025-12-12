@@ -13,9 +13,9 @@
 Implemented the agreed, minimal-risk improvements for `https://maasiso.nl/diensten` while staying consistent with the existing `/contact` page patterns:
 
 - LocalBusiness JSON-LD placeholders removed; schema now uses correct business details (phone/email/address) and adds `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
-- `/diensten` above-the-fold: always render an `H1` fallback independent of Strapi block IDs; add primary CTA “Plan kennismaking” → `/contact`; add secondary CTA “Bekijk expertisegebieden” → `#expertisegebieden` with stable anchor id in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
+- `/diensten` above-the-fold: always render an `H1` fallback independent of Strapi block IDs; keep only the primary CTA “Plan kennismaking” → `/contact` (secondary CTA removed) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
 - Layout top padding: removed `pt-20` from the layout so there’s a single source of truth for fixed-header offset (global `main { padding-top: 80px; }`) in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1) + [`app/layout.tsx`](../app/layout.tsx:1).
-- Header dropdown accessibility (Informatie): ARIA + keyboard support (Escape closes) + basic focus management in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
+- Header dropdown accessibility (Informatie): ARIA + keyboard support (Escape closes) + basic focus management; contact nav label now “Plan kennismaking” (links to `/contact`) to avoid duplicate contact CTAs in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
 - Reduced noisy `console.*` in production by gating debug logs behind `NODE_ENV !== 'production'` in Header/Analytics/API code paths (notably [`src/components/common/Analytics.tsx`](../src/components/common/Analytics.tsx:1), [`src/lib/analytics.ts`](../src/lib/analytics.ts:1), and proxy routes under `app/api/proxy/*`).
 
 **Verification status:**

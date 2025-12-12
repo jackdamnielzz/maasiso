@@ -149,11 +149,11 @@ export default function Header(): ReactElement {
             </Link>
             <Link
               href="/contact"
-              className={`text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+              className={`text-base font-semibold hover:text-[#FF8B00] transition-colors duration-200 ${
                 pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'
               }`}
             >
-              Contact
+              Plan kennismaking
             </Link>
 
             {/* Dropdown Menu */}
@@ -296,10 +296,10 @@ export default function Header(): ReactElement {
               </Link>
               <Link
                 href="/contact"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'}`}
+                className={`block text-base font-semibold hover:text-[#FF8B00] transition-colors duration-200 ${pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Contact
+                Plan kennismaking
               </Link>
               <div className="pt-2 pb-1 border-t border-gray-700">
                 <p className="text-white text-sm mb-2">Informatie</p>

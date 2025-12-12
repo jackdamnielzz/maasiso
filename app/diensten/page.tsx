@@ -113,8 +113,6 @@ export default async function DienstenPage() {
   const heroTitle = heroBlock?.title || 'Diensten';
   const heroSubtitle = heroBlock?.subtitle || '';
 
-  const isInternalHref = (href: string) => href.startsWith('/');
-
   return (
     <main className="flex-1 bg-gradient-to-b from-gray-50 via-white to-gray-50" data-testid="diensten-dynamic-content">
       {/* Hero (ALWAYS render an H1; never depend on Strapi block IDs) */}
@@ -139,31 +137,6 @@ export default async function DienstenPage() {
             >
               Plan kennismaking
             </Link>
-
-            <Link
-              href="#expertisegebieden"
-              className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
-            >
-              Bekijk expertisegebieden
-            </Link>
-
-            {heroBlock?.ctaButton?.link && heroBlock?.ctaButton?.text ? (
-              isInternalHref(heroBlock.ctaButton.link) ? (
-                <Link
-                  href={heroBlock.ctaButton.link}
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
-                >
-                  {heroBlock.ctaButton.text}
-                </Link>
-              ) : (
-                <a
-                  href={heroBlock.ctaButton.link}
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
-                >
-                  {heroBlock.ctaButton.text}
-                </a>
-              )
-            ) : null}
           </div>
         </div>
       </section>
@@ -394,7 +367,7 @@ export default async function DienstenPage() {
 
       {/* Diensten grid */}
       {diensten.length > 0 && (
-        <section id="expertisegebieden" className="py-16 md:py-24 bg-gray-50 scroll-mt-24">
+        <section className="py-16 md:py-24 bg-gray-50 scroll-mt-24">
           <div className="container-custom px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#091E42]">Onze Expertisegebieden</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">

@@ -31,11 +31,11 @@
 - LocalBusiness JSON-LD updated with correct business details + `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
 - `/diensten` hero hardened:
   - Always render an H1 fallback independent of Strapi block IDs
-  - Primary CTA: “Plan kennismaking” → `/contact`
-  - Secondary CTA: “Bekijk expertisegebieden” → `#expertisegebieden` (stable anchor id)
+  - Kept only the primary CTA: “Plan kennismaking” → `/contact` (removed “Bekijk expertisegebieden” + removed now-unused `#expertisegebieden` anchor)
   - Canonical + OG/Twitter metadata for `/diensten`
   - Implemented in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
 - Resolved likely double top padding by removing layout `pt-20` and relying on global `main { padding-top: 80px; }` in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1).
+- Header: ensured a single prominent contact entry by labeling the contact link “Plan kennismaking” → `/contact` (avoids duplicate contact CTAs) in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
 - Improved header dropdown accessibility (ARIA + Escape close + focus basics) in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
 - Reduced noisy production logs by gating debug `console.*` behind `NODE_ENV !== 'production'` in Analytics/API/Headers (e.g. [`src/components/common/Analytics.tsx`](../src/components/common/Analytics.tsx:1), [`src/lib/analytics.ts`](../src/lib/analytics.ts:1), proxy routes under `app/api/proxy/*`).
 

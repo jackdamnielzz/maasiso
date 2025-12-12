@@ -291,7 +291,8 @@ On December 9, 2025, a major security incident was discovered and resolved:
 **Frontend Overall**: 98%
 
 **Recent scoped improvements (Dec 12, 2025):**
-- `/diensten` above-the-fold UX: ensured H1 fallback, added primary CTA “Plan kennismaking” → `/contact`, and a stable expertise anchor (`#expertisegebieden`) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
+- `/diensten` above-the-fold UX: ensured H1 fallback and kept only the primary CTA “Plan kennismaking” → `/contact` (removed “Bekijk expertisegebieden” + removed now-unused `#expertisegebieden` anchor) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
+- Header contact entry: removed duplicate contact CTA by keeping a single prominent link labeled “Plan kennismaking” → `/contact` in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
 - LocalBusiness JSON-LD: replaced placeholders with correct email/phone/address and added `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
 - Fixed likely double top padding by removing `pt-20` from layout main and relying on global `main { padding-top: 80px; }` in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1).
 - Improved header dropdown accessibility (ARIA + Escape/keyboard + focus basics) in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
