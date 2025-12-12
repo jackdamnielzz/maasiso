@@ -1,5 +1,4 @@
 export async function GET() {
-
   return new Response(
     `User-agent: *
 Allow: /
@@ -14,5 +13,5 @@ Sitemap: https://maasiso.nl/sitemap.xml`,
         'Content-Type': 'text/plain',
       },
     }
-  )
+  );
 }
