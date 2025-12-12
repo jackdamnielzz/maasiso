@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { getImageUrl } from '@/lib/utils/imageUtils';
 import { BlogPost } from '../../lib/types';
 
 type BlogPostCardProps = {
@@ -38,12 +39,17 @@ export default function BlogPostCard({ post }: BlogPostCardProps): React.ReactNo
       })
     : null;
 
+  const imageSrc = React.useMemo(() => {
+    if (!post.featuredImage) return null;
+    return getImageUrl(post.featuredImage, 'medium');
+  }, [post.featuredImage]);
+
   // Calculate reading time based on content word count
   return (
     <article className="group bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden transform hover:-translate-y-1 flex flex-col h-full">
       <Link href={`/blog/${post.slug}`} className="flex flex-col h-full">
         <div className="h-48 sm:h-56 w-full bg-gray-100 overflow-hidden relative">
-          {post.featuredImage && !imageError ? (
+          {imageSrc && !imageError ? (
             <>
               {imageLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -52,10 +58,10 @@ export default function BlogPostCard({ post }: BlogPostCardProps): React.ReactNo
               )}
               <div className="w-full h-full">
                 <Image
-                  src={`/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`}
+                  src={imageSrc}
                   width={800}
                   height={450}
-                  alt={post.featuredImage.alternativeText || post.title}
+                  alt={post.featuredImage?.alternativeText || post.title}
                   className={`w-full h-full object-cover transition-opacity duration-300 ${
                     imageLoading ? 'opacity-0' : 'opacity-100'
                   }`}

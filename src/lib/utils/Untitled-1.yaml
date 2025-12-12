@@ -1,0 +1,460 @@
+﻿
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/pages?filters[slug][$eq]=blog&populate[…tures.icon&populate[3]=layout.backgroundImage&populate[4]=layout.ctaButton 404 (Not Found)
+
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948690, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/pages?filters[…yout.backgroundImage&populate[4]=layout.ctaButton', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/pages?filters[…yout.backgroundImage&populate[4]=layout.ctaButton', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [getPage] Error: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getPage (D:\Programmeren\Maas…c\lib\api.ts:416:18)
+    at async Promise.all (index 0)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/blog-posts?pagination[page]=1&paginatio…fields][1]=name&populate[categories][fields][2]=slug&sort=publishedAt:desc 404 (Not Found)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948710, url: 'http://localhost:3000/blog', …}
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/tags?populate[blog_posts][fields][0]=id&sort=name:asc&pagination[limit]=200 404 (Not Found)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948710, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/blog-posts?pag…categories][fields][2]=slug&sort=publishedAt:desc', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/blog-posts?pag…categories][fields][2]=slug&sort=publishedAt:desc', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 Error fetching blog posts: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getBlogPosts (D:\Programmeren\Maas…\lib\api.ts:1001:18)
+    at async Promise.all (index 1)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/tags?populate[…fields][0]=id&sort=name:asc&pagination[limit]=200', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/tags?populate[…fields][0]=id&sort=name:asc&pagination[limit]=200', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 Error fetching tags: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getTags (D:\Programmeren\Maas…\lib\api.ts:1148:22)
+    at async Promise.all (index 2)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc 401 (Unauthorized)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 401 Unauthorized', type: 'error', source: 'network', timestamp: 1765476948840, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [BlogPageClient] Fetch error: 
+{status: 401, statusText: 'Unauthorized', url: '/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc'}
+installHook.js:1 [BlogPageClient] Fetcher error: Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/pages?filters[slug][$eq]=blog&populate[…tures.icon&populate[3]=layout.backgroundImage&populate[4]=layout.ctaButton 404 (Not Found)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948936, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/pages?filters[…yout.backgroundImage&populate[4]=layout.ctaButton', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/pages?filters[…yout.backgroundImage&populate[4]=layout.ctaButton', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [getPage] Error: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getPage (D:\Programmeren\Maas…c\lib\api.ts:416:18)
+    at async Promise.all (index 0)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/blog-posts?pagination[page]=1&paginatio…fields][1]=name&populate[categories][fields][2]=slug&sort=publishedAt:desc 404 (Not Found)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948967, url: 'http://localhost:3000/blog', …}
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/api/tags?populate[blog_posts][fields][0]=id&sort=name:asc&pagination[limit]=200 404 (Not Found)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 404 Not Found', type: 'error', source: 'network', timestamp: 1765476948968, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/blog-posts?pag…categories][fields][2]=slug&sort=publishedAt:desc', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/blog-posts?pag…categories][fields][2]=slug&sort=publishedAt:desc', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 Error fetching blog posts: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getBlogPosts (D:\Programmeren\Maas…\lib\api.ts:1001:18)
+    at async Promise.all (index 1)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+installHook.js:1 [API Error] FULL DETAILS 
+{status: 404, statusText: 'Not Found', url: 'http://localhost:3000/api/proxy/api/tags?populate[…fields][0]=id&sort=name:asc&pagination[limit]=200', headers: {…}, body: '{"error":"The requested resource was not found.","…message":"Not Found","details":{}}},"status":404}'}
+installHook.js:1 [Fetch Error] FULL DETAILS 
+{url: 'http://localhost:3000/api/proxy/api/tags?populate[…fields][0]=id&sort=name:asc&pagination[limit]=200', method: 'GET', status: 500, error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 [API Fetch Error] Detailed Debug: 
+{error: 'API request failed: 404 Not Found', stack: 'Error: API request failed: 404 Not Found\n    at mo…///(app-pages-browser)/./app/blog/page.tsx:44:73)'}
+installHook.js:1 Error fetching tags: APIError: API request failed: 404 Not Found
+    at fetchWithBaseUrl (D:\Programmeren\Maas…c\lib\api.ts:125:11)
+    at async getTags (D:\Programmeren\Maas…\lib\api.ts:1148:22)
+    at async Promise.all (index 2)
+    at async BlogPage.useEffect.loadData (D:\Programmeren\Maas…blog\page.tsx:41:57)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClientWrapper] Missing or invalid page data, using fallback page configuration Error Component Stack
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc 401 (Unauthorized)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 401 Unauthorized', type: 'error', source: 'network', timestamp: 1765476953893, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [BlogPageClient] Fetch error: 
+{status: 401, statusText: 'Unauthorized', url: '/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc'}
+installHook.js:1 [BlogPageClient] Fetcher error: Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc 401 (Unauthorized)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 401 Unauthorized', type: 'error', source: 'network', timestamp: 1765476963944, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [BlogPageClient] Fetch error: 
+{status: 401, statusText: 'Unauthorized', url: '/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc'}
+installHook.js:1 [BlogPageClient] Fetcher error: Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+D:\Programmeren\Maas…itoring\error.ts:69 
+ GET http://localhost:3000/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc 401 (Unauthorized)
+installHook.js:1 Error logged: 
+{message: 'HTTP Error: 401 Unauthorized', type: 'error', source: 'network', timestamp: 1765477019391, url: 'http://localhost:3000/blog', …}
+installHook.js:1 [BlogPageClient] Fetch error: 
+{status: 401, statusText: 'Unauthorized', url: '/api/proxy/blog-posts?pagination[start]=0&pagination[limit]=9&populate=*&sort=publishedAt:desc'}
+installHook.js:1 [BlogPageClient] Fetcher error: Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+installHook.js:1 [BlogPageClient] SWR error Error: Failed to fetch: 401 Unauthorized
+    at fetcher (D:\Programmeren\Maas…ageClient.tsx:64:15)
+ Error Component Stack
+    at BlogPageClient (D:\Programmeren\Maas…ageClient.tsx:19:65)
+    at BlogErrorBoundary (D:\Programmeren\Maas…entWrapper.tsx:18:5)
+    at BlogPageClientWrapper (D:\Programmeren\Maas…entWrapper.tsx:45:3)
+    at Suspense (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at BlogPage (D:\Programmeren\Maas…blog\page.tsx:16:36)
+    at ExperimentProvider (D:\Programmeren\Maas…tProvider.tsx:11:38)
+    at CookieConsentProvider (D:\Programmeren\Maas…tProvider.tsx:10:82)
+    at QueryProvider (D:\Programmeren\Maas…yProvider.tsx:22:33)
+    at MonitoringProvider (D:\Programmeren\Maas…gProvider.tsx:11:38)
+    at Suspense (<anonymous>)
+    at NavigationContent (D:\Programmeren\Maas…nProvider.tsx:20:30)
+    at Suspense (<anonymous>)
+    at NavigationProvider (D:\Programmeren\Maas…nProvider.tsx:33:38)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)

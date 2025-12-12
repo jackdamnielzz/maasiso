@@ -5,8 +5,8 @@ import Link from 'next/link';
 import LazyImage from '../common/LazyImage';
 import ErrorBoundary from '../common/ErrorBoundary';
 import { validateSlug } from '@/lib/utils/slugUtils';
+import { getImageUrl } from '@/lib/utils/imageUtils';
 import { useMemo, useState } from 'react';
-import { trackBusinessEvent } from '@/lib/analytics';
 
 // Memoize date formatter instance
 const dateFormatter = new Intl.DateTimeFormat('nl-NL', {
@@ -38,6 +38,11 @@ interface BlogCardProps {
 
 export default function BlogCard({ post, className = '', ...props }: BlogCardProps) {
   const [imageError, setImageError] = useState(false);
+
+  const imageSrc = useMemo(() => {
+    if (!post.featuredImage) return null;
+    return getImageUrl(post.featuredImage, 'small');
+  }, [post.featuredImage]);
 
   // Memoize processed data
   const processedData = useMemo(() => {
@@ -81,8 +86,9 @@ export default function BlogCard({ post, className = '', ...props }: BlogCardPro
   // Track blog card clicks
   const handleCardClick = () => {
     // Track blog card click for analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'blog_card_click', {
+    const w = window as Window & { gtag?: (...args: unknown[]) => void };
+    if (typeof window !== 'undefined' && typeof w.gtag === 'function') {
+      w.gtag('event', 'blog_card_click', {
         blog_title: post.title,
         blog_slug: post.slug,
         click_position: 'listing_page',
@@ -109,11 +115,11 @@ export default function BlogCard({ post, className = '', ...props }: BlogCardPro
           className="block"
         >
           {/* Featured Image */}
-          {post.featuredImage?.url && !imageError && (
+          {imageSrc && !imageError && (
             <div className="w-full h-48 relative overflow-hidden">
               <LazyImage
-                src={post.featuredImage.url}
-                alt={post.featuredImage.alternativeText || post.title}
+                src={imageSrc}
+                alt={post.featuredImage?.alternativeText || post.title}
                 fill
                 className="object-cover transition-transform duration-300 hover:scale-105"
                 onError={() => setImageError(true)}

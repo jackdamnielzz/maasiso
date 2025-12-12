@@ -1,0 +1,416 @@
+{
+  "strapiUrl": "https://peaceful-insight-production.up.railway.app",
+  "timestamp": "2025-12-11T19:39:20.613Z",
+  "fixMode": true,
+  "nameFilter": "/Gemini_Generated_Image/i",
+  "filesAnalyzed": 14,
+  "filesChanged": 0,
+  "details": [
+    {
+      "id": 36,
+      "name": "Gemini_Generated_Image_ai7tilai7tilai7t.jpeg",
+      "url": "/uploads/Gemini_Generated_Image_ai7tilai7tilai7t_5055d928d6.jpeg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_ai7tilai7tilai7t_5055d928d6.jpeg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_ai7tilai7tilai7t_5055d928d6.jpeg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_ai7tilai7tilai7t_5055d928d6.jpeg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_ai7tilai7tilai7t_5055d928d6.jpeg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 37,
+      "name": "Gemini_Generated_Image_e99vxae99vxae99v.jpeg",
+      "url": "/uploads/Gemini_Generated_Image_e99vxae99vxae99v_5bb13d53bf.jpeg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_e99vxae99vxae99v_5bb13d53bf.jpeg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_e99vxae99vxae99v_5bb13d53bf.jpeg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_e99vxae99vxae99v_5bb13d53bf.jpeg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_e99vxae99vxae99v_5bb13d53bf.jpeg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 38,
+      "name": "Gemini_Generated_Image_sdtybrsdtybrsdty.jpeg",
+      "url": "/uploads/Gemini_Generated_Image_sdtybrsdtybrsdty_5a2eec91cc.jpeg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_sdtybrsdtybrsdty_5a2eec91cc.jpeg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_sdtybrsdtybrsdty_5a2eec91cc.jpeg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_sdtybrsdtybrsdty_5a2eec91cc.jpeg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_sdtybrsdtybrsdty_5a2eec91cc.jpeg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 39,
+      "name": "Gemini_Generated_Image_1g15dn1g15dn1g15.jpeg",
+      "url": "/uploads/Gemini_Generated_Image_1g15dn1g15dn1g15_6f823265ad.jpeg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_1g15dn1g15dn1g15_6f823265ad.jpeg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_1g15dn1g15dn1g15_6f823265ad.jpeg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_1g15dn1g15dn1g15_6f823265ad.jpeg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_1g15dn1g15dn1g15_6f823265ad.jpeg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 40,
+      "name": "Gemini_Generated_Image_xxe5u3xxe5u3xxe5.jpeg",
+      "url": "/uploads/Gemini_Generated_Image_xxe5u3xxe5u3xxe5_9d95492e14.jpeg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_xxe5u3xxe5u3xxe5_9d95492e14.jpeg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_xxe5u3xxe5u3xxe5_9d95492e14.jpeg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_xxe5u3xxe5u3xxe5_9d95492e14.jpeg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_xxe5u3xxe5u3xxe5_9d95492e14.jpeg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 41,
+      "name": "Gemini_Generated_Image_sheje6sheje6shej.jpg",
+      "url": "/uploads/Gemini_Generated_Image_sheje6sheje6shej_ee8291294c.jpg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_sheje6sheje6shej_ee8291294c.jpg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_sheje6sheje6shej_ee8291294c.jpg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_sheje6sheje6shej_ee8291294c.jpg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_sheje6sheje6shej_ee8291294c.jpg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 45,
+      "name": "Gemini_Generated_Image_3kljud3kljud3klj.jpg",
+      "url": "/uploads/Gemini_Generated_Image_3kljud3kljud3klj_2e61af62ee.jpg",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_3kljud3kljud3klj_2e61af62ee.jpg",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_3kljud3kljud3klj_2e61af62ee.jpg",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_3kljud3kljud3klj_2e61af62ee.jpg",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_3kljud3kljud3klj_2e61af62ee.jpg",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 46,
+      "name": "Gemini_Generated_Image_vhjvafvhjvafvhjv.png",
+      "url": "/uploads/Gemini_Generated_Image_vhjvafvhjvafvhjv_6a8c830440.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_vhjvafvhjvafvhjv_6a8c830440.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_vhjvafvhjvafvhjv_6a8c830440.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_vhjvafvhjvafvhjv_6a8c830440.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_vhjvafvhjvafvhjv_6a8c830440.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 47,
+      "name": "Gemini_Generated_Image_4jhl8g4jhl8g4jhl.png",
+      "url": "/uploads/Gemini_Generated_Image_4jhl8g4jhl8g4jhl_f39f94ec54.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_4jhl8g4jhl8g4jhl_f39f94ec54.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_4jhl8g4jhl8g4jhl_f39f94ec54.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_4jhl8g4jhl8g4jhl_f39f94ec54.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_4jhl8g4jhl8g4jhl_f39f94ec54.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 48,
+      "name": "Gemini_Generated_Image_2ea25r2ea25r2ea2 (1).png",
+      "url": "/uploads/Gemini_Generated_Image_2ea25r2ea25r2ea2_1_6b53a8c8a7.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_2ea25r2ea25r2ea2_1_6b53a8c8a7.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_2ea25r2ea25r2ea2_1_6b53a8c8a7.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_2ea25r2ea25r2ea2_1_6b53a8c8a7.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_2ea25r2ea25r2ea2_1_6b53a8c8a7.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 49,
+      "name": "Gemini_Generated_Image_z5z5mmz5z5mmz5z5.png",
+      "url": "/uploads/Gemini_Generated_Image_z5z5mmz5z5mmz5z5_abbc94a188.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_z5z5mmz5z5mmz5z5_abbc94a188.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_z5z5mmz5z5mmz5z5_abbc94a188.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_z5z5mmz5z5mmz5z5_abbc94a188.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_z5z5mmz5z5mmz5z5_abbc94a188.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 50,
+      "name": "Gemini_Generated_Image_4upge74upge74upg.png",
+      "url": "/uploads/Gemini_Generated_Image_4upge74upge74upg_6c2f46f013.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_4upge74upge74upg_6c2f46f013.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_4upge74upge74upg_6c2f46f013.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_4upge74upge74upg_6c2f46f013.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_4upge74upge74upg_6c2f46f013.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 51,
+      "name": "Gemini_Generated_Image_mjr61ymjr61ymjr6.png",
+      "url": "/uploads/Gemini_Generated_Image_mjr61ymjr61ymjr6_ecac286bfe.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_mjr61ymjr61ymjr6_ecac286bfe.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_mjr61ymjr61ymjr6_ecac286bfe.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_mjr61ymjr61ymjr6_ecac286bfe.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_mjr61ymjr61ymjr6_ecac286bfe.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    },
+    {
+      "id": 52,
+      "name": "Gemini_Generated_Image_o9xihpo9xihpo9xi.png",
+      "url": "/uploads/Gemini_Generated_Image_o9xihpo9xihpo9xi_9170958c6d.png",
+      "originalExists": false,
+      "formats": {
+        "large": {
+          "present": true,
+          "url": "/uploads/large_Gemini_Generated_Image_o9xihpo9xihpo9xi_9170958c6d.png",
+          "exists": false
+        },
+        "medium": {
+          "present": true,
+          "url": "/uploads/medium_Gemini_Generated_Image_o9xihpo9xihpo9xi_9170958c6d.png",
+          "exists": false
+        },
+        "small": {
+          "present": true,
+          "url": "/uploads/small_Gemini_Generated_Image_o9xihpo9xihpo9xi_9170958c6d.png",
+          "exists": false
+        },
+        "thumbnail": {
+          "present": true,
+          "url": "/uploads/thumbnail_Gemini_Generated_Image_o9xihpo9xihpo9xi_9170958c6d.png",
+          "exists": false
+        }
+      },
+      "changed": false
+    }
+  ]
+}

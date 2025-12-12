@@ -1,6 +1,6 @@
 # Implementation Status
 
-**Last Updated**: 2025-12-11 22:37 UTC
+**Last Updated**: 2025-12-12 08:47 UTC
 **Project**: MaasISO - ISO Certification Consultancy Website
 
 ---
@@ -281,7 +281,7 @@ On December 9, 2025, a major security incident was discovered and resolved:
 | Services Pages | ✅ Complete | 100% | ISO 9001, 14001, 27001, etc. |
 | About Page | ✅ Complete | 100% | - |
 | Contact Page | ✅ Complete | 100% | With form |
-| Blog System | ✅ Complete | 100% | Strapi integration (nu via Railway + Next.js proxy-routes). |
+| Blog System | ✅ Complete | 100% | Strapi integration (nu via Railway + Next.js proxy-routes). Blog overview cards now also support Cloudinary `featuredImage.url` via [`getImageUrl()`](src/lib/utils/imageUtils.ts:231). |
 | News Section | ✅ Live (statisch) | 100% | `/news` is geïmplementeerd als statische placeholder in `src/app/news/page.tsx`; alle Strapi/news API-calls zijn uit het server-renderpad gehaald zodat Vercel-builds stabiel zijn. De technische koppeling frontend → Railway Strapi via proxy is aanwezig; het opnieuw introduceren van een dynamische nieuwsfeed is een optionele feature, geen blocker meer voor de migratie. |
 | Cookie Consent | ✅ Complete | 100% | GDPR compliant |
 | SEO Optimization | ✅ Complete | 100% | Meta tags, sitemap |

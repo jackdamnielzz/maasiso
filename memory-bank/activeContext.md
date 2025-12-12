@@ -1,12 +1,27 @@
 # Active Context - MaasISO Migration
 
-**Last Updated:** 2025-12-11 22:37 UTC
+**Last Updated:** 2025-12-12 08:47 UTC
 **Current Phase:** Phase 5 - Vercel Frontend Deployment ✅ COMPLETE
 **Status:** Strapi Deployed to Railway ✅ LIVE ✅ Content Fixed ✅ Media Uploaded ✅ Frontend Deployed ✅ Backend-migratie naar Railway technisch afgerond ✅ **CONTENT MIGRATION COMPLETE** ✅ **CLOUDINARY URL FIX COMPLETE** ✅ **VERCEL CRITICAL.CSS FIX COMPLETE** ✅ **BLOG IMAGE POPULATE FIX COMPLETE** ✅
 
 ---
 
 ## Current Work
+
+### ✅ BLOG OVERVIEW CARD CLOUDINARY FEATURED IMAGE FIX (Dec 12, 2025 08:47 UTC)
+
+Fixed featured images not displaying on the blog overview page (and related cards) when `featuredImage.url` is a Cloudinary URL.
+
+**Root Cause:**
+- [`src/components/features/BlogPostCard.tsx`](src/components/features/BlogPostCard.tsx:1) built an image `src` by splitting on `/uploads/`, which fails for Cloudinary URLs.
+- Single post already worked because [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:1) uses [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) which supports Cloudinary.
+
+**Solution Implemented:**
+- Updated [`src/components/features/BlogPostCard.tsx`](src/components/features/BlogPostCard.tsx:1) to use [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) (preferred format: `medium`) and keep the existing placeholder behavior when missing/error.
+- Updated [`src/components/features/BlogCard.tsx`](src/components/features/BlogCard.tsx:1) to use [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) (preferred format: `small`) for consistency across overview cards.
+
+**Validation:**
+- `npm run build:prod` ✅ (uses `next build --no-lint` and skips type-check flags via script).
 
 ### ✅ BLOG IMAGE POPULATE FIX (Dec 11, 2025 22:37 UTC)
 

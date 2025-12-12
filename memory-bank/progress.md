@@ -1,6 +1,6 @@
 # MaasISO Progress Tracker
 
-**Last Updated:** 2025-12-11 22:37 UTC
+**Last Updated:** 2025-12-12 08:47 UTC
 
 ---
 
@@ -26,6 +26,16 @@
 ---
 
 ## Recent Milestones
+
+### December 12, 2025 - BLOG OVERVIEW CARD CLOUDINARY FEATURED IMAGE FIX ✅ (08:47 UTC)
+Fixed featured images not displaying on the blog overview page (and related cards) when `featuredImage.url` is a Cloudinary URL by updating overview cards to use [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) instead of `/uploads/`-based URL building.
+
+**Files changed:**
+- [`src/components/features/BlogPostCard.tsx`](src/components/features/BlogPostCard.tsx:1)
+- [`src/components/features/BlogCard.tsx`](src/components/features/BlogCard.tsx:1)
+
+**Validation:**
+- `npm run build:prod` ✅
 
 ### December 11, 2025 - BLOG IMAGE POPULATE FIX ✅ (22:37 UTC)
 Fixed blog post images not displaying. The `getBlogPosts()` function used explicit populate fields that were missing `provider` and `provider_metadata` - fields required for Cloudinary URL detection.
