@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
-      <main className="flex-grow w-full pt-20">
+      <main className="flex-grow w-full">
         {children}
       </main>
       <Footer />

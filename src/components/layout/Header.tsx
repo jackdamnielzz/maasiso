@@ -1,25 +1,18 @@
 'use client';
 
-import React, { ReactElement, useState, useEffect, useCallback } from 'react';
+import React, { ReactElement, useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useNavigation } from '@/components/providers/NavigationProvider';
 
-interface HeaderProps {
-  className?: string;
-}
-
-export default function Header({ className = '' }: HeaderProps): ReactElement {
+export default function Header(): ReactElement {
   const { pathname } = useNavigation();
   const [isHydrated, setIsHydrated] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [infoDropdownOpen, setInfoDropdownOpen] = useState(false);
 
-  // Log state changes
-  console.log('[Header] State:', {
-    isHydrated,
-    infoDropdownOpen,
-    mobileMenuOpen
-  });
+  const isDev = process.env.NODE_ENV !== 'production';
+  const infoButtonRef = useRef<HTMLButtonElement | null>(null);
+  const infoMenuRef = useRef<HTMLDivElement | null>(null);
 
   // Create stable callback function that won't be recreated on renders
   const toggleMobileMenu = useCallback(() => {
@@ -28,17 +21,15 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
   // Toggle info dropdown
   const toggleInfoDropdown = useCallback(() => {
-    console.log('[Header] Toggling info dropdown:', {
-      currentState: infoDropdownOpen,
-      isHydrated: typeof window !== 'undefined',
-      hasEventListener: document.getElementById('info-dropdown-button')?.hasAttribute('data-hydrated')
-    });
+    if (isDev) {
+      // eslint-disable-next-line no-console
+      console.debug('[Header] Toggling info dropdown', { currentState: infoDropdownOpen });
+    }
     setInfoDropdownOpen((prevState) => !prevState);
-  }, [infoDropdownOpen]);
+  }, [infoDropdownOpen, isDev]);
 
   // Close menu only when navigating to a different page
   useEffect(() => {
-    console.log('[Header] Route changed:', { pathname, dropdownState: infoDropdownOpen });
     if (pathname !== '/news' && pathname !== '/blog' && pathname !== '/whitepaper') {
       setMobileMenuOpen(false);
       setInfoDropdownOpen(false);
@@ -54,34 +45,56 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
     if (!isHydrated) {
       setIsHydrated(true);
-      console.log('[Header] Component hydrated:', {
-        pathname,
-        dropdownState: infoDropdownOpen,
-        hasButton: !!button
-      });
 
       // Only reset states if not on info pages and dropdown isn't open
-      if (!infoDropdownOpen &&
-          pathname !== '/news' &&
-          pathname !== '/blog' &&
-          pathname !== '/whitepaper') {
+      if (
+        !infoDropdownOpen &&
+        pathname !== '/news' &&
+        pathname !== '/blog' &&
+        pathname !== '/whitepaper'
+      ) {
         setMobileMenuOpen(false);
         setInfoDropdownOpen(false);
       }
     }
   }, [isHydrated, infoDropdownOpen, pathname]);
 
+  // Focus management: focus first item on open; restore focus to button on close
+  useEffect(() => {
+    if (!infoDropdownOpen) {
+      infoButtonRef.current?.focus();
+      return;
+    }
+    const firstItem = infoMenuRef.current?.querySelector<HTMLElement>('a[href]');
+    firstItem?.focus();
+  }, [infoDropdownOpen]);
+
+  // Escape closes dropdown when open
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!infoDropdownOpen) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setInfoDropdownOpen(false);
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [infoDropdownOpen]);
+
   // Handle clicks outside of dropdown to close it
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      const dropdownButton = document.getElementById('info-dropdown-button');
-      const dropdownMenu = document.getElementById('info-dropdown-menu');
-      
-      if (infoDropdownOpen && 
-          dropdownButton && 
-          dropdownMenu && 
-          !dropdownButton.contains(event.target as Node) && 
-          !dropdownMenu.contains(event.target as Node)) {
+      const dropdownButton = infoButtonRef.current;
+      const dropdownMenu = infoMenuRef.current;
+
+      if (
+        infoDropdownOpen &&
+        dropdownButton &&
+        dropdownMenu &&
+        !dropdownButton.contains(event.target as Node) &&
+        !dropdownMenu.contains(event.target as Node)
+      ) {
         setInfoDropdownOpen(false);
       }
     }
@@ -90,7 +103,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
     if (infoDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     // Clean up event listener
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -145,39 +158,70 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
             {/* Dropdown Menu */}
             <div className="relative">
-              <button 
+              <button
                 id="info-dropdown-button"
+                ref={infoButtonRef}
                 onClick={toggleInfoDropdown}
+                aria-haspopup="menu"
+                aria-expanded={infoDropdownOpen}
+                aria-controls="info-dropdown-menu"
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setInfoDropdownOpen(true);
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setInfoDropdownOpen(false);
+                  }
+                }}
                 className={`text-base hover:text-[#FF8B00] transition-colors duration-200 ${
-                (pathname && (pathname === '/news' || pathname.startsWith('/blog'))) ? 'text-[#FF8B00]' : 'text-white'
-              }`}>
+                  pathname && (pathname === '/news' || pathname.startsWith('/blog'))
+                    ? 'text-[#FF8B00]'
+                    : 'text-white'
+                }`}
+                type="button"
+              >
                 Informatie
               </button>
-              <div 
+              <div
                 id="info-dropdown-menu"
-                className={`absolute ${infoDropdownOpen ? 'block' : 'hidden'} bg-white min-w-[200px] rounded-md shadow-lg py-2 mt-2 right-0 z-50`}>
+                ref={infoMenuRef}
+                role="menu"
+                aria-labelledby="info-dropdown-button"
+                className={`absolute ${infoDropdownOpen ? 'block' : 'hidden'} bg-white min-w-[200px] rounded-md shadow-lg py-2 mt-2 right-0 z-50`}
+              >
                 <div className="absolute top-0 h-2 w-full -mt-2 bg-transparent" />
                 <Link
                   href="/news"
+                  role="menuitem"
+                  tabIndex={infoDropdownOpen ? 0 : -1}
                   className={`block px-4 py-2 text-base hover:text-[#FF8B00] transition-colors duration-200 ${
                     pathname === '/news' ? 'text-[#FF8B00]' : 'text-[#091E42]'
                   }`}
+                  onClick={() => setInfoDropdownOpen(false)}
                 >
                   Nieuws
                 </Link>
                 <Link
                   href="/blog"
+                  role="menuitem"
+                  tabIndex={infoDropdownOpen ? 0 : -1}
                   className={`block px-4 py-2 text-base hover:text-[#FF8B00] transition-colors duration-200 ${
                     pathname === '/blog' ? 'text-[#FF8B00]' : 'text-[#091E42]'
                   }`}
+                  onClick={() => setInfoDropdownOpen(false)}
                 >
                   Blog
                 </Link>
                 <Link
                   href="/whitepaper"
+                  role="menuitem"
+                  tabIndex={infoDropdownOpen ? 0 : -1}
                   className={`block px-4 py-2 text-base hover:text-[#FF8B00] transition-colors duration-200 ${
                     pathname === '/whitepaper' ? 'text-[#FF8B00]' : 'text-[#091E42]'
                   }`}
+                  onClick={() => setInfoDropdownOpen(false)}
                 >
                   Whitepapers
                 </Link>

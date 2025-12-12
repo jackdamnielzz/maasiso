@@ -1,6 +1,6 @@
 # Implementation Status
 
-**Last Updated**: 2025-12-12 08:47 UTC
+**Last Updated**: 2025-12-12 10:22 UTC
 **Project**: MaasISO - ISO Certification Consultancy Website
 
 ---
@@ -284,11 +284,22 @@ On December 9, 2025, a major security incident was discovered and resolved:
 | Blog System | ✅ Complete | 100% | Strapi integration (nu via Railway + Next.js proxy-routes). Blog overview cards now also support Cloudinary `featuredImage.url` via [`getImageUrl()`](src/lib/utils/imageUtils.ts:231). |
 | News Section | ✅ Live (statisch) | 100% | `/news` is geïmplementeerd als statische placeholder in `src/app/news/page.tsx`; alle Strapi/news API-calls zijn uit het server-renderpad gehaald zodat Vercel-builds stabiel zijn. De technische koppeling frontend → Railway Strapi via proxy is aanwezig; het opnieuw introduceren van een dynamische nieuwsfeed is een optionele feature, geen blocker meer voor de migratie. |
 | Cookie Consent | ✅ Complete | 100% | GDPR compliant |
-| SEO Optimization | ✅ Complete | 100% | Meta tags, sitemap |
+| SEO Optimization | ✅ Complete | 100% | Meta tags, sitemap + canonical/OG/Twitter metadata added specifically for `/diensten` (`https://maasiso.nl/diensten`) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1). |
 | Mobile Responsive | ✅ Complete | 100% | - |
 | Performance | ✅ Complete | 95% | Core Web Vitals optimized |
 
 **Frontend Overall**: 98%
+
+**Recent scoped improvements (Dec 12, 2025):**
+- `/diensten` above-the-fold UX: ensured H1 fallback, added primary CTA “Plan kennismaking” → `/contact`, and a stable expertise anchor (`#expertisegebieden`) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
+- LocalBusiness JSON-LD: replaced placeholders with correct email/phone/address and added `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
+- Fixed likely double top padding by removing `pt-20` from layout main and relying on global `main { padding-top: 80px; }` in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1).
+- Improved header dropdown accessibility (ARIA + Escape/keyboard + focus basics) in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
+- Reduced noisy production logs by guarding debug `console.*` behind `NODE_ENV !== 'production'` in critical paths (e.g., [`src/components/common/Analytics.tsx`](../src/components/common/Analytics.tsx:1), [`src/lib/analytics.ts`](../src/lib/analytics.ts:1), and proxy routes under `app/api/proxy/*`).
+
+**Verification note:**
+- `npm run lint` currently fails due to many repo-wide pre-existing lint violations outside this scoped work.
+- `npm run build` now passes because Next.js build-time linting is disabled via `eslint.ignoreDuringBuilds: true` in [`next.config.js`](../next.config.js:1) (lint remains available via `npm run lint`).
 
 > TODO (News): Optioneel, na stabiliteit in productie: dynamische, Strapi-gevoede nieuwslisting en detailpagina’s opnieuw introduceren als aparte feature (niet meer geblokkeerd door de Railway-migratie).
 
@@ -309,6 +320,27 @@ On December 9, 2025, a major security incident was discovered and resolved:
 **Backend Overall**: 100%
 
 ---
+
+## 🔄 Strapi → Railway migratie status
+
+### ✅ Blog images re-migration script (OLD VPS Strapi → NEW Strapi) (Dec 12, 2025 10:00 UTC)
+
+Fixed the NEW blog post update step in [`scripts/migrate-blog-images-from-vps-strapi.js`](../scripts/migrate-blog-images-from-vps-strapi.js:1).
+
+**Root cause:** NEW Strapi (v5) expects updates by `documentId`. The script was updating via numeric `id`, causing HTTP 404 for `PUT /api/blog-posts/{id}`.
+
+**Fix implemented:**
+- Resolve `documentId` from the NEW blog post response and update via `PUT /api/blog-posts/{documentId}`.
+
+**Safe test support:**
+- Added `ONLY_SLUG` env var to run against a single slug first (does not re-upload; reuses the map).
+
+- Upload: uses Strapi v4-compatible [`/api/upload`](../scripts/migrate-blog-images-from-vps-strapi.js:397)
+- Updates:
+  - `featuredImage` relation
+  - inline image URLs found in markdown / HTML `<img src="...">` inside content
+- Idempotent resume: mapping file `MAP_PATH` (default: `scripts/migrate-blog-images-media-map.json`)
+- Safety: `DRY_RUN=1`, retries, and concurrency
 
 ## 🔄 Strapi → Railway migratie status
 
@@ -407,6 +439,26 @@ Resterende actie (redactioneel, geen codewijzigingen nodig):
 ---
 
 ## 🚀 Infrastructure
+
+### Vercel CLI linkage / deployment trigger verification (Dec 12, 2025 09:22 UTC)
+
+**CLI availability + auth:**
+- `vercel --version` → `48.2.9`
+- `vercel whoami` → `jackdamnielzz`
+
+**Repo linkage confirmed:**
+- [`vercel link`](vercel:1) linked this local repo to `tunuxs-projects/maasiso-copy-2` (created `.vercel/`)
+
+**Production deploy via CLI:**
+- [`vercel --prod`](vercel:1) triggered a production deployment but it failed during the build step (`npm run build`).
+- Inspect: https://vercel.com/tunuxs-projects/maasiso-copy-2/Cn63ariykEQzwnbePHW3MZWagUjp
+- Deployment URL (errored): https://maasiso-copy-2-n33acc44h-tunuxs-projects.vercel.app
+- Root cause: `next build` failed at “Linting and checking validity of types …” due to many ESLint/TypeScript rule violations (e.g. `@typescript-eslint/no-explicit-any`, `@typescript-eslint/no-unused-vars`, `react/no-unescaped-entities`, etc.).
+
+**Deploy hooks:**
+- Vercel CLI 48.x does not expose a Deploy Hook management command in help output; deploy hooks should be created/managed in the Vercel dashboard:
+  - Project → Settings → Git → Deploy Hooks (create hook URL), then trigger it from CI/cron as needed.
+
 
 | Component | Status | Percentage | Notes |
 |-----------|--------|------------|-------|

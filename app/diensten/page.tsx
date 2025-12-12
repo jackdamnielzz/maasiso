@@ -1,29 +1,52 @@
 import { Metadata } from 'next';
 import { getPage } from '@/lib/api';
+import type { HeroComponent, Page, TextBlockComponent } from '@/lib/types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import { CheckCircleIcon, LightBulbIcon } from '@heroicons/react/24/solid';
-import { BriefcaseIcon, ShieldCheckIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import PageViewConversion from '@/components/common/PageViewConversion';
 
 export const metadata: Metadata = {
   title: 'Diensten | MaasISO - ISO-certificering & Informatiebeveiliging',
   description: 'Ontdek de diensten van MaasISO op het gebied van ISO-certificering, informatiebeveiliging, AVG-compliance en meer. Professionele begeleiding voor uw organisatie.',
-  keywords: 'ISO 9001, ISO 27001, ISO 27002, ISO 14001, ISO 16175, informatiebeveiliging, AVG, GDPR, privacy consultancy, BIO'
+  keywords: 'ISO 9001, ISO 27001, ISO 27002, ISO 14001, ISO 16175, informatiebeveiliging, AVG, GDPR, privacy consultancy, BIO',
+  alternates: {
+    canonical: 'https://maasiso.nl/diensten',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://maasiso.nl/diensten',
+    title: 'Diensten | MaasISO - ISO-certificering & Informatiebeveiliging',
+    description:
+      'Ontdek de diensten van MaasISO op het gebied van ISO-certificering, informatiebeveiliging, AVG-compliance en meer. Professionele begeleiding voor uw organisatie.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Diensten | MaasISO - ISO-certificering & Informatiebeveiliging',
+    description:
+      'Ontdek de diensten van MaasISO op het gebied van ISO-certificering, informatiebeveiliging, AVG-compliance en meer. Professionele begeleiding voor uw organisatie.',
+  },
 };
 
-function parseExpertiseBlocks(content: string) {
+type ExpertiseItem = { title: string; description: string; link: string };
+
+function parseExpertiseBlocks(content: string): ExpertiseItem[] {
   // Parseert de markdown van het "Onze Expertisegebieden" blok naar een array van diensten
   // Verwacht: ### Titel\n\nOmschrijving\n\n[**Lees meer** →](link)
   const regex = /### (.*?)\n+([\s\S]*?)(?:\[\*\*.*?\*\* →\]\((.*?)\))/g;
-  const matches = [];
-  let match;
+  const matches: ExpertiseItem[] = [];
+  let match: RegExpExecArray | null;
+
   while ((match = regex.exec(content)) !== null) {
     matches.push({
       title: match[1]?.trim() || '',
-      description: (match[2] || '').replace(/\n/g, ' ').replace(/\[\*\*.*?\*\* →\]\(.*?\)/g, '').trim(),
+      description: (match[2] || '')
+        .replace(/\n/g, ' ')
+        .replace(/\[\*\*.*?\*\* →\]\(.*?\)/g, '')
+        .trim(),
       link: match[3] || '#',
     });
   }
@@ -31,13 +54,14 @@ function parseExpertiseBlocks(content: string) {
 }
 
 export default async function DienstenPage() {
-  let pageData: any = null;
+  type PageData = Awaited<ReturnType<typeof getPage>>;
+  let pageData: PageData = null;
   let hasValidContent = false;
 
   try {
     pageData = await getPage('diensten');
-    hasValidContent = Boolean(pageData && pageData.layout && pageData.layout.length > 0);
-  } catch (error) {
+    hasValidContent = Boolean(pageData?.layout?.length);
+  } catch {
     hasValidContent = false;
   }
 
@@ -72,85 +96,91 @@ export default async function DienstenPage() {
   }
 
   // Zoek het juiste text-block voor de expertise grid
-  const expertiseBlock = pageData && pageData.layout ? pageData.layout.find(
-    (block: any) => block.__component === 'page-blocks.text-block' && typeof block.content === 'string' && block.content.includes('Onze Expertisegebieden')
-  ) : null;
-  const diensten = expertiseBlock ? parseExpertiseBlocks(expertiseBlock.content) : [];
+  type LayoutBlock = NonNullable<Page['layout']>[number];
 
-    return (
+  const expertiseBlock: TextBlockComponent | undefined =
+    pageData?.layout?.find((block: LayoutBlock): block is TextBlockComponent => block.__component === 'page-blocks.text-block') ??
+    undefined;
+
+  const diensten =
+    expertiseBlock?.content && expertiseBlock.content.includes('Onze Expertisegebieden')
+      ? parseExpertiseBlocks(expertiseBlock.content)
+      : [];
+
+  const heroBlock: HeroComponent | undefined =
+    pageData?.layout?.find((block: LayoutBlock): block is HeroComponent => block.__component === 'page-blocks.hero') ?? undefined;
+
+  const heroTitle = heroBlock?.title || 'Diensten';
+  const heroSubtitle = heroBlock?.subtitle || '';
+
+  const isInternalHref = (href: string) => href.startsWith('/');
+
+  return (
     <main className="flex-1 bg-gradient-to-b from-gray-50 via-white to-gray-50" data-testid="diensten-dynamic-content">
-      {/* Hero en andere blokken */}
-        {pageData?.layout?.map((block: any) => {
+      {/* Hero (ALWAYS render an H1; never depend on Strapi block IDs) */}
+      <section className="hero-section relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
+          <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
+        </div>
+
+        <div className="container-custom relative z-10 text-center py-20 md:py-28">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">{heroTitle}</h1>
+
+          {heroSubtitle ? (
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">{heroSubtitle}</p>
+          ) : null}
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/contact"
+              className="primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Plan kennismaking
+            </Link>
+
+            <Link
+              href="#expertisegebieden"
+              className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
+            >
+              Bekijk expertisegebieden
+            </Link>
+
+            {heroBlock?.ctaButton?.link && heroBlock?.ctaButton?.text ? (
+              isInternalHref(heroBlock.ctaButton.link) ? (
+                <Link
+                  href={heroBlock.ctaButton.link}
+                  className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
+                >
+                  {heroBlock.ctaButton.text}
+                </Link>
+              ) : (
+                <a
+                  href={heroBlock.ctaButton.link}
+                  className="inline-flex items-center justify-center rounded-lg px-6 py-4 text-lg font-semibold text-white/95 border border-white/30 hover:bg-white/10 transition-colors duration-200"
+                >
+                  {heroBlock.ctaButton.text}
+                </a>
+              )
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      {/* Other blocks (skip hero + expertise text-block used for grid) */}
+      {pageData?.layout?.map((block: LayoutBlock) => {
         if (block.__component === 'page-blocks.hero') {
-          // Hero sectie bovenaan
-          if (block.id === 125) {
-              return (
-                <section key={block.id} className="hero-section relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
-                    <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
-                  </div>
-                <div className="container-custom relative z-10 text-center py-20 md:py-28">
-                  <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white drop-shadow-lg">
-                        {block.title}
-                      </h1>
-                      {block.subtitle && (
-                        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                          {block.subtitle}
-                        </p>
-                      )}
-                      {block.ctaButton && (
-                        <a
-                          href={block.ctaButton.link}
-                          className="primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                        >
-                          {block.ctaButton.text}
-                        </a>
-                      )}
-                  </div>
-                </section>
-              );
-          }
-          
-          // CTA sectie onderaan
-          if (block.id === 126) {
-              return (
-                <section key={block.id} className="bg-[#091E42] text-white py-16 md:py-24 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
-                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
-                    <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
-                  </div>
-                  <div className="container-custom text-center relative z-10 px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-8 leading-tight">
-                    {block.title}
-                    </h2>
-                  {block.subtitle && (
-                    <p className="text-xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed">
-                      {block.subtitle}
-                    </p>
-                  )}
-                  {block.ctaButton && (
-                    <a
-                      href={block.ctaButton.link}
-                      className="primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                    >
-                      {block.ctaButton.text}
-                    </a>
-                  )}
-                </div>
-              </section>
-            );
-          }
+          return null;
         }
+
         // Sla text-blocks over die voor het grid gebruikt worden
         if (block.__component === 'page-blocks.text-block' && block.content.includes('Onze Expertisegebieden')) {
           return null;
         }
-        
+
         // Custom card voor 'Onze Manier van Werken'
-        if (block.__component === 'page-blocks.text-block' && typeof block.content === 'string' && block.content.includes('## Onze Manier van Werken')) {
+        if (block.__component === 'page-blocks.text-block' && block.content.includes('## Onze Manier van Werken')) {
           return (
             <section key={block.id} className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50">
               <div className="container-custom px-4 sm:px-6 lg:px-8">
@@ -193,7 +223,7 @@ export default async function DienstenPage() {
         }
         
         // Custom card voor 'Onze diensten kunnen bestaan uit'
-        if (block.__component === 'page-blocks.text-block' && typeof block.content === 'string' && block.content.includes('## Onze diensten kunnen bestaan uit')) {
+        if (block.__component === 'page-blocks.text-block' && block.content.includes('## Onze diensten kunnen bestaan uit')) {
           return (
             <section key={block.id} className="py-16 md:py-24 bg-white">
               <div className="container-custom px-4 sm:px-6 lg:px-8">
@@ -320,7 +350,7 @@ export default async function DienstenPage() {
                           </h3>
                           <p className="text-gray-600 leading-relaxed">
                             Op deze pagina vindt u een overzicht van onze expertisegebieden. 
-                            Klik door naar de specifieke pagina's voor meer uitgebreide informatie over elke dienst.
+                            Klik door naar de specifieke pagina’s voor meer uitgebreide informatie over elke dienst.
                           </p>
                         </div>
                       </div>
@@ -364,21 +394,30 @@ export default async function DienstenPage() {
 
       {/* Diensten grid */}
       {diensten.length > 0 && (
-        <section className="py-16 md:py-24 bg-gray-50">
+        <section id="expertisegebieden" className="py-16 md:py-24 bg-gray-50 scroll-mt-24">
           <div className="container-custom px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#091E42]">Onze Expertisegebieden</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {diensten.map((dienst, idx) => (
-                <div key={dienst.title + idx} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-8 flex flex-col justify-between border-t-4" style={{ borderTopColor: idx % 2 === 0 ? '#00875A' : '#FF8B00' }}>
+                <div
+                  key={dienst.title + idx}
+                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-8 flex flex-col justify-between border-t-4"
+                  style={{ borderTopColor: idx % 2 === 0 ? '#00875A' : '#FF8B00' }}
+                >
                   <h3 className="text-2xl font-bold text-[#091E42] mb-4">{dienst.title}</h3>
                   <p className="text-gray-600 mb-6 flex-1">{dienst.description}</p>
-                  <Link href={dienst.link} className="inline-block mt-auto text-[#00875A] font-semibold hover:text-[#006C48] transition-colors">Lees meer →</Link>
+                  <Link
+                    href={dienst.link}
+                    className="inline-block mt-auto text-[#00875A] font-semibold hover:text-[#006C48] transition-colors"
+                  >
+                    Lees meer →
+                  </Link>
                 </div>
               ))}
             </div>
           </div>
         </section>
-            )}
+      )}
       <PageViewConversion pageName="Services Overview" conversionValue={1.5} />
       </main>
     );

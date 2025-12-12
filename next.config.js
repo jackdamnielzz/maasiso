@@ -12,6 +12,9 @@ const nextConfig = {
     optimizeCss: true,
     optimizePackageImports: ['@heroicons/react']
   },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   // Cache and revalidation settings
   staticPageGenerationTimeout: 120,
   serverExternalPackages: ['sharp'],

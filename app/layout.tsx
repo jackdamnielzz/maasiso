@@ -44,7 +44,7 @@ const criticalCSS = `/* Critical CSS for above-the-fold content */
   height: 80px;
 }
 
-/* Main Content Padding for Fixed Header */
+/* Main Content Padding for Fixed Header (single source of truth; do not add extra padding in layout wrapper) */
 main {
   padding-top: 80px;
 }
@@ -168,7 +168,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   event: event,
                   ...data
                 });
-                console.log('[GTM] Event pushed:', event, data);
               };
               
               // Helper function for page views
@@ -179,7 +178,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   page_title: pageTitle || document.title,
                   page_location: window.location.href
                 });
-                console.log('[GTM] Page view tracked:', pagePath);
               };
               
               // Helper function for custom events
@@ -188,7 +186,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   event: eventName,
                   ...parameters
                 });
-                console.log('[GTM] Custom event tracked:', eventName, parameters);
               };
             `,
           }}
@@ -211,16 +208,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
               "name": "MaasISO",
+              "url": "https://maasiso.nl",
+              "telephone": "+31 (0)6 2357 8344",
+              "email": "info@maasiso.nl",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "Your Street Address 123",
-                "addressLocality": "Your City",
-                "postalCode": "1234 AB",
+                "streetAddress": "Jol 11-41",
+                "postalCode": "8243EE",
+                "addressLocality": "Lelystad",
                 "addressCountry": "NL"
               },
-              "telephone": "+31-123-456-7890",
-              "openingHours": "Mo-Fr 09:00-17:00",
-              "url": "https://www.maasiso.nl"
+              "openingHours": "Mo-Fr 09:00-17:00"
             }),
           }}
         />
