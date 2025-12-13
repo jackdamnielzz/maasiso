@@ -16,6 +16,9 @@
     "clean": "rimraf .next",
     "build:prod": "cross-env NODE_ENV=production SKIP_TYPESCRIPT=1 SKIP_TYPE_CHECK=true npm run clean && next build --no-lint",
     "verify": "node scripts/verify-build.js",
+    "seo:check-blog-indexable": "node scripts/check-blog-indexable.js",
+    "site:diagnose": "node scripts/diagnose-site-connectivity.js",
+    "site:diagnose:maasiso": "node scripts/diagnose-site-connectivity.js maasiso.nl www.maasiso.nl",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:env": "cross-env NODE_ENV=development node --loader ts-node/esm src/lib/config/test-env.ts"
@@ -74,7 +77,9 @@
     "zod": "^3.24.2"
   },
   "dependencies": {
+    "@azure/identity": "^4.13.0",
     "@heroicons/react": "^2.2.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query": "^5.68.0",
     "axios": "^1.10.0",

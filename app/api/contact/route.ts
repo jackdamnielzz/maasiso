@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { Client } from '@microsoft/microsoft-graph-client';
+import { ClientSecretCredential } from '@azure/identity';
+import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
 
 interface SMTPError {
   code?: string;
@@ -24,6 +27,51 @@ interface EmailError {
   responseCode?: number;
   command?: string;
   stack?: string;
+}
+
+/**
+ * Send email via Microsoft Graph API (application permissions).
+ *
+ * Requires:
+ * - AZURE_TENANT_ID
+ * - AZURE_CLIENT_ID
+ * - AZURE_CLIENT_SECRET
+ * - GRAPH_USER_ID (optional; falls back to EMAIL_USER)
+ */
+async function sendEmailViaGraph(options: {
+  to: string;
+  subject: string;
+  htmlBody: string;
+  textBody: string;
+  replyTo: string;
+}) {
+  const tenantId = process.env.AZURE_TENANT_ID;
+  const clientId = process.env.AZURE_CLIENT_ID;
+  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+  const userId = process.env.GRAPH_USER_ID || process.env.EMAIL_USER;
+
+  if (!tenantId || !clientId || !clientSecret || !userId) {
+    throw new Error('Microsoft Graph configuration incomplete');
+  }
+
+  const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+  const authProvider = new TokenCredentialAuthenticationProvider(credential, {
+    scopes: ['https://graph.microsoft.com/.default']
+  });
+
+  const client = Client.initWithMiddleware({ authProvider });
+
+  const message = {
+    subject: options.subject,
+    body: {
+      contentType: 'HTML',
+      content: options.htmlBody
+    },
+    toRecipients: [{ emailAddress: { address: options.to } }],
+    replyTo: [{ emailAddress: { address: options.replyTo } }]
+  };
+
+  await client.api(`/users/${userId}/sendMail`).post({ message });
 }
 
 // Valid subject options
@@ -85,16 +133,98 @@ export async function POST(request: NextRequest) {
    const emailPassword =
      (process.env.EMAIL_PASSWORD || process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '').trim() || undefined;
 
+   const useGraph = !!(
+     process.env.AZURE_CLIENT_ID &&
+     process.env.AZURE_CLIENT_SECRET &&
+     process.env.AZURE_TENANT_ID
+   );
+
    // Log the form submission and environment variables (password masked for security)
    console.log('Contact form submission:', body);
-   console.log('SMTP config:', {
+   console.log('Email send config:', {
      NODE_ENV: process.env.NODE_ENV,
+     USE_GRAPH: useGraph,
+     AZURE_TENANT_ID_SET: process.env.AZURE_TENANT_ID ? 'Yes' : 'No',
+     AZURE_CLIENT_ID_SET: process.env.AZURE_CLIENT_ID ? 'Yes' : 'No',
+     AZURE_CLIENT_SECRET_SET: process.env.AZURE_CLIENT_SECRET ? 'Yes (value hidden)' : 'No',
+     GRAPH_USER_ID_SET: process.env.GRAPH_USER_ID ? 'Yes' : 'No',
      SMTP_HOST: smtpHost,
      SMTP_PORT: smtpPort,
      SMTP_SECURE: smtpSecure,
      EMAIL_USER: emailUser,
      EMAIL_PASSWORD_SET: emailPassword ? 'Yes (value hidden)' : 'No'
    });
+
+    // Prepare email content (shared for Graph + SMTP)
+    const mailOptions = {
+      from: `"MaasISO Website" <${emailUser}>`,
+      to: 'info@maasiso.nl',
+      replyTo: body.email,
+      subject: `Contactformulier: ${body.subject}`,
+      text: `
+Naam: ${body.name}
+E-mail: ${body.email}
+Onderwerp: ${body.subject}
+
+Bericht:
+${body.message}
+      `,
+      html: `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <h2 style="color: #091E42;">Nieuw bericht via contactformulier</h2>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #eee; width: 120px;"><strong>Naam:</strong></td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.name}</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>E-mail:</strong></td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${body.email}" style="color: #FF8B00;">${body.email}</a></td>
+    </tr>
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Onderwerp:</strong></td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.subject}</td>
+    </tr>
+  </table>
+  
+  <div style="margin-top: 20px;">
+    <strong>Bericht:</strong>
+    <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+      ${body.message.replace(/\n/g, '<br>')}
+    </div>
+  </div>
+  
+  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
+    <p>Dit bericht is verzonden via het contactformulier op de MaasISO website.</p>
+  </div>
+</div>
+      `,
+    };
+
+   if (useGraph) {
+     try {
+       console.log('Attempting to send email via Microsoft Graph...');
+       await sendEmailViaGraph({
+         to: mailOptions.to,
+         subject: mailOptions.subject,
+         htmlBody: mailOptions.html,
+         textBody: mailOptions.text,
+         replyTo: mailOptions.replyTo
+       });
+       console.log('Email sent successfully via Microsoft Graph!');
+
+       return NextResponse.json(
+         { success: true, message: 'Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.' },
+         { status: 200 }
+       );
+     } catch (graphError) {
+       console.error('Microsoft Graph API failed:', graphError);
+       console.log('Falling back to SMTP...');
+       // Continue to SMTP fallback below
+     }
+   }
+
+   // Existing SMTP code here (only runs if Graph not configured OR Graph failed)
 
    // Fail fast if SMTP credentials are missing (common cause of 500 in production)
    if (!emailPassword) {
@@ -155,52 +285,6 @@ export async function POST(request: NextRequest) {
        { status: 500 }
      );
    }
-
-    // Prepare email content
-    const mailOptions = {
-      from: `"MaasISO Website" <${emailUser}>`,
-      to: 'info@maasiso.nl',
-      replyTo: body.email,
-      subject: `Contactformulier: ${body.subject}`,
-      text: `
-Naam: ${body.name}
-E-mail: ${body.email}
-Onderwerp: ${body.subject}
-
-Bericht:
-${body.message}
-      `,
-      html: `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <h2 style="color: #091E42;">Nieuw bericht via contactformulier</h2>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-    <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee; width: 120px;"><strong>Naam:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.name}</td>
-    </tr>
-    <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>E-mail:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${body.email}" style="color: #FF8B00;">${body.email}</a></td>
-    </tr>
-    <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Onderwerp:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.subject}</td>
-    </tr>
-  </table>
-  
-  <div style="margin-top: 20px;">
-    <strong>Bericht:</strong>
-    <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
-      ${body.message.replace(/\n/g, '<br>')}
-    </div>
-  </div>
-  
-  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
-    <p>Dit bericht is verzonden via het contactformulier op de MaasISO website.</p>
-  </div>
-</div>
-      `,
-    };
 
     try {
       // Send the email

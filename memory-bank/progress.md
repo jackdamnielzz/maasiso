@@ -1,6 +1,6 @@
 # MaasISO Progress Tracker
 
-**Last Updated:** 2025-12-13 11:15 UTC
+**Last Updated:** 2025-12-13 18:19 UTC
 
 ---
 
@@ -26,6 +26,11 @@
 ---
 
 ## Recent Milestones
+
+### December 13, 2025 - Contact form email: Microsoft Graph support + SMTP fallback ✅ (18:19 UTC)
+- Added Microsoft Graph sendMail support using Azure AD app credentials in [`sendEmailViaGraph()`](../app/api/contact/route.ts:41).
+- Updated contact API to try Graph first when configured and fall back to SMTP/nodemailer for backward compatibility in [`POST()`](../app/api/contact/route.ts:90).
+- New env vars: `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, optional `GRAPH_USER_ID` (falls back to `EMAIL_USER`).
 
 ### December 13, 2025 - Fix hardening: contact form `POST /api/contact` production 500 (mailserver) ✅ (11:15 UTC)
 - Implemented server-side “fail fast” when SMTP credentials are missing (common production misconfig), plus support for alternate env var names to reduce deployment mismatch.

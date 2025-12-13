@@ -1,6 +1,6 @@
 # Active Context - MaasISO Migration
 
-**Last Updated:** 2025-12-13 11:15 UTC
+**Last Updated:** 2025-12-13 18:19 UTC
 **Current Phase:** Production availability incident: intermittent “This connection is not private” on `www.maasiso.nl` (expired TLS cert)
 **Status:** Strapi Deployed to Railway ✅ LIVE ✅ Content Fixed ✅ Media Uploaded ✅ Frontend Deployed ✅ Backend-migratie naar Railway technisch afgerond ✅ **CONTENT MIGRATION COMPLETE** ✅ **CLOUDINARY URL FIX COMPLETE** ✅ **VERCEL CRITICAL.CSS FIX COMPLETE** ✅ **BLOG IMAGE POPULATE FIX COMPLETE** ✅ **BLOG IMAGE UPDATE FIX COMPLETE** ✅
 
@@ -278,15 +278,19 @@ A custom migration script was created to extract content from the VPS and import
 
 ## Next Steps
 
-### 🔧 Incident: contact form `POST /api/contact` returns 500 in production (Dec 13, 2025)
-- **Symptom:** contact form submission fails with 500 and user-facing message “Er is een fout opgetreden bij de verbinding met de mailserver.”
-- **Most likely cause:** missing SMTP credentials in the deployment environment (`EMAIL_PASSWORD` not set), consistent with prior incident notes in `cline_docs/technical_issues/contact_form_environment_issue.md`.
-- **Code hardening applied:** API now fails fast with a clear configuration error when credentials are missing, and supports alternate env var names to reduce deployment mismatch risk. Implemented in [`POST()`](../app/api/contact/route.ts:49).
-  - Supported env vars:
-    - Preferred: `EMAIL_PASSWORD`
-    - Also accepted: `SMTP_PASS`, `SMTP_PASSWORD`
-    - Optional: `EMAIL_USER`, `SMTP_USER`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`
-- **Operational fix required:** set `EMAIL_PASSWORD` (and optionally `EMAIL_USER`) in the production environment where Next.js runs.
+### 🔧 Incident mitigation: contact form email sending via Microsoft Graph (Dec 13, 2025)
+- **Problem:** SMTP basic auth fails for Microsoft 365 mailboxes with MFA; app passwords are blocked.
+- **Change implemented:** contact form API now attempts Microsoft Graph first (when configured) and falls back to SMTP/nodemailer for backward compatibility. Implemented in [`POST()`](../app/api/contact/route.ts:90) and [`sendEmailViaGraph()`](../app/api/contact/route.ts:41).
+- **New env vars (Graph):**
+  - `AZURE_TENANT_ID`
+  - `AZURE_CLIENT_ID`
+  - `AZURE_CLIENT_SECRET`
+  - `GRAPH_USER_ID` (optional; falls back to `EMAIL_USER`)
+- **SMTP still supported:** existing variables continue to work:
+  - Preferred: `EMAIL_PASSWORD`
+  - Also accepted: `SMTP_PASS`, `SMTP_PASSWORD`
+  - Optional: `EMAIL_USER`, `SMTP_USER`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`
+- **Azure AD requirement:** App registration must have **Application permission** `Mail.Send` granted with admin consent (and send-as mailbox must be allowed if applicable).
 
 De technische migratie naar Railway (Strapi + database + proxy + media-config) is afgerond. De resterende acties zijn vooral DNS, opschonen en **content-afwerking (Gemini-afbeeldingen)**.
 
