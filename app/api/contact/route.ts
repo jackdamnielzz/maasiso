@@ -74,16 +74,16 @@ export async function POST(request: NextRequest) {
 
    // Support multiple env var names to prevent deployment misconfig issues.
    // Preferred: EMAIL_PASSWORD (and optionally EMAIL_USER / SMTP_HOST / SMTP_PORT / SMTP_SECURE)
-   const smtpHost = process.env.SMTP_HOST || 'smtp.hostinger.com';
-   const smtpPort = Number(process.env.SMTP_PORT || 465);
+   const smtpHost = (process.env.SMTP_HOST || 'smtp.hostinger.com').trim();
+   const smtpPort = Number((process.env.SMTP_PORT || '465').toString().trim());
    const smtpSecure =
      typeof process.env.SMTP_SECURE === 'string'
-       ? process.env.SMTP_SECURE.toLowerCase() === 'true'
+       ? process.env.SMTP_SECURE.trim().toLowerCase() === 'true'
        : true;
 
-   const emailUser = process.env.EMAIL_USER || process.env.SMTP_USER || 'info@maasiso.nl';
+   const emailUser = (process.env.EMAIL_USER || process.env.SMTP_USER || 'info@maasiso.nl').trim();
    const emailPassword =
-     process.env.EMAIL_PASSWORD || process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
+     (process.env.EMAIL_PASSWORD || process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '').trim() || undefined;
 
    // Log the form submission and environment variables (password masked for security)
    console.log('Contact form submission:', body);
