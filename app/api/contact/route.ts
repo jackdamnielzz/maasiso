@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
    const isDev = process.env.NODE_ENV === 'development';
+   const isContactDebug = process.env.CONTACT_DEBUG === 'true';
 
    // Support multiple env var names to prevent deployment misconfig issues.
    // Preferred: EMAIL_PASSWORD (and optionally EMAIL_USER / SMTP_HOST / SMTP_PORT / SMTP_SECURE)
@@ -136,12 +137,12 @@ export async function POST(request: NextRequest) {
      const smtpError = error as SMTPError;
      console.error('SMTP connection failed:', smtpError);
      
-     // Include detailed error in response (only in development)
+     // Include detailed error in response (development or explicitly enabled debug)
      return NextResponse.json(
        {
          success: false,
          message: 'Er is een fout opgetreden bij de verbinding met de mailserver.',
-         error: isDev
+         error: isDev || isContactDebug
            ? {
                code: smtpError.code,
                message: smtpError.message,
@@ -253,11 +254,23 @@ ${body.message}
       );
     }
   } catch (error) {
-    console.error('Error processing contact form:', error);
+    const serverError = error as Error;
+    console.error('Error processing contact form:', serverError);
+
+    const isDev = process.env.NODE_ENV === 'development';
+    const isContactDebug = process.env.CONTACT_DEBUG === 'true';
+
     return NextResponse.json(
       {
         success: false,
-        message: 'Er is een fout opgetreden bij het verwerken van uw aanvraag. Probeer het later opnieuw.'
+        message: 'Er is een fout opgetreden bij het verwerken van uw aanvraag. Probeer het later opnieuw.',
+        error: isDev || isContactDebug
+          ? {
+              name: serverError.name,
+              message: serverError.message,
+              stack: serverError.stack
+            }
+          : undefined
       },
       { status: 500 }
     );
