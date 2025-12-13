@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+
 interface SMTPError {
   code?: string;
   message?: string;
@@ -14,14 +15,6 @@ interface ContactFormData {
   email: string;
   subject: string;
   message: string;
-}
-
-interface SMTPError {
-  code?: string;
-  message?: string;
-  responseCode?: number;
-  command?: string;
-  stack?: string;
 }
 
 interface EmailError {
@@ -76,25 +69,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
+   const isDev = process.env.NODE_ENV === 'development';
+
+   // Support multiple env var names to prevent deployment misconfig issues.
+   // Preferred: EMAIL_PASSWORD (and optionally EMAIL_USER / SMTP_HOST / SMTP_PORT / SMTP_SECURE)
+   const smtpHost = process.env.SMTP_HOST || 'smtp.hostinger.com';
+   const smtpPort = Number(process.env.SMTP_PORT || 465);
+   const smtpSecure =
+     typeof process.env.SMTP_SECURE === 'string'
+       ? process.env.SMTP_SECURE.toLowerCase() === 'true'
+       : true;
+
+   const emailUser = process.env.EMAIL_USER || process.env.SMTP_USER || 'info@maasiso.nl';
+   const emailPassword =
+     process.env.EMAIL_PASSWORD || process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
+
    // Log the form submission and environment variables (password masked for security)
    console.log('Contact form submission:', body);
-   console.log('EMAIL_PASSWORD set:', process.env.EMAIL_PASSWORD ? 'Yes (value hidden)' : 'No');
-   console.log('Environment variables:', {
+   console.log('SMTP config:', {
      NODE_ENV: process.env.NODE_ENV,
-     // Add other relevant env vars here, but DON'T log the actual password
+     SMTP_HOST: smtpHost,
+     SMTP_PORT: smtpPort,
+     SMTP_SECURE: smtpSecure,
+     EMAIL_USER: emailUser,
+     EMAIL_PASSWORD_SET: emailPassword ? 'Yes (value hidden)' : 'No'
    });
+
+   // Fail fast if SMTP credentials are missing (common cause of 500 in production)
+   if (!emailPassword) {
+     return NextResponse.json(
+       {
+         success: false,
+         message:
+           'Er is een fout opgetreden bij de verbinding met de mailserver. (Server configuratie ontbreekt)',
+         error: isDev
+           ? {
+               missingEnv: ['EMAIL_PASSWORD (preferred)', 'or SMTP_PASS / SMTP_PASSWORD'].filter(
+                 Boolean
+               )
+             }
+           : 'Details alleen zichtbaar in development mode'
+       },
+       { status: 500 }
+     );
+   }
 
    // Create a nodemailer transporter
    const transporter = nodemailer.createTransport({
-     host: 'smtp.hostinger.com', // Hostinger SMTP server
-     port: 465,
-     secure: true, // true for 465, false for other ports
+     host: smtpHost,
+     port: smtpPort,
+     secure: smtpSecure, // true for 465, false for other ports
      auth: {
-       user: 'info@maasiso.nl', // Your email address
-       pass: process.env.EMAIL_PASSWORD, // Email password from environment variables
+       user: emailUser,
+       pass: emailPassword
      },
-     debug: true, // Enable debug output
-     logger: true // Log information about the mail
+     debug: isDev, // Enable debug output only in development
+     logger: isDev // Log information about the mail only in development
    });
    
    // Test SMTP connection before sending
@@ -107,19 +137,19 @@ export async function POST(request: NextRequest) {
      console.error('SMTP connection failed:', smtpError);
      
      // Include detailed error in response (only in development)
-     const isDev = process.env.NODE_ENV === 'development';
-     
      return NextResponse.json(
        {
          success: false,
          message: 'Er is een fout opgetreden bij de verbinding met de mailserver.',
-         error: isDev ? {
-           code: smtpError.code,
-           message: smtpError.message,
-           responseCode: smtpError.responseCode,
-           command: smtpError.command,
-           stack: smtpError.stack
-         } : 'Details alleen zichtbaar in development mode'
+         error: isDev
+           ? {
+               code: smtpError.code,
+               message: smtpError.message,
+               responseCode: smtpError.responseCode,
+               command: smtpError.command,
+               stack: smtpError.stack
+             }
+           : 'Details alleen zichtbaar in development mode'
        },
        { status: 500 }
      );

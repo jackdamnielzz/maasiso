@@ -1,6 +1,6 @@
 # MaasISO Progress Tracker
 
-**Last Updated:** 2025-12-12 10:23 UTC
+**Last Updated:** 2025-12-13 11:15 UTC
 
 ---
 
@@ -24,6 +24,80 @@
 | Phase 7 | Cleanup & Documentation | ⏳ Pending | - |
 
 ---
+
+## Recent Milestones
+
+### December 13, 2025 - Fix hardening: contact form `POST /api/contact` production 500 (mailserver) ✅ (11:15 UTC)
+- Implemented server-side “fail fast” when SMTP credentials are missing (common production misconfig), plus support for alternate env var names to reduce deployment mismatch.
+- Change applied in [`POST()`](../app/api/contact/route.ts:49).
+- Operational requirement: ensure `EMAIL_PASSWORD` is configured in the production runtime environment.
+
+### December 13, 2025 - Incident: `www.maasiso.nl` TLS expired (connectivity warning) ✅ (10:53 UTC)
+- Reproduced the iOS Safari warning “Deze verbinding is niet privé” for `https://www.maasiso.nl`.
+- Confirmed root cause with new diagnostics script: `www.maasiso.nl` serves an **expired** certificate while `maasiso.nl` is valid.
+- Added diagnostics tooling:
+  - Script: [`scripts/diagnose-site-connectivity.js`](../scripts/diagnose-site-connectivity.js:1)
+  - NPM: [`site:diagnose`](../package.json:5), [`site:diagnose:maasiso`](../package.json:5)
+
+### December 12, 2025 - SEO cleanup: “Noindex URLs” (test/debug routes) ✅ (17:04 UTC)
+- Centralized production handling to reduce GSC “Noindex URLs” caused by test/debug endpoints:
+  - Auth-protect `/test-deploy` behind an internal shared secret (header/cookie) in [`middleware()`](../middleware.ts:36).
+  - Return **410 Gone** for `api/test-*` and `api/debug-*` endpoints (plus a few explicit legacy test endpoints) in [`middleware()`](../middleware.ts:36).
+- Added guardrail script to fail if blog post routes introduce robots/noindex directives:
+  - Script: [`check-blog-indexable.js`](../scripts/check-blog-indexable.js:1)
+  - npm: [`seo:check-blog-indexable`](../package.json:5)
+- Verified: running the script prints OK (exit 0).
+
+### December 12, 2025 - Robots.txt: block Next.js internals from crawling ✅ (16:47 UTC)
+- Updated `robots.txt` directives to reduce GSC noise for technical endpoints (e.g. `/_next/image?url=...`):
+  - `Disallow: /_next/`
+  - `Allow: /_next/static/`
+- Served via Next.js route: [`GET()`](../app/robots.txt/route.ts:1)
+- Deployment safety (hybrid router tree): mirrored at [`GET()`](../src/app/robots.txt/route.ts:1) so production serves identical output regardless of whether `app/` or `src/app/` is active.
+
+### December 12, 2025 - Fix: prevent Vercel Edge caching stale `/robots.txt` ✅ (16:57 UTC)
+- Live fetch was serving an old robots body with `X-Vercel-Cache: HIT` + high `Age`.
+- To ensure robots updates go live quickly, both robots route handlers were made explicitly dynamic + non-cacheable:
+  - Added `export const dynamic = 'force-dynamic'`
+  - Added `Cache-Control: no-store, max-age=0`
+  - Set `Content-Type: text/plain; charset=utf-8`
+- Implemented in both:
+  - [`app/robots.txt/route.ts`](../app/robots.txt/route.ts:1)
+  - [`src/app/robots.txt/route.ts`](../src/app/robots.txt/route.ts:1)
+
+### December 12, 2025 - Canonical tags for “Dubbele pagina zonder canonieke” ✅ (16:43 UTC)
+- Added explicit canonicals for:
+  - `/diensten` → `https://maasiso.nl/diensten` in [`metadata`](../app/diensten/page.tsx:12)
+  - `/iso-16175` → `https://maasiso.nl/iso-16175` in [`metadata`](../app/iso-16175/page.tsx:6)
+  - `/avg` → `https://maasiso.nl/avg` in [`metadata`](../app/avg/page.tsx:13)
+- Added a safety-net canonical for the same three slugs when served via the dynamic route in [`generateMetadata()`](../src/app/[slug]/page.tsx:12).
+- Redirect policy already enforced site-wide: no trailing slash (301) via [`middleware()`](../middleware.ts:36), so `/avg/` → `/avg`, `/diensten/` → `/diensten`, `/iso-16175/` → `/iso-16175`.
+
+### December 12, 2025 - HTTPS/security warning investigation + canonical host normalization ✅ (15:31 UTC)
+- Reported issue: browser showed “Not secure / Advanced → proceed” for `www.maasiso.nl`.
+- Local checks (`curl.exe -vkI`): both `maasiso.nl` and `www.maasiso.nl` resolved to `76.76.21.21` with `Server: Vercel`, returning normal HTTPS responses.
+- Code change: added canonical host normalization `www.* → apex` **301** (with pathname de-slashing on the redirected URL) in [`middleware()`](../middleware.ts:36).
+- Note: takes effect after deployment; live behavior may still reflect Vercel-level redirects until deployed.
+
+### December 12, 2025 - SEO canonicalization (no trailing slashes) ✅ (14:57 UTC)
+- Implemented site-wide **301** trailing-slash normalization (canonical: **no trailing slash** for all non-root pages) while preserving querystrings in [`middleware()`](../middleware.ts:1).
+- Added explicit legacy alias: `/home` and `/home/` → `/` (301) with **no redirect chain** in [`middleware()`](../middleware.ts:1).
+- Prevented redirect chains by matching legacy redirects against a de-slashed pathname, e.g. `/diensten/iso-27001/` → `/iso-27001` in one hop in [`middleware()`](../middleware.ts:1).
+- Added exclusions so redirects never affect `/_next/*`, `/api/*`, `/assets/*` (if applicable), and special files (`robots.txt`, `sitemap.xml`, `favicon.ico`) in [`middleware()`](../middleware.ts:1).
+
+### December 12, 2025 - Soft 404 fixes ✅ (14:52 UTC)
+- Added permanent redirects for additional legacy service URLs under `/diensten/*`, preserved querystrings on redirects, and explicitly handled `/diensten/iso-45001` as **410 Gone** (no `/iso-45001` route exists) in [`middleware()`](../middleware.ts:1).
+- Implemented canonical terms route: `/algemene-voorwaarden` is now a real page via [`AlgemeneVoorwaardenPage()`](../app/algemene-voorwaarden/page.tsx:1), and `/terms-and-conditions` redirects to it (301).
+- Updated sitemap base routes to include `/algemene-voorwaarden` (and not the redirected `/terms-and-conditions`) in [`sitemap()`](../app/sitemap.ts:1).
+- Internal legacy URL links: updated one direct match `/diensten/iso-9001-consultancy` → `/iso-9001` in [`serviceRelations`](../src/lib/utils/serviceRelations.ts:1).
+
+### December 12, 2025 - Blog detail SSR markdown regression fix ✅ (11:26 UTC)
+- Fixed Server/Client boundary violations by moving client-only UI (`RelatedPosts`, `ScrollToTop`, `BackToBlog`) behind an explicit client wrapper: [`src/components/features/BlogPostContentClientExtras.tsx`](../src/components/features/BlogPostContentClientExtras.tsx:1) + [`src/components/features/BlogPostContentServer.tsx`](../src/components/features/BlogPostContentServer.tsx:1).
+- Restored markdown styling parity by re-introducing `components={...}` overrides in the server markdown renderer (headings/tables/code/links); kept safe defaults (no `rehypeRaw`): [`src/components/features/BlogPostContentServer.tsx`](../src/components/features/BlogPostContentServer.tsx:1).
+- Cleaned up `constructImageUrl()` (removed unreachable code + noisy logging) without changing metadata behavior: [`app/blog/[slug]/page.tsx`](../app/blog/[slug]/page.tsx:1).
+- Verification:
+  - `npm run build` ✅
+  - `npm test` ❌ (fails due to pre-existing Jest/Vitest/environment issues)
 
 ## Recent Milestones
 

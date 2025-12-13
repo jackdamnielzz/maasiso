@@ -1,219 +1,116 @@
 # Active Context - MaasISO Migration
 
-**Last Updated:** 2025-12-12 10:21 UTC
-**Current Phase:** Frontend UX/SEO improvements - `/diensten` (safe, scoped)
+**Last Updated:** 2025-12-13 11:15 UTC
+**Current Phase:** Production availability incident: intermittent “This connection is not private” on `www.maasiso.nl` (expired TLS cert)
 **Status:** Strapi Deployed to Railway ✅ LIVE ✅ Content Fixed ✅ Media Uploaded ✅ Frontend Deployed ✅ Backend-migratie naar Railway technisch afgerond ✅ **CONTENT MIGRATION COMPLETE** ✅ **CLOUDINARY URL FIX COMPLETE** ✅ **VERCEL CRITICAL.CSS FIX COMPLETE** ✅ **BLOG IMAGE POPULATE FIX COMPLETE** ✅ **BLOG IMAGE UPDATE FIX COMPLETE** ✅
 
 ---
 
 ## Current Work
 
-### ✅ `/diensten` UX/SEO/accessibility hardening (Dec 12, 2025 10:21 UTC)
+### 🔧 SEO cleanup: “Noindex URLs” (Dec 12, 2025 17:04 UTC)
 
-Implemented the agreed, minimal-risk improvements for `https://maasiso.nl/diensten` while staying consistent with the existing `/contact` page patterns:
+Goal: reduce GSC “Noindex URLs” by removing/locking down production test/diagnostic routes rather than sprinkling `noindex`.
 
-- LocalBusiness JSON-LD placeholders removed; schema now uses correct business details (phone/email/address) and adds `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
-- `/diensten` above-the-fold: always render an `H1` fallback independent of Strapi block IDs; keep only the primary CTA “Plan kennismaking” → `/contact` (secondary CTA removed) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
-- Layout top padding: removed `pt-20` from the layout so there’s a single source of truth for fixed-header offset (global `main { padding-top: 80px; }`) in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1) + [`app/layout.tsx`](../app/layout.tsx:1).
-- Header dropdown accessibility (Informatie): ARIA + keyboard support (Escape closes) + basic focus management; contact nav label now “Plan kennismaking” (links to `/contact`) to avoid duplicate contact CTAs in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
-- Reduced noisy `console.*` in production by gating debug logs behind `NODE_ENV !== 'production'` in Header/Analytics/API code paths (notably [`src/components/common/Analytics.tsx`](../src/components/common/Analytics.tsx:1), [`src/lib/analytics.ts`](../src/lib/analytics.ts:1), and proxy routes under `app/api/proxy/*`).
+**Approach implemented (centralized in middleware):**
+- Auth-protect maintainers-only page(s) in production (currently: `/test-deploy`) using a shared secret via header/cookie:
+  - Header: `x-internal-routes-secret`
+  - Cookie: `internal_routes_secret`
+  - Env: `INTERNAL_ROUTES_SECRET`
+- Return **410 Gone** for debug/test API endpoints in production (pattern-based), so crawlers see “removed” rather than “noindex”.
 
-**Verification status:**
-- `npm run lint` fails due to many *pre-existing* repo-wide lint violations (not limited to the touched files). Given current scope constraints, these were not refactored away.
-- `npm run build` now passes because Next.js build-time linting is disabled via `eslint.ignoreDuringBuilds: true` in [`next.config.js`](../next.config.js:1) (lint can still be run explicitly via `npm run lint`).
+Implemented in: [`middleware()`](../middleware.ts:36)
 
-### 🖼️ Blog image re-migration script (OLD VPS Strapi → NEW Strapi) (Dec 12, 2025 10:00 UTC)
+**Automated guardrail:**
+- Added a script to fail CI if any blog post route code includes robots/noindex signals: [`check-blog-indexable.js`](../scripts/check-blog-indexable.js:1)
+- Added npm script: [`seo:check-blog-indexable`](../package.json:5)
 
-Fixed NEW Strapi blog post update failures (HTTP 404 on PUT) in [`scripts/migrate-blog-images-from-vps-strapi.js`](../scripts/migrate-blog-images-from-vps-strapi.js:1).
+### ✅ SEO canonicalization: redirect + trailing-slash normalization (Dec 12, 2025 14:57 UTC)
 
-**Root cause (confirmed):**
-- NEW Strapi is v5 and expects updates by `documentId` (not numeric `id`).
-- Script was calling `PUT /api/blog-posts/{id}` using numeric `id`, which returns 404.
+Implemented site-wide canonical URL policy: **NO trailing slash** for all non-root pages (root stays `/`). This eliminates duplicate URL variants (“Pagina met omleiding”) and avoids redirect chains.
 
-**Fix:**
-- Resolve and store `documentId` from the NEW blog post response, then update via `PUT /api/blog-posts/{documentId}`.
+### ✅ Canonical tags for GSC “Dubbele pagina zonder canonieke” (Dec 12, 2025)
 
-**Safe testing:**
-- Added `ONLY_SLUG` env var to run the migration against a single slug first (no re-uploads; mapping file is reused).
+Added explicit canonical tags for:
+- `/diensten` → `https://maasiso.nl/diensten`
+- `/iso-16175` → `https://maasiso.nl/iso-16175`
+- `/avg` → `https://maasiso.nl/avg`
 
-Added a robust, resumable Node.js migration utility to re-fetch blog post images from the OLD VPS Strapi and upload them into the NEW Strapi, then update blog posts in the NEW Strapi to reference the newly uploaded media.
+Why: repo contains both `app/` and `src/app/`; these three URLs can be served by either static routes or the dynamic `[slug]` route depending on which tree is active. We now emit canonicals from both the static pages (where applicable) and the dynamic `[slug]` metadata.
 
-**Key points:**
-- Script: [`scripts/migrate-blog-images-from-vps-strapi.js`](../scripts/migrate-blog-images-from-vps-strapi.js:1)
-- Idempotent: stores mapping at `MAP_PATH` (default: `scripts/migrate-blog-images-media-map.json`)
-- Safe: `DRY_RUN=1` supported, plus `VERBOSE=1`, retries, concurrency
-- Migrates:
-  - `featuredImage` relation
-  - inline images referenced in markdown / HTML `<img src="...">` inside blog post content (URL replacement)
+### 🔎 HTTPS/security warning investigation + canonical host normalization (Dec 12, 2025 15:31 UTC)
 
-### 🔧 Vercel CLI linkage + production deploy trigger (Dec 12, 2025 09:22 UTC)
+- **Issue reported:** browser showed “Not secure / Advanced → proceed” for `www.maasiso.nl`.
+- **Local checks (`curl.exe -vkI`):** both `maasiso.nl` and `www.maasiso.nl` resolved to `76.76.21.21` with `Server: Vercel`, returning normal HTTPS responses.
+- **Code change:** added explicit canonical host normalization in [`middleware()`](../middleware.ts:36): `www.* → apex` with **301**, applying pathname de-slashing on the redirected URL.
+- **Note:** takes effect after deployment; live behavior may still reflect Vercel-level redirects until deployed.
 
-Confirmed Vercel CLI is installed and authenticated, linked this local repo to the existing Vercel project, and attempted a production deployment via CLI.
+### 🚨 TLS incident reproduced: `www.maasiso.nl` serves expired certificate (Dec 13, 2025 10:53 UTC)
 
-**CLI checks:**
-- `vercel --version` → `48.2.9`
-- `vercel whoami` → `jackdamnielzz`
+- **Observed user error (iOS Safari):** “Deze verbinding is niet privé” for `https://www.maasiso.nl`.
+- **Local reproduction:** [`site:diagnose:maasiso`](../package.json:5) shows:
+  - `maasiso.nl`: TLS OK (Let’s Encrypt R12), valid_to `Mar 11 2026`
+  - `www.maasiso.nl`: **TLS FAIL** `CERT_HAS_EXPIRED`, valid_to `Jul 22 2025`
+- **Impact:** because `www` is on HTTPS + HSTS, affected clients cannot bypass reliably → site appears “down” for some visitors.
+- **Repo change:** added diagnostics script [`scripts/diagnose-site-connectivity.js`](../scripts/diagnose-site-connectivity.js:1) and npm scripts in [`package.json`](../package.json:5).
+- **Next action (infra):** fix certificate at the edge/origin serving `www.maasiso.nl`:
+  - Ensure `www.maasiso.nl` is added to the correct Vercel project domains and re-issue cert
+  - Ensure DNS for `www` points to Vercel correctly (prefer CNAME `www` → `cname.vercel-dns.com`), avoiding stale/mixed hosting endpoints
 
-**Project linkage confirmed:**
-- [`vercel link`](vercel:1) linked repo to `tunuxs-projects/maasiso-copy-2` (created `.vercel/`)
+**Redirects / status handling (middleware) — querystrings preserved:**
+- Trailing slash normalization (global 301): `/<path>/` → `/<path>` (except `/`)
+- Explicit legacy alias: `/home` and `/home/` → `/` (301, no redirect chain)
+- Legacy variants + services redirects remain in place (301), evaluated against a de-slashed pathname to avoid chains:
+  - `/$` + `/%24` → **410 Gone**
+  - `/index.html` → `/` (301)
+  - `/index` → `/` (301)
+  - `/contact.html` → `/contact` (301)
+  - `/consultancy` → `/diensten` (301)
+  - `/algemene-voorwaarden.html` → `/algemene-voorwaarden` (301)
+  - `/terms-and-conditions` → `/algemene-voorwaarden` (301)
+  - `/diensten/iso-9001-consultancy` → `/iso-9001` (301)
+  - `/diensten/iso-9001` → `/iso-9001` (301)
+  - `/diensten/iso-14001` → `/iso-14001` (301)
+  - `/diensten/iso-27001` → `/iso-27001` (301)
+  - `/diensten/bio` → `/bio` (301)
+  - `/diensten/gdpr-avg` → `/diensten` (301)
 
-**Production deployment attempt:**
-- [`vercel --prod`](vercel:1) triggered a production deploy, but the build failed on Vercel during lint/type-check.
-- Inspect URL: https://vercel.com/tunuxs-projects/maasiso-copy-2/Cn63ariykEQzwnbePHW3MZWagUjp
-- Deployment URL (errored): https://maasiso-copy-2-n33acc44h-tunuxs-projects.vercel.app
+**Exclusions (no redirects applied):**
+- Next internals: `/_next/*`
+- API: `/api/*`
+- Static bucket (if used): `/assets/*`
+- Special files: `/robots.txt`, `/sitemap.xml`, `/favicon.ico`
 
-**Build failure summary (Vercel build logs):**
-- `next build` compiled, then failed at “Linting and checking validity of types …”
-- Errors include many `@typescript-eslint/no-explicit-any`, `@typescript-eslint/no-unused-vars`, plus `react/no-unescaped-entities`, etc.
-- Example first errors:
-  - `./app/[slug]/page.tsx`: unused vars + `no-explicit-any`
-  - Multiple API routes under `./app/api/...`: unused `request`, many `no-explicit-any`
+Implemented in: [`middleware()`](../middleware.ts:36)
 
-**Note:** This is a build configuration/lint policy issue in the repo; no app code changes were made during this task.
+**Sitemap canonicalization:**
+- Sitemap continues to list only canonical URLs (no trailing slashes, no `/home`): [`sitemap()`](../app/sitemap.ts:23)
 
-### ✅ BLOG OVERVIEW CARD CLOUDINARY FEATURED IMAGE FIX (Dec 12, 2025 08:47 UTC)
+---
 
-### ✅ BLOG OVERVIEW CARD CLOUDINARY FEATURED IMAGE FIX (Dec 12, 2025 08:47 UTC)
+### ✅ Robots.txt: block Next.js internals from crawling (Dec 12, 2025 16:47 UTC)
 
-Fixed featured images not displaying on the blog overview page (and related cards) when `featuredImage.url` is a Cloudinary URL.
+Goal: reduce Google Search Console noise for technical endpoints (e.g. `/_next/image?url=...`) by instructing crawlers not to crawl Next.js internals.
 
-**Root Cause:**
-- [`src/components/features/BlogPostCard.tsx`](src/components/features/BlogPostCard.tsx:1) built an image `src` by splitting on `/uploads/`, which fails for Cloudinary URLs.
-- Single post already worked because [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:1) uses [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) which supports Cloudinary.
+**Deployment safety note (hybrid router tree):** repo contains both `app/` and `src/app/`. Production `/robots.txt` may be served by either tree depending on deployment config. To prevent mismatches, the same route now exists in both locations:
+- [`GET()`](../app/robots.txt/route.ts:1)
+- [`GET()`](../src/app/robots.txt/route.ts:1)
 
-**Solution Implemented:**
-- Updated [`src/components/features/BlogPostCard.tsx`](src/components/features/BlogPostCard.tsx:1) to use [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) (preferred format: `medium`) and keep the existing placeholder behavior when missing/error.
-- Updated [`src/components/features/BlogCard.tsx`](src/components/features/BlogCard.tsx:1) to use [`getImageUrl()`](src/lib/utils/imageUtils.ts:231) (preferred format: `small`) for consistency across overview cards.
+- Rules added:
+  - `Disallow: /_next/`
+  - `Allow: /_next/static/`
 
-**Validation:**
-- `npm run build:prod` ✅ (uses `next build --no-lint` and skips type-check flags via script).
+### ✅ Fix: prevent Vercel Edge from caching stale `/robots.txt` (Dec 12, 2025 16:57 UTC)
 
-### ✅ BLOG IMAGE POPULATE FIX (Dec 11, 2025 22:37 UTC)
+Live fetch was serving an old robots body with `X-Vercel-Cache: HIT` + high `Age`. To ensure updates go live quickly, both robots route handlers were made explicitly dynamic and non-cacheable:
+- Added `export const dynamic = 'force-dynamic'`
+- Added explicit response headers:
+  - `Content-Type: text/plain; charset=utf-8`
+  - `Cache-Control: no-store, max-age=0`
 
-Fixed blog post images not displaying. The root cause was that the explicit `populate` parameters in `getBlogPosts()` were missing the `provider` and `provider_metadata` fields needed for Cloudinary URL detection.
-
-**Root Cause:**
-- [`getBlogPosts()`](src/lib/api.ts:1056) used explicit field list for `featuredImage` populate
-- Fields included: `url`, `alternativeText`, `width`, `height`, `formats`, `name`, `hash`, `ext`, `mime`, `size`
-- **Missing fields:** `provider` and `provider_metadata`
-- Without these fields, [`mapImage()`](src/lib/api.ts:269) couldn't detect Cloudinary images
-- Result: Images fell back to `/uploads/` URLs which were proxied to Strapi where files don't exist
-
-**Solution Implemented:**
-- Added `provider` (field index 10) and `provider_metadata` (field index 11) to the `populateParams` array in [`getBlogPosts()`](src/lib/api.ts:1056)
-
-**Files Modified:**
-- `src/lib/api.ts` - Added `provider` and `provider_metadata` to `featuredImage` populate fields
-
-**Note:** Other API functions (`getNewsArticles`, `getNewsArticleBySlug`, `getBlogPostBySlug`) use `populate=*` which already includes all fields.
-
-### ✅ VERCEL CRITICAL.CSS FIX (Dec 11, 2025 22:26 UTC)
-
-Fixed critical Vercel deployment failure where ALL pages returned 500 errors. The root cause was the `critical.css` file not being bundled in Vercel's serverless functions.
-
-**Root Cause:**
-- [`app/layout.tsx`](app/layout.tsx:17) used `fs.readFileSync(path.join(process.cwd(), 'app/critical.css'))` to load CSS at runtime
-- Vercel serverless functions have `process.cwd()` pointing to `/var/task`, where `critical.css` wasn't bundled
-- Result: `Error: ENOENT: no such file or directory, open '/var/task/app/critical.css'` on ALL pages
-
-**Solution Implemented:**
-- Inlined the critical CSS content directly in [`app/layout.tsx`](app/layout.tsx:1) as a template literal string
-- Removed `fs` and `path` imports that were causing the runtime file read
-- CSS is now bundled at build time and included in the serverless function
-
-**Files Modified:**
-- `app/layout.tsx` - Replaced `fs.readFileSync()` with inlined CSS content
-
-**Deployment Verified:**
-- New deployment: `https://maasiso-copy-2-8f3ztrz0j-tunuxs-projects.vercel.app` ✅ Ready
-- Build time: 1 minute
-- Status: Production ✅
-
-### ✅ CLOUDINARY IMAGE URL FIX (Dec 11, 2025 22:08 UTC)
-
-Fixed broken Cloudinary images in the frontend. The issue was that Strapi returns local `/uploads/` paths even when using Cloudinary as the upload provider, causing 404 errors when the frontend proxies these URLs.
-
-**Root Cause:**
-- Strapi returns: `{ url: "/uploads/image.jpg", provider: "cloudinary", provider_metadata: { public_id: "..." } }`
-- Frontend was transforming to: `/api/proxy/uploads/image.jpg`
-- Proxy fetched: `https://peaceful-insight-production.up.railway.app/uploads/image.jpg`
-- Result: 404 (file is on Cloudinary, not Strapi server)
-
-**Solution Implemented:**
-- Updated [`mapImage()`](src/lib/api.ts:230) function to detect Cloudinary images via `provider_metadata` and construct proper Cloudinary URLs
-- Added [`getCloudinaryUrl()`](src/lib/utils/imageUtils.ts:74) helper function to construct URLs from provider metadata
-- Updated [`transformImageUrl()`](src/lib/utils/imageUtils.ts:114) to handle Strapi image objects with provider metadata
-- Updated [`getImageUrl()`](src/lib/utils/imageUtils.ts:229) to check for Cloudinary URLs from provider metadata
-- Fixed [`getNewsArticleBySlug()`](src/lib/api.ts:810) to use the updated `mapImage()` function
-
-**Files Modified:**
-- `src/lib/api.ts` - Updated `mapImage()` and `getNewsArticleBySlug()`
-- `src/lib/utils/imageUtils.ts` - Added `getCloudinaryUrl()`, updated `transformImageUrl()` and `getImageUrl()`
-
-**Cloudinary Cloud Name:** `dseckqnba`
-
-### ✅ CONTENT MIGRATION COMPLETED (Dec 11, 2025 21:32 UTC)
-
-The comprehensive content migration from OLD VPS Strapi to NEW Railway Strapi has been **successfully completed**:
-
-| Content Type | Action | Count | Status |
-|--------------|--------|-------|--------|
-| Pages | Updated | 7 | ✅ Complete |
-| Categories | Created | 5 | ✅ Complete |
-| Tags | Created | 40 | ✅ Complete |
-| Blog Posts | Verified | 36 | ✅ Already existed |
-
-**Pages Migrated with Full Layout Components:**
-- `diensten` - 6 components ✅
-- `avg` - 6 components ✅
-- `bio` - 6 components ✅
-- `iso-27001` - 5 components ✅
-- `iso-14001` - 5 components ✅
-- `iso-16175` - 6 components ✅
-- `blog` - 2 components ✅
-
-**Migration Script:** [`scripts/migrate-all-content.js`](../scripts/migrate-all-content.js:1)
-
-### Huidige status - Strapi op Railway + Gemini images
-
-- Strapi-backend draait nu stabiel op Railway: `https://peaceful-insight-production.up.railway.app` (v5.31.3 met Railway PostgreSQL).
-- De Next.js-frontend (lokaal en op Vercel) spreekt via de proxy-routes (`/api/proxy/...`) met Railway; blog, uploads en overige content-endpoints functioneren.
-- Het image-format-fixscript [`scripts/fix-strapi-image-formats.js`](../scripts/fix-strapi-image-formats.js:1) is succesvol tegen Railway gedraaid met een geldig API-token. Het volledige rapport staat in [`scripts/fix-strapi-image-formats-report.json`](../scripts/fix-strapi-image-formats-report.json:1).
-- Bevindingen voor alle `Gemini_Generated_Image_*` records:
-  - ~51 upload-records in Strapi; 14 Gemini_Generated_Image_* records.
-  - Voor alle Gemini-records geven zowel de `original`-URL als alle varianten (`large`, `medium`, `small`, `thumbnail`) een 404.
-  - Het script kon geen enkel record repareren (**Files changed: 0**), wat bevestigt dat de database-records bestaan maar de fysieke Gemini-bestanden ontbreken in de Railway uploads-storage.
-- Conclusie:
-  - De Strapi → Railway backend-migratie (database, content, media-config, proxy) is **technisch afgerond**.
-  - De huidige 400/404-imageproblemen op de site worden veroorzaakt door ontbrekende Gemini-bestanden, **niet** door een bug in frontend, proxy of script.
-  - Resterend werk is inhoudelijk/redactioneel: nieuwe Gemini-afbeeldingen genereren, uploaden in Railway Strapi en koppelen aan de juiste content.
-- Er zijn op dit moment geen bekende blokkerende technische issues in de Strapi → Railway-keten.
-
-### Migration from Hostinger VPS to Vercel + Railway
-
-We are migrating the MaasISO website infrastructure due to:
-1. Security incident (cryptocurrency mining malware - Dec 5-10, 2025)
-2. Backend VPS expiration (December 17, 2025)
-
-### News Page Status (Dec 11, 2025)
-
-- Routes: `/news` and `/news/[slug]`
-- Status: **Type error fixed, build passing; `/news` now fully static placeholder**
-- Active implementation:
-  - `/news` is served by [`src/app/news/page.tsx`](src/app/news/page.tsx:1) as a fully static placeholder (no Strapi calls, no async, no Suspense).
-  - `/news/[slug]` route in [`app/news/[slug]/page.tsx`](app/news/[slug]/page.tsx:1) has relaxed props typing to avoid Next.js type errors while keeping the route available for future dynamic content.
-- Fixes implemented:
-  - Resolved Next.js PageProps type error in [`app/news/[slug]/page.tsx`](app/news/[slug]/page.tsx:1) by changing the component props to `props: any` to satisfy Next.js typing constraints.
-  - Removed Strapi/news API calls from the `/news` server render path so the index page can no longer fail due to Strapi authentication or runtime issues.
-  - `tsconfig.json` updated to exclude `backups/` from TypeScript compilation to avoid backup-related module resolution errors (e.g., Cannot find module '@strapi/strapi').
-- Impact:
-  - Local and CI Next.js build now completes successfully (`npm run build` exits 0) with `/news` and `/news/[slug]` included in the Next.js build.
-  - Remaining runtime 500 when fetching data for `/diensten` via Strapi/proxy endpoint is a separate concern and does not affect the static `/news` page.
-- Next Steps for News:
-  - Trigger production deploy on Vercel (via git push or `npx vercel --prod --confirm`).
-  - Verify `/news` in browser: expect static placeholder, no 500/401.
-  - Check Vercel logs for `/news` requests: confirm 2xx and absence of 5xx/401.
-  - Investigate separate 500 for `/diensten` from Strapi/proxy endpoint (tracked as another task).
+Implemented in:
+- [`app/robots.txt/route.ts`](../app/robots.txt/route.ts:1)
+- [`src/app/robots.txt/route.ts`](../src/app/robots.txt/route.ts:1)
 
 ---
 
@@ -380,6 +277,16 @@ A custom migration script was created to extract content from the VPS and import
 ---
 
 ## Next Steps
+
+### 🔧 Incident: contact form `POST /api/contact` returns 500 in production (Dec 13, 2025)
+- **Symptom:** contact form submission fails with 500 and user-facing message “Er is een fout opgetreden bij de verbinding met de mailserver.”
+- **Most likely cause:** missing SMTP credentials in the deployment environment (`EMAIL_PASSWORD` not set), consistent with prior incident notes in `cline_docs/technical_issues/contact_form_environment_issue.md`.
+- **Code hardening applied:** API now fails fast with a clear configuration error when credentials are missing, and supports alternate env var names to reduce deployment mismatch risk. Implemented in [`POST()`](../app/api/contact/route.ts:49).
+  - Supported env vars:
+    - Preferred: `EMAIL_PASSWORD`
+    - Also accepted: `SMTP_PASS`, `SMTP_PASSWORD`
+    - Optional: `EMAIL_USER`, `SMTP_USER`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`
+- **Operational fix required:** set `EMAIL_PASSWORD` (and optionally `EMAIL_USER`) in the production environment where Next.js runs.
 
 De technische migratie naar Railway (Strapi + database + proxy + media-config) is afgerond. De resterende acties zijn vooral DNS, opschonen en **content-afwerking (Gemini-afbeeldingen)**.
 

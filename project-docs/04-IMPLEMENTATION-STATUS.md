@@ -1,6 +1,6 @@
 # Implementation Status
 
-**Last Updated**: 2025-12-12 10:22 UTC
+**Last Updated**: 2025-12-13 11:15 UTC
 **Project**: MaasISO - ISO Certification Consultancy Website
 
 ---
@@ -275,12 +275,28 @@ On December 9, 2025, a major security incident was discovered and resolved:
 
 ## 🌐 Frontend (Next.js Application)
 
+### ✅ Blog detail SSR Markdown regression fix (Dec 12, 2025 11:26 UTC)
+
+- Fixed Server/Client boundary violations on the `/blog/[slug]` route by moving client-only UI behind an explicit client wrapper:
+  - New: [`src/components/features/BlogPostContentClientExtras.tsx`](../src/components/features/BlogPostContentClientExtras.tsx:1)
+  - Updated: [`src/components/features/BlogPostContentServer.tsx`](../src/components/features/BlogPostContentServer.tsx:1)
+- Restored markdown render parity by re-introducing `components={...}` overrides (tables/code/links/headings) in the server markdown renderer: [`src/components/features/BlogPostContentServer.tsx`](../src/components/features/BlogPostContentServer.tsx:1)
+  - Safe by default (no `rehypeRaw`)
+  - External link hardening: `rel="noopener noreferrer"` when `target="_blank"`
+- Cleaned up dead/unreachable logic and removed noisy server-side logging in `constructImageUrl()` without changing metadata behavior: [`app/blog/[slug]/page.tsx`](../app/blog/[slug]/page.tsx:1)
+
+**Verification:**
+- `npm run build` ✅
+- `npm test` ❌ (fails due to pre-existing Jest/Vitest/environment issues, not introduced by this change)
+
+## 🌐 Frontend (Next.js Application)
+
 | Feature | Status | Percentage | Notes |
 |---------|--------|------------|-------|
 | Home Page | ✅ Complete | 100% | - |
 | Services Pages | ✅ Complete | 100% | ISO 9001, 14001, 27001, etc. |
 | About Page | ✅ Complete | 100% | - |
-| Contact Page | ✅ Complete | 100% | With form |
+| Contact Page | ✅ Complete | 100% | With form. Contact mail sending is handled by [`POST()`](../app/api/contact/route.ts:49); production requires `EMAIL_PASSWORD` (SMTP credentials) to be set. |
 | Blog System | ✅ Complete | 100% | Strapi integration (nu via Railway + Next.js proxy-routes). Blog overview cards now also support Cloudinary `featuredImage.url` via [`getImageUrl()`](src/lib/utils/imageUtils.ts:231). |
 | News Section | ✅ Live (statisch) | 100% | `/news` is geïmplementeerd als statische placeholder in `src/app/news/page.tsx`; alle Strapi/news API-calls zijn uit het server-renderpad gehaald zodat Vercel-builds stabiel zijn. De technische koppeling frontend → Railway Strapi via proxy is aanwezig; het opnieuw introduceren van een dynamische nieuwsfeed is een optionele feature, geen blocker meer voor de migratie. |
 | Cookie Consent | ✅ Complete | 100% | GDPR compliant |
@@ -291,9 +307,22 @@ On December 9, 2025, a major security incident was discovered and resolved:
 **Frontend Overall**: 98%
 
 **Recent scoped improvements (Dec 12, 2025):**
-- `/diensten` above-the-fold UX: ensured H1 fallback and kept only the primary CTA “Plan kennismaking” → `/contact` (removed “Bekijk expertisegebieden” + removed now-unused `#expertisegebieden` anchor) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:1).
+- Robots.txt (GSC “Crawled — currently not indexed” technical endpoints): disallow crawling Next.js internals `/_next/` while explicitly allowing `/_next/static/`, served via [`GET()`](../app/robots.txt/route.ts:1). Deployment safety (hybrid router tree): mirrored at [`GET()`](../src/app/robots.txt/route.ts:1) so production serves identical output regardless of whether `app/` or `src/app/` is active.
+- Robots.txt (Vercel Edge caching): forced dynamic rendering + disabled caching to prevent stale `X-Vercel-Cache: HIT` responses for `/robots.txt` by adding `export const dynamic = 'force-dynamic'` and explicit `Cache-Control: no-store, max-age=0` (plus `Content-Type: text/plain; charset=utf-8`) in both [`GET()`](../app/robots.txt/route.ts:1) and [`GET()`](../src/app/robots.txt/route.ts:1).
+- SEO canonicalization (site-wide): enforced canonical policy **no trailing slash** for all non-root pages via a global 301 normalization rule (querystrings preserved), with exclusions for `/_next/*`, `/api/*`, `/assets/*` (if applicable), and special files (`robots.txt`, `sitemap.xml`, `favicon.ico`) in [`middleware()`](../middleware.ts:1).
+- Canonical host normalization: added explicit `www.* → apex` **301** redirect (with pathname de-slashing on the redirected URL) in [`middleware()`](../middleware.ts:36). Note: takes effect after deployment; live behavior may still reflect Vercel-level redirects until deployed.
+- SEO cleanup (GSC “Noindex URLs”): centralized handling in middleware for production:
+  - Protect maintainer-only page `/test-deploy` with a shared secret header/cookie in [`middleware()`](../middleware.ts:36) (env `INTERNAL_ROUTES_SECRET`)
+  - Return **410 Gone** for `api/test-*` and `api/debug-*` endpoints (plus a few explicit legacy test endpoints) in [`middleware()`](../middleware.ts:36)
+- Guardrail: added a script to fail if blog post routes introduce robots/noindex directives: [`check-blog-indexable.js`](../scripts/check-blog-indexable.js:1) (run via [`seo:check-blog-indexable`](../package.json:5))
+- Canonical tags (GSC “Dubbele pagina zonder canonieke”): added explicit canonical metadata for `/diensten`, `/iso-16175`, `/avg` in both the static routes and the dynamic `[slug]` metadata handler:
+  - Static: [`DienstenPage()`](../app/diensten/page.tsx:56), [`Iso16175Page()`](../app/iso-16175/page.tsx:45), [`AvgPage()`](../app/avg/page.tsx:26)
+  - Dynamic fallback: [`generateMetadata()`](../src/app/[slug]/page.tsx:12)
+- Legacy alias: ensured `/home` and `/home/` redirect directly to `/` (301, no redirect chain) in [`middleware()`](../middleware.ts:1).
+- Soft-404 hardening: added additional legacy service redirects (301), preserved querystrings on redirects, and added explicit **410 Gone** for `/diensten/iso-45001` (no `/iso-45001` route exists) in [`middleware()`](../middleware.ts:1). Canonical terms route set to `/algemene-voorwaarden` (200), with `/terms-and-conditions` redirecting to it.
+- `/diensten` above-the-fold UX: ensured H1 fallback and kept only the primary CTA “Plan kennismaking” → `/contact` (removed “Bekijk expertisegebieden” + removed now-unused `#expertisegebieden` anchor) in [`app/diensten/page.tsx`](../app/diensten/page.tsx:56).
 - Header contact entry: removed duplicate contact CTA by keeping a single prominent link labeled “Plan kennismaking” → `/contact` in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
-- LocalBusiness JSON-LD: replaced placeholders with correct email/phone/address and added `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:1).
+- LocalBusiness JSON-LD: replaced placeholders with correct email/phone/address and added `url: https://maasiso.nl` in [`app/layout.tsx`](../app/layout.tsx:120).
 - Fixed likely double top padding by removing `pt-20` from layout main and relying on global `main { padding-top: 80px; }` in [`src/components/layout/Layout.tsx`](../src/components/layout/Layout.tsx:1).
 - Improved header dropdown accessibility (ARIA + Escape/keyboard + focus basics) in [`src/components/layout/Header.tsx`](../src/components/layout/Header.tsx:1).
 - Reduced noisy production logs by guarding debug `console.*` behind `NODE_ENV !== 'production'` in critical paths (e.g., [`src/components/common/Analytics.tsx`](../src/components/common/Analytics.tsx:1), [`src/lib/analytics.ts`](../src/lib/analytics.ts:1), and proxy routes under `app/api/proxy/*`).
@@ -486,8 +515,9 @@ Resterende actie (redactioneel, geen codewijzigingen nodig):
 | Error Tracking | ⏳ Planned | 0% | Consider Sentry |
 | Log Analysis | 📄 Script Ready | 0% | GoAccess ready |
 | Security Monitoring | ✅ Partial | 50% | Basic + scripts ready |
+| Site Connectivity Diagnostics (DNS/TLS/redirects) | ✅ Implemented | 100% | Added [`site:diagnose`](../package.json:5) + script [`scripts/diagnose-site-connectivity.js`](../scripts/diagnose-site-connectivity.js:1) to detect issues like expired certificates and redirect chains. |
 
-**Monitoring Overall**: 50%
+**Monitoring Overall**: 55%
 
 ---
 
