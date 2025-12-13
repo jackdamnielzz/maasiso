@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     // Prepare email content
     const mailOptions = {
-      from: '"MaasISO Website" <info@maasiso.nl>',
+      from: `"MaasISO Website" <${emailUser}>`,
       to: 'info@maasiso.nl',
       replyTo: body.email,
       subject: `Contactformulier: ${body.subject}`,
