@@ -109,7 +109,6 @@ export default async function BlogPostPage({ params }: PageProps) {
       id: blogPost.id,
       title: blogPost.title,
       contentLength: blogPost.content.length,
-      categories: blogPost.categories.length,
       tags: blogPost.tags?.length ?? 0,
       hasFeaturedImage: !!blogPost.featuredImage
     });
@@ -118,7 +117,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <div className="blog-post-container max-w-7xl mx-auto px-4 py-8">
         <BlogPostContent post={blogPost} />
         <div className="mt-16">
-          <RelatedPosts currentSlug={blogPost.slug} categoryIds={blogPost.categories.map(cat => cat.id)} />
+          <RelatedPosts currentSlug={blogPost.slug} />
         </div>
       </div>
     );

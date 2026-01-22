@@ -2,15 +2,8 @@
 
 import { useCallback, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import CategoryFilterWrapper from "@/components/common/CategoryFilterWrapper";
-import { Category } from "@/lib/types";
 
-interface SearchFiltersProps {
-  categories: Category[];
-  onHover?: (categorySlug: string) => void;
-}
-
-export default function SearchFilters({ categories, onHover }: SearchFiltersProps) {
+export default function SearchFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -112,17 +105,6 @@ export default function SearchFilters({ categories, onHover }: SearchFiltersProp
               Nieuws
             </button>
           </div>
-        </div>
-
-        {/* Category Filter */}
-        <div>
-          <label className="block text-sm font-medium text-[#091E42] mb-1">
-            Categorie
-          </label>
-          <CategoryFilterWrapper
-            categories={categories}
-            onHover={onHover}
-          />
         </div>
 
         {/* Expanded Filters */}

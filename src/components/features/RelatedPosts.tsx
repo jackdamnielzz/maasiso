@@ -1,124 +1,116 @@
 'use client';
 
-import { BlogPost } from '@/lib/types';
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import BlogCard from './BlogCard';
-import ErrorBoundary from '../common/ErrorBoundary';
-import { getRelatedPosts } from '@/lib/api';
+import { useEffect, useState } from 'react';
+import { BlogPost } from '../../lib/types';
+import Image from 'next/image';
+import Link from 'next/link';
+import { formatDate } from '../../lib/utils';
 
 interface RelatedPostsProps {
   currentSlug: string;
-  categoryIds: string[];
+  categoryIds?: string[];
 }
 
 export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsProps) {
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    async function fetchRelatedPosts() {
+      try {
+        // Use the proxy API endpoint instead of directly accessing Strapi
+        let url = `/api/proxy/blog-posts?filters[slug][$ne]=${currentSlug}&populate=*&pagination[limit]=3`;
+        
+        // Add category filter if categoryIds are provided
+        if (categoryIds && categoryIds.length > 0) {
+          const categoryFilter = categoryIds.map(id => `filters[categories][id][$in]=${id}`).join('&');
+          url += `&${categoryFilter}`;
+        }
 
-  // Memoize loading skeleton
-  const loadingSkeleton = useMemo(() => (
-    <div className="animate-pulse max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-[#091E42] mb-8">
-        Gerelateerde artikelen
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-gray-200 h-64 rounded-lg" />
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch related posts');
+        }
+
+        const data = await response.json();
+        // Check if data exists and has the expected structure
+        if (!data?.data || !Array.isArray(data.data)) {
+          console.warn('Unexpected API response format:', data);
+          setRelatedPosts([]);
+          return;
+        }
+
+        const posts = data.data
+          .filter((post: any) => post && post.attributes && post.attributes.title)
+          .map((post: any) => ({
+            id: post.id,
+            title: post.attributes.title,
+            slug: post.attributes.slug,
+            publishedAt: post.attributes.publishedAt,
+            createdAt: post.attributes.createdAt,
+            updatedAt: post.attributes.updatedAt,
+            featuredImage: post.attributes.featuredImage?.data?.attributes ? {
+              id: post.attributes.featuredImage.data.id,
+              url: post.attributes.featuredImage.data.attributes.url,
+              alternativeText: post.attributes.featuredImage.data.attributes.alternativeText
+            } : undefined
+          }));
+
+        setRelatedPosts(posts);
+      } catch (error) {
+        console.error('Error fetching related posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRelatedPosts();
+  }, [currentSlug]);
+
+  if (loading) {
+    return <div>Loading related posts...</div>;
+  }
+
+  if (relatedPosts.length === 0) {
+    return null;
+  }
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-6">Related Posts</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {relatedPosts.map((post) => (
+          <Link 
+            key={post.id}
+            href={`/blog/${post.slug}`}
+            className="group block"
+          >
+            <article className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 group-hover:transform group-hover:scale-105">
+              {post.featuredImage && (
+                <div className="relative w-full h-48">
+                  <Image
+                    src={post.featuredImage.url}
+                    alt={post.featuredImage.alternativeText || post.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600">
+                  {post.title}
+                </h3>
+                {post.publishedAt && (
+                  <time className="text-gray-600 text-sm" dateTime={post.publishedAt}>
+                    {formatDate(post.publishedAt)}
+                  </time>
+                )}
+              </div>
+            </article>
+          </Link>
         ))}
       </div>
     </div>
-  ), []);
-
-  const fetchRelatedPosts = useCallback(async () => {
-    try {
-      const response = await getRelatedPosts(currentSlug, categoryIds);
-      setRelatedPosts(response.blogPosts);
-    } catch (error) {
-      console.error('Error fetching related posts:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch related posts');
-      setRelatedPosts([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentSlug, categoryIds]);
-
-  useEffect(() => {
-    if (categoryIds.length > 0) {
-      fetchRelatedPosts();
-    } else {
-      setIsLoading(false);
-    }
-  }, [categoryIds, fetchRelatedPosts]);
-
-  const handleRetry = useCallback(() => {
-    setIsLoading(true);
-    setError(null);
-    fetchRelatedPosts();
-  }, [fetchRelatedPosts]);
-
-  // Memoize error state
-  const errorState = useMemo(() => (
-    <div className="bg-yellow-50 rounded-lg p-6 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-[#091E42] mb-6">
-        Gerelateerde artikelen
-      </h2>
-      <div className="text-yellow-800">
-        <p className="text-sm mb-4">
-          Er is een fout opgetreden bij het laden van gerelateerde artikelen.
-        </p>
-        <button
-          onClick={handleRetry}
-          className="px-4 py-2 bg-[#FF8B00] text-white rounded-lg hover:bg-[#E67E00] transition-colors text-sm"
-        >
-          Probeer opnieuw
-        </button>
-      </div>
-    </div>
-  ), [handleRetry]);
-
-  // Memoize empty state
-  const emptyState = useMemo(() => (
-    <div className="bg-gray-50 rounded-lg p-6 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-[#091E42] mb-4">
-        Gerelateerde artikelen
-      </h2>
-      <p className="text-sm text-gray-600">
-        Geen gerelateerde artikelen gevonden.
-      </p>
-    </div>
-  ), []);
-
-  if (error) {
-    return errorState;
-  }
-
-  if (isLoading) {
-    return loadingSkeleton;
-  }
-
-  if (relatedPosts.length === 0 && !isLoading) {
-    return emptyState;
-  }
-
-  // Memoize grid of blog cards
-  const blogCards = useMemo(() => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {relatedPosts.map((post) => (
-        <BlogCard key={post.id} post={post} />
-      ))}
-    </div>
-  ), [relatedPosts]);
-
-  return (
-    <ErrorBoundary>
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#091E42] mb-8">
-          Gerelateerde artikelen
-        </h2>
-        {blogCards}
-      </div>
-    </ErrorBoundary>
   );
 }

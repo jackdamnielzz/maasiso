@@ -1,52 +1,122 @@
-# Current Task: Frontend Deployment System Implementation
+# Current Task: Implement Contact Page with Form and Email Integration
 
-## Actions Completed (2024-02-15)
+## Objective
+Create a contact page with a form that allows users to send messages via email, update contact information across the site, and implement proper validation and error handling.
 
-1. Restructured Project
-   - Moved frontend code from /frontend directory to root
-   - Updated file paths and imports accordingly
-   - Committed and pushed changes
+## Background
+- Frontend is running on VPS2 (147.93.62.188:3000)
+- Strapi backend is on VPS1 (153.92.223.23:1337)
+- Email server is configured on Hostinger (smtp.hostinger.com)
+- Email account info@maasiso.nl is set up and working
 
-2. Set Up GitHub Actions Deployment
-   - Created .github/workflows/deploy.yml
-   - Configured Node.js 20 environment
-   - Set up SSH deployment to VPS2
-   - Added health check verification
+## Required Changes
 
-3. Fixed Type Issues
-   - Resolved type error in app/blog/[slug]/page.tsx
-   - Updated BlogPostPageProps interface to match Next.js expectations
+### 1. Contact Page (app/contact/page.tsx)
+```typescript
+// Create a responsive contact page with:
+// - Contact information section
+// - Contact form
+// - Proper metadata
+```
 
-4. Implemented Monitoring
-   - Set up health monitoring script (scripts/monitor-health.ps1)
-   - Configured automatic alerts for issues
-   - Added performance metrics tracking
+### 2. Contact Form Component (src/components/features/ContactForm.tsx)
+```typescript
+// Create a form component with:
+// - Name field
+// - Email field
+// - Subject dropdown (including Privacy/AVG option)
+// - Message textarea
+// - Submit button
+// - Validation
+// - Success/error messages
+```
 
-5. Added Deployment Infrastructure
-   - Set up PM2 on VPS2
-   - Created necessary deployment directories
-   - Configured SSH keys and known hosts
+### 3. API Endpoint (app/api/contact/route.ts)
+```typescript
+// Create an API endpoint that:
+// - Validates form data
+// - Sends email using nodemailer
+// - Returns appropriate response
+```
 
-## Current Status
-- Deployment workflow is set up and ready for testing
-- Monitoring system is in place
-- All type errors have been resolved
-- Infrastructure is prepared for deployment
+### 4. Update Contact Information
+- Remove address information from all pages
+- Add formatted phone number (+31 (0)6 2357 8344) to all relevant pages
 
-## Next Steps
-1. Test deployment through GitHub Actions
-2. Verify application functionality after deployment
-3. Monitor performance and health metrics
-4. Document deployment results
+## Implementation Steps
 
-## Technical Details
-- Node.js version: 20
-- Deployment target: VPS2 (147.93.62.188)
-- Deployment directory: /var/www/jouw-frontend-website
-- Process manager: PM2
-- Health check endpoint: /api/health
+1. Contact Page:
+   - Create page component
+   - Add metadata
+   - Design layout
+   - Add contact information section
+   - Integrate contact form
+
+2. Contact Form:
+   - Create form component
+   - Add form fields
+   - Implement validation
+   - Add state management
+   - Handle form submission
+   - Display success/error messages
+
+3. API Endpoint:
+   - Create route handler
+   - Implement validation
+   - Set up nodemailer
+   - Configure email sending
+   - Handle errors
+   - Return appropriate responses
+
+4. Contact Information Updates:
+   - Update footer component
+   - Update contact page
+   - Update cookie policy page
+   - Update privacy policy page
+
+5. Testing:
+   - Test form validation
+   - Test email sending
+   - Verify error handling
+   - Check responsive design
+
+## Testing Plan
+
+1. Form Validation:
+   - Test required fields
+   - Test email format validation
+   - Test subject selection
+
+2. Email Sending:
+   - Test successful email sending
+   - Test error handling
+   - Verify email content
+
+3. Responsive Design:
+   - Test on desktop
+   - Test on tablet
+   - Test on mobile
+
+## Success Criteria
+1. Contact form displays correctly on all devices
+2. Form validation works as expected
+3. Emails are sent successfully
+4. Proper error handling is implemented
+5. Success messages are displayed
+6. Contact information is updated across the site
+
+## Resources
+- Email Password: Niekties@100
+- SMTP Server: smtp.hostinger.com
+- Email: info@maasiso.nl
+- Phone Number: +31 (0)6 2357 8344
+- Nodemailer Documentation
+- Next.js Documentation
+- TypeScript Documentation
 
 ## Notes
-- Monitoring script is running and will track deployment success
-- GitHub Actions workflow includes automatic rollback on failure
-- All deployment infrastructure is in place and configured
+- Keep error handling comprehensive
+- Ensure proper validation on both client and server
+- Format phone number consistently
+- Implement responsive design
+- Document any new issues encountered

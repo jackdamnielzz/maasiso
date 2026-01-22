@@ -92,86 +92,90 @@ describe('BlogCard', () => {
     const link = screen.getByText('Lees meer');
     expect(link).toBeInTheDocument();
     expect(link.closest('a')).toHaveAttribute('href', '/blog/test-blog-post');
-});
-
-describe('BlogCard Performance', () => {
-  beforeEach(() => {
-    mockObserve.mockClear();
-    mockDisconnect.mockClear();
   });
 
-  it('memoizes excerpt generation', async () => {
-    const longContent = 'First paragraph\n'.repeat(1000);
-    const post = {
-      ...mockPost,
-      content: longContent
-    };
-
-    const { rerender } = render(<BlogCard post={post} />);
-
-    // Initial render should show first paragraph
-    expect(screen.getByText('First paragraph')).toBeInTheDocument();
-
-    // Force re-render with same content
-    act(() => {
-      rerender(<BlogCard post={post} />);
+  describe('BlogCard Performance', () => {
+    beforeEach(() => {
+      mockObserve.mockClear();
+      mockDisconnect.mockClear();
     });
 
-    // Should use memoized value without recalculation
-    expect(screen.getByText('First paragraph')).toBeInTheDocument();
-  });
+    it('memoizes excerpt generation', async () => {
+      const longContent = 'First paragraph\n'.repeat(1000);
+      const post = {
+        ...mockPost,
+        content: longContent
+      };
 
-  it('handles image loading performance', async () => {
-    const { container } = render(<BlogCard post={mockPost} />);
+      const { rerender } = render(<BlogCard post={post} />);
 
-    // Verify image optimization attributes
-    const img = container.querySelector('img');
-    expect(img).toHaveAttribute('loading', 'lazy');
-    expect(img).toHaveAttribute('sizes', '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw');
-    expect(img).toHaveAttribute('quality', '75');
-  });
+      // Initial render should show first paragraph
+      expect(screen.getByText('First paragraph')).toBeInTheDocument();
 
-  it('handles image loading errors gracefully', async () => {
-    const postWithBadImage = {
-      ...mockPost,
-      featuredImage: {
-        ...mockPost.featuredImage!,
-        url: '/nonexistent.jpg'
-      }
-    };
+      // Force re-render with same content
+      act(() => {
+        rerender(<BlogCard post={post} />);
+      });
 
-    render(<BlogCard post={postWithBadImage} />);
-
-    // Simulate image load error
-    const img = screen.getByRole('img');
-    act(() => {
-      img.dispatchEvent(new Event('error'));
+      // Should use memoized value without recalculation
+      expect(screen.getByText('First paragraph')).toBeInTheDocument();
     });
 
-    // Should show fallback
-    await waitFor(() => {
-      expect(screen.getByText('Kon de afbeelding niet laden')).toBeInTheDocument();
+    it('handles image loading performance', async () => {
+      const { container } = render(<BlogCard post={mockPost} />);
+
+      // Verify image optimization attributes
+      const img = container.querySelector('img');
+      expect(img).toHaveAttribute('loading', 'lazy');
+      expect(img).toHaveAttribute('sizes', '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw');
+      expect(img).toHaveAttribute('quality', '75');
+    });
+
+    it('handles image loading errors gracefully', async () => {
+      const postWithBadImage = {
+        ...mockPost,
+        featuredImage: {
+          ...mockPost.featuredImage!,
+          url: '/nonexistent.jpg'
+        }
+      };
+
+      render(<BlogCard post={postWithBadImage} />);
+
+      // Simulate image load error
+      const img = screen.getByRole('img');
+      act(() => {
+        img.dispatchEvent(new Event('error'));
+      });
+
+      // Should show fallback
+      await waitFor(() => {
+        expect(screen.getByText('Kon de afbeelding niet laden')).toBeInTheDocument();
+      });
+    });
+
+    it('renders efficiently with large category lists', () => {
+      const timestamp = new Date().toISOString();
+      const postWithManyCategories = {
+        ...mockPost,
+        categories: mockPost.categories ? Array(100).fill(mockPost.categories[0]).map((cat, i) => ({
+          id: `cat${i}`,
+          name: `Category ${i}`,
+          slug: `category-${i}`,
+          description: `Category ${i} description`,
+          createdAt: timestamp,
+          updatedAt: timestamp
+        })) : []
+      };
+
+      const startTime = performance.now();
+      render(<BlogCard post={postWithManyCategories} />);
+      const renderTime = performance.now() - startTime;
+
+      // Render time should be reasonable even with many categories
+      expect(renderTime).toBeLessThan(100); // 100ms threshold
     });
   });
-
-  it('renders efficiently with large category lists', () => {
-    const postWithManyCategories = {
-      ...mockPost,
-      categories: Array(100).fill(mockPost.categories[0]).map((cat, i) => ({
-        ...cat,
-        id: `cat${i}`,
-        name: `Category ${i}`
-      }))
-    };
-
-    const startTime = performance.now();
-    render(<BlogCard post={postWithManyCategories} />);
-    const renderTime = performance.now() - startTime;
-
-    // Render time should be reasonable even with many categories
-    expect(renderTime).toBeLessThan(100); // 100ms threshold
-  });
-});
 
   it('handles missing optional fields', () => {
     const minimalPost: BlogPost = {
@@ -203,21 +207,25 @@ describe('BlogCard Performance', () => {
   });
 
   it('handles numeric IDs correctly', () => {
+    const timestamp = new Date().toISOString();
     const postWithNumericIds: BlogPost = {
       ...mockPost,
       id: '123', // Ensure string ID
       categories: [
         {
-          ...mockPost.categories[0],
-          id: '456' // Ensure string ID
+          id: '456',
+          name: 'Default Category',
+          slug: 'default',
+          createdAt: timestamp,
+          updatedAt: timestamp
         }
       ],
-      tags: mockPost.tags?.[0] ? [
+      tags: [
         {
-          ...mockPost.tags[0],
-          id: '789' // Ensure string ID
+          id: '789',
+          name: 'Default Tag'
         }
-      ] : []
+      ]
     };
 
     render(<BlogCard post={postWithNumericIds} />);

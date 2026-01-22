@@ -1,8 +1,31 @@
 /**
- * Cache invalidation service
+ * Cache invalidation service has been deprecated
+ * All content is now fetched directly from Strapi without caching
+ * This file is kept for reference but its functionality is no longer used
  */
-import { cacheConfig, invalidateCache } from '../cache';
+
 import { cacheMonitor } from '../monitoring/cacheMonitor';
+
+interface ContentType {
+  tag: string;
+}
+
+interface CacheConfig {
+  content: {
+    newsArticle: ContentType;
+    blogPost: ContentType;
+    page: ContentType;
+  };
+}
+
+// Default config for monitoring purposes only
+const cacheConfig: CacheConfig = {
+  content: {
+    newsArticle: { tag: 'news' },
+    blogPost: { tag: 'blog' },
+    page: { tag: 'page' }
+  }
+};
 
 interface InvalidationRule {
   contentType: keyof typeof cacheConfig.content;
@@ -31,32 +54,32 @@ const invalidationRules: InvalidationRule[] = [
 ];
 
 /**
- * Check cache health and invalidate based on rules
+ * Check cache health and log metrics
+ * Note: This no longer invalidates cache since caching is disabled
  */
 export function checkCacheHealth() {
   invalidationRules.forEach(rule => {
     const metrics = cacheMonitor.getTagPerformance(cacheConfig.content[rule.contentType].tag);
     
     if (rule.condition(metrics)) {
-      invalidateCache(rule.contentType);
-      console.log(`[Cache] Invalidated ${rule.contentType} due to poor performance:`, metrics);
+      console.log(`[Performance] Poor metrics for ${String(rule.contentType)}:`, metrics);
     }
   });
 }
 
 /**
- * Schedule regular cache health checks
+ * Schedule regular performance checks
  */
-export function scheduleCacheHealthChecks(intervalMs: number = 300000) { // Default: 5 minutes
+export function schedulePerformanceChecks(intervalMs: number = 300000) { // Default: 5 minutes
   return setInterval(checkCacheHealth, intervalMs);
 }
 
 /**
- * Initialize cache monitoring and health checks
+ * Initialize performance monitoring
  */
-export function initializeCacheMonitoring() {
+export function initializePerformanceMonitoring() {
   // Start health checks
-  const healthCheckInterval = scheduleCacheHealthChecks();
+  const healthCheckInterval = schedulePerformanceChecks();
 
   // Return cleanup function
   return () => {

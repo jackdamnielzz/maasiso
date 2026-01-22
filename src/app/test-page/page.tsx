@@ -7,6 +7,17 @@ export default async function TestPage() {
     const page = await getPage('test-page');
     console.log('[Debug] Attempting to fetch page with slug:', 'test-page');
     
+    if (!page) {
+      return (
+        <main className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
+            <p className="text-lg text-gray-600">The requested page could not be found.</p>
+          </div>
+        </main>
+      );
+    }
+
     return (
       <main className="min-h-screen">
         <div className="container mx-auto px-4 py-8">

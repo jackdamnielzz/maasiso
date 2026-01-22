@@ -26,6 +26,7 @@ import {
   StrapiRawFeatureGridComponent,
   Page,
   StrapiRawPage,
+  StrapiRawPageAttributes,
   SEOMetadata,
   PageComponentType,
   // Navigation Types
@@ -624,9 +625,9 @@ function isValidSubtitle(value: unknown): value is string | undefined {
 
 export function normalizeHeroComponent(raw: StrapiRawHeroComponent): HeroComponent {
   return {
-    id: raw.id,
-    __component: raw.__component,
-    title: raw.title,
+    id: raw.id || '',
+    __component: 'page-blocks.hero',
+    title: raw.title || '',
     subtitle: raw.subtitle && typeof raw.subtitle === 'string' ? raw.subtitle : undefined,
     backgroundImage: raw.backgroundImage?.data ? normalizeImage(raw.backgroundImage.data) : undefined,
     ctaButton: raw.ctaButton ? normalizeCTAButton(raw.ctaButton) : undefined
@@ -636,41 +637,45 @@ export function normalizeHeroComponent(raw: StrapiRawHeroComponent): HeroCompone
 export function normalizeTextBlockComponent(raw: StrapiRawTextBlockComponent): TextBlockComponent {
   // Unescape newlines and normalize content
   const normalizedContent = raw.content
-    .replace(/\\n/g, '\n') // Replace escaped newlines with actual newlines
-    .replace(/\\\\/g, '\\'); // Replace double escaped backslashes with single backslash
+    ? raw.content
+        .replace(/\\n/g, '\n') // Replace escaped newlines with actual newlines
+        .replace(/\\\\/g, '\\') // Replace double escaped backslashes with single backslash
+    : '';
 
   return {
-    id: raw.id,
+    id: raw.id || '',
     __component: 'page-blocks.text-block' as const,
-    content: normalizedContent,
-    alignment: raw.alignment
+    content: normalizedContent || '',
+    alignment: raw.alignment || 'left'
   };
 }
 
 export function normalizeImageGalleryComponent(raw: StrapiRawImageGalleryComponent): ImageGalleryComponent {
   return {
-    id: raw.id,
-    __component: raw.__component,
-    images: raw.images.data.map(normalizeImage),
-    layout: raw.layout
+    id: raw.id || '',
+    __component: 'page-blocks.gallery',
+    images: raw.images?.data?.map(normalizeImage) || [],
+    layout: raw.layout || 'grid'
   };
 }
 
 export function normalizeFeature(raw: StrapiRawFeature): Feature {
   return {
-    id: raw.id,
-    title: raw.title,
-    description: raw.description,
+    id: raw.id || '',
+    title: raw.title || '',
+    description: raw.description || '',
     icon: raw.icon?.data ? normalizeImage(raw.icon.data) : undefined,
-    link: raw.link
+    link: raw.link || ''
   };
 }
 
 export function normalizeFeatureGridComponent(raw: StrapiRawFeatureGridComponent): FeatureGridComponent {
   return {
-    id: raw.id,
-    __component: raw.__component,
-    features: raw.features.map(normalizeFeature)
+    id: raw.id || '',
+    __component: 'page-blocks.feature-grid',
+    features: Array.isArray(raw.features)
+      ? raw.features.map(normalizeFeature)
+      : raw.features?.data?.map(item => normalizeFeature(item.attributes)) || []
   };
 }
 
@@ -806,7 +811,7 @@ function normalizeLayoutComponent(rawComponent: unknown): HeroComponent | TextBl
 
 export function normalizePage(raw: StrapiRawPage): Page {
   // Handle both flat and nested structures
-  const data = raw.attributes || raw;
+  const data = raw.attributes || {} as StrapiRawPageAttributes;
   
   return {
     id: raw.id,
@@ -819,7 +824,7 @@ export function normalizePage(raw: StrapiRawPage): Page {
     },
     layout: data.layout
       ?.map(normalizeLayoutComponent)
-      .filter((component): component is NonNullable<typeof component> => component !== undefined),
+      .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
     publishedAt: data.publishedAt || '',
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || ''
@@ -842,7 +847,23 @@ export function normalizeMenuPosition(raw: StrapiRawMenu['attributes']['position
 export function normalizeMenuItemSettings(raw: StrapiRawMenuItem['attributes']['settings']): MenuItemSettings {
   return {
     order: raw.order,
-    icon: raw.icon?.data ? normalizeImage(raw.icon.data) : undefined,
+    icon: raw.icon?.data ? {
+      data: {
+        id: raw.icon.data.id || '',
+        attributes: {
+          url: raw.icon.data.attributes?.url || '',
+          width: raw.icon.data.attributes?.width || 0,
+          height: raw.icon.data.attributes?.height || 0,
+          alternativeText: raw.icon.data.attributes?.alternativeText,
+          formats: raw.icon.data.attributes?.formats,
+          hash: raw.icon.data.attributes?.hash,
+          ext: raw.icon.data.attributes?.ext,
+          mime: raw.icon.data.attributes?.mime,
+          size: raw.icon.data.attributes?.size,
+          provider: raw.icon.data.attributes?.provider
+        }
+      }
+    } : undefined,
     openInNewTab: raw.openInNewTab,
     highlight: raw.highlight,
     className: raw.className

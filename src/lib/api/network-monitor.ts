@@ -9,11 +9,6 @@ interface NetworkConnection extends EventTarget {
   removeEventListener(type: string, listener: EventListener): void;
 }
 
-declare global {
-  interface Navigator {
-    connection?: NetworkConnection;
-  }
-}
 
 export type { NetworkMonitor };
 
@@ -78,7 +73,12 @@ export class BrowserNetworkMonitor implements NetworkMonitor {
 
   private handleConnectionChange = () => {
     this.updateConnectionState();
-    this.dispatchEvent('change', new Event('change'));
+    this.dispatchEvent('change', {
+      type: 'change',
+      quality: this.state.quality,
+      throughput: navigator.connection?.downlink || 0,
+      latency: navigator.connection?.rtt || 0
+    });
   };
 
   private updateConnectionState(): void {
@@ -116,7 +116,12 @@ export class BrowserNetworkMonitor implements NetworkMonitor {
       prevState.connected !== this.state.connected ||
       Math.abs(prevState.quality - this.state.quality) > 0.2
     ) {
-      this.dispatchEvent('change', new Event('change'));
+      this.dispatchEvent('change', {
+        type: 'change',
+        quality: this.state.quality,
+        throughput: navigator.connection?.downlink || 0,
+        latency: navigator.connection?.rtt || 0
+      });
     }
   }
 
@@ -135,7 +140,12 @@ export class BrowserNetworkMonitor implements NetworkMonitor {
         if (Math.abs(this.state.quality - quality) > 0.2) {
           this.state.quality = quality;
           this.state.timestamp = Date.now();
-          this.dispatchEvent('change', new Event('change'));
+          this.dispatchEvent('change', {
+            type: 'change',
+            quality: this.state.quality,
+            throughput: navigator.connection?.downlink || 0,
+            latency: navigator.connection?.rtt || 0
+          });
         }
       }
     } catch (error) {
@@ -143,7 +153,12 @@ export class BrowserNetworkMonitor implements NetworkMonitor {
       if (this.state.quality > 0.3) {
         this.state.quality = 0.3; // Reduce quality but don't assume complete failure
         this.state.timestamp = Date.now();
-        this.dispatchEvent('change', new Event('change'));
+        this.dispatchEvent('change', {
+          type: 'change',
+          quality: this.state.quality,
+          throughput: navigator.connection?.downlink || 0,
+          latency: navigator.connection?.rtt || 0
+        });
       }
     }
   }

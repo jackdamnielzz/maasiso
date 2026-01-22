@@ -10,16 +10,28 @@ type PageProps = {
   params: Promise<PageParams>;
 };
 
+// Force dynamic rendering to ensure fresh content from Strapi
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   try {
+    console.log(`[Metadata] Fetching page data for slug: ${resolvedParams.slug}`);
     const page = await getPage(resolvedParams.slug);
     
+    if (!page) {
+      return {
+        title: 'Page Not Found',
+        description: 'The requested page could not be found.',
+      };
+    }
+
     return {
-      title: page.seoMetadata?.metaTitle || page.title,
-      description: page.seoMetadata?.metaDescription,
-      keywords: page.seoMetadata?.keywords,
-      openGraph: page.seoMetadata?.ogImage ? {
+      title: page.seoMetadata?.metaTitle || page.title || 'Untitled Page',
+      description: page.seoMetadata?.metaDescription || undefined,
+      keywords: page.seoMetadata?.keywords || undefined,
+      openGraph: page.seoMetadata?.ogImage?.url ? {
         images: [{ url: page.seoMetadata.ogImage.url }],
       } : undefined,
     };
@@ -34,7 +46,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function DynamicPage({ params }: PageProps) {
   const resolvedParams = await params;
   try {
+    console.log(`[DynamicPage] Fetching page data for slug: ${resolvedParams.slug} directly from Strapi`);
     const page = await getPage(resolvedParams.slug);
+    
+    if (!page) {
+      return notFound();
+    }
+
     return (
       <main className="min-h-screen">
         {page.layout?.length ? (
@@ -54,7 +72,7 @@ export default async function DynamicPage({ params }: PageProps) {
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      console.log(`Page ${resolvedParams.slug} not found`);
+      console.log(`[DynamicPage] Page ${resolvedParams.slug} not found`);
       return (
         <main className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -65,7 +83,17 @@ export default async function DynamicPage({ params }: PageProps) {
       );
     }
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Failed to load page ${resolvedParams.slug}:`, errorMessage);
+    console.error(`[DynamicPage] Failed to load page ${resolvedParams.slug}:`, errorMessage);
+    
+    // Enhanced error logging
+    if (error instanceof Error) {
+      console.error(`[DynamicPage] Error details: ${error.message}`);
+      if ('status' in error) {
+        const status = (error as any).status;
+        console.error(`[DynamicPage] Error status: ${status}`);
+      }
+    }
+    
     throw error;
   }
 }

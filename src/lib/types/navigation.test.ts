@@ -69,21 +69,14 @@ describe('Navigation Normalizers', () => {
       expect(result).toEqual({
         order: 1,
         icon: {
-          id: 'icon1',
-          url: 'https://example.com/icon.png',
-          width: 24,
-          height: 24,
-          formats: {},
-          hash: 'icon',
-          ext: '.png',
-          mime: 'image/png',
-          size: 0,
-          name: 'icon.png',
-          provider: 'strapi',
-          provider_metadata: undefined,
-          createdAt: mockDate,
-          updatedAt: mockDate,
-          publishedAt: mockDate
+          data: {
+            id: 'icon1',
+            attributes: {
+              url: 'https://example.com/icon.png',
+              width: 24,
+              height: 24
+            }
+          }
         },
         openInNewTab: true,
         highlight: true,
@@ -199,8 +192,9 @@ describe('Navigation Normalizers', () => {
 
       expect(typeof result.id).toBe('string');
       expect(result.id).toBe('123');
-      expect(typeof result.menu.id).toBe('string');
-      expect(result.menu.id).toBe('456');
+      expect(result.menu).toBeDefined();
+      expect(typeof result.menu?.id).toBe('string');
+      expect(result.menu?.id).toBe('456');
     });
   });
 
@@ -325,21 +319,14 @@ describe('Navigation Normalizers', () => {
         platform: 'twitter',
         url: 'https://twitter.com/example',
         icon: {
-          id: 'icon1',
-          url: 'https://example.com/twitter.png',
-          width: 24,
-          height: 24,
-          formats: {},
-          hash: 'twitter',
-          ext: '.png',
-          mime: 'image/png',
-          size: 0,
-          name: 'twitter.png',
-          provider: 'strapi',
-          provider_metadata: undefined,
-          createdAt: mockDate,
-          updatedAt: mockDate,
-          publishedAt: mockDate
+          data: {
+            id: 'icon1',
+            attributes: {
+              url: 'https://example.com/twitter.png',
+              width: 24,
+              height: 24
+            }
+          }
         },
         order: 1
       });

@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { DeploymentTimestamp } from './DeploymentTimestamp';
 
 export default function HomeContent() {
   return (
@@ -12,7 +13,7 @@ export default function HomeContent() {
         <div className="container-custom">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Verbeter Uw Bedrijf met <span className="text-[#FF8B00]">MaasISO</span>
+              Verbeter Uw Bedrijf met <span className="text-white">MaasISO</span>
             </h1>
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Expert in ISO-normen en kwaliteitsmanagement. Snel, efficiënt en op maat
@@ -34,7 +35,7 @@ export default function HomeContent() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
             Onze Diensten
           </h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-sm md:max-w-5xl mx-auto">
             {[
               {
                 icon: '/file.svg',
@@ -52,13 +53,21 @@ export default function HomeContent() {
                 description: 'Implementatie en verbetering van kwaliteitsmanagementsystemen'
               }
             ].map((service, index) => (
-              <div key={index} className="service-card">
+              <div key={index} className="service-card w-full">
                 <div className="icon-wrapper">
                   <Image
                     src={service.icon}
                     alt={service.title}
                     width={40}
                     height={40}
+                    sizes="40px"
+                    priority={index === 0}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      objectFit: 'contain'
+                    }}
                   />
                 </div>
                 <h3 className="text-xl font-bold mb-4">{service.title}</h3>
@@ -84,7 +93,7 @@ export default function HomeContent() {
               Wij onderscheiden ons door onze efficiënte werkwijze en persoonlijke aanpak
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-sm md:max-w-4xl mx-auto">
             {[
               {
                 title: 'Snelle Implementatie',
@@ -143,6 +152,9 @@ export default function HomeContent() {
           </Link>
         </div>
       </section>
+
+      {/* Deployment Timestamp */}
+      <DeploymentTimestamp />
     </main>
   );
 }

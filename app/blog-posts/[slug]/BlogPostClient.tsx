@@ -8,6 +8,9 @@ import { Suspense, useState, useEffect } from 'react';
 
 function BlogPostContent() {
   const params = useParams();
+  if (!params?.slug) {
+    notFound();
+  }
   const slug = params.slug as string;
 
   const [blogPost, setBlogPost] = useState<any>(null);

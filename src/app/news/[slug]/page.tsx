@@ -10,8 +10,7 @@ interface NewsArticlePageProps {
 }
 
 async function getNewsArticle(slug: string) {
-  const { newsArticle } = await getNewsArticleBySlug(slug);
-  return newsArticle;
+  return await getNewsArticleBySlug(slug);
 }
 
 export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {

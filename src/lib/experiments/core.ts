@@ -67,17 +67,18 @@ class ExperimentManager {
     conversionData?: { type: string; value?: number }
   ): void {
     trackEvent({
-      category: 'experiment',
-      action: isConversion ? 'experiment_conversion' : 'experiment_exposure',
-      experiment_id: experimentId,
-      experiment_name: experimentName,
-      variant_id: variantId,
-      variant_name: variantName,
-      label: `${experimentId}:${variantId}`,
-      ...(isConversion && conversionData ? {
-        conversion_type: conversionData.type,
-        conversion_value: conversionData.value
-      } : {})
+      name: isConversion ? 'experiment_conversion' : 'experiment_exposure',
+      params: {
+        experiment_id: experimentId,
+        experiment_name: experimentName,
+        variant_id: variantId,
+        variant_name: variantName,
+        label: `${experimentId}:${variantId}`,
+        ...(isConversion && conversionData ? {
+          conversion_type: conversionData.type,
+          conversion_value: conversionData.value || 0
+        } : {})
+      }
     });
   }
 
@@ -90,13 +91,14 @@ class ExperimentManager {
   ): void {
     const variant = experiment.variants.find((v: { id: string; name: string }) => v.id === assignment.variantId);
     trackEvent({
-      category: 'experiment',
-      action: 'experiment_exposure',
-      experiment_id: experiment.id,
-      experiment_name: experiment.name,
-      variant_id: assignment.variantId,
-      variant_name: variant?.name || 'unknown',
-      label: `${experiment.id}:${assignment.variantId}`
+      name: 'experiment_exposure',
+      params: {
+        experiment_id: experiment.id,
+        experiment_name: experiment.name,
+        variant_id: assignment.variantId,
+        variant_name: variant?.name || 'unknown',
+        label: `${experiment.id}:${assignment.variantId}`
+      }
     });
   }
 }

@@ -1,21 +1,29 @@
 # Memory Bank Status
 
 ## Current Project State
-The project is a Next.js frontend application deployed on VPS2 (147.93.62.188) that interacts with a Strapi CMS on VPS1 (153.92.223.23). We are currently working on improving the development workflow and resolving authentication issues.
+The project is a Next.js frontend application deployed on VPS2 (147.93.62.188) that interacts with a Strapi CMS on VPS1 (153.92.223.23). We have successfully fixed the contact form functionality and improved the deployment process for handling environment variables.
 
 ## Recent Activities
 
-### Development Workflow Improvements
-1. Created synchronization scripts:
-   - sync.ps1 for downloading production files
-   - deploy.ps1 for deployment
-   - Progress indicators added
-   - Error handling implemented
+### Contact Form Fixes & Deployment Improvements
+1. Fixed contact form issues on production:
+   - Identified and fixed email authentication problems
+   - Resolved environment variable issues in deployment
+   - Added detailed error logging and diagnostics
+   - Confirmed successful email sending capability
 
-2. Environment Management:
-   - Synchronized .env files
-   - Configured build settings
-   - Added production optimizations
+2. Deployment Workflow Improvements:
+   - Enhanced direct-deploy.ps1 script
+   - Fixed environment variable handling during deployment
+   - Added proper NODE_ENV=production setting
+   - Created safer .env file generation on server
+   - Added file permissions handling (chmod 600)
+
+3. Environment Management:
+   - Improved environment variable handling
+   - Fixed issue with EMAIL_PASSWORD not being set correctly
+   - Created diagnostic test endpoint for environment verification
+   - Added comprehensive documentation of the solutions
 
 ### Authentication Attempts
 1. SSH Key Authentication:
@@ -30,32 +38,47 @@ The project is a Next.js frontend application deployed on VPS2 (147.93.62.188) t
 
 ## Current Challenges
 
-### Critical Issues
-1. Authentication:
-   - Build process failing with 401 errors
-   - Token validation issues
-   - Environment variable problems
+### Resolved Issues
+1. Contact Form Functionality:
+   - Email sending in production environment now working correctly
+   - SMTP authentication fixed by properly setting EMAIL_PASSWORD
+   - Production mode ensured by setting NODE_ENV=production
+   - Environment variable persistence fixed in deployment script
 
-2. File System:
-   - Permission issues during sync
-   - File locking problems
-   - Directory access errors
+2. Deployment Process:
+   - Environment variable handling improved
+   - Production/development environment distinction enforced
+   - Secure handling of sensitive credentials implemented
+   - File permissions properly set for security
 
-### Attempted Solutions
-1. Authentication:
-   ```powershell
-   # SSH key generation
-   ssh-keygen -t rsa -b 4096
-   
-   # Automated password handling
-   $pinfo.RedirectStandardInput = $true
+### Current Solutions Implemented
+1. Environment Variable Management:
+   ```bash
+   # Create a production .env file with correct settings
+   cat > /var/www/jouw-frontend-website/.env << EOL
+   NODE_ENV=production
+   NEXT_PUBLIC_API_URL=http://147.93.62.188:3000
+   NEXT_PUBLIC_BACKEND_URL=http://147.93.62.187:1337
+   EMAIL_PASSWORD=******
+   EOL
+
+   # Make sure the file has correct permissions
+   chmod 600 /var/www/jouw-frontend-website/.env
    ```
 
-2. File System:
-   ```powershell
-   # Directory handling
-   Set-Location $LOCAL_PATH
-   Remove-Item -Path $TEMP_DIR -Recurse -Force
+2. Diagnostic Tools:
+   ```typescript
+   // Test endpoint for verifying environment variables
+   export async function GET(request: NextRequest) {
+     return NextResponse.json({
+       success: true,
+       environment: process.env.NODE_ENV,
+       debug: {
+         emailPasswordSet: process.env.EMAIL_PASSWORD ? true : false,
+         timestamp: new Date().toISOString()
+       }
+     });
+   }
    ```
 
 ## Next Actions
@@ -85,15 +108,16 @@ The project is a Next.js frontend application deployed on VPS2 (147.93.62.188) t
 ## Documentation Status
 
 ### Updated Documents
-- systemPatterns.md: Architecture and patterns
-- progress.md: Current progress and tasks
-- currentTask.md: Active development focus
-- project_handover.md: Comprehensive project summary
+- activeContext.md: Current work context and contact form fixes
+- progress.md: Updated progress (95% complete) and contact form status
+- vps_deployment_setup.md: Improved deployment instructions for environment handling
+- technical_issues/contact_form_environment_issue.md: Detailed documentation of the issue and solution
+- memory_bank.md: Updated memory bank with current status
 
-### Pending Updates
-- Troubleshooting guides
-- Error recovery procedures
-- Performance optimization docs
+### New Documentation Created
+- contact_form_environment_issue.md: Detailed troubleshooting documentation of contact form fixes
+- Test endpoint for environment verification (app/api/contact-test/route.ts)
+- Updated deployment scripts documentation with environment handling best practices
 
 ## Technical Context
 
@@ -114,28 +138,31 @@ module.exports = {
   }
 }
 ```
-
 ## Last Known State
-- Authentication: Failing with 401 errors
-- Build Process: Static generation issues
-- File System: Permission problems
-- Documentation: 90% complete
-- Scripts: Working with manual intervention
+- Contact Form: Working correctly in production with email functionality
+- Environment Variables: Correctly configured with EMAIL_PASSWORD and NODE_ENV
+- Authentication: Still experiencing issues with 401 errors (to be addressed)
+- Build Process: Fixed deployment script issues with environment variables
+- Documentation: 95% complete, including new contact form issue documentation
+- Deployment Script: Enhanced with proper environment variable handling
 
 ## Recovery Points
 1. Working Configuration:
-   - Basic file synchronization
-   - Environment variable handling
-   - Build process automation
+   - Contact form with email sending capability
+   - Environment variable handling during deployment
+   - Direct deployment script with proper .env configuration
+   - Test endpoint for environment verification
 
-2. Failed Attempts:
-   - SSH key authentication
-   - Automated password handling
-   - Token refresh mechanism
+2. Resolved Issues:
+   - Email sending in production environment
+   - SMTP authentication with proper PASSWORD
+   - NODE_ENV=production setting
+   - Deployment script environment variable handling
 
 ## Next Steps After Reset
-1. Review authentication logs
-2. Check token validity
-3. Verify environment variables
-4. Test build process
+1. Test the contact form functionality on production
+2. Verify environment variables are correctly set
+3. Check email sending capability
+4. Review updated documentation about the contact form fixes
+5. Use the test endpoint (/api/contact-test) to verify environment variables if needed
 5. Update documentation

@@ -177,8 +177,10 @@ describe('normalizeNewsArticle', () => {
     const result = normalizeNewsArticle(input);
 
     expect(result.id).toBe('123');
-    expect(result.categories[0].id).toBe('456');
-    expect(result.tags[0].id).toBe('789');
+    expect(result.categories).toBeDefined();
+    expect(result.categories?.[0]?.id).toBe('456');
+    expect(result.tags).toBeDefined();
+    expect(result.tags?.[0]?.id).toBe('789');
   });
 
   it('should handle flat structure', () => {
@@ -210,8 +212,9 @@ describe('normalizeNewsArticle', () => {
     expect(result.id).toBe('article123');
     expect(result.title).toBe('Test News Article');
     expect(result.content).toBe('Test content');
+    expect(result.categories).toBeDefined();
     expect(result.categories).toHaveLength(1);
-    expect(result.categories[0].name).toBe('News');
+    expect(result.categories?.[0]?.name).toBe('News');
   });
 
   it('should handle empty categories and tags data', () => {
@@ -328,7 +331,7 @@ describe('normalizeNewsArticle', () => {
       id: 'article123',
       title: 'Test News Article',
       content: 'Test content',
-      slug: '',
+      slug: 'test-news-article',
       categories: [],
       tags: [],
       summary: undefined,

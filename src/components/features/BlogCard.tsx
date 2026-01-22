@@ -4,6 +4,7 @@ import { BlogPost } from '@/lib/types';
 import Link from 'next/link';
 import LazyImage from '../common/LazyImage';
 import ErrorBoundary from '../common/ErrorBoundary';
+import { validateSlug } from '@/lib/utils/slugUtils';
 import { useMemo, useState } from 'react';
 
 // Memoize date formatter instance
@@ -33,15 +34,24 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ post }: BlogCardProps) {
+  // Debug: log de hele post-prop
+  console.log('BlogCard received post:', post);
+
   // Memoize image source calculation
   const imageSource = useMemo(() => {
     if (!post.featuredImage) return null;
     const imageUrl = post.featuredImage.formats?.small?.url || post.featuredImage.url;
-    return imageUrl.startsWith('http') ? imageUrl : `${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`;
+    if (!imageUrl) return null;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageUrl.startsWith('/uploads/')) return `/api/proxy/assets${imageUrl}`;
+    return imageUrl;
   }, [post.featuredImage]);
 
   // Memoize excerpt - use summary if available, otherwise generate from content
   const excerpt = useMemo(() => post.summary || getExcerpt(post.content), [post.summary, post.content]);
+
+  // Memoize validated slug
+  const validatedSlug = useMemo(() => validateSlug(post.slug), [post.slug]);
 
   // Memoize date section
   const dateSection = useMemo(() => (
@@ -86,19 +96,19 @@ export default function BlogCard({ post }: BlogCardProps) {
       <div className="p-6 flex flex-col flex-grow">
         {dateSection}
         
-        <Link href={`/blog/${post.slug}`}>
+        <Link href={`/blog/${validatedSlug}`}>
           <h3 className="text-xl font-semibold text-[#091E42] mb-3 hover:text-[#FF8B00] transition-colors">
-            {post.title}
+            {post.title || 'Geen titel'}
           </h3>
         </Link>
         
         <p className="text-[#091E42]/80 mb-4 line-clamp-3 whitespace-pre-wrap">
-          {excerpt}
+          {excerpt || 'Geen samenvatting beschikbaar'}
         </p>
         
         <div className="mt-auto">
           <Link 
-            href={`/blog/${post.slug}`}
+            href={`/blog/${validatedSlug}`}
             className="text-[#FF8B00] hover:text-[#E67E00] font-medium transition-colors"
           >
             Lees meer

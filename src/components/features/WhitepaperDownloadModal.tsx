@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { clientEnv } from '@/lib/config/client-env';
+import Link from 'next/link';
 
 interface WhitepaperDownloadModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export interface DownloadFormData {
   email: string;
   company: string;
   subscribeNewsletter: boolean;
+  acceptTerms: boolean;
 }
 
 export default function WhitepaperDownloadModal({
@@ -29,7 +31,8 @@ export default function WhitepaperDownloadModal({
     name: '',
     email: '',
     company: '',
-    subscribeNewsletter: true
+    subscribeNewsletter: true,
+    acceptTerms: false
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -131,6 +134,24 @@ export default function WhitepaperDownloadModal({
             />
             <label htmlFor="newsletter" className="ml-2 block text-sm text-[#091E42]">
               Ja, ik wil graag de nieuwsbrief ontvangen met updates over ISO-certificering en informatiebeveiliging
+            </label>
+          </div>
+
+          <div className="flex items-start space-x-2">
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              name="acceptTerms"
+              required
+              className="mt-1 h-4 w-4 text-[#FF8B00] focus:ring-[#FF8B00] border-gray-300 rounded"
+              checked={formData.acceptTerms}
+              onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+            />
+            <label htmlFor="acceptTerms" className="text-sm text-[#091E42]">
+              Ik ga akkoord met de{' '}
+              <Link href="/terms-and-conditions" className="text-[#FF8B00] hover:underline">
+                algemene voorwaarden
+              </Link> *
             </label>
           </div>
 

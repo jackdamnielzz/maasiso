@@ -7,9 +7,6 @@ export interface SearchResultItemProps {
   content: string;
   slug: string;
   publishedAt?: string;
-  category?: {
-    name: string;
-  };
   type: 'blog' | 'news';
   query?: string;
 }
@@ -29,7 +26,6 @@ export default function SearchResultItem({
   content,
   slug,
   publishedAt,
-  category,
   type,
   query = ''
 }: SearchResultItemProps) {
@@ -52,12 +48,6 @@ export default function SearchResultItem({
             <time dateTime={publishedAt}>
               {dateFormatter(publishedAt)}
             </time>
-          )}
-          {category && (
-            <>
-              <span className="mx-2">•</span>
-              <span>{category.name}</span>
-            </>
           )}
         </div>
       </Link>

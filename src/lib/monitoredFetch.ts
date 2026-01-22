@@ -3,28 +3,24 @@ import { monitoringService } from './monitoring/service';
 import { FetchOptions } from './api/cache';
 import { clientEnv } from './config/client-env';
 import logger from './logger';
+import { MonitoringEventTypes } from './monitoring/types';
 
-const DEBUG = process.env.DEBUG === 'true';
+const DEBUG = true; // Always enable debug mode
 
 function getFullUrl(url: string): string {
+  // If it's already a full URL, return it
   if (url.startsWith('http')) {
     return url;
   }
-  
-  // If we're on the client side, use the current origin
+
+  // Use current origin on client side
   if (typeof window !== 'undefined') {
-    const baseUrl = window.location.origin;
-    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+    return `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
   }
-  
-  // On the server side, use the Strapi URL directly
-  const strapiUrl = process.env.STRAPI_URL;
-  if (url.startsWith('/api/proxy/')) {
-    const apiPath = url.replace('/api/proxy/', '');
-    return `${strapiUrl}/api/${apiPath}`;
-  }
-  
-  return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+
+  // Use backend URL for server-side requests
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:1337';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
 /**
@@ -40,22 +36,28 @@ export async function monitoredFetch(
   const fullUrl = getFullUrl(url);
 
   try {
-    // Log request details in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[API Request]', {
-        endpoint,
-        url: fullUrl,
-        method: options?.method || 'GET',
-        headers: {
-          ...options?.headers,
-          'Authorization': '[REDACTED]'
-        }
-      });
+    // Always log request details
+    console.log('[API Request] FULL DETAILS:', {
+      endpoint,
+      url: fullUrl,
+      method: options?.method || 'GET',
+      headers: {
+        ...options?.headers,
+        'Authorization': '[REDACTED]'
+      },
+      body: options?.body ? JSON.stringify(options.body) : 'No body'
+    });
+
+    // Get the token directly from environment variables
+    const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+    if (!token) {
+      throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
     }
 
-    // Get the token and ensure it's properly formatted
-    const token = clientEnv.strapiToken;
     const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+
+    console.log('[Token Debug] Token present:', !!token);
+    console.log('[Token Debug] Formatted Token:', formattedToken ? '[REDACTED]' : 'MISSING');
 
     const response = await fetchWithRetry(fullUrl, {
       ...options,
@@ -76,16 +78,20 @@ export async function monitoredFetch(
 
     if (!response.ok) {
       // Log response details for debugging
-      console.error('[API Error]', {
+      // Get response body for error details if possible
+      const errorBody = await response.text().catch(() => 'Could not read error body');
+      
+      console.error('[API Error] FULL DETAILS', {
         status: response.status,
         statusText: response.statusText,
         url: response.url,
-        headers: Object.fromEntries(response.headers.entries())
+        headers: Object.fromEntries(response.headers.entries()),
+        body: errorBody
       });
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 
-    monitoringService.trackRequest({
+    monitoringService.trackEvent(MonitoringEventTypes.REQUEST, {
       method: options?.method || 'GET',
       url: fullUrl,
       duration: Date.now() - startTime,
@@ -99,11 +105,17 @@ export async function monitoredFetch(
       : 500;
 
     const currentTime = Date.now();
-    if (DEBUG) {
-      logUniqueErrors(fullUrl, options?.method || 'GET', status, error);
-    }
+    
+    // Always log errors in detail
+    console.error('[Fetch Error] FULL DETAILS', {
+      url: fullUrl,
+      method: options?.method || 'GET',
+      status,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
 
-    monitoringService.trackRequest({
+    monitoringService.trackEvent(MonitoringEventTypes.REQUEST, {
       method: options?.method || 'GET',
       url: fullUrl,
       duration: currentTime - startTime,

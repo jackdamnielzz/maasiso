@@ -9,7 +9,7 @@ export default async function Home() {
     let blogPosts: BlogPost[] = [];
     try {
       const response = await getBlogPosts(1, 3);
-      blogPosts = response.blogPosts.data;
+      blogPosts = response.posts;
     } catch (error) {
       console.log('No blog posts found:', error);
     }

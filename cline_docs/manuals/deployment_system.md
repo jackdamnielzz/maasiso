@@ -1,247 +1,179 @@
-# MaasISO Frontend Deployment System
+# Deployment System Documentation
 
 ## Overview
 
-This document details the automated deployment system for the MaasISO frontend application to VPS2 (147.93.62.188) using GitHub Actions.
+This document describes the automated deployment system for the Maasiso website. The system uses GitHub Actions for continuous deployment to VPS2 (147.93.62.188) with PM2 process management.
 
-## System Components
+## Components
 
 ### 1. GitHub Actions Workflow
-- Located in `.github/workflows/deploy.yml`
-- Triggers on:
-  * Push to main branch
-  * Manual workflow dispatch
-- Handles:
-  * Testing
-  * Building
-  * Deployment
-  * Health verification
-  * Automatic rollback on failure
-
-### 2. SSH Key Authentication
-- Uses ED25519 key pair for secure authentication
-- Keys managed through GitHub Secrets:
-  * VPS2_SSH_PRIVATE_KEY
-  * VPS2_KNOWN_HOSTS
-- Setup script: `scripts/setup-ssh.ps1`
-
-### 3. Health Monitoring
-- Endpoint: `/api/health`
-- Monitoring script: `scripts/monitor-health.ps1`
-- Metrics tracked:
-  * Memory usage
-  * CPU load
-  * Application uptime
-  * Node.js metrics
-- Alert thresholds configurable
-
-### 4. Backup System
-- Script: `scripts/backup-site.ps1`
+- Triggered on:
+  - Push to main branch
+  - Manual workflow dispatch
 - Features:
-  * Timestamped backups
-  * Integrity verification
-  * Automatic rotation
-  * Latest backup symlink
-- Default retention: 5 backups
+  - Build caching for faster deployments
+  - Automated backup creation
+  - Health check verification
+  - Slack notifications
+  - Automatic rollback on failure
 
-## Setup Instructions
+### 2. PM2 Process Management
+- Cluster mode for better performance
+- Auto-restart on failure
+- Memory limit: 1GB per instance
+- Log rotation enabled
+- Performance monitoring
+- Resource usage tracking
 
-### 1. Initial Setup
-
-1. Generate SSH keys:
-```powershell
-.\scripts\setup-ssh.ps1
-```
-
-2. Add GitHub Secrets:
-- VPS2_SSH_PRIVATE_KEY: Private key from setup script
-- VPS2_KNOWN_HOSTS: Known hosts entry from setup script
-
-3. Configure VPS2:
-- Add public key to /root/.ssh/authorized_keys
-- Ensure PM2 is installed globally
-- Create deployment directory with correct permissions
-
-### 2. Monitoring Setup
-
-1. Start monitoring service:
-```powershell
-.\scripts\monitor-health.ps1 -IntervalSeconds 300
-```
-
-2. Configure alert thresholds:
-- Memory threshold: 85%
-- CPU load threshold: 4.0
-- Custom thresholds can be set via parameters
-
-### 3. Backup Configuration
-
-1. Initialize backup system:
-```powershell
-.\scripts\backup-site.ps1 -KeepBackups 5
-```
-
-2. Verify backup location permissions
-3. Test backup integrity
-4. Confirm backup rotation
+### 3. Health Check System
+- Endpoint: `/api/health`
+- Monitors:
+  - System resources (CPU, memory, disk)
+  - External service connectivity
+  - Response times
+  - Process metrics
+  - Node.js runtime stats
 
 ## Deployment Process
 
-### Standard Deployment
+### Normal Deployment Flow
+1. Code pushed to main branch
+2. GitHub Actions workflow triggered
+3. Build with cached dependencies
+4. Backup of current deployment created
+5. New code deployed to VPS2
+6. PM2 service restarted
+7. Health check verification
+8. Slack notification sent
 
-1. Push changes to main branch
-2. GitHub Actions automatically:
-   - Runs tests
-   - Builds application
-   - Creates backup
-   - Deploys to VPS2
-   - Verifies health
-   - Handles any necessary rollbacks
+### Rollback Procedure
+Automatic rollback occurs if:
+- Deployment fails
+- Health check fails
+- PM2 restart fails
 
-### Manual Deployment
-
-1. Go to GitHub Actions
-2. Select "Deploy to VPS2" workflow
-3. Click "Run workflow"
-4. Monitor deployment progress
+Manual rollback steps:
+1. Access VPS2: `ssh root@147.93.62.188`
+2. List backups: `ls -l /root/backups/`
+3. Choose backup timestamp
+4. Execute: `cd /var/www/jouw-frontend-website && cp -r /root/backups/[TIMESTAMP]/* .`
+5. Restart PM2: `pm2 reload ecosystem.config.js`
 
 ## Monitoring
 
-### Health Checks
+### Health Check Endpoint
+- URL: `http://147.93.62.188/api/health`
+- Response includes:
+  - System status
+  - Resource usage
+  - External service status
+  - Performance metrics
 
-- Endpoint: http://147.93.62.188/api/health
-- Frequency: Every 5 minutes
-- Metrics available:
-  * System status
-  * Memory usage
-  * CPU load
-  * Uptime
-  * Node.js info
-
-### Alerts
-
-Alerts are triggered for:
-- High memory usage (>85%)
-- High CPU load (>4.0)
-- Application restarts
-- Failed health checks
-- Deployment failures
-
-## Rollback Procedures
-
-### Automatic Rollback
-
-Occurs when:
-- Deployment fails
-- Health check fails post-deployment
-- PM2 service fails to start
-
-Process:
-1. Latest backup is restored
-2. Dependencies reinstalled
-3. Service restarted
-4. Health verified
-
-### Manual Rollback
-
-To manually rollback:
-
-1. SSH into VPS2
-2. Navigate to backup directory
-3. Choose backup to restore
-4. Run restore procedure:
+### PM2 Monitoring
 ```bash
-cd /var/www/backups
-cp -r frontend_backup_[timestamp]/* /var/www/jouw-frontend-website/
-cd /var/www/jouw-frontend-website
-npm ci --production
-pm2 restart frontend
+# View process list
+pm2 list
+
+# Monitor processes
+pm2 monit
+
+# View logs
+pm2 logs
+
+# View metrics
+pm2 show maasiso
 ```
+
+### Performance Requirements
+- Response time: < 500ms
+- Uptime: > 99.9%
+- Memory usage: < 1GB per instance
+- CPU usage: < 80%
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. Deployment Failures
-- Check GitHub Actions logs
-- Verify SSH key authentication
-- Check disk space on VPS2
-- Verify PM2 status
+1. **Deployment Failures**
+   - Check GitHub Actions logs
+   - Verify SSH access
+   - Check disk space
+   - Review health check response
 
-2. Health Check Failures
-- Check application logs
-- Verify memory usage
-- Check CPU load
-- Verify network connectivity
+2. **Performance Issues**
+   - Monitor PM2 metrics
+   - Check system resources
+   - Review application logs
+   - Analyze health check data
 
-3. Backup Issues
-- Check disk space
-- Verify file permissions
-- Check backup integrity
-- Confirm backup rotation
+3. **Rollback Failures**
+   - Verify backup existence
+   - Check file permissions
+   - Review PM2 logs
 
-### Recovery Steps
-
-1. Service Not Starting
+### Debug Commands
 ```bash
-pm2 logs frontend
-pm2 delete frontend
-pm2 start npm --name "frontend" -- start
-```
+# Check system resources
+htop
 
-2. Corrupted Deployment
-```bash
-cd /var/www/jouw-frontend-website
-git reset --hard
-npm ci
-npm run build
-pm2 restart frontend
-```
+# View application logs
+pm2 logs maasiso
 
-3. Failed Health Checks
-```bash
-pm2 logs frontend
+# Check nginx logs
 tail -f /var/log/nginx/error.log
+
+# Verify disk space
+df -h
+
+# Test health endpoint
+curl http://147.93.62.188/api/health
 ```
 
-## Maintenance
+## Maintenance Procedures
 
-### Regular Tasks
+### Regular Maintenance
+1. Review PM2 logs weekly
+2. Check system resources daily
+3. Test health endpoint hourly
+4. Rotate logs weekly
+5. Clean old backups monthly
 
-1. Weekly
-- Review monitoring logs
-- Check backup integrity
-- Verify alert system
-- Clean old logs
+### Security Updates
+1. Update Node.js version
+2. Update PM2 version
+3. Review SSH keys
+4. Update SSL certificates
+5. Check security dependencies
 
-2. Monthly
-- Rotate SSH keys
-- Update dependencies
-- Review performance metrics
-- Test rollback procedures
+### Backup Management
+- Location: `/root/backups/`
+- Retention: 5 most recent
+- Automatic cleanup
+- Manual backup command:
+```bash
+ssh root@147.93.62.188 'cd /var/www && tar -czf /root/backups/manual_$(date +%Y%m%d_%H%M%S).tar.gz jouw-frontend-website/'
+```
 
-3. Quarterly
-- Full system backup
-- Security audit
-- Performance optimization
-- Documentation update
+## Emergency Procedures
 
-### Best Practices
+### Complete System Failure
+1. SSH into VPS2
+2. Check system logs
+3. Restore latest backup
+4. Restart PM2
+5. Verify health endpoint
+6. Check external services
 
-1. Deployment
-- Always test locally before deployment
-- Monitor deployment logs
-- Verify health post-deployment
-- Keep backup before major changes
+### Performance Degradation
+1. Monitor system resources
+2. Check PM2 metrics
+3. Review application logs
+4. Scale PM2 instances if needed
+5. Clear application caches
 
-2. Security
-- Rotate SSH keys regularly
-- Monitor access logs
-- Keep dependencies updated
-- Review security alerts
+## Contact Information
 
-3. Performance
-- Monitor resource usage
-- Optimize build size
-- Clean old assets
-- Review caching strategy
+For deployment issues:
+- System Administrator: [Contact Info]
+- DevOps Team: [Contact Info]
+- Emergency Contact: [Contact Info]

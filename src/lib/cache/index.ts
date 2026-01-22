@@ -1,12 +1,13 @@
 import { CacheManager } from './CacheManager';
 import { 
   cachedFetch, 
-  prefetchRequest, 
+  prefetchRequest,
   getCacheStats, 
   clearCache, 
   cleanupCache 
 } from './cachedFetch';
 
+// Export the simplified cache functions that now perform direct fetches without caching
 export { 
   CacheManager,
   cachedFetch, 
@@ -15,8 +16,3 @@ export {
   clearCache, 
   cleanupCache 
 };
-
-// Set up automatic cache cleanup every 5 minutes
-if (typeof window !== 'undefined') {
-  setInterval(cleanupCache, 5 * 60 * 1000);
-}

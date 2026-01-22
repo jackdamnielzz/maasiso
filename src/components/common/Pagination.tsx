@@ -37,7 +37,7 @@ export default function Pagination({ currentPage, totalPages, onHover }: Paginat
     }
 
     // Create a new params object with validated values
-    const currentParams = new URLSearchParams(searchParams.toString());
+    const currentParams = new URLSearchParams(searchParams?.toString() || '');
     const validatedParams: Record<string, string> = {};
     
     // Add validated page number

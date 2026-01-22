@@ -1,70 +1,236 @@
-# Project Architecture Analysis
+# Project Architecture Documentation
 
-## Initial Project Overview
+## System Overview
 
-This document outlines the architecture of the current project, analyzing its structure, layers, and deployment strategy. It also assesses the feasibility of using GitHub for deployment to a VPS and discusses common deployment practices for larger websites.
+The Maasiso project is a distributed web application using a two-server architecture, separating the frontend and backend components for optimal performance, security, and maintainability.
+
+### Infrastructure Architecture
+
+1. **Backend Server (VPS1)**
+   - Server: srv692111.hstgr.cloud (153.92.223.23)
+   - Location: Netherlands
+   - Specifications:
+     * CPU: 2 cores
+     * Memory: 8 GB
+     * Storage: 100 GB
+     * OS: Ubuntu 22.04
+   - Components:
+     * Strapi CMS
+     * PM2 Process Manager
+     * Node.js Runtime
+
+2. **Frontend Server (VPS2)**
+   - Server: srv718842.hstgr.cloud (147.93.62.188)
+   - Location: Germany
+   - Specifications:
+     * CPU: 2 cores
+     * Memory: 8 GB
+     * Storage: 100 GB
+     * OS: Ubuntu 22.04
+   - Components:
+     * Next.js Application
+     * Nginx Reverse Proxy
+     * PM2 Process Manager
+     * Node.js Runtime
 
 ## Project Structure
 
-Based on the provided file list and analysis, the project appears to be structured as follows:
+### Frontend Application (`/`)
+- **`app/`**: Next.js app router structure containing page components and API routes
+- **`src/`**: Core application source code
+  * `components/`: Reusable UI components
+  * `lib/`: Utility functions and services
+  * `hooks/`: Custom React hooks
+  * `types/`: TypeScript type definitions
+- **`public/`**: Static assets
+- **`scripts/`**: Deployment and utility scripts
 
-- **`app/`**:  Contains the main application routes and page components, using Next.js app router structure.
-- **`frontend/`**: Seems to be a separate frontend application, possibly an older version or a different part of the project. It contains its own `package.json`, `next.config.js`, and `src/` directory. This might indicate a migration in progress or a modular architecture.
-- **`src/`**: Contains the main source code for the application, including components, configurations, hooks, and libraries.
-- **`scripts/`**: Includes deployment and utility scripts, suggesting custom deployment processes.
-- **`cline_docs/`**:  Dedicated directory for project documentation, indicating a focus on documentation and knowledge management.
-- **`public/`**:  Contains static assets for the application.
+### Key Components
 
-### Key Directories and Layers (Preliminary)
+1. **Presentation Layer**
+   - Location: `app/`, `src/components/`
+   - Technology: React, Next.js
+   - Purpose: User interface and interactions
+   - Key Features:
+     * Server-side rendering
+     * Client-side navigation
+     * Dynamic routing
+     * Static page generation
 
-- **Presentation Layer (`app/`, `src/components/`)**:  Handles UI components, page layouts, and user interactions. Likely built with React and Next.js.
-- **API Layer (`app/api/`, `frontend/app/api/`)**: Defines API endpoints for data fetching and backend interactions.
-- **Logic/Service Layer (`src/lib/`, `src/hooks/`)**: Contains business logic, utility functions, custom hooks, and potentially service integrations.
-- **Configuration (`src/config/`, `next.config.js`)**:  Manages application configuration, routing, and build settings.
-- **Scripts (`scripts/`)**:  Automates deployment, synchronization, and other development tasks.
-- **Documentation (`cline_docs/`)**: Stores project documentation, manuals, and architectural notes.
+2. **API Layer**
+   - Location: `app/api/`
+   - Technology: Next.js API routes
+   - Purpose: Backend communication and data proxying
+   - Key Features:
+     * Proxy to Strapi backend
+     * Request/response handling
+     * Error management
+     * Rate limiting
 
-## Deployment Strategy Assessment (Initial)
+3. **Service Layer**
+   - Location: `src/lib/`
+   - Purpose: Business logic and utilities
+   - Key Features:
+     * Data fetching
+     * State management
+     * Authentication
+     * Error handling
 
-The user proposes using GitHub for version control and deployment to a VPS. This strategy generally involves:
+4. **Configuration Layer**
+   - Files: `next.config.js`, `.env.production`
+   - Purpose: Application configuration
+   - Key Settings:
+     * Build settings
+     * Environment variables
+     * API endpoints
+     * Runtime configuration
 
-1. **Version Control with Git and GitHub:**  Managing code changes, tracking history, and collaboration using Git and GitHub.
-2. **Push to GitHub Repository:** Committing and pushing code changes to a remote GitHub repository.
-3. **Pull from VPS:**  On the VPS, pulling the latest changes from the GitHub repository.
-4. **Deployment on VPS:**  Building and deploying the application on the VPS after pulling the latest code.
+## Deployment Architecture
 
-This approach is a common and generally sound strategy for deploying web applications. It leverages Git for version control and GitHub as a central repository and potentially for automation.
+### Backend Deployment (VPS1)
 
-### Feasibility and Potential Considerations
+1. **Process Management**
+   - Tool: PM2
+   - Processes:
+     * Strapi CMS (Primary)
+   - Configuration:
+     * Auto-restart enabled
+     * Error logging
+     * Process monitoring
 
-- **Feasibility:**  Using GitHub for deployment to a VPS is definitely feasible and a widely adopted practice.
-- **Security:**  Ensure proper security measures for GitHub repository access and VPS access. Consider using SSH keys for secure authentication.
-- **Automation:**  Deployment can be automated using GitHub Actions or other CI/CD tools to streamline the process.
-- **Build Process:**  The VPS will need to have the necessary environment (Node.js, npm/yarn) to build the application after pulling from GitHub.
-- **Downtime:**  Deployment process should be designed to minimize downtime during updates. Consider strategies like blue/green deployments or rolling updates for more complex setups.
+2. **Network Configuration**
+   - Ports:
+     * 1337: Strapi API
+   - Security:
+     * CORS configuration
+     * Rate limiting
+     * SSL/TLS encryption
 
-## Common Deployment Practices for Larger Websites
+### Frontend Deployment (VPS2)
 
-Larger websites often employ more sophisticated deployment strategies to ensure high availability, scalability, and resilience. Some common practices include:
+1. **Process Management**
+   - Tool: PM2
+   - Processes:
+     * Next.js application
+   - Configuration:
+     * Production optimization
+     * Error handling
+     * Auto-restart
 
-- **CI/CD Pipelines:**  Automated pipelines for continuous integration and continuous deployment, triggered by code changes in Git repositories. Tools like Jenkins, GitLab CI, GitHub Actions, CircleCI are commonly used.
-- **Containerization (Docker, Kubernetes):**  Packaging applications into containers for consistent deployment across environments and easier scaling. Kubernetes orchestrates container deployments and management.
-- **Infrastructure as Code (IaC):**  Managing infrastructure (servers, networks, databases) using code and automation tools like Terraform or AWS CloudFormation.
-- **Blue/Green Deployments:**  Maintaining two identical environments (blue and green). Deploying new code to the inactive environment, testing it, and then switching traffic to the updated environment with minimal downtime.
-- **Rolling Deployments:**  Gradually updating application instances in a rolling fashion, minimizing downtime and allowing for rollback if issues are detected.
-- **Load Balancing:** Distributing traffic across multiple servers to handle high loads and improve availability.
-- **Content Delivery Networks (CDNs):**  Caching and serving static assets from geographically distributed servers to improve performance and reduce latency for users worldwide.
+2. **Nginx Configuration**
+   - Purpose: Reverse proxy and static file serving
+   - Features:
+     * SSL termination
+     * Caching
+     * Compression
+     * Security headers
 
-These practices aim to automate and streamline the deployment process, reduce risks, and ensure efficient and reliable updates for large-scale web applications.
+3. **Monitoring**
+   - Health checks
+   - Performance metrics
+   - Error tracking
+   - Log management
+
+## Security Architecture
+
+1. **Access Control**
+   - SSH key authentication
+   - Firewall rules
+   - Role-based access
+   - API authentication
+
+2. **Data Protection**
+   - SSL/TLS encryption
+   - Secure headers
+   - CORS policies
+   - Input validation
+
+3. **Monitoring & Logging**
+   - Access logs
+   - Error logs
+   - Security alerts
+   - Performance metrics
+
+## Deployment Workflow
+
+1. **Code Management**
+   - Version Control: Git
+   - Repository: GitHub
+   - Branch Strategy:
+     * main: production
+     * develop: staging
+     * feature branches: development
+
+2. **Deployment Process**
+   - Frontend:
+     1. Code push to GitHub
+     2. Build process
+     3. SFTP transfer to VPS2
+     4. PM2 restart
+   - Backend:
+     1. Code push to GitHub
+     2. Pull on VPS1
+     3. Build process
+     4. PM2 restart
+
+3. **Verification**
+   - Health checks
+   - API testing
+   - Frontend verification
+   - Log monitoring
+
+## Maintenance Procedures
+
+1. **Backup Strategy**
+   - Database backups
+   - File system backups
+   - Configuration backups
+   - Automated scheduling
+
+2. **Monitoring**
+   - Server health
+   - Application performance
+   - Error rates
+   - Resource usage
+
+3. **Update Procedures**
+   - Security patches
+   - Dependency updates
+   - Feature deployments
+   - Rollback procedures
+
+## Documentation Structure
+
+1. **Technical Documentation**
+   - Architecture diagrams
+   - API documentation
+   - Database schemas
+   - Deployment guides
+
+2. **Operational Documentation**
+   - Monitoring procedures
+   - Backup procedures
+   - Emergency responses
+   - Contact information
 
 ## Next Steps
 
-1. **Detailed Codebase Analysis:** Use tools to further analyze the codebase, identify key components, and understand dependencies.
-2. **Refine Architecture Diagram:** Create a more detailed architecture diagram based on the codebase analysis.
-3. **Plan Deployment Workflow:**  Develop a step-by-step deployment workflow using GitHub and VPS, considering automation and security.
-4. **Address Frontend Folder:** Investigate the purpose of the separate `frontend/` folder and its relationship to the main application.
-5. **Document VPS Setup:**  Document the VPS environment setup, including necessary software and configurations.
+1. **Infrastructure Improvements**
+   - Implement CI/CD pipeline
+   - Enhance monitoring
+   - Automate deployments
+   - Improve backup systems
 
----
+2. **Security Enhancements**
+   - Security audit
+   - Access control review
+   - Monitoring improvements
+   - Incident response planning
 
-This is an initial analysis. Further investigation is needed to create a comprehensive architectural understanding and a robust deployment plan.
+3. **Documentation Updates**
+   - Complete missing sections
+   - Add troubleshooting guides
+   - Create runbooks
+   - Update contact information
+
+This document should be updated regularly as the architecture evolves and new components are added or modified.

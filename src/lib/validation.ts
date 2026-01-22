@@ -17,6 +17,19 @@ const SEARCH_ESCAPE_MAP: Record<string, string> = {
 };
 
 /**
+ * Sanitize a string for use as a URL slug
+ */
+export function sanitizeSlug(str: string): string {
+  return str
+    .toLowerCase() // Convert to lowercase
+    .trim() // Remove leading/trailing whitespace
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+/**
  * Sanitize a string by escaping special characters
  */
 export function escapeHtml(str: string): string {
@@ -64,7 +77,7 @@ export function validateSearchQuery(query: string): {
 /**
  * Validate and sanitize URL parameters
  */
-export function validateUrlParam(param: string | null, maxLength = 100): {
+export function validateUrlParam(param: string | null, maxLength = 100, isSlug = false): {
   isValid: boolean;
   sanitized: string;
   error?: string;
@@ -90,7 +103,7 @@ export function validateUrlParam(param: string | null, maxLength = 100): {
   }
 
   // Sanitize the parameter
-  const sanitized = escapeHtml(trimmed);
+  const sanitized = isSlug ? sanitizeSlug(trimmed) : escapeHtml(trimmed);
 
   return {
     isValid: true,
@@ -101,13 +114,14 @@ export function validateUrlParam(param: string | null, maxLength = 100): {
 /**
  * Validate and sanitize API request parameters
  */
-export function validateApiParams(params: Record<string, unknown>): {
+export function validateApiParams(params: Record<string, unknown>, options: { slugFields?: string[] } = {}): {
   isValid: boolean;
   sanitized: Record<string, string>;
   errors: Record<string, string>;
 } {
   const sanitized: Record<string, string> = {};
   const errors: Record<string, string> = {};
+  const { slugFields = [] } = options;
 
   for (const [key, value] of Object.entries(params)) {
     // Skip null or undefined values
@@ -118,7 +132,8 @@ export function validateApiParams(params: Record<string, unknown>): {
 
     // Convert to string and validate
     const strValue = String(value);
-    const result = validateUrlParam(strValue);
+    const isSlug = slugFields.includes(key);
+    const result = validateUrlParam(strValue, 100, isSlug);
 
     if (!result.isValid) {
       errors[key] = result.error || 'Invalid parameter';

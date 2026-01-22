@@ -76,7 +76,6 @@ export interface ContentEvent extends BaseEvent {
   contentMetadata?: {
     author?: string;
     publishDate?: string;
-    categories?: string[];
     tags?: string[];
     readingTime?: number;
     wordCount?: number;

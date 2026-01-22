@@ -5,10 +5,8 @@ describe('normalizeBlogPost', () => {
   it('should normalize a complete blog post', () => {
     const input: StrapiRawBlogPost = {
       id: 'post123',
-      documentId: 'doc123',
       title: 'Test Blog Post',
       content: 'Test content',
-      summary: 'Test summary',
       slug: 'test-blog-post',
       author: 'John Doe',
       categories: [
@@ -41,7 +39,6 @@ describe('normalizeBlogPost', () => {
       id: 'post123',
       title: 'Test Blog Post',
       content: 'Test content',
-      summary: 'Test summary',
       slug: 'test-blog-post',
       author: 'John Doe',
       categories: [
@@ -188,8 +185,7 @@ describe('normalizeBlogPost', () => {
       updatedAt: '2024-01-26T20:30:00.000Z',
       publishedAt: '',
       author: undefined,
-      featuredImage: undefined,
-      summary: undefined
+      featuredImage: undefined
     });
   });
 
@@ -199,7 +195,6 @@ describe('normalizeBlogPost', () => {
       title: 'Test Blog Post',
       slug: 'test-blog-post',
       author: undefined,
-      summary: undefined,
       seoTitle: undefined,
       seoDescription: undefined,
       seoKeywords: undefined,
@@ -210,7 +205,6 @@ describe('normalizeBlogPost', () => {
     const result = normalizeBlogPost(input);
 
     expect(result.author).toBeUndefined();
-    expect(result.summary).toBeUndefined();
     expect(result.seoTitle).toBe('');
     expect(result.seoDescription).toBe('');
     expect(result.seoKeywords).toBe('');

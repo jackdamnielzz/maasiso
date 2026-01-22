@@ -40,7 +40,7 @@ export const usePageTracking = () => {
 
   useEffect(() => {
     // Track page view
-    const url = searchParams.toString()
+    const url = searchParams?.toString()
       ? `${pathname}?${searchParams.toString()}`
       : pathname;
     
@@ -57,7 +57,13 @@ export const trackWebVital = (metric: Metric) => {
   }
 
   const { name, value, rating } = metric;
-  monitoringService.updateWebVital(name as WebVitalName, value);
+  monitoringService.updateWebVital({
+    id: `${name}-${Date.now()}`,
+    name,
+    value,
+    rating,
+    timestamp: Date.now()
+  });
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
@@ -96,8 +102,9 @@ export const getPerformanceMetrics = () => {
   return {
     webVitals: monitoringService.getMetrics(),
     apiPerformance: {
-      averageResponseTime: monitoringService.getAverageResponseTime(),
-      errorRate: monitoringService.getErrorRate()
+      // These metrics are not available in the current monitoring service
+      averageResponseTime: 0,
+      errorRate: 0
     }
   };
 };

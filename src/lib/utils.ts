@@ -1,25 +1,40 @@
-import { clsx, type ClassValue } from 'clsx';
+import { ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+// Class name utility for combining Tailwind classes
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Format date using Intl.DateTimeFormat
 export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
   return new Intl.DateTimeFormat('nl-NL', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
-  }).format(new Date(dateString));
+  }).format(date);
 }
 
+// Legacy date formatter (keeping for compatibility)
 export const dateFormatter = formatDate;
 
-export function isPromise(value: unknown): value is Promise<unknown> {
-  return value instanceof Promise;
-}
+// Get excerpt from content
+export function getExcerpt(content: string, maxLength: number = 200): string {
+  // Remove Markdown syntax
+  const plainText = content
+    .replace(/[#*`]/g, '') // Remove Markdown syntax
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace links with just their text
+    .replace(/\n+/g, ' ') // Replace newlines with spaces
+    .trim();
 
-export function getExcerpt(text: string, maxLength: number = 155): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + '...';
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+
+  // Find the last complete word within maxLength
+  const truncated = plainText.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  
+  return lastSpace > 0 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
 }

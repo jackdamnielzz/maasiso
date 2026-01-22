@@ -8,7 +8,7 @@ import { validateSearchQuery, createSafeUrl } from '@/lib/validation';
 export default function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('q') || '';
+  const initialQuery = searchParams?.get('q') || '';
   const [query, setQuery] = useState(initialQuery);
   const [isExpanded, setIsExpanded] = useState(false);
   const debouncedQuery = useDebounce(query, 300);

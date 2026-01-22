@@ -18,10 +18,17 @@ export async function generateMetadata(
   try {
     const { blogPost } = await getBlogPostBySlug(resolvedParams.slug);
     
+    if (!blogPost) {
+      return {
+        title: 'Blog Post Not Found',
+        description: 'The requested blog post could not be found.',
+      };
+    }
+
     return {
       title: blogPost.seoTitle || blogPost.title,
-      description: blogPost.seoDescription,
-      keywords: blogPost.seoKeywords,
+      description: blogPost.seoDescription || '',
+      keywords: blogPost.seoKeywords || '',
       openGraph: blogPost.featuredImage ? {
         images: [{ url: blogPost.featuredImage.url }],
       } : undefined,

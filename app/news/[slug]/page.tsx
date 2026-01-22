@@ -1,124 +1,126 @@
 import type { Metadata } from 'next';
-import { getNewsArticleBySlug, getNewsArticles } from '@/lib/api';
-import NewsArticleContent from '@/components/features/NewsArticleContent';
-import ContentAnalytics from '@/components/features/ContentAnalytics';
+import { getNewsArticleBySlug } from '@/lib/api';
+import NewsArticleWrapper from '@/components/features/NewsArticleWrapper';
 import { notFound } from 'next/navigation';
 import { NewsArticle } from '@/lib/types';
-import { isPromise } from '@/lib/utils';
 import { getExcerpt } from '@/lib/utils';
 
-type PageParams = {
-  slug: string;
-};
+// Force dynamic rendering and disable caching for news articles
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-type Props = {
-  params: Promise<PageParams>;
-};
+type NewsArticlePageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+}
 
-export async function generateStaticParams() {
+async function fetchArticle(slug: string): Promise<NewsArticle> {
   try {
-    const response = await getNewsArticles();
-    return response.newsArticles.data.map((article: NewsArticle) => ({
-      slug: article.slug,
-    }));
-  } catch (error) {
-    // If we can't get the articles, return an empty array
-    // This prevents build failure but logs the error
-    if (error instanceof Error) {
-      console.error('Error generating static params:', error.message);
+    console.log(`[NewsArticlePage] Fetching article: ${slug}`);
+    const article = await getNewsArticleBySlug(slug);
+    
+    if (!article) {
+      console.error(`[NewsArticlePage] Article not found: ${slug}`);
+      throw new Error('Article not found');
     }
-    return [];
+
+    if (!article.content) {
+      console.error(`[NewsArticlePage] Article content missing: ${slug}`);
+      throw new Error('Article content is missing');
+    }
+
+    return article;
+  } catch (error) {
+    console.error('[NewsArticlePage] Error fetching article:', {
+      slug,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    throw error;
   }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {
   try {
     const resolvedParams = await params;
+    const { slug } = resolvedParams;
     
-    if (!resolvedParams.slug) {
+    if (!slug) {
+      console.warn('[NewsArticlePage] No slug provided for metadata generation');
       return {
         title: 'News Article Not Found',
         description: 'The requested news article could not be found.'
       };
     }
 
-    const { newsArticle } = await getNewsArticleBySlug(resolvedParams.slug);
-    if (!newsArticle) {
-      return {
-        title: 'News Article Not Found',
-        description: 'The requested news article could not be found.'
-      };
-    }
+    const article = await fetchArticle(slug);
+    const description = article.summary || getExcerpt(article.content || '', 155);
+    const mainCategory = article.categories?.[0]?.name;
+    const imageUrl = article.featuredImage?.url;
 
-    const description = newsArticle.summary || getExcerpt(newsArticle.content || '', 155);
-    const mainCategory = newsArticle.categories?.[0]?.name;
-    const imageUrl = newsArticle.featuredImage?.url;
-
-    return {
-      title: `${newsArticle.seoTitle || newsArticle.title} | MaasISO`,
-      description: newsArticle.seoDescription || description,
+    const metadata: Metadata = {
+      title: `${article.seoTitle || article.title} | MaasISO`,
+      description: article.seoDescription || description,
       openGraph: {
-        title: newsArticle.seoTitle || newsArticle.title,
-        description: newsArticle.seoDescription || description,
+        title: article.seoTitle || article.title,
+        description: article.seoDescription || description,
         type: 'article',
-        publishedTime: newsArticle.publishedAt,
-        modifiedTime: newsArticle.updatedAt,
-        authors: newsArticle.author ? [newsArticle.author] : undefined,
+        publishedTime: article.publishedAt,
+        modifiedTime: article.updatedAt,
+        authors: article.author ? [article.author] : undefined,
         images: imageUrl ? [{ url: imageUrl }] : undefined,
         ...(mainCategory && { tags: [mainCategory] })
       }
-    } as Metadata;
+    };
+
+    console.log('[NewsArticlePage] Generated metadata:', {
+      title: metadata.title,
+      description: metadata.description
+    });
+
+    return metadata;
   } catch (error) {
-    // On error, return default metadata
-    if (error instanceof Error) {
-      console.error('Error generating metadata:', error.message);
-    }
+    console.error('[NewsArticlePage] Error generating metadata:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
     return {
-      title: 'Error Loading News Article',
-      description: 'There was an error loading the news article.'
+      title: 'News Article Not Found',
+      description: 'The requested news article could not be found.'
     };
   }
 }
 
-export default async function NewsArticlePage({ params }: Props) {
+export default async function NewsArticlePage({ params }: NewsArticlePageProps) {
   try {
     const resolvedParams = await params;
-
-    if (!resolvedParams.slug) {
-      notFound();
-    }
-
-    const { newsArticle } = await getNewsArticleBySlug(resolvedParams.slug);
+    const { slug } = resolvedParams;
     
-    if (!newsArticle || !newsArticle.content) {
+    if (!slug) {
+      console.error('[NewsArticlePage] No slug provided');
       notFound();
     }
 
-    const readingTime = Math.ceil((newsArticle.content || '').split(/\s+/).length / 200);
+    console.log(`[NewsArticlePage] Rendering article: ${slug}`);
+    const article = await fetchArticle(slug);
 
     return (
-      <div className="bg-white py-24">
-        <div className="container-custom">
-          <ContentAnalytics
-            contentType="news"
-            contentId={newsArticle.id}
-            title={newsArticle.title}
-            metadata={{
-              categories: newsArticle.categories?.map(cat => cat.name),
-              author: newsArticle.author,
-              publishedAt: newsArticle.publishedAt,
-              readingTime
-            }}
-          />
-          <NewsArticleContent article={newsArticle} />
-        </div>
+      <div className="min-h-screen bg-white">
+        <NewsArticleWrapper article={article} />
       </div>
     );
   } catch (error) {
-    // Let the error boundary handle the error display
-    if (error instanceof Error) {
-      throw new Error(`Er is een fout opgetreden bij het laden van het nieuwsartikel: ${error.message}`);
+    console.error('[NewsArticlePage] Error rendering article:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+
+    if (error instanceof Error && error.message === 'Article not found') {
+      notFound();
     }
-    throw new Error('Er is een onverwachte fout opgetreden bij het laden van het nieuwsartikel.');
+
+    throw error; // Let the error boundary handle other errors
   }
 }

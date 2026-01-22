@@ -3,7 +3,9 @@ import { performanceLog } from '../service';
 import {
   MonitoringEventTypes,
   ErrorContext,
-  PerformanceMetrics,
+  BatchProcessingEventData,
+  CircuitBreakerEventData,
+  NetworkQualityEventData,
   CircuitBreakerState
 } from '../types';
 
@@ -27,69 +29,85 @@ describe('PerformanceMonitor', () => {
     vi.useRealTimers();
   });
 
-  describe('track', () => {
+  describe('trackEvent', () => {
     it('should track batch processing metrics', () => {
-      const batchMetrics = {
+      const batchMetrics: BatchProcessingEventData = {
         duration: 100,
         success_count: 5,
         error_count: 1,
         queue_size: 10
       };
 
-      performanceLog.track('batch_processing', batchMetrics);
+      performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, batchMetrics);
 
       expect(console.log).toHaveBeenCalled();
       const loggedData = (console.log as Mock).mock.calls[0][1];
-      expect(loggedData.type).toBe('batch_processing');
-      expect(loggedData.payload).toEqual(batchMetrics);
+      expect(loggedData.type).toBe(MonitoringEventTypes.BATCH_PROCESSING);
+      expect(loggedData.data).toEqual(batchMetrics);
     });
 
     it('should track circuit breaker state changes', () => {
-      const breakerMetrics = {
+      const breakerMetrics: CircuitBreakerEventData = {
         service: 'api',
         state: CircuitBreakerState.Open,
         failure_count: 3
       };
 
-      performanceLog.track('circuit_breaker', breakerMetrics);
+      performanceLog.trackEvent(MonitoringEventTypes.CIRCUIT_BREAKER, breakerMetrics);
 
       expect(console.log).toHaveBeenCalled();
       const loggedData = (console.log as Mock).mock.calls[0][1];
-      expect(loggedData.type).toBe('circuit_breaker');
-      expect(loggedData.payload).toEqual(breakerMetrics);
+      expect(loggedData.type).toBe(MonitoringEventTypes.CIRCUIT_BREAKER);
+      expect(loggedData.data).toEqual(breakerMetrics);
     });
 
     it('should track network quality metrics', () => {
-      const networkMetrics = {
+      const networkMetrics: NetworkQualityEventData = {
         quality: 0.8,
         throughput: 1000,
         latency: 50
       };
 
-      performanceLog.track('network_quality', networkMetrics);
+      performanceLog.trackEvent(MonitoringEventTypes.NETWORK_QUALITY, networkMetrics);
 
       expect(console.log).toHaveBeenCalled();
       const loggedData = (console.log as Mock).mock.calls[0][1];
-      expect(loggedData.type).toBe('network_quality');
-      expect(loggedData.payload).toEqual(networkMetrics);
+      expect(loggedData.type).toBe(MonitoringEventTypes.NETWORK_QUALITY);
+      expect(loggedData.data).toEqual(networkMetrics);
     });
   });
 
-  describe('increment and metrics', () => {
-    it('should increment and track metric values', () => {
-      performanceLog.increment('cache_hits');
-      expect(performanceLog.getMetricValue('cache_hits')).toBe(1);
+  describe('performance metrics', () => {
+    it('should track and retrieve metric values', () => {
+      const timestamp = Date.now();
+      
+      performanceLog.trackPerformanceMetric({
+        name: 'cache_hits',
+        value: 1,
+        timestamp
+      });
 
-      performanceLog.increment('cache_hits');
-      expect(performanceLog.getMetricValue('cache_hits')).toBe(2);
+      const metrics = performanceLog.getMetrics();
+      expect(metrics['cache_hits']).toBe(1);
     });
 
-    it('should reset metric values', () => {
-      performanceLog.increment('cache_misses');
-      expect(performanceLog.getMetricValue('cache_misses')).toBe(1);
+    it('should track multiple metric updates', () => {
+      const timestamp = Date.now();
+      
+      performanceLog.trackPerformanceMetric({
+        name: 'cache_hits',
+        value: 1,
+        timestamp
+      });
 
-      performanceLog.resetMetric('cache_misses');
-      expect(performanceLog.getMetricValue('cache_misses')).toBe(0);
+      performanceLog.trackPerformanceMetric({
+        name: 'cache_hits',
+        value: 2,
+        timestamp: timestamp + 1000
+      });
+
+      const metrics = performanceLog.getMetrics();
+      expect(metrics['cache_hits']).toBe(2);
     });
   });
 
@@ -105,23 +123,25 @@ describe('PerformanceMonitor', () => {
 
       expect(console.error).toHaveBeenCalled();
       const loggedData = (console.error as Mock).mock.calls[0][1];
-      expect(loggedData.eventType).toBe(MonitoringEventTypes.ERROR);
-      expect(loggedData.data.error.message).toBe('Test error');
-      expect(loggedData.data.componentName).toBe('TestComponent');
+      expect(loggedData.name).toBe(error.name);
+      expect(loggedData.message).toBe('Test error');
+      expect(loggedData.context.componentName).toBe('TestComponent');
     });
   });
 
   describe('metric batching', () => {
     it('should batch and send metrics', async () => {
+      const timestamp = Date.now();
+      
       // Track multiple metrics
-      performanceLog.track('batch_processing', {
+      performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, {
         duration: 100,
         success_count: 5,
         error_count: 0,
         queue_size: 10
       });
 
-      performanceLog.track('network_quality', {
+      performanceLog.trackEvent(MonitoringEventTypes.NETWORK_QUALITY, {
         quality: 0.9,
         throughput: 1200,
         latency: 45
@@ -133,8 +153,8 @@ describe('PerformanceMonitor', () => {
       expect(fetch).toHaveBeenCalled();
       const requestBody = JSON.parse((fetch as Mock).mock.calls[0][1].body);
       expect(requestBody.metrics).toHaveLength(2);
-      expect(requestBody.metrics[0].eventType).toBe('batch_processing');
-      expect(requestBody.metrics[1].eventType).toBe('network_quality');
+      expect(requestBody.metrics[0].eventType).toBe(MonitoringEventTypes.BATCH_PROCESSING);
+      expect(requestBody.metrics[1].eventType).toBe(MonitoringEventTypes.NETWORK_QUALITY);
     });
 
     it('should handle failed requests by keeping metrics in buffer', async () => {
@@ -142,7 +162,7 @@ describe('PerformanceMonitor', () => {
         Promise.resolve({ ok: false })
       );
 
-      performanceLog.track('batch_processing', {
+      performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, {
         duration: 100,
         success_count: 5,
         error_count: 0,
@@ -163,7 +183,7 @@ describe('PerformanceMonitor', () => {
     it('should flush metrics when buffer size is reached', async () => {
       // Fill buffer to size limit (100)
       for (let i = 0; i < 100; i++) {
-        performanceLog.track('batch_processing', {
+        performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, {
           duration: i,
           success_count: 1,
           error_count: 0,

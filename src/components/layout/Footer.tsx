@@ -19,18 +19,33 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Diensten</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/iso-27001" className="text-gray-400 hover:text-white">
-                  ISO 27001
-                </Link>
-              </li>
-              <li>
                 <Link href="/iso-9001" className="text-gray-400 hover:text-white">
                   ISO 9001
                 </Link>
               </li>
               <li>
-                <Link href="/consultancy" className="text-gray-400 hover:text-white">
-                  Consultancy
+                <Link href="/iso-27001" className="text-gray-400 hover:text-white">
+                  ISO 27001
+                </Link>
+              </li>
+              <li>
+                <Link href="/iso-14001" className="text-gray-400 hover:text-white">
+                  ISO 14001
+                </Link>
+              </li>
+              <li>
+                <Link href="/iso-16175" className="text-gray-400 hover:text-white">
+                  ISO 16175
+                </Link>
+              </li>
+              <li>
+                <Link href="/bio" className="text-gray-400 hover:text-white">
+                  BIO
+                </Link>
+              </li>
+              <li>
+                <Link href="/avg" className="text-gray-400 hover:text-white">
+                  AVG
                 </Link>
               </li>
             </ul>
@@ -40,15 +55,12 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="text-gray-400">
-                <span>Tel: +31 (0)10 123 4567</span>
+                <span>Tel: +31 (0)6 2357 8344</span>
               </li>
               <li className="text-gray-400">
-                <span>Email: info@maasiso.com</span>
+                <span>Email: info@maasiso.nl</span>
               </li>
-              <li className="text-gray-400">
-                <span>Postbus 1234</span><br />
-                <span>3000 AB Rotterdam</span>
-              </li>
+              {/* Address removed as requested */}
             </ul>
           </div>
           
@@ -66,7 +78,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white">
+                <Link href="/terms-and-conditions" className="text-gray-400 hover:text-white">
                   Algemene Voorwaarden
                 </Link>
               </li>

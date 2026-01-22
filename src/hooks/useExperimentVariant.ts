@@ -22,7 +22,7 @@ export function useExperimentVariant(
 
     // Track exposure if enabled
     if (options.trackExposure) {
-      const variantConfig = experiment.variants.find(v => v.id === variant);
+      const variantConfig = experiment.variants.find((v: { id: string; name: string; weight: number }) => v.id === variant);
       manager.trackExperimentEvent(
         experiment.id,
         experiment.name,

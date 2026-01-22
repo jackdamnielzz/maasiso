@@ -1,25 +1,37 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+
+function throttle<T extends (...args: any[]) => void>(
+  func: T,
+  limit: number
+): (...args: Parameters<T>) => void {
+  let inThrottle: boolean;
+  return function(this: any, ...args: Parameters<T>) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
 
 export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
+  const toggleVisibility = useCallback(() => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    setIsVisible(scrollY > 300);
+  }, []);
 
-    window.addEventListener('scroll', toggleVisibility);
+  useEffect(() => {
+    const throttledToggleVisibility = throttle(toggleVisibility, 100);
+    window.addEventListener('scroll', throttledToggleVisibility, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', toggleVisibility);
+      window.removeEventListener('scroll', throttledToggleVisibility);
     };
-  }, []);
+  }, [toggleVisibility]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -33,7 +45,7 @@ export default function ScrollToTop() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-12 right-12 bg-[#FF8B00] text-white p-4 rounded-full shadow-lg hover:bg-[#E67A00] transition-all duration-200 z-50 hover:scale-110"
+          className="fixed bottom-12 right-12 bg-[#FF8B00] text-white p-4 rounded-full shadow-lg hover:bg-[#E67A00] transition-all duration-200 z-40 hover:scale-110"
           aria-label="Scroll naar boven"
         >
           <svg
