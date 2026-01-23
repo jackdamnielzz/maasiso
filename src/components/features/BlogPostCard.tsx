@@ -44,7 +44,12 @@ export default function BlogPostCard({ post }: BlogPostCardProps): React.ReactNo
               )}
               <div className="w-full h-full">
                 <Image
-                  src={`/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`}
+                  src={
+                    // Check if URL is already an external URL (Cloudinary, etc.)
+                    post.featuredImage.url.startsWith('http')
+                      ? post.featuredImage.url
+                      : `/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`
+                  }
                   width={800}
                   height={450}
                   alt={post.featuredImage.alternativeText || post.title}
