@@ -8,6 +8,8 @@ const nextConfig = {
       timeStyle: 'long'
     })
   },
+  // Enable Turbopack for Next.js 16+
+  turbopack: {},
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['@heroicons/react']
