@@ -14,15 +14,15 @@ function constructImageUrl(path: string | undefined): string {
   const constructedUrl = (() => {
     try {
       // If it's a Strapi URL, extract just the uploads part
-      if (path?.includes('153.92.223.23:1337')) {
+      if (path?.includes('153.92.223.23:1337') || path?.includes('peaceful-insight-production.up.railway.app')) {
         const match = path.match(/\/uploads\/(.+)$/);
         if (match) {
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://peaceful-insight-production.up.railway.app';
           return `${baseUrl}/api/assets/uploads/${match[1]}`;
         }
       }
       // For Next.js Image component, return just the path if it's an absolute URL but not a Strapi URL
-      if (path?.startsWith('http') && !path.includes('153.92.223.23:1337')) {
+      if (path?.startsWith('http') && !path.includes('153.92.223.23:1337') && !path.includes('peaceful-insight-production.up.railway.app')) {
         return path;
       }
       // For relative paths that start with /uploads/
@@ -49,10 +49,10 @@ function constructImageUrl(path: string | undefined): string {
   
   try {
     // If it's a Strapi URL, extract just the uploads part
-    if (path?.includes('153.92.223.23:1337')) {
+    if (path?.includes('153.92.223.23:1337') || path?.includes('peaceful-insight-production.up.railway.app')) {
       const match = path?.match(/\/uploads\/(.+)$/);
       if (match) {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://peaceful-insight-production.up.railway.app';
         return `${baseUrl}/api/assets/uploads/${match?.[1] ?? ''}`;
       }
     }
@@ -61,7 +61,7 @@ function constructImageUrl(path: string | undefined): string {
     // but not a Strapi URL
     if (typeof path === 'string') {
       const safePath = path!;
-      if (safePath.startsWith('http') && !safePath.includes('153.92.223.23:1337')) {
+      if (safePath.startsWith('http') && !safePath.includes('153.92.223.23:1337') && !safePath.includes('peaceful-insight-production.up.railway.app')) {
         return safePath;
       }
     }

@@ -43,7 +43,7 @@ const getImageUrl = (url: string) => {
     return url;
   }
   
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://153.92.223.23:1337';
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://peaceful-insight-production.up.railway.app';
   const fullUrl = `${baseUrl}${url}`;
   console.debug('[NewsArticleCard] Constructed URL:', {
     baseUrl,

@@ -18,6 +18,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'peaceful-insight-production.up.railway.app',
+        pathname: '/**'
+      },
+      {
         protocol: 'http',
         hostname: '153.92.223.23',
         port: '1337',

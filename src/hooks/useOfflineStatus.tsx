@@ -25,7 +25,7 @@ type ServiceWorkerMessage = {
   };
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://153.92.223.23';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://peaceful-insight-production.up.railway.app';
 
 export function useOfflineStatus(): OfflineStatus {
   const [status, setStatus] = useState<OfflineStatus>({
