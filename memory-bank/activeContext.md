@@ -1,20 +1,26 @@
-# Active Context - Vercel Deployment
+# Active Context - Vercel Deployment Complete
 
 ## Current Task
-Vercel deployment triggered after Next.js upgrade to 16.1.4.
+✅ Vercel deployment successfully completed!
 
-## Recent Changes
+## Recent Changes (2026-01-23)
 - Upgraded Next.js from 15.1.7 to 16.1.4 (fixes CVE-2025-66478 security vulnerability)
 - Added `turbopack: {}` config for Next.js 16 compatibility
 - Fixed blog layout TypeScript types for Next.js 16 stricter typing
 - Updated eslint-config-next and @next/eslint-plugin-next to 16.1.4
-- Pushed commit `8f3c841` to GitHub main branch
+- Removed duplicate middleware.ts file (root vs src/)
+- Fixed Edge Runtime compatibility in middleware
+- Added `.nvmrc` for Node.js 20 requirement
+- Added `.npmrc` with legacy-peer-deps for ESLint compatibility
+- Added `vercel.json` to use standard build command
 
-## Current Focus
-- Vercel deployment in progress (auto-triggered by GitHub push)
-- Monitor deployment status at Vercel dashboard
+## Deployment Status
+- **Status**: ✅ Live
+- **Latest Commit**: `698e08d`
+- **Platform**: Vercel
+- **Node.js**: 20.x
+- **Next.js**: 16.1.4
 
 ## Next Steps
-- Verify Vercel deployment completes successfully
-- Test production site functionality
+- Monitor production site for any issues
 - Verify Railway Strapi API connectivity in production

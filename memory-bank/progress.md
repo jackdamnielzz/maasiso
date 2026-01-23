@@ -14,5 +14,11 @@
 - [x] Add Turbopack configuration for Next.js 16
 - [x] Fix TypeScript types for Next.js 16 compatibility
 - [x] Push upgrade to GitHub (commit `8f3c841`)
-- [-] Vercel deployment in progress (auto-triggered)
-- [ ] Verify production deployment success
+- [x] Fix middleware conflicts and Edge Runtime issues
+- [x] Add Node.js 20 requirement (`.nvmrc`)
+- [x] Add `.npmrc` for ESLint peer dependency resolution
+- [x] Add `vercel.json` for build configuration
+- [x] **Vercel deployment successful** (commit `698e08d`) ✅
+
+## Completed (2026-01-23)
+All Railway Strapi migration and Vercel deployment tasks are complete. The site is now live on Vercel with Next.js 16.1.4.
