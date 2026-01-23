@@ -90,7 +90,11 @@ export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsP
               {post.featuredImage && (
                 <div className="relative w-full h-48">
                   <Image
-                    src={post.featuredImage.url}
+                    src={
+                      post.featuredImage.url.startsWith('http')
+                        ? post.featuredImage.url
+                        : `/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`
+                    }
                     alt={post.featuredImage.alternativeText || post.title}
                     fill
                     className="object-cover"

@@ -20,5 +20,21 @@
 - [x] Add `vercel.json` for build configuration
 - [x] **Vercel deployment successful** (commit `698e08d`) ✅
 
+## Blog Page Improvements (2026-01-23)
+- [x] Fix blog post grid images (Cloudinary URLs)
+- [x] Add categories sidebar to blog page
+- [x] Add search bar to blog page
+- [x] Fix blog detail page featured image (Cloudinary URLs)
+- [x] Fix related posts images (Cloudinary URLs)
+- [x] Create `BlogSidebar.tsx` component
+- [x] Update `BlogPostCard.tsx` for direct Cloudinary URLs
+- [x] Update `BlogPostContent.tsx` for Cloudinary URLs
+- [x] Update `RelatedPosts.tsx` for Cloudinary URLs
+- [x] Add Cloudinary to `next.config.js` remotePatterns
+- [x] Deploy to Vercel ✅
+
 ## Completed (2026-01-23)
-All Railway Strapi migration and Vercel deployment tasks are complete. The site is now live on Vercel with Next.js 16.1.4.
+All Railway Strapi migration, Vercel deployment, and blog page improvement tasks are complete. The site is now live on Vercel with:
+- Next.js 16.1.4
+- Blog page with categories sidebar and search
+- All images properly loading from Cloudinary

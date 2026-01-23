@@ -1,9 +1,10 @@
 import { getBlogPosts } from '@/lib/api';
 import BlogCard from '@/components/features/BlogCard';
 import Pagination from '@/components/common/Pagination';
-import { BlogPost } from '@/lib/types';
+import { BlogPost, Category } from '@/lib/types';
 import { Suspense } from 'react';
 import { prefetch } from '../../lib/prefetch';
+import BlogSidebar from '@/components/features/BlogSidebar';
 
 // Prefetch function for next page
 async function prefetchNextPage(currentPage: number, pageSize: number) {
@@ -14,16 +15,60 @@ async function prefetchNextPage(currentPage: number, pageSize: number) {
 interface BlogPageProps {
   searchParams: {
     page?: string;
+    category?: string;
+    search?: string;
   };
+}
+
+// Extract unique categories from blog posts
+function extractCategories(posts: BlogPost[]): Category[] {
+  const categoryMap = new Map<string, Category>();
+  
+  posts.forEach(post => {
+    if (post.categories) {
+      post.categories.forEach(category => {
+        if (!categoryMap.has(category.id)) {
+          categoryMap.set(category.id, category);
+        }
+      });
+    }
+  });
+  
+  return Array.from(categoryMap.values());
+}
+
+// Filter posts by category and search query
+function filterPosts(posts: BlogPost[], category?: string, search?: string): BlogPost[] {
+  let filtered = posts;
+  
+  if (category) {
+    filtered = filtered.filter(post =>
+      post.categories?.some(cat => cat.slug === category)
+    );
+  }
+  
+  if (search) {
+    const searchLower = search.toLowerCase();
+    filtered = filtered.filter(post =>
+      post.title.toLowerCase().includes(searchLower) ||
+      post.content?.toLowerCase().includes(searchLower) ||
+      post.summary?.toLowerCase().includes(searchLower)
+    );
+  }
+  
+  return filtered;
 }
 
 async function BlogContent({ searchParams }: BlogPageProps) {
   try {
-    const currentPage = typeof searchParams.page === 'string' 
-      ? parseInt(searchParams.page) 
+    const currentPage = typeof searchParams.page === 'string'
+      ? parseInt(searchParams.page)
       : 1;
+    const selectedCategory = searchParams.category;
+    const searchQuery = searchParams.search;
 
-    const response = await getBlogPosts(currentPage, 6).catch(() => {
+    // Fetch more posts to extract categories (we'll filter client-side for now)
+    const response = await getBlogPosts(1, 100).catch(() => {
       throw new Error(
         'Er is een fout opgetreden bij het ophalen van de blog artikelen. ' +
         'Controleer uw internetverbinding en probeer het opnieuw.'
@@ -34,6 +79,18 @@ async function BlogContent({ searchParams }: BlogPageProps) {
       throw new Error('Geen data ontvangen van de server.');
     }
 
+    // Extract categories from all posts
+    const categories = extractCategories(response.posts);
+    
+    // Filter posts based on category and search
+    const filteredPosts = filterPosts(response.posts, selectedCategory, searchQuery);
+    
+    // Paginate filtered posts
+    const pageSize = 6;
+    const startIndex = (currentPage - 1) * pageSize;
+    const paginatedPosts = filteredPosts.slice(startIndex, startIndex + pageSize);
+    const totalPages = Math.ceil(filteredPosts.length / pageSize);
+
     if (!response.posts || response.posts.length === 0) {
       return (
         <div className="bg-white py-24">
@@ -42,7 +99,7 @@ async function BlogContent({ searchParams }: BlogPageProps) {
               Blog
             </h1>
             <p className="text-[#091E42]/70 mb-6 max-w-2xl">
-              Ontdek onze laatste inzichten, tips en best practices op het gebied van 
+              Ontdek onze laatste inzichten, tips en best practices op het gebied van
               informatiebeveiliging, ISO-certificering en privacywetgeving.
             </p>
             <p className="text-[#091E42]/70">
@@ -54,9 +111,8 @@ async function BlogContent({ searchParams }: BlogPageProps) {
     }
 
     // Prefetch next page in the background
-    const totalPages = Math.ceil(response.total / 6);
     if (currentPage < totalPages) {
-      prefetchNextPage(currentPage, 6).catch(() => {
+      prefetchNextPage(currentPage, pageSize).catch(() => {
         // Ignore prefetch errors
       });
     }
@@ -67,31 +123,58 @@ async function BlogContent({ searchParams }: BlogPageProps) {
           <h1 className="text-4xl font-bold text-[#091E42] mb-8">
             Blog
           </h1>
-          <p className="text-[#091E42]/70 mb-12 max-w-2xl">
-            Ontdek onze laatste inzichten, tips en best practices op het gebied van 
+          <p className="text-[#091E42]/70 mb-8 max-w-2xl">
+            Ontdek onze laatste inzichten, tips en best practices op het gebied van
             informatiebeveiliging, ISO-certificering en privacywetgeving.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {response.posts.map((post: BlogPost) => (
-              <div key={post.id}>
-                <BlogCard post={post} />
-              </div>
-            ))}
-          </div>
+          
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar with categories and search */}
+            <aside className="lg:w-64 flex-shrink-0">
+              <BlogSidebar
+                categories={categories}
+                selectedCategory={selectedCategory}
+                searchQuery={searchQuery}
+              />
+            </aside>
+            
+            {/* Main content */}
+            <main className="flex-1">
+              {filteredPosts.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-[#091E42]/70">
+                    Geen artikelen gevonden
+                    {selectedCategory && ` in categorie "${categories.find(c => c.slug === selectedCategory)?.name || selectedCategory}"`}
+                    {searchQuery && ` voor "${searchQuery}"`}.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {paginatedPosts.map((post: BlogPost) => (
+                      <div key={post.id}>
+                        <BlogCard post={post} />
+                      </div>
+                    ))}
+                  </div>
 
-          {Math.ceil(response.total / 6) > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(response.total / 6)}
-              onHover={(page) => {
-                if (page > currentPage) {
-                  prefetchNextPage(page - 1, 6).catch(() => {
-                    // Ignore prefetch errors
-                  });
-                }
-              }}
-            />
-          )}
+                  {totalPages > 1 && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onHover={(page) => {
+                        if (page > currentPage) {
+                          prefetchNextPage(page - 1, pageSize).catch(() => {
+                            // Ignore prefetch errors
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                </>
+              )}
+            </main>
+          </div>
         </div>
       </div>
     );
