@@ -24,10 +24,26 @@ Dit document beschrijft het volledige proces voor het deployen van de MaasISO fr
 ### Environment Variables (Vercel Dashboard)
 Zorg dat deze variabelen zijn ingesteld in Vercel Project Settings > Environment Variables:
 
+**Server-side variabelen (BELANGRIJK voor API proxy):**
+```
+STRAPI_URL=https://peaceful-insight-production.up.railway.app
+STRAPI_TOKEN=<your-strapi-token>
+```
+
+**Client-side variabelen:**
 ```
 NEXT_PUBLIC_API_URL=https://peaceful-insight-production.up.railway.app
+NEXT_PUBLIC_BACKEND_URL=https://peaceful-insight-production.up.railway.app
 NEXT_PUBLIC_STRAPI_TOKEN=<your-strapi-token>
 NEXT_PUBLIC_SITE_URL=https://maasiso.nl
+```
+
+**⚠️ BELANGRIJK:** De `STRAPI_URL` en `STRAPI_TOKEN` (zonder `NEXT_PUBLIC_` prefix) zijn nodig voor server-side API calls in de proxy routes. Zonder deze variabelen werken de blog posts, nieuws artikelen en andere dynamische content niet!
+
+**Via Vercel CLI toevoegen:**
+```bash
+echo "https://peaceful-insight-production.up.railway.app" | npx vercel env add STRAPI_URL production
+echo "<your-token>" | npx vercel env add STRAPI_TOKEN production
 ```
 
 ---
