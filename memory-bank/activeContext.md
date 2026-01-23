@@ -1,13 +1,12 @@
-# Active Context - Sitemap Dynamic Integration
+# Active Context - Railway Strapi Migration
 
-## Current Status
-- Fixed `app/sitemap.ts` to use authenticated API calls.
-- Integrated `getBlogPosts`, `getNewsArticles`, and `getWhitepapers` from `src/lib/api.ts`.
-- Added dynamic fetching for `pages` collection via authenticated direct fetch.
-- Added missing static routes `/avg` and `/bio`.
-- Implemented robust error handling and logging.
-- Switched to `process.env.NEXT_PUBLIC_SITE_URL` for the base URL.
+## Current Task
+Diagnosing the failed Vercel deployment (commit `b363795`) following the Railway Strapi migration.
 
-## Next Steps
-- Verify sitemap output in production/staging environment.
-- Monitor console logs for "Sitemap: X blogposts, Y news articles, Z pages".
+## Recent Changes
+- Identified the root cause of Vercel deployment failure: Security block due to vulnerable Next.js version (15.1.6, CVE-2025-66478).
+- Verified Railway Strapi connectivity: Reachable but returning 401 Unauthorized with current token.
+- Identified missing `NEXT_PUBLIC_STRAPI_TOKEN` in Vercel production environment variables.
+
+## Current Focus
+- Awaiting user confirmation to update Next.js version and fix API token.

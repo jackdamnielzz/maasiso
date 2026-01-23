@@ -1,10 +1,10 @@
-# Implementation Status - Sitemap
+# Implementation Status - Railway Migration
 
 ## Features
-- Dynamic Sitemap: 100%
-- Strapi API Integration (Authenticated): 100%
-- Multi-content support (Blogs, News, Whitepapers, Pages): 100%
-- Static route coverage: 100%
+- Railway Strapi Backend Integration: 100%
+- Environment Variable Update: 100%
+- Image URL Strategy Update: 100%
+- Vercel Deployment: 0% (Blocked - Security Vulnerability in Next.js)
 
 ## Technical Debt
-- `pages` collection fetching is currently direct; consider adding `getPages` to `src/lib/api.ts` in the future for consistency.
+- Some old IP references might still exist in legacy scripts/documentation (verified and replaced in active frontend code).
