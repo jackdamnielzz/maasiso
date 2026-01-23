@@ -1,12 +1,20 @@
-# Active Context - Railway Strapi Migration
+# Active Context - Vercel Deployment
 
 ## Current Task
-Diagnosing the failed Vercel deployment (commit `b363795`) following the Railway Strapi migration.
+Vercel deployment triggered after Next.js upgrade to 16.1.4.
 
 ## Recent Changes
-- Identified the root cause of Vercel deployment failure: Security block due to vulnerable Next.js version (15.1.6, CVE-2025-66478).
-- Verified Railway Strapi connectivity: Reachable but returning 401 Unauthorized with current token.
-- Identified missing `NEXT_PUBLIC_STRAPI_TOKEN` in Vercel production environment variables.
+- Upgraded Next.js from 15.1.7 to 16.1.4 (fixes CVE-2025-66478 security vulnerability)
+- Added `turbopack: {}` config for Next.js 16 compatibility
+- Fixed blog layout TypeScript types for Next.js 16 stricter typing
+- Updated eslint-config-next and @next/eslint-plugin-next to 16.1.4
+- Pushed commit `8f3c841` to GitHub main branch
 
 ## Current Focus
-- Awaiting user confirmation to update Next.js version and fix API token.
+- Vercel deployment in progress (auto-triggered by GitHub push)
+- Monitor deployment status at Vercel dashboard
+
+## Next Steps
+- Verify Vercel deployment completes successfully
+- Test production site functionality
+- Verify Railway Strapi API connectivity in production

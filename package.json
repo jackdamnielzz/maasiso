@@ -2,6 +2,9 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "cross-env DEBUG=false NODE_OPTIONS=\"--inspect\" NEXT_DEV_NO_PROGRESS=1 next dev",
     "dev:debug": "cross-env DEBUG=true NODE_OPTIONS=\"--inspect\" NEXT_DEV_NO_PROGRESS=1 next dev",

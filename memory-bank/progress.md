@@ -1,4 +1,4 @@
-# Progress - Railway Strapi Migration
+# Progress - Railway Strapi Migration & Vercel Deployment
 
 ## Milestones
 - [x] Update all environment files (`.env`, `.env.local`, `.env.production`)
@@ -7,7 +7,12 @@
 - [x] Verify build locally
 - [x] Commit and push changes to GitHub
 - [x] Update Vercel project environment variables
-- [ ] Trigger successful Vercel production deployment
 - [x] Diagnose failed deployment `b363795`
 - [x] Identified root cause: Security block by Vercel and Auth failure
 - [x] Update documentation (Final diagnosis results)
+- [x] Upgrade Next.js to 16.1.4 (fix CVE-2025-66478)
+- [x] Add Turbopack configuration for Next.js 16
+- [x] Fix TypeScript types for Next.js 16 compatibility
+- [x] Push upgrade to GitHub (commit `8f3c841`)
+- [-] Vercel deployment in progress (auto-triggered)
+- [ ] Verify production deployment success
