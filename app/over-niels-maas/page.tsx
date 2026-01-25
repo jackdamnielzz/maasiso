@@ -5,6 +5,9 @@ import { cn } from '@/lib/utils';
 export const metadata: Metadata = {
   title: 'Over Niels Maas | Lead Consultant MaasISO',
   description: 'Niels Maas is expert in ISO-normen (9001, 27001), AVG/GDPR en BIO. Oprichter en lead consultant bij MaasISO.',
+  alternates: {
+    canonical: "/over-niels-maas",
+  },
 };
 
 export default function OverNielsMaasPage() {

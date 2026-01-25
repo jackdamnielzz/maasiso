@@ -11,7 +11,10 @@ import remarkBreaks from 'remark-breaks';
 
 export const metadata: Metadata = {
   title: 'AVG & Privacy | MaasISO',
-  description: 'AVG en privacy compliance met MaasISO. Professionele begeleiding voor uw organisatie bij het implementeren van AVG-richtlijnen en privacybeleid.'
+  description: 'AVG en privacy compliance met MaasISO. Professionele begeleiding voor uw organisatie bij het implementeren van AVG-richtlijnen en privacybeleid.',
+  alternates: {
+    canonical: "/avg",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi

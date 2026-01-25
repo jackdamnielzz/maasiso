@@ -149,6 +149,9 @@ export async function generateMetadata(
         description: blogPost.seoDescription || getExcerpt(blogPost.content),
         images: [constructImageUrl(blogPost.featuredImage?.url)],
       },
+      alternates: {
+        canonical: `/blog/${resolvedParams.slug}`,
+      },
     };
   } catch (error) {
     logger.error('[Metadata Generation Error]', {

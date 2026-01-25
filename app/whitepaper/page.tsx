@@ -4,7 +4,10 @@ import WhitepaperClientWrapper from '@/components/features/WhitepaperClientWrapp
 export const metadata: Metadata = {
   title: 'Gratis Whitepaper | MaasISO - ISO Certificering Gids',
   description: 'Download onze gratis whitepaper over ISO certificering en informatiebeveiliging. Praktische tips en inzichten voor uw organisatie.',
-  keywords: 'whitepaper, ISO certificering, informatiebeveiliging, gratis download, MaasISO'
+  keywords: 'whitepaper, ISO certificering, informatiebeveiliging, gratis download, MaasISO',
+  alternates: {
+    canonical: "/whitepaper",
+  },
 };
 
 export default function WhitepaperPage() {

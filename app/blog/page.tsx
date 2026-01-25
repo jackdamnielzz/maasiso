@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { getBlogPosts } from '@/lib/api';
 import BlogCard from '@/components/features/BlogCard';
 import Pagination from '@/components/common/Pagination';
@@ -9,6 +10,14 @@ import { createSlug } from '@/lib/utils/slugUtils';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'Blog | MaasISO - ISO Certificering & Informatiebeveiliging',
+  description: 'Ontdek onze laatste inzichten, tips en best practices op het gebied van informatiebeveiliging, ISO-certificering en privacywetgeving.',
+  alternates: {
+    canonical: '/blog',
+  },
+};
 
 function getTagSlug(tag: Tag): string {
   // Some API responses include a slug, but our normalized Tag type doesn't.

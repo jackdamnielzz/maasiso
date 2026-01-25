@@ -5,7 +5,10 @@ import { Block } from './Iso16175Client';
 
 export const metadata: Metadata = {
   title: 'ISO 16175 Certificering | MaasISO',
-  description: 'ISO 16175 certificering en documentbeheer met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 16175 certificering.'
+  description: 'ISO 16175 certificering en documentbeheer met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 16175 certificering.',
+  alternates: {
+    canonical: "/iso-16175",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi

@@ -39,9 +39,28 @@
 - [x] **Author Page Creation** (/over-niels-maas) (2026-01-25) ✅
 - [x] **Internal Linking & Author ID Verification** (2026-01-25) ✅
 - [x] **Final Domain Unification Check (non-WWW)** (2026-01-25) ✅
+- [x] **Automated Verification Script** (2026-01-25) ✅
 - [x] **Sync with Remote Repository** (2026-01-25) ✅
 
+- [x] **Project Metadata Analysis** (2026-01-25) ✅
+  - [x] Identified root `app/` as active directory
+  - [x] Audited `app/layout.tsx` for metadataBase
+  - [x] Checked `next.config.js` for trailingSlash
+  - [x] Audited dynamic and static routes for canonical tags
+- [x] **Canonical Tags Implementation** (2026-01-25) ✅
+  - [x] Set `metadataBase` to `https://maasiso.nl` in root layout
+  - [x] Added default canonical tag in `app/layout.tsx`
+  - [x] Implemented canonical tags for all static pages
+  - [x] Implemented canonical tags for dynamic routes (`blog/[slug]`, `news/[slug]`)
+  - [x] Verified non-WWW and no trailing slash consistency
+
 ## Recent Changes
+- COMPLETED: Canonical Tags Implementation - all static and dynamic routes now have proper canonical tags.
+- COMPLETED: Implemented `metadataBase` and default canonical tag in `app/layout.tsx`.
+- COMPLETED: Added explicit canonical tags to all static service, blog, news, and information pages.
+- COMPLETED: Verified non-WWW and non-trailing-slash consistency across all metadata.
+- COMPLETED: Analyzed project structure for metadata and canonical tag implementation.
+- COMPLETED: Created and ran `scripts/verify-entities.js` to automate canonical and JSON-LD validation.
 - COMPLETED: Pushed all SEO, JSON-LD, and Author Page changes to the remote repository.
 - COMPLETED: Final sweep for `www.maasiso.nl` in `app/` and `src/`. Confirmed 0 occurrences in source.
 - COMPLETED: Strengthened internal linking by adding "Over Niels Maas" section to the Over Ons page.

@@ -8,6 +8,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Algemene Voorwaarden | MaasISO',
   description: 'Onze algemene voorwaarden en bepalingen voor dienstverlening',
+  alternates: {
+    canonical: "/terms-and-conditions",
+  },
 };
 
 async function getTermsContent() {

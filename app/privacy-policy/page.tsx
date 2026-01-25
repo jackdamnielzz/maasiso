@@ -8,6 +8,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Privacy Beleid | MaasISO',
   description: 'Hoe wij uw privacy beschermen en omgaan met uw gegevens',
+  alternates: {
+    canonical: "/privacy-policy",
+  },
 };
 
 async function getPrivacyPolicyContent() {

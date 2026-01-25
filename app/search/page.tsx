@@ -20,6 +20,9 @@ interface SearchPageProps {
 export const metadata: Metadata = {
   title: "Zoekresultaten | MaasISO",
   description: "Doorzoek alle content van MaasISO",
+  alternates: {
+    canonical: "/search",
+  },
 };
 
 export const dynamic = 'force-dynamic';

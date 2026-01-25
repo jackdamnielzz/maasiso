@@ -5,7 +5,10 @@ import DienstenContent from '@/components/features/DienstenContent';
 export const metadata: Metadata = {
   title: 'Diensten | MaasISO - ISO-certificering & Informatiebeveiliging',
   description: 'Ontdek de diensten van MaasISO op het gebied van ISO-certificering, informatiebeveiliging, AVG-compliance en meer. Professionele begeleiding voor uw organisatie.',
-  keywords: 'ISO 9001, ISO 27001, ISO 27002, ISO 14001, ISO 16175, informatiebeveiliging, AVG, GDPR, privacy consultancy, BIO'
+  keywords: 'ISO 9001, ISO 27001, ISO 27002, ISO 14001, ISO 16175, informatiebeveiliging, AVG, GDPR, privacy consultancy, BIO',
+  alternates: {
+    canonical: "/diensten",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi

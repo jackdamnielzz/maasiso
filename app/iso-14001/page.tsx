@@ -5,7 +5,10 @@ import { Block } from './Iso14001Client';
 
 export const metadata: Metadata = {
   title: 'ISO 14001 Certificering | MaasISO',
-  description: 'ISO 14001 certificering en milieumanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 14001 certificering.'
+  description: 'ISO 14001 certificering en milieumanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 14001 certificering.',
+  alternates: {
+    canonical: "/iso-14001",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi

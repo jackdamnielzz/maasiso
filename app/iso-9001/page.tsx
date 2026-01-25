@@ -11,7 +11,10 @@ import remarkBreaks from 'remark-breaks';
 
 export const metadata: Metadata = {
   title: 'ISO 9001 Certificering | MaasISO',
-  description: 'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.'
+  description: 'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.',
+  alternates: {
+    canonical: "/iso-9001",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi

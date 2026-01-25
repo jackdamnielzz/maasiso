@@ -1,5 +1,12 @@
 # Active Context - Redesign Cycle (Onze Voordelen & Over Ons)
 
+## Recently Completed: Canonical Tags Implementation (2026-01-25)
+- **Metadata Base**: Set `metadataBase` to `https://maasiso.nl` in `app/layout.tsx`.
+- **Default Canonical**: Added `alternates: { canonical: '/' }` to `app/layout.tsx` to ensure every page has a canonical tag by default.
+- **Static Pages**: Updated all major static pages with explicit relative canonical paths (e.g., `/over-ons`, `/contact`, `/diensten`, `/blog`, `/news`, etc.).
+- **Dynamic Routes**: Implemented canonical tags for `blog/[slug]` and `news/[slug]` routes.
+- **Consistency**: Verified `next.config.js` has `trailingSlash: false`, matching the canonical tag strategy.
+
 ## Recently Completed: Repository Sync & Documentation Update (2026-01-25)
 - **Git Push**: Successfully pushed all recent changes to the remote repository.
 - **Changes Included**: Standardized JSON-LD, new author page, internal links, and SEO domain unification.
@@ -120,7 +127,18 @@
 - **Results**: Confirmed 0 occurrences in source code. All metadata, JSON-LD schemas, sitemaps, and robots.txt files are verified to use the unified `https://maasiso.nl` domain.
 - **Entity Integrity**: Verified that `ProfessionalService` and `Person` schemas use stable, non-WWW `@id`s consistently.
 
+## Recently Completed: Automated Verification (2026-01-25)
+- **Tooling**: Created and executed [`scripts/verify-entities.js`](scripts/verify-entities.js) to automate the verification of the redesign's technical SEO requirements.
+- **Verification Status**: PASSED. Confirmed page existence, schema IDs, author links, and domain unification across the codebase.
+
+## Recently Completed: Project Metadata Analysis (2026-01-25)
+- **Active Directory**: Confirmed root `app/` is the active directory for the Next.js App Router (overriding `src/app/`).
+- **Metadata Inventory**:
+  - `app/layout.tsx`: Missing `metadataBase`.
+  - `next.config.js`: `trailingSlash` is `false` (default).
+  - `app/blog/[slug]/page.tsx`: Lacks canonical tag in `generateMetadata`.
+  - Static pages (e.g., `iso-9001`): Lack canonical tags.
+- **Goal**: Findings will be used to implement consistent canonical tags across the site to prevent duplicate content issues.
+
 ## Next Steps
-- Monitor Vercel deployment for the latest pushed changes.
-- Verify JSON-LD on live site using Google Rich Results Test.
-- Monitor search console for canonical consolidation.
+- Sync changes to remote repository.

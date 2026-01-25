@@ -20,7 +20,9 @@
 - Author Page (/over-niels-maas): 100% ✅
 - Internal Linking & Author ID Verification: 100% ✅
 - Final Domain Unification Check (non-WWW): 100% ✅
+- Verification Script (scripts/verify-entities.js): 100% ✅
 - Repository Sync: 100% ✅
+- Canonical Tags Implementation: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -33,6 +35,21 @@
 - [x] Paginated search results
 
 ## Recent Updates (2026-01-25)
+
+### Canonical Tags Implementation (2026-01-25) ✅
+- **Metadata Base**: Established `https://maasiso.nl` as the `metadataBase` in the root layout.
+- **Default Logic**: Configured `alternates: { canonical: '/' }` in `app/layout.tsx` to provide a fallback canonical for all pages.
+- **Static Page Coverage**: Manually implemented canonical tags for all major static pages including:
+  - Home (`/`)
+  - Diensten (`/diensten`)
+  - ISO Norms (`/iso-9001`, `/iso-27001`, etc.)
+  - Blog & News Overviews (`/blog`, `/news`)
+  - Policy Pages (`/privacy-policy`, `/cookie-policy`)
+  - Information Pages (`/over-ons`, `/contact`, `/onze-voordelen`, `/over-niels-maas`)
+- **Dynamic Route Coverage**: Implemented canonical tags in `generateMetadata` for:
+  - `app/blog/[slug]/page.tsx` → `/blog/${slug}`
+  - `app/news/[slug]/page.tsx` → `/news/${slug}`
+- **Validation**: Confirmed non-WWW and no trailing slash consistency.
 
 ### Repository Sync (2026-01-25)
 - **Git Push**: Successfully synchronized the local state with the remote repository.
@@ -62,6 +79,25 @@
 - **Codebase Sweep**: Verified that no `www.maasiso.nl` occurrences remain in `app/` and `src/` source files.
 - **Metadata Audit**: Re-confirmed that `app/layout.tsx`, `app/over-niels-maas/page.tsx`, and `app/blog/[slug]/page.tsx` use the correct stable `@id`s and non-WWW URLs.
 - **Environment Verification**: Confirmed all `.env` files and `sitemap.ts` use the canonical `https://maasiso.nl` domain.
+
+### Verification Script (2026-01-25)
+- **Script Creation**: Developed `scripts/verify-entities.js` to automate validation of canonical entities and JSON-LD standards.
+- **Automated Checks**:
+  - Existence of `/over-niels-maas` page.
+  - Presence of `ProfessionalService` and stable `@id` in root layout.
+  - Link to author profile in blog posts.
+  - Visible link to author page in "Over Ons" component.
+  - Recursive codebase sweep for legacy `www.maasiso.nl` domain.
+- **Results**: Verified all checks passed (PASS).
+
+### Project Metadata Analysis (2026-01-25)
+- **Status**: Completed analysis of current metadata structure.
+- **Findings**:
+  - Root `app/` is the active directory.
+  - Missing `metadataBase` in root layout.
+  - Dynamic routes (blog, news) lack canonical metadata.
+  - Static service pages lack canonical metadata.
+  - `next.config.js` has `trailingSlash: false`.
 
 ## Previous Updates (2026-01-23)
 

@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Contact | MaasISO',
   description: 'Neem contact op met MaasISO voor vragen over ISO-certificering, informatiebeveiliging en compliance.',
   keywords: 'contact, MaasISO, ISO-certificering, informatiebeveiliging, compliance',
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactPage() {

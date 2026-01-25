@@ -3,7 +3,10 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Home | MaasISO - ISO Consultancy & Informatiebeveiliging voor MKB',
   description: 'MaasISO: uw pragmatische partner voor ISO consultancy (9001, 27001), AVG/privacy en management advies in Nederland. Ontdek onze diensten voor het MKB.',
-  keywords: 'ISO consultancy, ISO 9001, ISO 27001, AVG advies, GDPR compliance, MKB advies, kwaliteitsmanagement, informatiebeveiliging, privacy compliance'
+  keywords: 'ISO consultancy, ISO 9001, ISO 27001, AVG advies, GDPR compliance, MKB advies, kwaliteitsmanagement, informatiebeveiliging, privacy compliance',
+  alternates: {
+    canonical: "/",
+  },
 }
 
 export default function HomePage() {

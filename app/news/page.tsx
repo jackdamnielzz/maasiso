@@ -11,7 +11,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Nieuws en Updates | MaasISO - ISO Certificering & Informatiebeveiliging',
   description: 'Blijf op de hoogte van het laatste nieuws over informatiebeveiliging, ISO-certificering en privacywetgeving van MaasISO.',
-  keywords: 'nieuws, updates, ISO certificering, informatiebeveiliging, privacy, AVG, GDPR, MaasISO'
+  keywords: 'nieuws, updates, ISO certificering, informatiebeveiliging, privacy, AVG, GDPR, MaasISO',
+  alternates: {
+    canonical: "/news",
+  },
 };
 
 export default async function NewsPage() {

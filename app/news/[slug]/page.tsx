@@ -71,7 +71,10 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
         authors: article.author ? [article.author] : undefined,
         images: imageUrl ? [{ url: imageUrl }] : undefined,
         ...(mainCategory && { tags: [mainCategory] })
-      }
+      },
+      alternates: {
+        canonical: `/news/${slug}`,
+      },
     };
 
     console.log('[NewsArticlePage] Generated metadata:', {

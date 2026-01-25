@@ -103,12 +103,12 @@ export const metadata = {
   keywords:
     "MaasISO, iso 9001 consultant, iso 9001 adviesbureau, iso 27001 consultant, avg consulting, privacy consultant, management consulting",
   alternates: {
-    canonical: 'https://maasiso.nl/'
+    canonical: '/'
   },
   openGraph: {
     title: "MaasISO | Consultancy ISO 9001, ISO 27001 & AVG | MKB Advies",
     description: "MaasISO: uw pragmatische partner voor ISO consultancy (9001, 27001), AVG/privacy en management advies in Nederland. Ontdek onze diensten voor het MKB.",
-    url: 'https://maasiso.nl/',
+    url: '/',
     siteName: 'MaasISO',
     type: 'website'
   }

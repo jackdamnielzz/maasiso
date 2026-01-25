@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: page.seoMetadata?.ogImage?.url ? {
         images: [{ url: page.seoMetadata.ogImage.url }],
       } : undefined,
+      alternates: {
+        canonical: `/${resolvedParams.slug}`,
+      },
     };
   } catch (error: unknown) {
     return {

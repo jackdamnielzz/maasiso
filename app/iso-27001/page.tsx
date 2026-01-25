@@ -11,7 +11,10 @@ import remarkBreaks from 'remark-breaks';
 
 export const metadata: Metadata = {
   title: 'ISO 27001 Certificering | MaasISO',
-  description: 'ISO 27001 certificering en informatiebeveiliging met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 27001 certificering.'
+  description: 'ISO 27001 certificering en informatiebeveiliging met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 27001 certificering.',
+  alternates: {
+    canonical: "/iso-27001",
+  },
 };
 
 // Force dynamic rendering to ensure fresh content from Strapi
