@@ -1,4 +1,17 @@
 {
   "buildCommand": "npm run build",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.maasiso.nl"
+        }
+      ],
+      "destination": "https://maasiso.nl/$1",
+      "permanent": true
+    }
+  ]
 }
