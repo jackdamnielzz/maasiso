@@ -37,6 +37,8 @@ export function middleware(request: NextRequest) {
     '/diensten/gdpr-avg': '/avg',
     '/diensten/bio': '/bio',
     '/algemene-voorwaarden': '/terms-and-conditions',
+    '/contact.html': '/contact',
+    '/blog/iso-27001-checklist': '/blog/iso-27001-checklist-augustus-2025',
   };
 
   const redirectTarget = redirectMap[request.nextUrl.pathname];
@@ -61,6 +63,7 @@ export const config = {
     '/sitemap.xml',
     '/home',
     '/index.html',
+    '/contact.html',
     '/algemene-voorwaarden',
     '/$',
     '/diensten/:path*',

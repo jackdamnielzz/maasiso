@@ -40,7 +40,7 @@
 - [x] **Internal Linking & Author ID Verification** (2026-01-25) ✅
 - [x] **Final Domain Unification Check (non-WWW)** (2026-01-25) ✅
 - [x] **Automated Verification Script** (2026-01-25) ✅
-- [x] **Final Repository Sync & Canonical Implementation** (2026-01-25) ✅
+- [x] **Final Repository Sync & SEO/Sitemap Implementation** (2026-01-25) ✅
 
 - [x] **Project Metadata Analysis** (2026-01-25) ✅
   - [x] Identified root `app/` as active directory
@@ -55,6 +55,8 @@
   - [x] Verified non-WWW and no trailing slash consistency
 
 ## Recent Changes
+- COMPLETED: Deployed latest changes to Git repository, including sitemap normalization, verification scripts, and removal of test pages.
+- COMPLETED: Added 301 redirects for `/contact.html` and `/blog/iso-27001-checklist` to remove "crawled not indexed" noise.
 - COMPLETED: Added 7 301 redirects for legacy `/diensten/...` URLs to their new service pages (incl. `/diensten/iso-45001`).
 - COMPLETED: Added permanent redirects for `/index.html` → `/` and `/algemene-voorwaarden` → `/terms-and-conditions` in [`src/middleware.ts`](src/middleware.ts).
 - COMPLETED: Configured `/$` to return a real `404` response (no redirect) via middleware.

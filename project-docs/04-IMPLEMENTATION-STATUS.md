@@ -23,6 +23,8 @@
 - Verification Script (scripts/verify-entities.js): 100% ✅
 - Repository Sync: 100% ✅
 - Canonical Tags Implementation: 100% ✅
+- Sitemap & SEO Verification Sync: 100% ✅
+- SEO Redirects Cleanup: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -56,9 +58,9 @@
   - `app/news/[slug]/page.tsx` → `/news/${slug}`
 - **Validation**: Confirmed non-WWW and no trailing slash consistency.
 
-### Repository Sync & Canonical Tags (2026-01-25) ✅
-- **Git Push**: Successfully synchronized all canonical tag implementations and final SEO fixes with the remote repository.
-- **Scope**: Includes all JSON-LD improvements, author page, domain unification, and server-rendered canonical tags across all pages.
+### Repository Sync & Final SEO Sync (2026-01-25) ✅
+- **Git Push**: Successfully synchronized all canonical tag implementations, final SEO fixes, sitemap formatting improvements, and verification scripts with the remote repository.
+- **Scope**: Includes all JSON-LD improvements, author page, domain unification, server-rendered canonical tags, sitemap pagination/normalization, and entity verification scripts.
 
 ### Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` to serve as the official author profile for Niels Maas.
@@ -88,6 +90,9 @@
 - **301 Redirects**: Added 7 legacy `/diensten/...` routes mapping 1-op-1 to their new service pages (incl. `/diensten/iso-45001`) in [`src/middleware.ts`](src/middleware.ts).
 - **New Landing Page**: Created `/iso-45001` placeholder with Dutch intro + contact CTA and canonical metadata in [`app/iso-45001/page.tsx`](app/iso-45001/page.tsx) and [`app/iso-45001/metadata.ts`](app/iso-45001/metadata.ts).
 - **Sitemap**: Added `/iso-45001` to static sitemap entries and excluded it from dynamic slugs in [`app/sitemap.ts`](app/sitemap.ts).
+
+### SEO Redirects Cleanup (2026-01-25) ✅
+- **Legacy Cleanup**: Added 301 redirects to eliminate "crawled not indexed" noise for `/contact.html` and old blog slugs in `src/middleware.ts`.
 
 ### Final Domain Unification Check (2026-01-25)
 - **Codebase Sweep**: Verified that no `www.maasiso.nl` occurrences remain in `app/` and `src/` source files.

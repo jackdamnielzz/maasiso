@@ -152,8 +152,11 @@
 ## Next Steps
 - Monitor Vercel deployment for any SEO-related crawl issues.
 
-## In Progress: Sitemap URL Formatting Fix (2026-01-25)
-- **Problem**: Sitemap `<loc>` URLs contain whitespace or malformed host/path concatenation.
-- **Fix**: Normalize base URL + path, trim whitespace, and ensure exactly one `/` separator.
-- **Canonical Cleanup**: Explicitly remove `/home` from sitemap to avoid non-canonical URLs.
-- **Coverage**: Fetch all paginated blog posts/news/whitepapers/pages so sitemap includes all published content.
+## Recently Completed: Git Deployment & Final SEO Sync (2026-01-25)
+- **Git Push**: Successfully pushed the latest changes including sitemap fixes, SEO script updates, and project configuration to GitHub.
+- **Sitemap URL Formatting Fix**: Normalized `<loc>` URLs, removed `/home` and ensured full coverage of all content types (blog, news, whitepapers, pages).
+- **Cleanup**: Removed `app/test-deploy/page.tsx` as part of the production readiness.
+
+## Recently Completed: Redirect Cleanup (2026-01-25)
+- **Legacy HTML Redirect**: Added 301 redirect for `/contact.html` to `/contact` via `src/middleware.ts`.
+- **Blog Content Redirect**: Added 301 redirect for `/blog/iso-27001-checklist` to `/blog/iso-27001-checklist-augustus-2025` to resolve "crawled not indexed" issues.
