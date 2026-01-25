@@ -7,10 +7,10 @@
 - **Dynamic Routes**: Implemented canonical tags for `blog/[slug]` and `news/[slug]` routes.
 - **Consistency**: Verified `next.config.js` has `trailingSlash: false`, matching the canonical tag strategy.
 
-## Recently Completed: Repository Sync & Documentation Update (2026-01-25)
-- **Git Push**: Successfully pushed all recent changes to the remote repository.
-- **Changes Included**: Standardized JSON-LD, new author page, internal links, and SEO domain unification.
-- **Commit Message**: `feat: standardize canonical entities and JSON-LD (non-www URLs, ProfessionalService, author page)`
+## Recently Completed: Canonical Tags & Final Sync (2026-01-25)
+- **Git Push**: Successfully pushed all canonical tag implementations and documentation updates to the remote repository.
+- **Changes Included**: Server-rendered canonical tags for all static and dynamic pages, `metadataBase` setup.
+- **Commit Message**: `feat: add server-rendered canonical tags across all pages`
 
 ## Recently Completed: Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` author page with professional biography and publication links.
@@ -141,4 +141,4 @@
 - **Goal**: Findings will be used to implement consistent canonical tags across the site to prevent duplicate content issues.
 
 ## Next Steps
-- Sync changes to remote repository.
+- Monitor Vercel deployment for any SEO-related crawl issues.

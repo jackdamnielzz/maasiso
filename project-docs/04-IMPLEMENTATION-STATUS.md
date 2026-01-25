@@ -51,9 +51,9 @@
   - `app/news/[slug]/page.tsx` → `/news/${slug}`
 - **Validation**: Confirmed non-WWW and no trailing slash consistency.
 
-### Repository Sync (2026-01-25)
-- **Git Push**: Successfully synchronized the local state with the remote repository.
-- **Scope**: Includes all JSON-LD improvements, the new author page, and domain unification fixes.
+### Repository Sync & Canonical Tags (2026-01-25) ✅
+- **Git Push**: Successfully synchronized all canonical tag implementations and final SEO fixes with the remote repository.
+- **Scope**: Includes all JSON-LD improvements, author page, domain unification, and server-rendered canonical tags across all pages.
 
 ### Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` to serve as the official author profile for Niels Maas.

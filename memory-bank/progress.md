@@ -40,7 +40,7 @@
 - [x] **Internal Linking & Author ID Verification** (2026-01-25) ✅
 - [x] **Final Domain Unification Check (non-WWW)** (2026-01-25) ✅
 - [x] **Automated Verification Script** (2026-01-25) ✅
-- [x] **Sync with Remote Repository** (2026-01-25) ✅
+- [x] **Final Repository Sync & Canonical Implementation** (2026-01-25) ✅
 
 - [x] **Project Metadata Analysis** (2026-01-25) ✅
   - [x] Identified root `app/` as active directory
@@ -61,7 +61,7 @@
 - COMPLETED: Verified non-WWW and non-trailing-slash consistency across all metadata.
 - COMPLETED: Analyzed project structure for metadata and canonical tag implementation.
 - COMPLETED: Created and ran `scripts/verify-entities.js` to automate canonical and JSON-LD validation.
-- COMPLETED: Pushed all SEO, JSON-LD, and Author Page changes to the remote repository.
+- COMPLETED: Pushed all SEO, JSON-LD, Author Page, and Canonical Tag changes to the remote repository.
 - COMPLETED: Final sweep for `www.maasiso.nl` in `app/` and `src/`. Confirmed 0 occurrences in source.
 - COMPLETED: Strengthened internal linking by adding "Over Niels Maas" section to the Over Ons page.
 - COMPLETED: Verified and unified author `@id` in blog post schema across the site.
