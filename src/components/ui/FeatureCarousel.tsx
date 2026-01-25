@@ -72,11 +72,11 @@ const FeatureCarousel: React.FC<FeatureCarouselProps> = ({ children, className =
   const slides = React.Children.toArray(children);
 
   return (
-    <div className={`relative overflow-hidden w-full max-w-[800px] mx-auto ${className}`} style={{ height: '400px' }}>
+    <div className={`relative overflow-hidden w-full max-w-[800px] mx-auto ${className}`} style={{ minHeight: '400px' }}>
       {/* Carousel container with fixed height */}
       <div
         ref={carouselRef}
-        className="relative w-full mx-auto"
+        className="relative w-full mx-auto h-full"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -85,13 +85,13 @@ const FeatureCarousel: React.FC<FeatureCarouselProps> = ({ children, className =
           <div
             key={index}
             className={`absolute inset-0 w-full h-full transition-all duration-500 ease-in-out ${
-              currentIndex === index ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              currentIndex === index ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 pointer-events-none scale-95'
             }`}
           >
             {/* Content wrapper with fixed height and overflow handling */}
-            <div className="relative w-full mx-auto p-8" style={{ height: '400px' }}>
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-full flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="relative w-full mx-auto p-4 md:p-8 h-full">
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-full flex flex-col items-center justify-center h-full">
                   {slide}
                 </div>
               </div>

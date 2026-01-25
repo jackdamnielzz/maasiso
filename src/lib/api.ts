@@ -3,6 +3,8 @@ import {
   NewsArticle,
   Page,
   SearchParams,
+  SearchParamsV2,
+  SearchResultsV2,
   StrapiCollectionResponse,
   StrapiData,
   StrapiSingleResponse,
@@ -90,11 +92,25 @@ async function fetchWithBaseUrl<T>(
     );
 
     const data = await response.json();
-    
+
+    // Avoid expensive/full JSON stringification in logs (can be massive for content fields)
+    const summary = (() => {
+      if (!data || typeof data !== 'object') return { type: typeof data };
+      const obj = data as any;
+      const dataLen = Array.isArray(obj.data) ? obj.data.length : undefined;
+      const keys = Object.keys(obj);
+      const pagination = obj?.meta?.pagination;
+      return {
+        keys,
+        dataLength: dataLen,
+        pagination,
+      };
+    })();
+
     console.log('[API Response] Detailed Debug:', {
       url,
       status: response.status,
-      data: JSON.stringify(data, null, 2)
+      summary
     });
 
     return data;
@@ -402,7 +418,9 @@ export async function getPage(slug: string): Promise<Page | null> {
 
 export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articles: NewsArticle[]; total: number }> {
   try {
-    console.log('[getNewsArticles] Starting request:', {
+    const debug = false;
+
+    if (debug) console.log('[getNewsArticles] Starting request:', {
       page,
       pageSize,
       timestamp: new Date().toISOString(),
@@ -420,7 +438,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     );
 
     // Validate API response structure
-    console.log('[getNewsArticles] Raw API response structure:', {
+    if (debug) console.log('[getNewsArticles] Raw API response structure:', {
       hasData: !!data,
       dataType: typeof data,
       hasDataArray: !!data?.data,
@@ -441,7 +459,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     }
 
     const total = data.meta?.pagination?.total || 0;
-    console.log('[getNewsArticles] Response meta:', {
+    if (debug) console.log('[getNewsArticles] Response meta:', {
       total,
       page: data.meta?.pagination?.page,
       pageSize: data.meta?.pagination?.pageSize
@@ -479,7 +497,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
         const rawFeaturedImage = article.featuredImage?.data?.attributes || article.featuredImage;
         const featuredImage = rawFeaturedImage ? mapImage(rawFeaturedImage) : undefined;
 
-        console.log('[getNewsArticles] Processing article:', {
+        if (debug) console.log('[getNewsArticles] Processing article:', {
           id: articleId,
           hasAttributes: !!articleData.attributes,
           hasFeaturedImage: !!featuredImage,
@@ -490,7 +508,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
         });
 
         // Log the data structure for debugging
-        console.log('[getNewsArticles] Article data structure:', {
+        if (debug) console.log('[getNewsArticles] Article data structure:', {
           hasAttributes: !!articleData.attributes,
           isDirect: !articleData.attributes,
           availableFields: Object.keys(article)
@@ -601,7 +619,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     });
 
     // Log final processing statistics
-    console.log('[getNewsArticles] Processing complete:', {
+    if (debug) console.log('[getNewsArticles] Processing complete:', {
       totalReceived: data.data.length,
       successfullyProcessed: processedCount,
       errorCount,
@@ -610,7 +628,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     });
 
     // Log detailed article information
-    console.log('[getNewsArticles] Processed articles:', {
+    if (debug) console.log('[getNewsArticles] Processed articles:', {
       totalArticles: articles.length,
       firstArticle: articles[0] ? {
         id: articles[0].id,
@@ -919,9 +937,43 @@ export async function search(params: SearchParams): Promise<{
   }
 }
 
+/**
+ * Search V2 (relevance-based scoring + field scope filtering)
+ * Calls the local Next.js route handler at GET /api/search.
+ */
+export async function searchV2(params: SearchParamsV2): Promise<SearchResultsV2> {
+  const queryParams = new URLSearchParams({
+    q: params.query,
+    scope: params.scope || 'all',
+    type: params.contentType || 'all',
+    page: String(params.page || 1),
+    pageSize: String(params.pageSize || 10)
+  });
+
+  if (params.dateFrom) queryParams.set('dateFrom', params.dateFrom);
+  if (params.dateTo) queryParams.set('dateTo', params.dateTo);
+
+  const response = await fetch(`/api/search?${queryParams.toString()}`);
+
+  if (!response.ok) {
+    let details: unknown;
+    try {
+      details = await response.json();
+    } catch {
+      // ignore
+    }
+    throw new Error(
+      `Search failed (status ${response.status})${details ? `: ${JSON.stringify(details)}` : ''}`
+    );
+  }
+
+  return response.json();
+}
+
 export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: BlogPost[]; total: number }> {
   try {
-    console.log('Fetching blog posts with params:', { page, pageSize });
+    const debug = false;
+    if (debug) console.log('Fetching blog posts with params:', { page, pageSize });
     
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
       `/api/blog-posts?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*&sort=publishedAt:desc`,
@@ -934,7 +986,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
       }
     );
 
-    console.log('Raw Strapi response:', {
+    if (debug) console.log('Raw Strapi response:', {
       dataExists: !!data,
       hasData: !!data?.data,
       dataLength: data?.data?.length,
@@ -945,7 +997,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
     const posts = data.data
       .map(post => {
         const mappedPost = mapBlogPost(post);
-        console.log('Mapped post:', mappedPost);
+        if (debug) console.log('Mapped post:', mappedPost);
         return mappedPost;
       })
       .filter((post): post is BlogPost => post !== null);
@@ -955,7 +1007,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
       total: data.meta.pagination?.total || 0
     };
     
-    console.log('Final posts result:', result);
+    if (debug) console.log('Final posts result:', result);
     return result;
   } catch (error) {
     console.error('Error fetching blog posts:', error);

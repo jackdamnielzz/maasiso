@@ -3,21 +3,14 @@ import BlogCard from '@/components/features/BlogCard';
 import Pagination from '@/components/common/Pagination';
 import { BlogPost, Category } from '@/lib/types';
 import { Suspense } from 'react';
-import { prefetch } from '../../lib/prefetch';
 import BlogSidebar from '@/components/features/BlogSidebar';
 
-// Prefetch function for next page
-async function prefetchNextPage(currentPage: number, pageSize: number) {
-  const nextPage = currentPage + 1;
-  await prefetch(() => getBlogPosts(nextPage, pageSize));
-}
-
 interface BlogPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     category?: string;
     search?: string;
-  };
+  }>;
 }
 
 // Extract unique categories from blog posts
@@ -61,11 +54,14 @@ function filterPosts(posts: BlogPost[], category?: string, search?: string): Blo
 
 async function BlogContent({ searchParams }: BlogPageProps) {
   try {
-    const currentPage = typeof searchParams.page === 'string'
-      ? parseInt(searchParams.page)
+    // Await searchParams as it's a Promise in Next.js 15
+    const resolvedParams = await searchParams;
+    
+    const currentPage = typeof resolvedParams.page === 'string'
+      ? parseInt(resolvedParams.page)
       : 1;
-    const selectedCategory = searchParams.category;
-    const searchQuery = searchParams.search;
+    const selectedCategory = resolvedParams.category;
+    const searchQuery = resolvedParams.search;
 
     // Fetch more posts to extract categories (we'll filter client-side for now)
     const response = await getBlogPosts(1, 100).catch(() => {
@@ -110,12 +106,6 @@ async function BlogContent({ searchParams }: BlogPageProps) {
       );
     }
 
-    // Prefetch next page in the background
-    if (currentPage < totalPages) {
-      prefetchNextPage(currentPage, pageSize).catch(() => {
-        // Ignore prefetch errors
-      });
-    }
 
     return (
       <div className="bg-white py-24">
@@ -162,13 +152,6 @@ async function BlogContent({ searchParams }: BlogPageProps) {
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
-                      onHover={(page) => {
-                        if (page > currentPage) {
-                          prefetchNextPage(page - 1, pageSize).catch(() => {
-                            // Ignore prefetch errors
-                          });
-                        }
-                      }}
                     />
                   )}
                 </>

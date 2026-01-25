@@ -272,6 +272,50 @@ export interface SearchParams {
   pageSize?: number;
 }
 
+// Search scope types
+export type SearchScope = 'all' | 'title' | 'title-summary' | 'content';
+
+export interface SearchParamsV2 extends Omit<SearchParams, 'filters'> {
+  /**
+   * Field scope filter.
+   * Defaults to 'all'.
+   */
+  scope?: SearchScope;
+
+  /**
+   * Content type filter.
+   * Defaults to 'all'.
+   */
+  contentType?: 'blog' | 'news' | 'all';
+
+  /**
+   * Optional date filters (ISO strings)
+   */
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface ScoredSearchResult {
+  type: 'blog' | 'news';
+  item: BlogPost | NewsArticle;
+  relevanceScore: number;
+  scoreBreakdown?: {
+    titleScore: number;
+    summaryScore: number;
+    contentScore: number;
+  };
+}
+
+export interface SearchResultsV2 {
+  blog: ScoredSearchResult[];
+  news: ScoredSearchResult[];
+  meta: {
+    totalResults: number;
+    query: string;
+    scope: SearchScope;
+  };
+}
+
 export interface SearchResults {
   items: (BlogPost | NewsArticle)[];
   total: number;

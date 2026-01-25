@@ -27,10 +27,11 @@ export default function SearchInput() {
         return;
       }
       setError(undefined);
-      const safeUrl = createSafeUrl('/search', { q: validation.sanitized });
+      const currentScope = searchParams?.get('scope') || 'all';
+      const safeUrl = createSafeUrl('/search', { q: validation.sanitized, scope: currentScope });
       router.push(safeUrl);
     }
-  }, [debouncedQuery, router]);
+  }, [debouncedQuery, router, searchParams]);
 
   // Handle keyboard shortcuts
   useEffect(() => {

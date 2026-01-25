@@ -93,7 +93,17 @@ const nextConfig = {
     }
 
     return config;
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.maasiso.nl' }],
+        destination: 'https://maasiso.nl/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

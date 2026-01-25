@@ -1,7 +1,9 @@
 'use client';
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import type { SearchScope } from "@/lib/types";
+import { trackEvent } from "@/lib/analytics";
 
 export default function SearchFilters() {
   const router = useRouter();
@@ -23,6 +25,15 @@ export default function SearchFilters() {
   const currentSort = getCurrentParam("sort") || "relevance";
   const dateFrom = getCurrentParam("dateFrom");
   const dateTo = getCurrentParam("dateTo");
+  const initialScope = getCurrentParam("scope") as SearchScope | undefined;
+  const [scope, setScope] = useState<SearchScope>(initialScope || 'all');
+
+  useEffect(() => {
+    const currentScope = (getCurrentParam('scope') as SearchScope | undefined) || 'all';
+    if (currentScope !== scope) {
+      setScope(currentScope);
+    }
+  }, [searchParams, scope]);
 
   const updateSearchParams = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -50,6 +61,24 @@ export default function SearchFilters() {
     },
     [router, searchParams]
   );
+
+  const handleScopeChange = (newScope: SearchScope) => {
+    setScope(newScope);
+    try {
+      const newParams = new URLSearchParams(window.location.search);
+      newParams.set('scope', newScope);
+      newParams.set('page', '1');
+      router.push(`/search?${newParams.toString()}`);
+      trackEvent({
+        name: 'filter_results',
+        params: {
+          scope: newScope
+        }
+      });
+    } catch (e) {
+      console.error('Error updating scope param:', e);
+    }
+  };
 
   return (
     <div className={`space-y-4 bg-white rounded-lg shadow-lg p-4 mb-6 ${isPending ? 'opacity-70' : ''}`}>
@@ -110,6 +139,59 @@ export default function SearchFilters() {
         {/* Expanded Filters */}
         {isExpanded && (
           <>
+            {/* Field Scope Filter */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Zoek in:
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleScopeChange('all')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    scope === 'all'
+                      ? 'bg-[#007FA3] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isPending}
+                >
+                  Alles
+                </button>
+                <button
+                  onClick={() => handleScopeChange('title')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    scope === 'title'
+                      ? 'bg-[#007FA3] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isPending}
+                >
+                  Alleen titel
+                </button>
+                <button
+                  onClick={() => handleScopeChange('title-summary')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    scope === 'title-summary'
+                      ? 'bg-[#007FA3] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isPending}
+                >
+                  Titel + samenvatting
+                </button>
+                <button
+                  onClick={() => handleScopeChange('content')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    scope === 'content'
+                      ? 'bg-[#007FA3] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isPending}
+                >
+                  Alleen tekst
+                </button>
+              </div>
+            </div>
+
             {/* Date Filter */}
             <div className="grid grid-cols-2 gap-4">
               <div>

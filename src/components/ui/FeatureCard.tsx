@@ -25,55 +25,52 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <a
       href={link || '#'}
-      className={`block group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${className}`}
+      className={`relative flex flex-col h-full group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 ${className}`}
     >
-      {/* Top accent bar */}
-      <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00] rounded-t-lg"></div>
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 bg-[#00875A]/5 rounded-full transition-transform duration-700 group-hover:scale-[3]"></div>
+      
+      {/* Accent line */}
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#00875A] to-[#FF8B00] transform -translate-y-full transition-transform duration-500 group-hover:translate-y-0"></div>
 
       {/* Card content */}
-      <div className="p-6 md:p-8 flex flex-col items-center text-center">
-        {/* Icon */}
+      <div className="relative z-10 p-8 flex flex-col h-full">
+        {/* Icon wrapper */}
         {icon && (
-          <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300">
-            {icon}
+          <div className="mb-8 w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 transition-all duration-500 group-hover:bg-white group-hover:shadow-lg group-hover:-translate-y-1">
+            <div className="transform transition-transform duration-500 group-hover:scale-110">
+              {icon}
+            </div>
           </div>
         )}
 
-        {/* Title */}
-        <h3 className="text-xl md:text-2xl font-bold text-[#091E42] mb-4 group-hover:text-[#00875A] transition-colors duration-200">
-          {title}
-        </h3>
-
-        {/* Content */}
-        <div className="prose prose-sm md:prose-base text-center">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkBreaks]}
-            className="text-gray-600 line-clamp-3"
-          >
-            {content}
-          </ReactMarkdown>
+        {/* Text content */}
+        <div className="flex-grow">
+          <h3 className="text-2xl font-extrabold text-[#091E42] mb-4 transition-colors duration-300 group-hover:text-[#00875A]">
+            {title}
+          </h3>
+          <div className="prose prose-slate text-gray-600">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkBreaks]}
+              className="line-clamp-4 leading-relaxed"
+            >
+              {content}
+            </ReactMarkdown>
+          </div>
         </div>
 
-        {/* Call to action button */}
-        {showMoreInfo && link && (
-          <div className="mt-4 w-full">
-            <div className="inline-flex items-center justify-center px-6 py-3 bg-[#00875A] text-white rounded-lg font-medium transition-all duration-200 group-hover:bg-[#006C48] group-hover:shadow-md">
-              Lees meer over {title}
-              <svg
-                className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
+        {/* Footer info */}
+        {showMoreInfo && (
+          <div className="mt-8 pt-6 border-t border-gray-50 flex items-center text-[#00875A] font-bold text-sm uppercase tracking-wider">
+            <span>Ontdek deze dienst</span>
+            <svg
+              className="ml-3 w-5 h-5 transition-transform duration-300 transform group-hover:translate-x-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </div>
         )}
       </div>

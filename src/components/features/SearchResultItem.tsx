@@ -9,6 +9,7 @@ export interface SearchResultItemProps {
   publishedAt?: string;
   type: 'blog' | 'news';
   query?: string;
+  relevanceScore?: number;
 }
 
 function highlightText(text: string, query: string) {
@@ -27,7 +28,8 @@ export default function SearchResultItem({
   slug,
   publishedAt,
   type,
-  query = ''
+  query = '',
+  relevanceScore
 }: SearchResultItemProps) {
   const baseUrl = type === 'blog' ? '/blog' : '/nieuws';
   
@@ -43,6 +45,11 @@ export default function SearchResultItem({
         <p className="text-[#091E42]/70 mb-2 line-clamp-2">
           {highlightText(getExcerpt(content), query)}
         </p>
+        {process.env.NODE_ENV === 'development' && relevanceScore !== undefined && (
+          <div className="text-xs text-gray-400 mt-1">
+            Relevantie: {relevanceScore.toFixed(2)}
+          </div>
+        )}
         <div className="flex items-center text-sm text-[#091E42]/60">
           {publishedAt && (
             <time dateTime={publishedAt}>

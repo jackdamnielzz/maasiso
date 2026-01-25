@@ -33,6 +33,36 @@
   h1 {
     @apply text-5xl md:text-[3.5rem] font-medium leading-[1.2];
   }
+
+  .reveal-on-scroll {
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: none !important;
+  }
+
+  .reveal-up {
+    transform: translateY(30px);
+  }
+
+  .reveal-left {
+    transform: translateX(-30px);
+  }
+
+  .reveal-right {
+    transform: translateX(30px);
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 8s infinite;
+  }
 }
 
 @layer components {

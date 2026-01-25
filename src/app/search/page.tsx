@@ -1,14 +1,15 @@
 import { Metadata } from "next";
-import { search } from "@/lib/api";
+import { searchV2 } from "@/lib/api";
 import { SearchResults } from "@/components/features/SearchResults";
 import SearchAnalytics from "@/components/features/SearchAnalytics";
-import { SearchParams } from "@/lib/types";
+import type { SearchParamsV2, SearchScope } from "@/lib/types";
 import { validateSearchQuery, validateUrlParam } from "@/lib/validation";
 
 interface SearchPageProps {
   searchParams: {
     q?: string;
     type?: string;
+    scope?: string;
     dateFrom?: string;
     dateTo?: string;
     sort?: string;
@@ -78,41 +79,34 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       searchParams.page = pageValidation.sanitized;
     }
 
+    const scope = searchParams.scope as SearchScope | null;
+    const validScope: SearchScope = ['all', 'title', 'title-summary', 'content'].includes(scope || '')
+      ? (scope as SearchScope)
+      : 'all';
+
     // Convert validated search params to API params with proper type checking
     const contentType = searchParams.type as 'blog' | 'news' | undefined;
     const sortField = searchParams.sort as 'date' | 'relevance' | 'title' | undefined;
 
-    const apiParams: SearchParams = {
+    const apiParams: SearchParamsV2 = {
       query,
-      filters: {
-        contentType: contentType ? [contentType] : undefined,
-        dateFrom: searchParams.dateFrom,
-        dateTo: searchParams.dateTo,
-      },
+      scope: validScope,
+      contentType: contentType || 'all',
+      dateFrom: searchParams.dateFrom,
+      dateTo: searchParams.dateTo,
+      page: searchParams.page ? parseInt(searchParams.page) : 1,
       sort: sortField ? {
         field: sortField,
         direction: 'desc'
       } : undefined,
-      page: searchParams.page ? parseInt(searchParams.page) : 1,
       pageSize: 10
     };
 
-    // Validate the structure of the API params
-    const { filters, sort, page, pageSize } = apiParams;
-    if (
-      (filters?.contentType && !filters.contentType.every(type => type === 'blog' || type === 'news')) ||
-      (sort?.field && !['date', 'relevance', 'title'].includes(sort.field)) ||
-      (page && (isNaN(page) || page < 1)) ||
-      (pageSize && (isNaN(pageSize) || pageSize < 1))
-    ) {
-      throw new Error('Invalid API parameters structure');
-    }
-
-    const results = await search(apiParams);
-    const hasBlogResults = results.blogPosts.data.length > 0;
-    const hasNewsResults = results.newsArticles.data.length > 0;
+    const results = await searchV2(apiParams);
+    const hasBlogResults = results.blog.length > 0;
+    const hasNewsResults = results.news.length > 0;
     const hasResults = hasBlogResults || hasNewsResults;
-    const totalResults = results.blogPosts.meta.pagination.total + results.newsArticles.meta.pagination.total;
+    const totalResults = results.meta.totalResults;
 
     return (
       <main className="container mx-auto px-4 py-8 mt-[72px]">
@@ -142,10 +136,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {hasResults && (
           <SearchResults
             query={query}
-            blogPosts={results.blogPosts.data}
-            newsArticles={results.newsArticles.data}
-            blogTotal={results.blogPosts.meta.pagination.total}
-            newsTotal={results.newsArticles.meta.pagination.total}
+            blog={results.blog}
+            news={results.news}
           />
         )}
       </main>
