@@ -36,6 +36,7 @@ type ArticleSchema = {
   dateModified: string;
   author: {
     name: string;
+    id?: string;
   };
   publisherId: string;
   mainEntityOfPage: string;
@@ -72,7 +73,8 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
       name: service.name,
       description: service.description,
       provider: {
-        '@type': 'Organization',
+        '@type': 'ProfessionalService',
+        '@id': 'https://maasiso.nl/#professionalservice',
         name: service.provider.name,
         url: service.provider.url
       },
@@ -126,6 +128,7 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
       dateModified: article.dateModified,
       author: {
         '@type': 'Person',
+        '@id': article.author.id,
         name: article.author.name
       },
       publisher: {

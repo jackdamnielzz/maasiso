@@ -69,10 +69,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              "@id": "https://maasiso.nl/#organization",
+              "@type": "ProfessionalService",
+              "@id": "https://maasiso.nl/#professionalservice",
               "name": "MaasISO",
               "url": "https://maasiso.nl",
+              "logo": "https://maasiso.nl/apple-touch-icon.png",
+              "image": "https://maasiso.nl/apple-touch-icon.png",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Your Street Address 123",
@@ -80,7 +82,9 @@ export default function RootLayout({
                 "postalCode": "1234 AB",
                 "addressCountry": "NL"
               },
-              "telephone": "+31-123-456-7890"
+              "telephone": "+31623578344",
+              "email": "info@maasiso.nl",
+              "priceRange": "$$"
             }),
           }}
         />

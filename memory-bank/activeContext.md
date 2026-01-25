@@ -1,8 +1,14 @@
 # Active Context - Redesign Cycle (Onze Voordelen & Over Ons)
 
+## Recently Completed: Author Page Creation (2026-01-25)
+- **New Page**: Created `/over-niels-maas` author page with professional biography and publication links.
+- **Content**: Dutch language, highlighting expertise in ISO 9001, 27001, AVG, and BIO.
+- **SEO**: Implemented `Person` JSON-LD schema with stable `@id` and link to `ProfessionalService` schema.
+
 ## Recently Completed: JSON-LD Structured Data Improvements (2026-01-25)
-- **Organization Identity**: Fixed site-wide `Organization` schema in `app/layout.tsx` with stable `@id` (`https://maasiso.nl/#organization`) and non-WWW URLs.
-- **Blog SEO**: Implemented `BlogPosting` and `BreadcrumbList` schemas in `app/blog/[slug]/page.tsx`.
+- **ProfessionalService Identity**: Updated site-wide schema in `app/layout.tsx` to `ProfessionalService` with stable `@id` (`https://maasiso.nl/#professionalservice`) and non-WWW URLs.
+- **Contact Details**: Updated JSON-LD with real phone number (+31623578344) and email (info@maasiso.nl).
+- **Blog SEO**: Implemented `BlogPosting` and `BreadcrumbList` schemas in `app/blog/[slug]/page.tsx`, linked to `ProfessionalService` publisher.
 - **Schema Reusability**: Extended `SchemaMarkup` component to support `Article` and `BreadcrumbList` types.
 
 ## Recently Completed: SEO & Redirect Consolidation (2026-01-25)
@@ -97,6 +103,17 @@
 ## Recently Completed: SEO & Redirect Integrity (2026-01-25)
 - **WWW to non-WWW Redirect**: Implemented a forced permanent redirect from `www.maasiso.nl` to `maasiso.nl` in [`next.config.js`](next.config.js).
 - **Domain Consolidation**: Resolved content duplication issues by ensuring only the non-WWW version serves content.
+- **Schema Unification**: Ensured all structured data uses non-WWW URLs and refers to the `ProfessionalService` entity.
+
+## Recently Completed: Internal Linking & Author Schema Verification (2026-01-25)
+- **Over Ons Integration**: Added a dedicated "Over Niels Maas" section to the [`src/components/features/OverOnsContent.tsx`](src/components/features/OverOnsContent.tsx) component, providing a visible Dutch description and a crawlable internal link to `/over-niels-maas`.
+- **Author ID Consistency**: Verified and updated [`app/blog/[slug]/page.tsx`](app/blog/[slug]/page.tsx) to ensure the `Person` schema uses the stable `@id`: `https://maasiso.nl/over-niels-maas#author`.
+- **Schema Component Support**: Enhanced [`src/components/ui/SchemaMarkup.tsx`](src/components/ui/SchemaMarkup.tsx) to support the `id` property in the author object, ensuring proper JSON-LD output.
+
+## Recently Completed: Final Domain Unification Check (2026-01-25)
+- **Codebase Verification**: Performed a recursive search for `www.maasiso.nl` across `app/` and `src/` directories.
+- **Results**: Confirmed 0 occurrences in source code. All metadata, JSON-LD schemas, sitemaps, and robots.txt files are verified to use the unified `https://maasiso.nl` domain.
+- **Entity Integrity**: Verified that `ProfessionalService` and `Person` schemas use stable, non-WWW `@id`s consistently.
 
 ## Next Steps
 - Manual browser verification of the new diensten grid layout on different screen sizes.

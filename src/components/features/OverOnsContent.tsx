@@ -166,6 +166,57 @@ export default function OverOnsContent() {
         </div>
       </section>
 
+      {/* Over Niels Maas Section */}
+      <section className="py-24 bg-white relative overflow-hidden border-t border-gray-50">
+        <div className="container-custom px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="w-full lg:w-1/2">
+              <ScrollReveal className="reveal-left">
+                <div className="relative group">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-[#00875A] to-[#FF8B00] rounded-[2rem] opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
+                  <div className="relative aspect-[4/5] bg-[#091E42] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-8 text-center">
+                    <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-6">
+                      <svg className="w-12 h-12 text-white/40" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
+                    <h4 className="text-white text-2xl font-bold mb-2">Niels Maas</h4>
+                    <p className="text-white/60 text-lg">Lead Consultant & Oprichter</p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+            
+            <div className="w-full lg:w-1/2">
+              <ScrollReveal className="reveal-right" delay={200}>
+                <div>
+                  <span className="text-[#FF8B00] font-bold tracking-widest uppercase text-sm mb-4 block">De Persoon Achter MaasISO</span>
+                  <h2 className="text-4xl md:text-5xl font-bold text-[#091E42] mb-8 leading-tight">
+                    Over <span className="text-[#00875A]">Niels Maas</span>
+                  </h2>
+                  <p className="text-xl text-gray-600 leading-relaxed mb-6">
+                    Niels Maas is een doorgewinterde expert in ISO-normen (9001, 27001), AVG/GDPR en de BIO. Als oprichter en lead consultant bij MaasISO helpt hij organisaties met het professionaliseren en beveiligen van hun bedrijfsvoering.
+                  </p>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-10">
+                    Met een nuchtere en resultaatgerichte aanpak vertaalt hij complexe normen naar praktische meerwaarde. Zijn passie ligt in het creëren van systemen die écht werken voor de organisatie.
+                  </p>
+                  
+                  <Link
+                    href="/over-niels-maas"
+                    className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-[#00875A] rounded-full hover:bg-[#006644] shadow-lg transform hover:-translate-y-1"
+                  >
+                    <span>Lees meer over Niels</span>
+                    <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Interactive Roles Section - espectacular effect */}
       <section className="py-24 bg-[#F4F7F9]">
         <div className="container-custom px-4">

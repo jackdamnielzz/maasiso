@@ -17,6 +17,9 @@
 - Over Ons Page Spectacular Redesign: 100% ✅
 - WWW to non-WWW Redirect Implementation: 100% ✅
 - JSON-LD Structured Data Improvements: 100% ✅
+- Author Page (/over-niels-maas): 100% ✅
+- Internal Linking & Author ID Verification: 100% ✅
+- Final Domain Unification Check (non-WWW): 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -30,13 +33,30 @@
 
 ## Recent Updates (2026-01-25)
 
+### Author Page Creation (2026-01-25)
+- **New Page**: Created `/over-niels-maas` to serve as the official author profile for Niels Maas.
+- **Biography**: Dutch content covering his role as Oprichter & Lead Consultant, and expertise in ISO 9001, 27001, AVG, and BIO.
+- **Curated Publications**: Manually linked to top-performing blog posts about ISO handbooks, risk-based thinking, and checklists.
+- **Structured Data**: Integrated `Person` JSON-LD schema with stable ID and connection to the main ProfessionalService schema.
+
+### Internal Linking & Author ID Verification (2026-01-25)
+- **Over Ons Page**: Added "Over Niels Maas" section to `OverOnsContent.tsx` with description and link to `/over-niels-maas`.
+- **Blog Schema**: Verified and fixed author `@id` in `app/blog/[slug]/page.tsx` to match `https://maasiso.nl/over-niels-maas#author`.
+- **Schema Component**: Extended `SchemaMarkup.tsx` to support `@id` for Person objects.
+
 ### JSON-LD Structured Data Improvements (2026-01-25)
-- **Organization Schema**: Updated site-wide identity to use `Organization` with a stable `@id` (`https://maasiso.nl/#organization`) and unified non-WWW URLs.
-- **Blog Templates**: Added `BlogPosting` and `BreadcrumbList` schemas to `app/blog/[slug]/page.tsx`.
+- **ProfessionalService Schema**: Updated site-wide identity in `app/layout.tsx` to use `ProfessionalService` with a stable `@id` (`https://maasiso.nl/#professionalservice`) and unified non-WWW URLs.
+- **Contact Details**: Integrated real phone number (+31623578344) and email into global schema.
+- **Blog Templates**: Added `BlogPosting` and `BreadcrumbList` schemas to `app/blog/[slug]/page.tsx`, linked to the primary `ProfessionalService` entity.
 - **Component Extension**: Enhanced `SchemaMarkup.tsx` to handle Article and Breadcrumb data structures.
 
 ### SEO & Redirect Integrity (2026-01-25)
 - **WWW to non-WWW Redirect**: Implemented forced permanent redirect from `www.maasiso.nl` to `maasiso.nl` in `next.config.js`. This resolves content duplication and signal splitting issues.
+
+### Final Domain Unification Check (2026-01-25)
+- **Codebase Sweep**: Verified that no `www.maasiso.nl` occurrences remain in `app/` and `src/` source files.
+- **Metadata Audit**: Re-confirmed that `app/layout.tsx`, `app/over-niels-maas/page.tsx`, and `app/blog/[slug]/page.tsx` use the correct stable `@id`s and non-WWW URLs.
+- **Environment Verification**: Confirmed all `.env` files and `sitemap.ts` use the canonical `https://maasiso.nl` domain.
 
 ## Previous Updates (2026-01-23)
 

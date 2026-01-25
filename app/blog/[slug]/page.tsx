@@ -186,9 +186,10 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
             datePublished: blogPost.publishedAt || blogPost.createdAt,
             dateModified: blogPost.updatedAt,
             author: {
-              name: "Niels Maas"
+              name: "Niels Maas",
+              id: "https://maasiso.nl/over-niels-maas#author"
             },
-            publisherId: "https://maasiso.nl/#organization",
+            publisherId: "https://maasiso.nl/#professionalservice",
             mainEntityOfPage: canonicalUrl,
             image: featuredImageUrl
           }}
