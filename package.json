@@ -19,6 +19,9 @@
     "clean": "rimraf .next",
     "build:prod": "cross-env NODE_ENV=production SKIP_TYPESCRIPT=1 SKIP_TYPE_CHECK=true npm run clean && next build --no-lint",
     "verify": "node scripts/verify-build.js",
+    "verify:seo": "node scripts/seo-verify.js",
+    "verify:seo:json": "node scripts/seo-verify.js --json --output seo-report.json",
+    "verify:seo:fast": "node scripts/seo-verify.js --fail-fast",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:env": "cross-env NODE_ENV=development node --loader ts-node/esm src/lib/config/test-env.ts"

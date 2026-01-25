@@ -1,3 +1,13 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'ISO 45001 | MaasISO',
+  description: 'ISO 45001 advies en begeleiding voor gezond en veilig werken. MaasISO helpt u pragmatisch op weg.',
+  alternates: {
+    canonical: 'https://maasiso.nl/iso-45001',
+  },
+};
+
 export default function Iso45001Page() {
   return (
     <main className="flex-1 bg-gradient-to-b from-blue-50 to-white">

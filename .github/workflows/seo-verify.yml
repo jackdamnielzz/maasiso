@@ -1,0 +1,189 @@
+name: SEO Verification
+
+on:
+  schedule:
+    # Daily at 2 AM UTC (3 AM CET, 4 AM CEST)
+    - cron: '0 2 * * *'
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'scripts/seo-verify.js'
+      - '.github/workflows/seo-verify.yml'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  verify-seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (if needed)
+        run: |
+          # Script uses only built-in Node.js modules, but run anyway for safety
+          if [ -f package.json ]; then
+            npm ci --prefer-offline --no-audit
+          fi
+
+      - name: Run SEO verification
+        id: seo_check
+        run: |
+          node scripts/seo-verify.js --output seo-report.json
+        continue-on-error: true
+
+      - name: Upload SEO report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-report-${{ github.run_number }}
+          path: seo-report.json
+          retention-days: 30
+
+      - name: Parse report and set outputs
+        if: always()
+        id: parse_report
+        run: |
+          if [ -f seo-report.json ]; then
+            TOTAL_ISSUES=$(jq -r '.summary.totalIssues' seo-report.json)
+            PASSED=$(jq -r '.summary.passed' seo-report.json)
+            DURATION=$(jq -r '.summary.duration' seo-report.json)
+            echo "total_issues=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+            echo "passed=$PASSED" >> $GITHUB_OUTPUT
+            echo "duration=$DURATION" >> $GITHUB_OUTPUT
+          else
+            echo "total_issues=unknown" >> $GITHUB_OUTPUT
+            echo "passed=false" >> $GITHUB_OUTPUT
+            echo "duration=N/A" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let comment = '## SEO Verification Results\n\n';
+
+            if (!fs.existsSync('seo-report.json')) {
+              comment += '❌ **Error:** SEO verification script failed to generate report.\n';
+              comment += 'Check the action logs for details.';
+            } else {
+              const report = JSON.parse(fs.readFileSync('seo-report.json', 'utf8'));
+              const passed = report.summary.passed;
+              const icon = passed ? '✅' : '❌';
+
+              comment += `${icon} **Status:** ${passed ? 'PASSED' : 'FAILED'}\n`;
+              comment += `**Total issues:** ${report.summary.totalIssues}\n`;
+              comment += `**Duration:** ${report.summary.duration}\n\n`;
+
+              comment += '### Check Summary\n\n';
+              comment += '| Check | Total | Failed |\n';
+              comment += '|-------|-------|--------|\n';
+
+              for (const [key, value] of Object.entries(report.summary.checks)) {
+                const emoji = value.failed === 0 ? '✅' : '❌';
+                const label = key.replace(/([A-Z])/g, ' $1').trim();
+                const capitalizedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+                comment += `| ${emoji} ${capitalizedLabel} | ${value.total} | ${value.failed} |\n`;
+              }
+
+              if (report.summary.totalIssues > 0) {
+                comment += '\n### Issues Found\n\n';
+
+                // Show canonical issues
+                if (report.results.canonical) {
+                  const failedCanonical = report.results.canonical.filter(r => r.issues?.length > 0);
+                  if (failedCanonical.length > 0) {
+                    comment += '#### Canonical Tag Issues\n';
+                    failedCanonical.forEach(item => {
+                      comment += `- \`${item.url}\`\n`;
+                      item.issues.forEach(issue => {
+                        comment += `  - ${issue}\n`;
+                      });
+                    });
+                    comment += '\n';
+                  }
+                }
+
+                // Show redirect issues
+                if (report.results.legacyRedirects) {
+                  const failedRedirects = report.results.legacyRedirects.filter(r => r.issues?.length > 0);
+                  if (failedRedirects.length > 0) {
+                    comment += '#### Legacy Redirect Issues\n';
+                    failedRedirects.forEach(item => {
+                      comment += `- \`${item.from}\` → \`${item.to}\`\n`;
+                      item.issues.forEach(issue => {
+                        comment += `  - ${issue}\n`;
+                      });
+                    });
+                    comment += '\n';
+                  }
+                }
+
+                // Show sitemap issues
+                if (report.results.sitemap?.invalid?.length > 0) {
+                  comment += '#### Sitemap Issues\n';
+                  report.results.sitemap.invalid.forEach(item => {
+                    comment += `- \`${item.loc}\`: ${item.reason}\n`;
+                  });
+                  comment += '\n';
+                }
+              }
+
+              comment += '\n📊 [Download full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+            }
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('SEO Verification Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                comment_id: botComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+      - name: Fail workflow if SEO check failed
+        if: steps.parse_report.outputs.passed == 'false'
+        run: |
+          echo "SEO verification failed with ${{ steps.parse_report.outputs.total_issues }} issues"
+          exit 1
+
+      - name: Success notification
+        if: success()
+        run: |
+          echo "✅ All SEO checks passed!"
+          echo "Duration: ${{ steps.parse_report.outputs.duration }}"
