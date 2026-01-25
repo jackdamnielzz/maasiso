@@ -1,5 +1,10 @@
 # Active Context - Redesign Cycle (Onze Voordelen & Over Ons)
 
+## Recently Completed: Repository Sync & Documentation Update (2026-01-25)
+- **Git Push**: Successfully pushed all recent changes to the remote repository.
+- **Changes Included**: Standardized JSON-LD, new author page, internal links, and SEO domain unification.
+- **Commit Message**: `feat: standardize canonical entities and JSON-LD (non-www URLs, ProfessionalService, author page)`
+
 ## Recently Completed: Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` author page with professional biography and publication links.
 - **Content**: Dutch language, highlighting expertise in ISO 9001, 27001, AVG, and BIO.
@@ -116,5 +121,6 @@
 - **Entity Integrity**: Verified that `ProfessionalService` and `Person` schemas use stable, non-WWW `@id`s consistently.
 
 ## Next Steps
-- Manual browser verification of the new diensten grid layout on different screen sizes.
-- Monitor Vercel deployment for any CSS issues with ScrollReveal.
+- Monitor Vercel deployment for the latest pushed changes.
+- Verify JSON-LD on live site using Google Rich Results Test.
+- Monitor search console for canonical consolidation.

@@ -20,6 +20,7 @@
 - Author Page (/over-niels-maas): 100% ✅
 - Internal Linking & Author ID Verification: 100% ✅
 - Final Domain Unification Check (non-WWW): 100% ✅
+- Repository Sync: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -32,6 +33,10 @@
 - [x] Paginated search results
 
 ## Recent Updates (2026-01-25)
+
+### Repository Sync (2026-01-25)
+- **Git Push**: Successfully synchronized the local state with the remote repository.
+- **Scope**: Includes all JSON-LD improvements, the new author page, and domain unification fixes.
 
 ### Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` to serve as the official author profile for Niels Maas.

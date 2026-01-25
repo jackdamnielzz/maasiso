@@ -39,8 +39,10 @@
 - [x] **Author Page Creation** (/over-niels-maas) (2026-01-25) ✅
 - [x] **Internal Linking & Author ID Verification** (2026-01-25) ✅
 - [x] **Final Domain Unification Check (non-WWW)** (2026-01-25) ✅
+- [x] **Sync with Remote Repository** (2026-01-25) ✅
 
 ## Recent Changes
+- COMPLETED: Pushed all SEO, JSON-LD, and Author Page changes to the remote repository.
 - COMPLETED: Final sweep for `www.maasiso.nl` in `app/` and `src/`. Confirmed 0 occurrences in source.
 - COMPLETED: Strengthened internal linking by adding "Over Niels Maas" section to the Over Ons page.
 - COMPLETED: Verified and unified author `@id` in blog post schema across the site.
