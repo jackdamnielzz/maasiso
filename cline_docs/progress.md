@@ -2,6 +2,13 @@
 
 ## Completed Features
 
+### JSON-LD Structured Data Improvements (January 25, 2026)
+- ✅ Fixed Organization schema in `app/layout.tsx` with stable `@id`
+- ✅ Unified non-WWW domain (`maasiso.nl`) across all schemas
+- ✅ Implemented `BlogPosting` schema for blog articles
+- ✅ Implemented `BreadcrumbList` schema for blog articles
+- ✅ Extended `SchemaMarkup` component to support new schemas
+
 ### Content Audit and Cleanup (March 3, 2025)
 - ✅ Removed hardcoded content from diensten and over-ons pages
 - ✅ Fixed feature grid component not displaying properly due to incorrect populate parameters

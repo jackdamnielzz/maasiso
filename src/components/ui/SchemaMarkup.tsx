@@ -29,17 +29,39 @@ type HowToSchema = {
   }>;
 };
 
+type ArticleSchema = {
+  headline: string;
+  description: string;
+  datePublished: string;
+  dateModified: string;
+  author: {
+    name: string;
+  };
+  publisherId: string;
+  mainEntityOfPage: string;
+  image: string;
+};
+
+type BreadcrumbSchema = {
+  items: Array<{
+    name: string;
+    item: string;
+  }>;
+};
+
 type SchemaMarkupProps = {
   service?: ServiceSchema;
   faq?: FAQSchema;
   howTo?: HowToSchema;
+  article?: ArticleSchema;
+  breadcrumbs?: BreadcrumbSchema;
 };
 
 /**
  * SchemaMarkup component adds structured data for SEO
- * It supports Service, FAQ, and HowTo schemas
+ * It supports Service, FAQ, HowTo, Article, and Breadcrumb schemas
  */
-const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo }) => {
+const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, article, breadcrumbs }) => {
   const schemas = [];
 
   // Add Service schema if provided
@@ -89,6 +111,44 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo }) => {
         text: step.text,
         url: step.url,
         image: step.image
+      }))
+    });
+  }
+
+  // Add Article schema if provided
+  if (article) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: article.headline,
+      description: article.description,
+      datePublished: article.datePublished,
+      dateModified: article.dateModified,
+      author: {
+        '@type': 'Person',
+        name: article.author.name
+      },
+      publisher: {
+        '@id': article.publisherId
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': article.mainEntityOfPage
+      },
+      image: article.image
+    });
+  }
+
+  // Add Breadcrumb schema if provided
+  if (breadcrumbs) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: item.item
       }))
     });
   }

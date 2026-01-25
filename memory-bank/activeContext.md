@@ -1,5 +1,15 @@
 # Active Context - Redesign Cycle (Onze Voordelen & Over Ons)
 
+## Recently Completed: JSON-LD Structured Data Improvements (2026-01-25)
+- **Organization Identity**: Fixed site-wide `Organization` schema in `app/layout.tsx` with stable `@id` (`https://maasiso.nl/#organization`) and non-WWW URLs.
+- **Blog SEO**: Implemented `BlogPosting` and `BreadcrumbList` schemas in `app/blog/[slug]/page.tsx`.
+- **Schema Reusability**: Extended `SchemaMarkup` component to support `Article` and `BreadcrumbList` types.
+
+## Recently Completed: SEO & Redirect Consolidation (2026-01-25)
+- **Domain Consolidation**: Fixed content duplication and signal splitting by forcing all traffic to `https://maasiso.nl/`.
+- **Implementation**: Added host-based redirects in [`next.config.js`](next.config.js) and fixed build-time prerendering issues.
+- **Search Page Sync**: Synchronized root `app/search/page.tsx` with modern server-side implementation and fixed TypeScript prop mismatches.
+
 ## Recently Completed: Over Ons Page Spectacular Redesign (2026-01-23)
 - **Spectacular Visuals**: Completely transformed the "Over Ons" page with premium styling.
 - **Advanced UI Features**:

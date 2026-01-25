@@ -30,10 +30,15 @@
   - [x] Check WWW vs non-WWW redirects
   - [x] Identify canonical domain version
   - [x] Implement permanent redirect to non-WWW
+- [x] **JSON-LD Structured Data Improvements** (2026-01-25)
+  - [x] Fixed Organization schema with stable @id and non-WWW URLs
+  - [x] Implemented BlogPosting and BreadcrumbList for blog posts
+  - [x] Extended SchemaMarkup component
 
 ## Recent Changes
+- COMPLETED: Improved JSON-LD structured data with Organization ID and Blog schemas.
 - COMPLETED: Checked WWW vs non-WWW redirects. Found that both secure variants return 200 OK.
-- COMPLETED: Implemented WWW to non-WWW redirect in `next.config.js` to ensure canonical domain usage.
+- COMPLETED: Implemented WWW to non-WWW redirect in `next.config.js` and deployed to Git.
 - NEW: `src/components/features/OverOnsContent.tsx` - Spectacular redesign of the "Over Ons" page.
 - MODIFIED: `app/over-ons/page.tsx` - Updated to use the new OverOnsContent component.
 - NEW: `src/components/features/OnzeVoordelenContent.tsx` - Complete redesign of the Onze Voordelen page with modern styling matching DienstenContent.

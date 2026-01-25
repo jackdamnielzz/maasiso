@@ -6,6 +6,7 @@ import RelatedPosts from '@/components/features/RelatedPosts';
 import ContentAnalytics from '@/components/features/ContentAnalytics';
 import { Category, BlogPost } from '@/lib/types';
 import logger from '@/lib/logger';
+import SchemaMarkup from '@/components/ui/SchemaMarkup';
 
 const DEFAULT_IMAGE = '/placeholder-blog.jpg';
 
@@ -173,8 +174,32 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const categoryIds = blogPost.categories?.map((cat: Category) => cat.id) || [];
     const readingTime = Math.ceil(blogPost.content.split(/\s+/).length / 200);
 
+    const canonicalUrl = `https://maasiso.nl/blog/${blogPost.slug}`;
+    const featuredImageUrl = constructImageUrl(blogPost.featuredImage?.url);
+
     return (
       <div className="bg-white pb-16 relative z-0">
+        <SchemaMarkup
+          article={{
+            headline: blogPost.title,
+            description: blogPost.seoDescription || getExcerpt(blogPost.content),
+            datePublished: blogPost.publishedAt || blogPost.createdAt,
+            dateModified: blogPost.updatedAt,
+            author: {
+              name: "Niels Maas"
+            },
+            publisherId: "https://maasiso.nl/#organization",
+            mainEntityOfPage: canonicalUrl,
+            image: featuredImageUrl
+          }}
+          breadcrumbs={{
+            items: [
+              { name: 'Home', item: 'https://maasiso.nl' },
+              { name: 'Blog', item: 'https://maasiso.nl/blog' },
+              { name: blogPost.title, item: canonicalUrl }
+            ]
+          }}
+        />
         <ContentAnalytics
           contentType="blog"
           contentId={blogPost.id}

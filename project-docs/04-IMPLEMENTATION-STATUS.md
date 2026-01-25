@@ -16,6 +16,7 @@
 - Onze Voordelen Page Redesign: 100% ✅
 - Over Ons Page Spectacular Redesign: 100% ✅
 - WWW to non-WWW Redirect Implementation: 100% ✅
+- JSON-LD Structured Data Improvements: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -28,6 +29,11 @@
 - [x] Paginated search results
 
 ## Recent Updates (2026-01-25)
+
+### JSON-LD Structured Data Improvements (2026-01-25)
+- **Organization Schema**: Updated site-wide identity to use `Organization` with a stable `@id` (`https://maasiso.nl/#organization`) and unified non-WWW URLs.
+- **Blog Templates**: Added `BlogPosting` and `BreadcrumbList` schemas to `app/blog/[slug]/page.tsx`.
+- **Component Extension**: Enhanced `SchemaMarkup.tsx` to handle Article and Breadcrumb data structures.
 
 ### SEO & Redirect Integrity (2026-01-25)
 - **WWW to non-WWW Redirect**: Implemented forced permanent redirect from `www.maasiso.nl` to `maasiso.nl` in `next.config.js`. This resolves content duplication and signal splitting issues.
