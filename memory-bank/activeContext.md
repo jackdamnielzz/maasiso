@@ -120,6 +120,11 @@
 ## Recently Completed: Internal Linking & Author Schema Verification (2026-01-25)
 - **Over Ons Integration**: Added a dedicated "Over Niels Maas" section to the [`src/components/features/OverOnsContent.tsx`](src/components/features/OverOnsContent.tsx) component, providing a visible Dutch description and a crawlable internal link to `/over-niels-maas`.
 - **Author ID Consistency**: Verified and updated [`app/blog/[slug]/page.tsx`](app/blog/[slug]/page.tsx) to ensure the `Person` schema uses the stable `@id`: `https://maasiso.nl/over-niels-maas#author`.
+
+## In Progress: ISO 45001 Landing + Diensten Redirects (2026-01-25)
+- **Redirects**: Added 301 mapping for 7 legacy `/diensten/...` URLs (incl. `/diensten/iso-45001`) to their new service pages via [`src/middleware.ts`](src/middleware.ts).
+- **New Landing**: Added placeholder `/iso-45001` page with Dutch intro + contact CTA and canonical metadata in [`app/iso-45001/page.tsx`](app/iso-45001/page.tsx) + [`app/iso-45001/metadata.ts`](app/iso-45001/metadata.ts).
+- **Sitemap**: Included `/iso-45001` in static pages + excluded from dynamic slugs in [`app/sitemap.ts`](app/sitemap.ts).
 - **Schema Component Support**: Enhanced [`src/components/ui/SchemaMarkup.tsx`](src/components/ui/SchemaMarkup.tsx) to support the `id` property in the author object, ensuring proper JSON-LD output.
 
 ## Recently Completed: Final Domain Unification Check (2026-01-25)

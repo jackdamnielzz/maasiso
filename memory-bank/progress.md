@@ -55,6 +55,9 @@
   - [x] Verified non-WWW and no trailing slash consistency
 
 ## Recent Changes
+- COMPLETED: Added 7 301 redirects for legacy `/diensten/...` URLs to their new service pages (incl. `/diensten/iso-45001`).
+- COMPLETED: Created `/iso-45001` placeholder landing (indexable) with canonical metadata, Dutch intro, and contact CTA.
+- COMPLETED: Included `/iso-45001` in the sitemap static routes and excluded it from dynamic slugs.
 - COMPLETED: Sitemap URL formatting fix (trim base/path, enforce single `/`, remove `/home` from sitemap, paginate Strapi content for completeness).
 - COMPLETED: Canonical Tags Implementation - all static and dynamic routes now have proper canonical tags.
 - COMPLETED: Implemented `metadataBase` and default canonical tag in `app/layout.tsx`.

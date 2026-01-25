@@ -80,6 +80,11 @@
 ### SEO & Redirect Integrity (2026-01-25)
 - **WWW to non-WWW Redirect**: Implemented forced permanent redirect from `www.maasiso.nl` to `maasiso.nl` in `next.config.js`. This resolves content duplication and signal splitting issues.
 
+### ISO 45001 Landing + Diensten Redirects (2026-01-25)
+- **301 Redirects**: Added 7 legacy `/diensten/...` routes mapping 1-op-1 to their new service pages (incl. `/diensten/iso-45001`) in [`src/middleware.ts`](src/middleware.ts).
+- **New Landing Page**: Created `/iso-45001` placeholder with Dutch intro + contact CTA and canonical metadata in [`app/iso-45001/page.tsx`](app/iso-45001/page.tsx) and [`app/iso-45001/metadata.ts`](app/iso-45001/metadata.ts).
+- **Sitemap**: Added `/iso-45001` to static sitemap entries and excluded it from dynamic slugs in [`app/sitemap.ts`](app/sitemap.ts).
+
 ### Final Domain Unification Check (2026-01-25)
 - **Codebase Sweep**: Verified that no `www.maasiso.nl` occurrences remain in `app/` and `src/` source files.
 - **Metadata Audit**: Re-confirmed that `app/layout.tsx`, `app/over-niels-maas/page.tsx`, and `app/blog/[slug]/page.tsx` use the correct stable `@id`s and non-WWW URLs.

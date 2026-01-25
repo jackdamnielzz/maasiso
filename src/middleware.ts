@@ -7,6 +7,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
 
+  const redirectMap: Record<string, string> = {
+    '/diensten/iso-9001-consultancy': '/iso-9001',
+    '/diensten/iso-9001': '/iso-9001',
+    '/diensten/iso-14001': '/iso-14001',
+    '/diensten/iso-27001': '/iso-27001',
+    '/diensten/iso-45001': '/iso-45001',
+    '/diensten/gdpr-avg': '/avg',
+    '/diensten/bio': '/bio',
+  };
+
+  const redirectTarget = redirectMap[request.nextUrl.pathname];
+  if (redirectTarget) {
+    return NextResponse.redirect(new URL(redirectTarget, request.url), 301);
+  }
+
   // Handle sitemap cache headers
   if (request.nextUrl.pathname === '/sitemap.xml') {
     const response = NextResponse.next();
@@ -20,5 +35,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/sitemap.xml', '/home'],
+  matcher: ['/sitemap.xml', '/home', '/diensten/:path*'],
 };
