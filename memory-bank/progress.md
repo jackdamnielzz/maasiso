@@ -55,6 +55,7 @@
   - [x] Verified non-WWW and no trailing slash consistency
 
 ## Recent Changes
+- COMPLETED: Sitemap URL formatting fix (trim base/path, enforce single `/`, remove `/home` from sitemap, paginate Strapi content for completeness).
 - COMPLETED: Canonical Tags Implementation - all static and dynamic routes now have proper canonical tags.
 - COMPLETED: Implemented `metadataBase` and default canonical tag in `app/layout.tsx`.
 - COMPLETED: Added explicit canonical tags to all static service, blog, news, and information pages.

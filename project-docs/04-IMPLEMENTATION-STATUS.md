@@ -36,6 +36,11 @@
 
 ## Recent Updates (2026-01-25)
 
+### Sitemap URL Formatting Fix (2026-01-25) ✅
+- **Normalization**: Added URL normalization helpers to guarantee clean `<loc>` values (trim base/path/result, single `/` separator).
+- **Canonical Cleanup**: Excluded `/home` from sitemap output to avoid non-canonical URLs.
+- **Completeness**: Implemented pagination loops for blog posts, news articles, whitepapers, and pages to include all published content.
+
 ### Canonical Tags Implementation (2026-01-25) ✅
 - **Metadata Base**: Established `https://maasiso.nl` as the `metadataBase` in the root layout.
 - **Default Logic**: Configured `alternates: { canonical: '/' }` in `app/layout.tsx` to provide a fallback canonical for all pages.

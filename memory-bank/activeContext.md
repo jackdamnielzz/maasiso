@@ -142,3 +142,9 @@
 
 ## Next Steps
 - Monitor Vercel deployment for any SEO-related crawl issues.
+
+## In Progress: Sitemap URL Formatting Fix (2026-01-25)
+- **Problem**: Sitemap `<loc>` URLs contain whitespace or malformed host/path concatenation.
+- **Fix**: Normalize base URL + path, trim whitespace, and ensure exactly one `/` separator.
+- **Canonical Cleanup**: Explicitly remove `/home` from sitemap to avoid non-canonical URLs.
+- **Coverage**: Fetch all paginated blog posts/news/whitepapers/pages so sitemap includes all published content.
