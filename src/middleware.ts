@@ -1,7 +1,20 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isRemovedUrl } from '@/config/removed-urls';
 
 export function middleware(request: NextRequest) {
+  // Check for permanently removed URLs FIRST (410 Gone)
+  // This ensures 410 is returned before any redirect logic
+  if (isRemovedUrl(request.nextUrl.pathname)) {
+    return new NextResponse('Gone', {
+      status: 410,
+      headers: {
+        'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
+        'Content-Type': 'text/plain',
+      }
+    });
+  }
+
   // Redirect /home to / to prevent duplicate content
   if (request.nextUrl.pathname === '/home') {
     return NextResponse.redirect(new URL('/', request.url), 301);
@@ -51,5 +64,8 @@ export const config = {
     '/algemene-voorwaarden',
     '/$',
     '/diensten/:path*',
+    '/blog/:path*',
+    '/news/:path*',
+    '/test-deploy',
   ],
 };

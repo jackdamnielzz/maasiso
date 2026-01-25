@@ -1,6 +1,7 @@
 import { getBlogPosts, getNewsArticles, getWhitepapers } from '@/lib/api';
 import { MetadataRoute } from 'next';
 import { BlogPost, NewsArticle, Page, StrapiCollectionResponse, StrapiData, Whitepaper } from '@/lib/types';
+import { REMOVED_PATHS } from '@/config/removed-urls';
 
 export const revalidate = 0;
 
@@ -192,12 +193,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/cookie-policy',
     '/avg',
     '/bio',
-  ].map((route) => ({
-    url: buildUrl(baseUrl, route),
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    priority: route === '' ? 1 : 0.8,
-  }));
+  ]
+    .filter(route => !REMOVED_PATHS.has(route))
+    .map((route) => ({
+      url: buildUrl(baseUrl, route),
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: route === '' ? 1 : 0.8,
+    }));
 
   try {
     // Fetch all dynamic content in parallel with individual error handling
@@ -226,6 +229,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Map Blog Posts
     const blogEntries: MetadataRoute.Sitemap = blogResult.posts
       .filter(post => post.slug)
+      .filter(post => !REMOVED_PATHS.has(`/blog/${normalizeSlug(post.slug)}`))
       .map(post => ({
         url: buildUrl(baseUrl, `/blog/${normalizeSlug(post.slug)}`),
         lastModified: new Date(post.publishedAt || post.updatedAt || new Date()),
@@ -236,6 +240,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Map News Articles
     const newsEntries: MetadataRoute.Sitemap = newsResult.articles
       .filter(article => article.slug)
+      .filter(article => !REMOVED_PATHS.has(`/news/${normalizeSlug(article.slug)}`))
       .map(article => ({
         url: buildUrl(baseUrl, `/news/${normalizeSlug(article.slug)}`),
         lastModified: new Date(article.publishedAt || article.updatedAt || new Date()),

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(if [ -f \"d:\\\\Programmeren\\\\MaasISO\\\\New without errors\\\\maasiso - Copy\\\\scripts\\\\seo-report.json\" ])",
+      "Bash(then echo \"File exists\")",
+      "Bash(else echo \"File not found\")",
+      "Bash(fi)",
+      "Bash(npm run verify:seo:fast:*)",
+      "Bash(npm run verify:seo:*)",
+      "Bash(npm run build:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}

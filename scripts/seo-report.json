@@ -1,0 +1,1099 @@
+{
+  "timestamp": "2026-01-25T20:01:28.113Z",
+  "site": "https://maasiso.nl",
+  "options": {
+    "failFast": false,
+    "maxRetries": 2,
+    "concurrency": 6,
+    "timeout": 20000
+  },
+  "results": {
+    "sitemap": {
+      "count": 54,
+      "locs": [
+        "https://maasiso.nl",
+        "https://maasiso.nl/over-ons",
+        "https://maasiso.nl/diensten",
+        "https://maasiso.nl/contact",
+        "https://maasiso.nl/blog",
+        "https://maasiso.nl/news",
+        "https://maasiso.nl/onze-voordelen",
+        "https://maasiso.nl/privacy-policy",
+        "https://maasiso.nl/terms-and-conditions",
+        "https://maasiso.nl/whitepaper",
+        "https://maasiso.nl/iso-9001",
+        "https://maasiso.nl/iso-14001",
+        "https://maasiso.nl/iso-45001",
+        "https://maasiso.nl/iso-16175",
+        "https://maasiso.nl/iso-27001",
+        "https://maasiso.nl/cookie-policy",
+        "https://maasiso.nl/avg",
+        "https://maasiso.nl/bio",
+        "https://maasiso.nl/blog/iso-9001-2026-veranderingen-voorbereiding",
+        "https://maasiso.nl/blog/iso-27001-checklist-augustus-2025",
+        "https://maasiso.nl/blog/avg-beeldmateriaal-toestemming",
+        "https://maasiso.nl/blog/isms-betekenis",
+        "https://maasiso.nl/blog/informatieveiligheid-moderne-aanpak-trends-best-practices",
+        "https://maasiso.nl/blog/wat-is-isms-ultieme-gids",
+        "https://maasiso.nl/blog/beleidsverklaring-iso-9001",
+        "https://maasiso.nl/blog/cloud-computing-ai-bedrijven-transformatie",
+        "https://maasiso.nl/blog/wat-is-procesmanagement",
+        "https://maasiso.nl/blog/grondslag-avg-kiezen",
+        "https://maasiso.nl/blog/penetratietest-informatiebeveiliging-iso-27001",
+        "https://maasiso.nl/blog/iso-certificering-gratis-tool-norm-selector",
+        "https://maasiso.nl/blog/iso-keurmerk-uitleg",
+        "https://maasiso.nl/blog/checklist-iso-14001",
+        "https://maasiso.nl/blog/iso-27001-eisen",
+        "https://maasiso.nl/blog/context-van-de-organisatie-iso-9001",
+        "https://maasiso.nl/blog/interne-audit-iso-9001-voorbeeld",
+        "https://maasiso.nl/blog/kwaliteitshandboek-iso-9001",
+        "https://maasiso.nl/blog/iso-9001-handboek-gids",
+        "https://maasiso.nl/blog/waarde-interne-auditor-iso-9001",
+        "https://maasiso.nl/blog/directiebeoordeling-iso-9001",
+        "https://maasiso.nl/blog/leveranciersbeoordeling-iso-9001",
+        "https://maasiso.nl/blog/iso-certificering",
+        "https://maasiso.nl/blog/directiebeoordeling-iso-9001-voorbeeld",
+        "https://maasiso.nl/blog/klanttevredenheid-iso",
+        "https://maasiso.nl/blog/continue-verbetering-iso",
+        "https://maasiso.nl/blog/informatiebeheer-iso-16175",
+        "https://maasiso.nl/blog/iso-9001-klimaatverandering",
+        "https://maasiso.nl/blog/interne-audit-iso-9001-verbeterinstrument",
+        "https://maasiso.nl/blog/kwaliteitsdoelstellingen-iso-9001",
+        "https://maasiso.nl/blog/iso-9001-audit-voorbereiding-begeleiding",
+        "https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-excel",
+        "https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd",
+        "https://maasiso.nl/blog/iso-9001-normvereisten-gids",
+        "https://maasiso.nl/blog/iso-9001-checklist-complete-gids",
+        "https://maasiso.nl/blog/risicogebaseerd-denken-succesfactor-iso"
+      ],
+      "invalid": []
+    },
+    "canonical": [
+      {
+        "url": "https://maasiso.nl",
+        "finalUrl": "https://maasiso.nl/",
+        "canonical": "https://maasiso.nl/",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/over-ons",
+        "finalUrl": "https://maasiso.nl/over-ons",
+        "canonical": "https://maasiso.nl/over-ons",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/over-ons",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/diensten",
+        "finalUrl": "https://maasiso.nl/diensten",
+        "canonical": "https://maasiso.nl/diensten",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/contact",
+        "finalUrl": "https://maasiso.nl/contact",
+        "canonical": "https://maasiso.nl/contact",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/contact",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog",
+        "finalUrl": "https://maasiso.nl/blog",
+        "canonical": "https://maasiso.nl/blog",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/news",
+        "finalUrl": "https://maasiso.nl/news",
+        "canonical": "https://maasiso.nl/news",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/news",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/onze-voordelen",
+        "finalUrl": "https://maasiso.nl/onze-voordelen",
+        "canonical": "https://maasiso.nl/onze-voordelen",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/onze-voordelen",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/privacy-policy",
+        "finalUrl": "https://maasiso.nl/privacy-policy",
+        "canonical": "https://maasiso.nl/privacy-policy",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/privacy-policy",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/terms-and-conditions",
+        "finalUrl": "https://maasiso.nl/terms-and-conditions",
+        "canonical": "https://maasiso.nl/terms-and-conditions",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/terms-and-conditions",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/whitepaper",
+        "finalUrl": "https://maasiso.nl/whitepaper",
+        "canonical": "https://maasiso.nl/whitepaper",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/whitepaper",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/iso-9001",
+        "finalUrl": "https://maasiso.nl/iso-9001",
+        "canonical": "https://maasiso.nl/iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/iso-14001",
+        "finalUrl": "https://maasiso.nl/iso-14001",
+        "canonical": "https://maasiso.nl/iso-14001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/iso-14001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/iso-45001",
+        "finalUrl": "https://maasiso.nl/iso-45001",
+        "canonical": "https://maasiso.nl/",
+        "issues": [
+          "Canonical points to homepage for non-home page"
+        ],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/iso-45001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/iso-16175",
+        "finalUrl": "https://maasiso.nl/iso-16175",
+        "canonical": "https://maasiso.nl/iso-16175",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/iso-16175",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/iso-27001",
+        "finalUrl": "https://maasiso.nl/iso-27001",
+        "canonical": "https://maasiso.nl/iso-27001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/iso-27001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/cookie-policy",
+        "finalUrl": "https://maasiso.nl/cookie-policy",
+        "canonical": "https://maasiso.nl/cookie-policy",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/cookie-policy",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/avg",
+        "finalUrl": "https://maasiso.nl/avg",
+        "canonical": "https://maasiso.nl/avg",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/avg",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/bio",
+        "finalUrl": "https://maasiso.nl/bio",
+        "canonical": "https://maasiso.nl/bio",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/bio",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-2026-veranderingen-voorbereiding",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-2026-veranderingen-voorbereiding",
+        "canonical": "https://maasiso.nl/blog/iso-9001-2026-veranderingen-voorbereiding",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-2026-veranderingen-voorbereiding",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-27001-checklist-augustus-2025",
+        "finalUrl": "https://maasiso.nl/blog/iso-27001-checklist-augustus-2025",
+        "canonical": "https://maasiso.nl/blog/iso-27001-checklist-augustus-2025",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-27001-checklist-augustus-2025",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/avg-beeldmateriaal-toestemming",
+        "finalUrl": "https://maasiso.nl/blog/avg-beeldmateriaal-toestemming",
+        "canonical": "https://maasiso.nl/blog/avg-beeldmateriaal-toestemming",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/avg-beeldmateriaal-toestemming",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/isms-betekenis",
+        "finalUrl": "https://maasiso.nl/blog/isms-betekenis",
+        "canonical": "https://maasiso.nl/blog/isms-betekenis",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/isms-betekenis",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/informatieveiligheid-moderne-aanpak-trends-best-practices",
+        "finalUrl": "https://maasiso.nl/blog/informatieveiligheid-moderne-aanpak-trends-best-practices",
+        "canonical": "https://maasiso.nl/blog/informatieveiligheid-moderne-aanpak-trends-best-practices",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/informatieveiligheid-moderne-aanpak-trends-best-practices",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/wat-is-isms-ultieme-gids",
+        "finalUrl": "https://maasiso.nl/blog/wat-is-isms-ultieme-gids",
+        "canonical": "https://maasiso.nl/blog/wat-is-isms-ultieme-gids",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/wat-is-isms-ultieme-gids",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/beleidsverklaring-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/beleidsverklaring-iso-9001",
+        "canonical": "https://maasiso.nl/blog/beleidsverklaring-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/beleidsverklaring-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/cloud-computing-ai-bedrijven-transformatie",
+        "finalUrl": "https://maasiso.nl/blog/cloud-computing-ai-bedrijven-transformatie",
+        "canonical": "https://maasiso.nl/blog/cloud-computing-ai-bedrijven-transformatie",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/cloud-computing-ai-bedrijven-transformatie",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/wat-is-procesmanagement",
+        "finalUrl": "https://maasiso.nl/blog/wat-is-procesmanagement",
+        "canonical": "https://maasiso.nl/blog/wat-is-procesmanagement",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/wat-is-procesmanagement",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/grondslag-avg-kiezen",
+        "finalUrl": "https://maasiso.nl/blog/grondslag-avg-kiezen",
+        "canonical": "https://maasiso.nl/blog/grondslag-avg-kiezen",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/grondslag-avg-kiezen",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/penetratietest-informatiebeveiliging-iso-27001",
+        "finalUrl": "https://maasiso.nl/blog/penetratietest-informatiebeveiliging-iso-27001",
+        "canonical": "https://maasiso.nl/blog/penetratietest-informatiebeveiliging-iso-27001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/penetratietest-informatiebeveiliging-iso-27001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-certificering-gratis-tool-norm-selector",
+        "finalUrl": "https://maasiso.nl/blog/iso-certificering-gratis-tool-norm-selector",
+        "canonical": "https://maasiso.nl/blog/iso-certificering-gratis-tool-norm-selector",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-certificering-gratis-tool-norm-selector",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-keurmerk-uitleg",
+        "finalUrl": "https://maasiso.nl/blog/iso-keurmerk-uitleg",
+        "canonical": "https://maasiso.nl/blog/iso-keurmerk-uitleg",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-keurmerk-uitleg",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/checklist-iso-14001",
+        "finalUrl": "https://maasiso.nl/blog/checklist-iso-14001",
+        "canonical": "https://maasiso.nl/blog/checklist-iso-14001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/checklist-iso-14001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-27001-eisen",
+        "finalUrl": "https://maasiso.nl/blog/iso-27001-eisen",
+        "canonical": "https://maasiso.nl/blog/iso-27001-eisen",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-27001-eisen",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/context-van-de-organisatie-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/context-van-de-organisatie-iso-9001",
+        "canonical": "https://maasiso.nl/blog/context-van-de-organisatie-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/context-van-de-organisatie-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/interne-audit-iso-9001-voorbeeld",
+        "finalUrl": "https://maasiso.nl/blog/interne-audit-iso-9001-voorbeeld",
+        "canonical": "https://maasiso.nl/blog/interne-audit-iso-9001-voorbeeld",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/interne-audit-iso-9001-voorbeeld",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/kwaliteitshandboek-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/kwaliteitshandboek-iso-9001",
+        "canonical": "https://maasiso.nl/blog/kwaliteitshandboek-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/kwaliteitshandboek-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-handboek-gids",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-handboek-gids",
+        "canonical": "https://maasiso.nl/blog/iso-9001-handboek-gids",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-handboek-gids",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/waarde-interne-auditor-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/waarde-interne-auditor-iso-9001",
+        "canonical": "https://maasiso.nl/blog/waarde-interne-auditor-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/waarde-interne-auditor-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/directiebeoordeling-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/directiebeoordeling-iso-9001",
+        "canonical": "https://maasiso.nl/blog/directiebeoordeling-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/directiebeoordeling-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/leveranciersbeoordeling-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/leveranciersbeoordeling-iso-9001",
+        "canonical": "https://maasiso.nl/blog/leveranciersbeoordeling-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/leveranciersbeoordeling-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-certificering",
+        "finalUrl": "https://maasiso.nl/blog/iso-certificering",
+        "canonical": "https://maasiso.nl/blog/iso-certificering",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-certificering",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/directiebeoordeling-iso-9001-voorbeeld",
+        "finalUrl": "https://maasiso.nl/blog/directiebeoordeling-iso-9001-voorbeeld",
+        "canonical": "https://maasiso.nl/blog/directiebeoordeling-iso-9001-voorbeeld",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/directiebeoordeling-iso-9001-voorbeeld",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/klanttevredenheid-iso",
+        "finalUrl": "https://maasiso.nl/blog/klanttevredenheid-iso",
+        "canonical": "https://maasiso.nl/blog/klanttevredenheid-iso",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/klanttevredenheid-iso",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/continue-verbetering-iso",
+        "finalUrl": "https://maasiso.nl/blog/continue-verbetering-iso",
+        "canonical": "https://maasiso.nl/blog/continue-verbetering-iso",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/continue-verbetering-iso",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/informatiebeheer-iso-16175",
+        "finalUrl": "https://maasiso.nl/blog/informatiebeheer-iso-16175",
+        "canonical": "https://maasiso.nl/blog/informatiebeheer-iso-16175",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/informatiebeheer-iso-16175",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-klimaatverandering",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-klimaatverandering",
+        "canonical": "https://maasiso.nl/blog/iso-9001-klimaatverandering",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-klimaatverandering",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/interne-audit-iso-9001-verbeterinstrument",
+        "finalUrl": "https://maasiso.nl/blog/interne-audit-iso-9001-verbeterinstrument",
+        "canonical": "https://maasiso.nl/blog/interne-audit-iso-9001-verbeterinstrument",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/interne-audit-iso-9001-verbeterinstrument",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/kwaliteitsdoelstellingen-iso-9001",
+        "finalUrl": "https://maasiso.nl/blog/kwaliteitsdoelstellingen-iso-9001",
+        "canonical": "https://maasiso.nl/blog/kwaliteitsdoelstellingen-iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/kwaliteitsdoelstellingen-iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-audit-voorbereiding-begeleiding",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-audit-voorbereiding-begeleiding",
+        "canonical": "https://maasiso.nl/blog/iso-9001-audit-voorbereiding-begeleiding",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-audit-voorbereiding-begeleiding",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-excel",
+        "finalUrl": "https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-excel",
+        "canonical": "https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-excel",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-excel",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd",
+        "finalUrl": "https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd",
+        "canonical": "https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-normvereisten-gids",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-normvereisten-gids",
+        "canonical": "https://maasiso.nl/blog/iso-9001-normvereisten-gids",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-normvereisten-gids",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/iso-9001-checklist-complete-gids",
+        "finalUrl": "https://maasiso.nl/blog/iso-9001-checklist-complete-gids",
+        "canonical": "https://maasiso.nl/blog/iso-9001-checklist-complete-gids",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/iso-9001-checklist-complete-gids",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/blog/risicogebaseerd-denken-succesfactor-iso",
+        "finalUrl": "https://maasiso.nl/blog/risicogebaseerd-denken-succesfactor-iso",
+        "canonical": "https://maasiso.nl/blog/risicogebaseerd-denken-succesfactor-iso",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/blog/risicogebaseerd-denken-succesfactor-iso",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      }
+    ],
+    "legacyRedirects": [
+      {
+        "from": "https://maasiso.nl/diensten/iso-9001-consultancy",
+        "to": "https://maasiso.nl/iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/iso-9001-consultancy",
+            "status": 301,
+            "location": "/iso-9001"
+          },
+          {
+            "url": "https://maasiso.nl/iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/gdpr-avg",
+        "to": "https://maasiso.nl/avg",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/gdpr-avg",
+            "status": 301,
+            "location": "/avg"
+          },
+          {
+            "url": "https://maasiso.nl/avg",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/bio",
+        "to": "https://maasiso.nl/bio",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/bio",
+            "status": 301,
+            "location": "/bio"
+          },
+          {
+            "url": "https://maasiso.nl/bio",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/iso-27001",
+        "to": "https://maasiso.nl/iso-27001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/iso-27001",
+            "status": 301,
+            "location": "/iso-27001"
+          },
+          {
+            "url": "https://maasiso.nl/iso-27001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/iso-45001",
+        "to": "https://maasiso.nl/iso-45001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/iso-45001",
+            "status": 301,
+            "location": "/iso-45001"
+          },
+          {
+            "url": "https://maasiso.nl/iso-45001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/iso-9001",
+        "to": "https://maasiso.nl/iso-9001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/iso-9001",
+            "status": 301,
+            "location": "/iso-9001"
+          },
+          {
+            "url": "https://maasiso.nl/iso-9001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "from": "https://maasiso.nl/diensten/iso-14001",
+        "to": "https://maasiso.nl/iso-14001",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/diensten/iso-14001",
+            "status": 301,
+            "location": "/iso-14001"
+          },
+          {
+            "url": "https://maasiso.nl/iso-14001",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      }
+    ],
+    "hostConsolidation": [
+      {
+        "url": "http://maasiso.nl/",
+        "finalUrl": "https://maasiso.nl/",
+        "issues": [],
+        "chain": [
+          {
+            "url": "http://maasiso.nl/",
+            "status": 308,
+            "location": "https://maasiso.nl/"
+          },
+          {
+            "url": "https://maasiso.nl/",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "http://www.maasiso.nl/",
+        "finalUrl": "https://maasiso.nl/",
+        "issues": [],
+        "chain": [
+          {
+            "url": "http://www.maasiso.nl/",
+            "status": 308,
+            "location": "https://www.maasiso.nl/"
+          },
+          {
+            "url": "https://www.maasiso.nl/",
+            "status": 301,
+            "location": "https://maasiso.nl/"
+          },
+          {
+            "url": "https://maasiso.nl/",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://www.maasiso.nl/",
+        "finalUrl": "https://maasiso.nl/",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://www.maasiso.nl/",
+            "status": 301,
+            "location": "https://maasiso.nl/"
+          },
+          {
+            "url": "https://maasiso.nl/",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      }
+    ],
+    "soft404": [
+      {
+        "url": "https://maasiso.nl/index.html",
+        "finalUrl": "https://maasiso.nl/",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/index.html",
+            "status": 301,
+            "location": "/"
+          },
+          {
+            "url": "https://maasiso.nl/",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/algemene-voorwaarden",
+        "finalUrl": "https://maasiso.nl/terms-and-conditions",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/algemene-voorwaarden",
+            "status": 301,
+            "location": "/terms-and-conditions"
+          },
+          {
+            "url": "https://maasiso.nl/terms-and-conditions",
+            "status": 200,
+            "location": null
+          }
+        ],
+        "retries": 0
+      },
+      {
+        "url": "https://maasiso.nl/$",
+        "finalUrl": "https://maasiso.nl/$",
+        "issues": [],
+        "chain": [
+          {
+            "url": "https://maasiso.nl/$",
+            "status": 404,
+            "location": null
+          }
+        ],
+        "retries": 0
+      }
+    ]
+  },
+  "summary": {
+    "totalIssues": 1,
+    "passed": false,
+    "duration": "4.62s",
+    "checks": {
+      "sitemap": {
+        "total": 54,
+        "invalid": 0
+      },
+      "canonical": {
+        "total": 54,
+        "failed": 1
+      },
+      "legacyRedirects": {
+        "total": 7,
+        "failed": 0
+      },
+      "hostConsolidation": {
+        "total": 3,
+        "failed": 0
+      },
+      "soft404": {
+        "total": 3,
+        "failed": 0
+      }
+    }
+  }
+}

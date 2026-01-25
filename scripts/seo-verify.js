@@ -26,6 +26,13 @@ const SOFT_404_EXPECTATIONS = [
   { path: '/$', expected: 'status', status: [404, 410] },
 ];
 
+const REMOVED_URL_CHECKS = [
+  '/blog/iso-9001-interne-audit-tips',
+  '/blog/minimal-test-blog-post',
+  '/test-deploy',
+  '/news/avg-iso-9001-integratie',
+];
+
 const HOST_CHECKS = [
   'http://maasiso.nl/',
   'http://www.maasiso.nl/',
@@ -365,6 +372,45 @@ async function checkSoft404s() {
   return results;
 }
 
+async function checkRemovedUrls() {
+  const results = [];
+  for (const path of REMOVED_URL_CHECKS) {
+    try {
+      const targetUrl = `${SITE_URL}${normalizePath(path)}`;
+      const { response, finalUrl, chain, retries } = await fetchWithRedirects(targetUrl, { method: 'HEAD' });
+      const issues = [];
+
+      // Expect 410 Gone status
+      if (response.status !== 410) {
+        issues.push(`Expected 410 Gone, got ${response.status}`);
+      }
+
+      // Should not redirect
+      if (chain.length > 1) {
+        issues.push('URL should return 410 directly without redirects');
+      }
+
+      if (options.failFast && issues.length > 0) {
+        throw new FailFastError(`Fail-fast triggered: ${targetUrl} - ${issues.join(', ')}`);
+      }
+
+      results.push({ url: targetUrl, status: response.status, issues, chain, retries });
+    } catch (error) {
+      if (error instanceof FailFastError) {
+        throw error;
+      }
+      results.push({
+        url: `${SITE_URL}${normalizePath(path)}`,
+        status: null,
+        issues: [`Error: ${error.message}`],
+        chain: [],
+        retries: options.maxRetries,
+      });
+    }
+  }
+  return results;
+}
+
 async function runWithConcurrency(items, worker) {
   const results = [];
   let index = 0;
@@ -482,6 +528,12 @@ async function run() {
     report.results.soft404 = softResults;
     failures += reportIssues(softResults, item => item.url);
 
+    // Removed URLs Check (410 Gone)
+    reportSection('Removed URLs (410 Gone)');
+    const removedResults = await checkRemovedUrls();
+    report.results.removedUrls = removedResults;
+    failures += reportIssues(removedResults, item => item.url);
+
     const duration = Date.now() - startTime;
     report.summary = {
       totalIssues: failures,
@@ -507,6 +559,10 @@ async function run() {
         soft404: {
           total: softResults.length,
           failed: softResults.filter(r => r.issues?.length).length,
+        },
+        removedUrls: {
+          total: removedResults.length,
+          failed: removedResults.filter(r => r.issues?.length).length,
         },
       },
     };
