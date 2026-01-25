@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description: "Doorzoek alle content van MaasISO",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   try {
     // Validate search query
