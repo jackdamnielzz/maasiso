@@ -7,6 +7,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
 
+  if (request.nextUrl.pathname === '/index.html') {
+    return NextResponse.redirect(new URL('/', request.url), 301);
+  }
+
+  if (request.nextUrl.pathname === '/$') {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
   const redirectMap: Record<string, string> = {
     '/diensten/iso-9001-consultancy': '/iso-9001',
     '/diensten/iso-9001': '/iso-9001',
@@ -15,6 +23,7 @@ export function middleware(request: NextRequest) {
     '/diensten/iso-45001': '/iso-45001',
     '/diensten/gdpr-avg': '/avg',
     '/diensten/bio': '/bio',
+    '/algemene-voorwaarden': '/terms-and-conditions',
   };
 
   const redirectTarget = redirectMap[request.nextUrl.pathname];
@@ -35,5 +44,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/sitemap.xml', '/home', '/diensten/:path*'],
+  matcher: [
+    '/sitemap.xml',
+    '/home',
+    '/index.html',
+    '/algemene-voorwaarden',
+    '/$',
+    '/diensten/:path*',
+  ],
 };

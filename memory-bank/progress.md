@@ -56,6 +56,8 @@
 
 ## Recent Changes
 - COMPLETED: Added 7 301 redirects for legacy `/diensten/...` URLs to their new service pages (incl. `/diensten/iso-45001`).
+- COMPLETED: Added permanent redirects for `/index.html` → `/` and `/algemene-voorwaarden` → `/terms-and-conditions` in [`src/middleware.ts`](src/middleware.ts).
+- COMPLETED: Configured `/$` to return a real `404` response (no redirect) via middleware.
 - COMPLETED: Created `/iso-45001` placeholder landing (indexable) with canonical metadata, Dutch intro, and contact CTA.
 - COMPLETED: Included `/iso-45001` in the sitemap static routes and excluded it from dynamic slugs.
 - COMPLETED: Sitemap URL formatting fix (trim base/path, enforce single `/`, remove `/home` from sitemap, paginate Strapi content for completeness).

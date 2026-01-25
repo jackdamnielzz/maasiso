@@ -127,6 +127,10 @@
 - **Sitemap**: Included `/iso-45001` in static pages + excluded from dynamic slugs in [`app/sitemap.ts`](app/sitemap.ts).
 - **Schema Component Support**: Enhanced [`src/components/ui/SchemaMarkup.tsx`](src/components/ui/SchemaMarkup.tsx) to support the `id` property in the author object, ensuring proper JSON-LD output.
 
+## Recently Completed: Legacy URL Soft-404 Fixes (2026-01-25)
+- **Redirects**: Added permanent redirects for `/index.html` → `/` and `/algemene-voorwaarden` → `/terms-and-conditions` via [`src/middleware.ts`](src/middleware.ts).
+- **Garbage URL Handling**: Return a real `404` for `/$` (no redirect) to eliminate Soft 404 noise.
+
 ## Recently Completed: Final Domain Unification Check (2026-01-25)
 - **Codebase Verification**: Performed a recursive search for `www.maasiso.nl` across `app/` and `src/` directories.
 - **Results**: Confirmed 0 occurrences in source code. All metadata, JSON-LD schemas, sitemaps, and robots.txt files are verified to use the unified `https://maasiso.nl` domain.

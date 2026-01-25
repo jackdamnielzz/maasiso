@@ -80,6 +80,10 @@
 ### SEO & Redirect Integrity (2026-01-25)
 - **WWW to non-WWW Redirect**: Implemented forced permanent redirect from `www.maasiso.nl` to `maasiso.nl` in `next.config.js`. This resolves content duplication and signal splitting issues.
 
+### Legacy URL Soft-404 Fixes (2026-01-25) ✅
+- **Permanent Redirects**: Added `/index.html` → `/` and `/algemene-voorwaarden` → `/terms-and-conditions` in [`src/middleware.ts`](src/middleware.ts).
+- **Garbage URL Handling**: Configured `/$` to return a real `404` (no redirect) via middleware to stop Soft 404 noise.
+
 ### ISO 45001 Landing + Diensten Redirects (2026-01-25)
 - **301 Redirects**: Added 7 legacy `/diensten/...` routes mapping 1-op-1 to their new service pages (incl. `/diensten/iso-45001`) in [`src/middleware.ts`](src/middleware.ts).
 - **New Landing Page**: Created `/iso-45001` placeholder with Dutch intro + contact CTA and canonical metadata in [`app/iso-45001/page.tsx`](app/iso-45001/page.tsx) and [`app/iso-45001/metadata.ts`](app/iso-45001/metadata.ts).
