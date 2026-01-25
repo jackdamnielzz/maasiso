@@ -2,24 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@/components/providers/NavigationProvider';
-import { search } from '@/lib/api';
-import { SearchParams, BlogPost, NewsArticle } from '@/lib/types';
+import { searchV2 } from '@/lib/api';
+import { SearchParamsV2, SearchScope, SearchResultsV2 } from '@/lib/types';
 import { validateSearchQuery, validateUrlParam } from '@/lib/validation';
 import { SearchResults } from './SearchResults';
 import SearchAnalytics from './SearchAnalytics';
 
-interface SearchData {
-  blogPosts: BlogPost[];
-  newsArticles: NewsArticle[];
-  pagination: {
-    blogTotal: number;
-    newsTotal: number;
-  };
-}
-
 export default function SearchPageClientWrapper() {
   const { searchParams } = useNavigation();
-  const [data, setData] = useState<SearchData | null>(null);
+  const [data, setData] = useState<SearchResultsV2 | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +31,7 @@ export default function SearchPageClientWrapper() {
         // Validate and collect all parameters
         const paramValidations = {
           type: params.get('type'),
+          scope: params.get('scope'),
           dateFrom: params.get('dateFrom'),
           dateTo: params.get('dateTo'),
           sort: params.get('sort'),
@@ -58,7 +50,7 @@ export default function SearchPageClientWrapper() {
         }
 
         // Additional type validations
-        if (validatedParams.type && !['blog', 'news'].includes(validatedParams.type)) {
+        if (validatedParams.type && !['blog', 'news', 'all'].includes(validatedParams.type)) {
           throw new Error('Invalid content type parameter');
         }
 
@@ -76,13 +68,12 @@ export default function SearchPageClientWrapper() {
         }
 
         // Construct API params
-        const apiParams: SearchParams = {
+        const apiParams: SearchParamsV2 = {
           query,
-          filters: {
-            contentType: validatedParams.type ? [validatedParams.type as 'blog' | 'news'] : undefined,
-            dateFrom: validatedParams.dateFrom,
-            dateTo: validatedParams.dateTo,
-          },
+          scope: (validatedParams.scope as SearchScope) || 'all',
+          contentType: (validatedParams.type as 'blog' | 'news' | 'all') || 'all',
+          dateFrom: validatedParams.dateFrom,
+          dateTo: validatedParams.dateTo,
           sort: validatedParams.sort ? {
             field: validatedParams.sort as 'date' | 'relevance' | 'title',
             direction: 'desc'
@@ -91,17 +82,10 @@ export default function SearchPageClientWrapper() {
           pageSize: 10
         };
 
-        // Fetch data
-        const results = await search(apiParams);
+        // Fetch data using searchV2
+        const results = await searchV2(apiParams);
 
-        setData({
-          blogPosts: results.blogPosts.data,
-          newsArticles: results.newsArticles.data,
-          pagination: {
-            blogTotal: results.blogPosts.meta.pagination.total,
-            newsTotal: results.newsArticles.meta.pagination.total
-          }
-        });
+        setData(results);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred while searching');
@@ -143,8 +127,8 @@ export default function SearchPageClientWrapper() {
   }
 
   const query = searchParams?.get('q') || '';
-  const totalResults = data.pagination.blogTotal + data.pagination.newsTotal;
-  const hasResults = data.blogPosts.length > 0 || data.newsArticles.length > 0;
+  const totalResults = data.meta.totalResults;
+  const hasResults = data.blog.length > 0 || data.news.length > 0;
 
   return (
     <main className="container mx-auto px-4 py-8 mt-[72px]">
@@ -159,22 +143,20 @@ export default function SearchPageClientWrapper() {
         }}
       />
       <h1 className="text-3xl font-bold text-[#091E42] mb-4">
-        Zoekresultaten voor &quot;{query}&quot;
+        Zoekresultaten voor "{query}"
       </h1>
 
       {!hasResults ? (
         <div className="bg-white rounded-lg shadow-lg p-6">
           <p className="text-[#091E42]/70">
-            Geen resultaten gevonden voor &quot;{query}&quot;. Probeer andere zoektermen of controleer de spelling.
+            Geen resultaten gevonden voor "{query}". Probeer andere zoektermen of controleer de spelling.
           </p>
         </div>
       ) : (
         <SearchResults
           query={query}
-          blogPosts={data.blogPosts}
-          newsArticles={data.newsArticles}
-          blogTotal={data.pagination.blogTotal}
-          newsTotal={data.pagination.newsTotal}
+          blog={data.blog}
+          news={data.news}
         />
       )}
     </main>
