@@ -4,7 +4,10 @@ import { monitoredFetch } from '@/lib/monitoredFetch';
 import { BlogPostContent } from '@/components/features/BlogPostContent';
 import RelatedPosts from '@/components/features/RelatedPosts';
 import ContentAnalytics from '@/components/features/ContentAnalytics';
-import { Category, BlogPost } from '@/lib/types';
+import TldrBlock from '@/components/features/TldrBlock';
+import FaqSection from '@/components/features/FaqSection';
+import AuthorBox from '@/components/features/AuthorBox';
+import { Category, BlogPost, Author } from '@/lib/types';
 import logger from '@/lib/logger';
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
 
@@ -140,17 +143,50 @@ export async function generateMetadata(
       };
     }
 
+    // Determine OG image (use ogImage if available, fallback to featuredImage)
+    const ogImageUrl = blogPost.ogImage?.url
+      ? constructImageUrl(blogPost.ogImage.url)
+      : constructImageUrl(blogPost.featuredImage?.url);
+
     return {
       title: blogPost.seoTitle || blogPost.title,
-      description: blogPost.seoDescription || getExcerpt(blogPost.content),
+      description: blogPost.seoDescription || blogPost.excerpt || getExcerpt(blogPost.content),
       keywords: blogPost.seoKeywords,
       openGraph: {
         title: blogPost.seoTitle || blogPost.title,
-        description: blogPost.seoDescription || getExcerpt(blogPost.content),
-        images: [constructImageUrl(blogPost.featuredImage?.url)],
+        description: blogPost.seoDescription || blogPost.excerpt || getExcerpt(blogPost.content),
+        images: [{
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: blogPost.featuredImageAltText || blogPost.title,
+        }],
+        type: 'article',
+        locale: 'nl_NL',
+        siteName: 'Maas ISO',
+        url: `https://maasiso.nl/blog/${resolvedParams.slug}`,
+        publishedTime: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
+        modifiedTime: blogPost.updatedAt,
+        authors: typeof blogPost.author === 'string'
+          ? [blogPost.author]
+          : blogPost.author?.name ? [blogPost.author.name] : ['Maas ISO'],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: blogPost.seoTitle || blogPost.title,
+        description: blogPost.seoDescription || blogPost.excerpt || getExcerpt(blogPost.content),
+        images: [ogImageUrl],
       },
       alternates: {
         canonical: `/blog/${resolvedParams.slug}`,
+      },
+      robots: {
+        index: blogPost.robotsIndex ?? true,
+        follow: blogPost.robotsFollow ?? true,
+        googleBot: {
+          index: blogPost.robotsIndex ?? true,
+          follow: blogPost.robotsFollow ?? true,
+        },
       },
     };
   } catch (error) {
@@ -180,22 +216,52 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const canonicalUrl = `https://maasiso.nl/blog/${blogPost.slug}`;
     const featuredImageUrl = constructImageUrl(blogPost.featuredImage?.url);
 
+    // Extract author details for schema
+    const authorName = typeof blogPost.author === 'string'
+      ? blogPost.author
+      : blogPost.author?.name || 'Niels Maas';
+
+    const authorId = typeof blogPost.author === 'object' && blogPost.author?.slug
+      ? `https://maasiso.nl/auteurs/${blogPost.author.slug}#person`
+      : 'https://maasiso.nl/over-niels-maas#author';
+
+    const authorJobTitle = typeof blogPost.author === 'object'
+      ? blogPost.author?.credentials
+      : undefined;
+
+    const authorImage = typeof blogPost.author === 'object'
+      ? blogPost.author?.profileImage?.url
+      : undefined;
+
+    const authorSameAs = typeof blogPost.author === 'object' && blogPost.author?.linkedIn
+      ? [blogPost.author.linkedIn]
+      : undefined;
+
     return (
       <div className="bg-white pb-16 relative z-0">
         <SchemaMarkup
           article={{
             headline: blogPost.title,
-            description: blogPost.seoDescription || getExcerpt(blogPost.content),
-            datePublished: blogPost.publishedAt || blogPost.createdAt,
+            description: blogPost.seoDescription || blogPost.excerpt || getExcerpt(blogPost.content),
+            datePublished: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
             dateModified: blogPost.updatedAt,
             author: {
-              name: "Niels Maas",
-              id: "https://maasiso.nl/over-niels-maas#author"
+              name: authorName,
+              id: authorId,
+              jobTitle: authorJobTitle,
+              image: authorImage,
+              sameAs: authorSameAs,
             },
-            publisherId: "https://maasiso.nl/#professionalservice",
+            publisherId: 'https://maasiso.nl/#professionalservice',
             mainEntityOfPage: canonicalUrl,
-            image: featuredImageUrl
+            image: featuredImageUrl,
           }}
+          faq={blogPost.faq && blogPost.faq.length > 0 ? {
+            questions: blogPost.faq.map(item => ({
+              question: item.question,
+              answer: item.answer
+            }))
+          } : undefined}
           breadcrumbs={{
             items: [
               { name: 'Home', item: 'https://maasiso.nl' },
@@ -210,12 +276,39 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           title={blogPost.title}
           metadata={{
             categories: blogPost.categories?.map((cat: Category) => cat.name) || [],
-            author: blogPost.author,
+            author: authorName,
             publishedAt: blogPost.publishedAt,
             readingTime,
           }}
         />
+
+        {/* TL;DR Section - appears before main content */}
+        {blogPost.tldr && blogPost.tldr.length > 0 && (
+          <div className="container mx-auto px-4 max-w-4xl mt-8">
+            <TldrBlock items={blogPost.tldr} />
+          </div>
+        )}
+
         <BlogPostContent post={blogPost} />
+
+        {/* FAQ Section */}
+        {blogPost.faq && blogPost.faq.length > 0 && (
+          <div className="container mx-auto px-4 max-w-4xl">
+            <FaqSection items={blogPost.faq} />
+          </div>
+        )}
+
+        {/* Author Box */}
+        <div className="container mx-auto px-4 max-w-4xl">
+          <AuthorBox author={blogPost.author} />
+        </div>
+
+        {/* Related Posts */}
+        {blogPost.relatedPosts && blogPost.relatedPosts.length > 0 && (
+          <div className="container mx-auto px-4 max-w-4xl">
+            <RelatedPosts posts={blogPost.relatedPosts} />
+          </div>
+        )}
       </div>
     );
   } catch (error) {

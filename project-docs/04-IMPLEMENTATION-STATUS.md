@@ -25,6 +25,12 @@
 - Canonical Tags Implementation: 100% ✅
 - Sitemap & SEO Verification Sync: 100% ✅
 - SEO Redirects Cleanup: 100% ✅
+- Claude Code Installation: 100% ✅
+- SEO/GEO Enhancement - Database Migration: 100% ✅
+- SEO/GEO Enhancement - Author Data Migration: 100% ✅
+- SEO/GEO Enhancement - Strapi Content-Type Schema: 100% ✅
+- SEO/GEO Enhancement - Full Author Relation: 100% ✅
+- SEO/GEO Enhancement - Phase 2 Complete: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -36,7 +42,61 @@
 - [x] Query validation and sanitization
 - [x] Paginated search results
 
-## Recent Updates (2026-01-25)
+## Recent Updates (2026-01-26)
+
+### SEO/GEO Enhancement - Phase 2 COMPLETE (2026-01-26) ✅
+- **Author Content Type**: Created and deployed to production Railway Strapi
+- **Author Profile**: "Niels Maas" created with:
+  - Full bio describing role and expertise
+  - Credentials: Lead Auditor for ISO 9001, 14001, 27001, 45001, 50001, 16175, VCA
+  - Expertise array: 12 areas including ISO standards, Kwaliteitsmanagement, Informatiebeveiliging, BIO, AI
+- **Blog Posts Linked**: All 36 blog posts connected to author via relation
+- **TL;DR Component**: Schema deployed and working (returns array of points)
+- **FAQ Component**: Schema deployed and ready (awaiting content)
+- **Railway Deployment**: Connected to GitHub for automatic deployments
+
+**Production API Verification:**
+- ✅ `/api/authors?populate=*` - Returns Niels Maas with full profile and linked blog posts
+- ✅ `/api/blog-posts?populate=author,tldr,faq` - Returns posts with all relations populated
+
+**Scripts Created:**
+- [`scripts/setup-production-author.js`](scripts/setup-production-author.js:1) - Creates author and links blog posts
+- [`scripts/link-blog-posts-to-author.js`](scripts/link-blog-posts-to-author.js:1) - Links posts to author
+
+### SEO/GEO Enhancement - Database Migration Completed (2026-01-26) ✅
+- **SQL Migration**: Created and executed [`scripts/strapi-db-migration.sql`](scripts/strapi-db-migration.sql:1) with all required tables.
+- **Runner**: Created [`scripts/run-strapi-migration.js`](scripts/run-strapi-migration.js:1) using `pg` to execute the SQL against Railway Postgres.
+- **Migration Executed**: Successfully migrated Railway PostgreSQL database.
+- **New Tables Created**:
+  - `authors` - Author profiles with bio, credentials, expertise
+  - `components_blog_tldr_items` - TL;DR summary items
+  - `components_blog_faq_items` - FAQ question/answer pairs
+  - Link tables for component relationships
+- **New Columns**: Added to `blog_posts` table for SEO/GEO fields.
+- **API Status**: `/api/authors` endpoint now returns 200 (was 404 before).
+
+### Author Data Migration (2026-01-26) ✅
+- **Script**: Created [`scripts/migrate-authors.js`](scripts/migrate-authors.js:1) to update blog posts.
+- **Execution**: Updated all 36 blog posts with Author="Niels Maas".
+- **Idempotent**: Script is safe to run multiple times.
+
+### Important Finding: Schema Architecture
+- **Current State**: Strapi schema has `Author` as a **string field**, not a relation.
+- **Database Ready**: Tables exist for full author relation.
+- **Next Step**: Update Strapi content-type schema in `maasiso-strapi-railway` repository.
+- **Impact**: Full author features (bio, credentials, expertise) require Strapi schema update and redeploy.
+
+### Strapi Database Migration Scripts (2026-01-26) ✅
+- **SQL Migration**: Added [`scripts/strapi-db-migration.sql`](scripts/strapi-db-migration.sql:1) to create missing tables, link tables, and new Blog Post columns.
+- **Runner**: Added [`scripts/run-strapi-migration.js`](scripts/run-strapi-migration.js:1) using `pg` to execute the SQL against Railway Postgres.
+- **Status**: ✅ Migration executed successfully.
+
+### Claude Code Installation (2026-01-26) ✅
+- **Installation**: Successfully installed Claude Code version 2.1.19 to `C:\Users\niels\.local\bin`.
+- **PATH Configuration**: Added the installation directory to the User PATH environment variable.
+- **Verification**: Verified accessibility via `claude --version`.
+
+## Previous Updates (2026-01-25)
 
 ### Sitemap URL Formatting Fix (2026-01-25) ✅
 - **Normalization**: Added URL normalization helpers to guarantee clean `<loc>` values (trim base/path/result, single `/` separator).

@@ -53,8 +53,41 @@
   - [x] Implemented canonical tags for all static pages
   - [x] Implemented canonical tags for dynamic routes (`blog/[slug]`, `news/[slug]`)
   - [x] Verified non-WWW and no trailing slash consistency
+- [x] **Claude Code Installation** (2026-01-26) ✅
+  - [x] Installed Claude Code v2.1.19
+  - [x] Configured User PATH environment variable
+- [x] **SEO/GEO Enhancement - Database Migration** (2026-01-26) ✅
+  - [x] Created SQL migration script with all required tables
+  - [x] Created Node.js runner script for migration execution
+  - [x] Successfully migrated Railway PostgreSQL database
+  - [x] New tables: `authors`, `components_blog_tldr_items`, `components_blog_faq_items`
+  - [x] `/api/authors` endpoint now returns 200
+- [x] **SEO/GEO Enhancement - Author Data Migration** (2026-01-26) ✅
+  - [x] Created [`scripts/migrate-authors.js`](scripts/migrate-authors.js:1)
+  - [x] Updated all 36 blog posts with Author="Niels Maas"
+- [x] **SEO/GEO Enhancement - Strapi Content-Type Schema** (2026-01-26) ✅
+  - [x] Update Strapi content-type schema in `maasiso-strapi-railway` repository
+  - [x] Push changes to GitHub to trigger Railway redeploy
+- [x] **SEO/GEO Enhancement - Full Author Relation** (2026-01-26) ✅
+  - [x] Create author entries via Strapi Admin UI (Niels Maas created)
+  - [x] Update blog posts to use author relation instead of string
+  - [x] All 36 blog posts linked to author
+- [x] **SEO/GEO Enhancement - Phase 2 COMPLETE** (2026-01-26) ✅
+  - [x] Author content type deployed to production
+  - [x] TL;DR and FAQ components added to blog-post schema
+  - [x] Production API verified working
+  - [x] Railway connected to GitHub for automatic deployments
 
 ## Recent Changes
+- MILESTONE: SEO/GEO Enhancement Phase 2 COMPLETE (2026-01-26)
+- COMPLETED: Author "Niels Maas" created with full bio, credentials, 12 expertise areas
+- COMPLETED: All 36 blog posts linked to author relation
+- COMPLETED: TL;DR component schema deployed and working
+- COMPLETED: FAQ component schema deployed and ready
+- COMPLETED: Production API verification passed - all endpoints working
+- COMPLETED: Database migration executed successfully against Railway PostgreSQL.
+- COMPLETED: Created and ran author migration script - all 36 blog posts updated.
+- COMPLETED: Installed Claude Code 2.1.19 and configured environment variables for global access.
 - COMPLETED: Deployed latest changes to Git repository, including sitemap normalization, verification scripts, and removal of test pages.
 - COMPLETED: Added 301 redirects for `/contact.html` and `/blog/iso-27001-checklist` to remove "crawled not indexed" noise.
 - COMPLETED: Added 7 301 redirects for legacy `/diensten/...` URLs to their new service pages (incl. `/diensten/iso-45001`).

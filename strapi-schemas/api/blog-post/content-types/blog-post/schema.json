@@ -1,0 +1,163 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_posts",
+  "info": {
+    "singularName": "blog-post",
+    "pluralName": "blog-posts",
+    "displayName": "Blog Post",
+    "description": "Blog posts with complete SEO/GEO optimization for traditional and AI-powered search"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "excerpt": {
+      "type": "text",
+      "required": true,
+      "maxLength": 160,
+      "description": "Short summary for listings, meta description fallback, and AI snippeting"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "blog_posts",
+      "required": true
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "blog_posts"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "blog_posts"
+    },
+    "featuredImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "featuredImageAltText": {
+      "type": "string",
+      "required": true,
+      "maxLength": 125,
+      "description": "Accessibility and image SEO"
+    },
+    "seoTitle": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Custom meta title, fallback to title if empty"
+    },
+    "seoDescription": {
+      "type": "text",
+      "maxLength": 160,
+      "description": "Custom meta description, fallback to excerpt if empty"
+    },
+    "seoKeywords": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "publicationDate": {
+      "type": "datetime",
+      "required": true,
+      "description": "Original publish date for schema.org"
+    },
+    "tldr": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blog.tldr-item",
+      "required": true,
+      "min": 3,
+      "max": 7,
+      "description": "Key takeaways block for AI citation optimization"
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": true,
+      "component": "blog.faq-item",
+      "description": "FAQ section for PAA and FAQPage schema"
+    },
+    "relatedPosts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::blog-post.blog-post",
+      "description": "Manual internal linking for topical authority"
+    },
+    "schemaType": {
+      "type": "enumeration",
+      "enum": ["Article", "HowTo", "FAQPage"],
+      "default": "Article",
+      "required": true,
+      "description": "Determines which JSON-LD schema to generate"
+    },
+    "primaryKeyword": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Target keyword for SEMrush tracking"
+    },
+    "searchIntent": {
+      "type": "enumeration",
+      "enum": ["Informational", "Commercial", "Transactional"],
+      "default": "Informational",
+      "description": "Content template selection and analytics"
+    },
+    "ctaVariant": {
+      "type": "enumeration",
+      "enum": ["contact", "download", "newsletter", "none"],
+      "default": "none",
+      "description": "Dynamic CTA selection per post"
+    },
+    "robotsIndex": {
+      "type": "boolean",
+      "default": true,
+      "description": "Control search engine indexing per post"
+    },
+    "robotsFollow": {
+      "type": "boolean",
+      "default": true,
+      "description": "Control link following per post"
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Override Open Graph image if different from featured"
+    },
+    "videoUrl": {
+      "type": "string",
+      "regex": "^(https?:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.be|vimeo\\.com)\\/.*$",
+      "description": "YouTube/Vimeo URL for posts with video"
+    },
+    "videoTitle": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Video title for VideoObject schema"
+    },
+    "videoDuration": {
+      "type": "string",
+      "maxLength": 20,
+      "regex": "^PT[0-9HhMmSs]+$",
+      "description": "Video duration in ISO 8601 format (e.g., PT5M30S)"
+    }
+  }
+}

@@ -37,6 +37,9 @@ type ArticleSchema = {
   author: {
     name: string;
     id?: string;
+    jobTitle?: string;
+    image?: string;
+    sameAs?: string[];
   };
   publisherId: string;
   mainEntityOfPage: string;
@@ -119,6 +122,24 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
 
   // Add Article schema if provided
   if (article) {
+    // Build author object with optional fields
+    const authorSchema: any = {
+      '@type': 'Person',
+      '@id': article.author.id,
+      name: article.author.name
+    };
+
+    // Add optional author fields if provided
+    if (article.author.jobTitle) {
+      authorSchema.jobTitle = article.author.jobTitle;
+    }
+    if (article.author.image) {
+      authorSchema.image = article.author.image;
+    }
+    if (article.author.sameAs && article.author.sameAs.length > 0) {
+      authorSchema.sameAs = article.author.sameAs;
+    }
+
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
@@ -126,19 +147,26 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
       description: article.description,
       datePublished: article.datePublished,
       dateModified: article.dateModified,
-      author: {
-        '@type': 'Person',
-        '@id': article.author.id,
-        name: article.author.name
-      },
+      author: authorSchema,
       publisher: {
-        '@id': article.publisherId
+        '@type': 'Organization',
+        '@id': article.publisherId,
+        name: 'Maas ISO',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://maasiso.nl/logo.png',
+          width: 600,
+          height: 60
+        }
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': article.mainEntityOfPage
       },
-      image: article.image
+      image: {
+        '@type': 'ImageObject',
+        url: article.image
+      }
     });
   }
 

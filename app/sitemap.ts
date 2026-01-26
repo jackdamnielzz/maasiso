@@ -227,24 +227,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${newsResult.articles.length} news articles, ${whitepaperResult.whitepapers.data.length} whitepapers, ${pagesData.length} pages`);
 
     // Map Blog Posts
+    // Use updatedAt as priority for freshness signals (important for SEO)
     const blogEntries: MetadataRoute.Sitemap = blogResult.posts
       .filter(post => post.slug)
       .filter(post => !REMOVED_PATHS.has(`/blog/${normalizeSlug(post.slug)}`))
       .map(post => ({
         url: buildUrl(baseUrl, `/blog/${normalizeSlug(post.slug)}`),
-        lastModified: new Date(post.publishedAt || post.updatedAt || new Date()),
-        changeFrequency: 'weekly',
-        priority: 0.6,
+        lastModified: new Date(post.updatedAt || post.publishedAt || new Date()),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
       }));
 
     // Map News Articles
+    // Use updatedAt as priority for freshness signals (important for SEO)
     const newsEntries: MetadataRoute.Sitemap = newsResult.articles
       .filter(article => article.slug)
       .filter(article => !REMOVED_PATHS.has(`/news/${normalizeSlug(article.slug)}`))
       .map(article => ({
         url: buildUrl(baseUrl, `/news/${normalizeSlug(article.slug)}`),
-        lastModified: new Date(article.publishedAt || article.updatedAt || new Date()),
-        changeFrequency: 'weekly',
+        lastModified: new Date(article.updatedAt || article.publishedAt || new Date()),
+        changeFrequency: 'weekly' as const,
         priority: 0.6,
       }));
 

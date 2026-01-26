@@ -169,30 +169,133 @@ function mapBlogPost(data: any | null): BlogPost | null {
     return null;
   }
 
-  // Zorg dat featuredImage altijd een vlakke structuur krijgt
-  let rawImage = data.featuredImage;
-  if (rawImage && rawImage.data && rawImage.data.attributes) {
-    rawImage = { id: rawImage.data.id, ...rawImage.data.attributes };
-  }
+  // Helper to flatten Strapi media fields
+  const flattenMedia = (media: any) => {
+    if (!media) return undefined;
+    if (media.data && media.data.attributes) {
+      return { id: media.data.id, ...media.data.attributes };
+    }
+    return media;
+  };
+
+  // Helper to map author (can be string or relation)
+  const mapAuthor = (authorData: any) => {
+    // Backward compatibility: if it's a string, return as-is
+    if (typeof authorData === 'string') {
+      return authorData;
+    }
+
+    // If it's a relation with data
+    if (authorData?.data?.attributes) {
+      const attr = authorData.data.attributes;
+      return {
+        id: String(authorData.data.id),
+        name: attr.name || '',
+        slug: attr.slug || '',
+        bio: attr.bio || '',
+        credentials: attr.credentials,
+        expertise: attr.expertise,
+        profileImage: attr.profileImage ? flattenMedia(attr.profileImage) : undefined,
+        linkedIn: attr.linkedIn,
+        email: attr.email,
+        createdAt: attr.createdAt || new Date().toISOString(),
+        updatedAt: attr.updatedAt || new Date().toISOString(),
+        publishedAt: attr.publishedAt,
+      };
+    }
+
+    return undefined;
+  };
+
+  // Map related posts if they exist
+  const mapRelatedPosts = (relatedData: any) => {
+    if (!relatedData?.data || !Array.isArray(relatedData.data)) {
+      return [];
+    }
+
+    return relatedData.data.map((post: any) => ({
+      id: String(post.id),
+      title: post.attributes?.title || '',
+      slug: post.attributes?.slug || '',
+      excerpt: post.attributes?.excerpt,
+      featuredImage: post.attributes?.featuredImage
+        ? flattenMedia(post.attributes.featuredImage)
+        : undefined,
+      createdAt: post.attributes?.createdAt || new Date().toISOString(),
+      updatedAt: post.attributes?.updatedAt || new Date().toISOString(),
+      publishedAt: post.attributes?.publishedAt,
+    }));
+  };
 
   return {
     id: String(data.id),
     title: data.title || 'Untitled',
-    content: data.Content || data.content || '',
-    summary: data.summary || '',
     slug: data.slug || '',
+    content: data.Content || data.content || '',
+    excerpt: data.excerpt,
+
+    // Author (backward compatible)
+    author: mapAuthor(data.author || data.Author),
+
+    // Dates
     createdAt: data.createdAt || new Date().toISOString(),
     updatedAt: data.updatedAt || new Date().toISOString(),
     publishedAt: data.publishedAt,
+    publicationDate: data.publicationDate,
+
+    // SEO fields
     seoTitle: data.seoTitle || data.title || 'Untitled',
     seoDescription: data.seoDescription || '',
     seoKeywords: data.seoKeywords || '',
-    author: data.Author || '',
-    tags: Array.isArray(data.tags) ? data.tags.map((tag: any) => ({
-      id: String(tag.id),
-      name: tag.name || ''
-    })) : [],
-    featuredImage: rawImage ? mapImage(rawImage) : undefined
+    primaryKeyword: data.primaryKeyword,
+
+    // Relations
+    tags: Array.isArray(data.tags)
+      ? data.tags.map((tag: any) => ({
+          id: String(tag.id || tag.documentId),
+          name: tag.name || '',
+          slug: tag.slug || '',
+          description: tag.description,
+          createdAt: tag.createdAt || new Date().toISOString(),
+          updatedAt: tag.updatedAt || new Date().toISOString(),
+          publishedAt: tag.publishedAt,
+        }))
+      : [],
+    categories: Array.isArray(data.categories)
+      ? data.categories.map((cat: any) => ({
+          id: String(cat.id || cat.documentId),
+          name: cat.name || '',
+          slug: cat.slug || '',
+          description: cat.description || '',
+          createdAt: cat.createdAt || new Date().toISOString(),
+          updatedAt: cat.updatedAt || new Date().toISOString(),
+          publishedAt: cat.publishedAt,
+        }))
+      : [],
+    relatedPosts: mapRelatedPosts(data.relatedPosts),
+
+    // Images
+    featuredImage: flattenMedia(data.featuredImage),
+    featuredImageAltText: data.featuredImageAltText,
+    ogImage: flattenMedia(data.ogImage),
+
+    // Components
+    tldr: data.tldr || [],
+    faq: data.faq || [],
+
+    // Schema and categorization
+    schemaType: data.schemaType,
+    searchIntent: data.searchIntent,
+    ctaVariant: data.ctaVariant,
+
+    // Robots directives
+    robotsIndex: data.robotsIndex ?? true,
+    robotsFollow: data.robotsFollow ?? true,
+
+    // Video fields
+    videoUrl: data.videoUrl,
+    videoTitle: data.videoTitle,
+    videoDuration: data.videoDuration,
   };
 }
 

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_blog_faq_items",
+  "info": {
+    "displayName": "FaqItem",
+    "description": "FAQ question and answer pair - optimized for Google's People Also Ask and FAQPage schema",
+    "icon": "question-circle"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "answer": {
+      "type": "text",
+      "required": true,
+      "maxLength": 1000
+    }
+  }
+}

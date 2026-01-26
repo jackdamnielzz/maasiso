@@ -1,4 +1,46 @@
-# Active Context - Redesign Cycle (Onze Voordelen & Over Ons)
+# Active Context - SEO/GEO Enhancement Project
+
+## Current Status (2026-01-26)
+
+### SEO/GEO Enhancement - Phase 2 COMPLETE ✅
+
+**Completed:**
+- Author content type created and deployed to production
+- Author "Niels Maas" created with full bio, credentials, expertise
+- All 36 blog posts linked to author
+- TL;DR and FAQ components added to blog-post schema
+- Railway connected to GitHub for automatic deployments
+
+**API Endpoints Working:**
+- `/api/authors` - Returns author data (Niels Maas with full profile)
+- `/api/blog-posts?populate=author,tldr,faq` - Returns posts with all relations
+
+**Production Verification (2026-01-26):**
+- ✅ Authors endpoint: Returns Niels Maas with bio, credentials, 12 expertise areas
+- ✅ Blog posts: All 36 posts linked to author (documentId: `l0hgoajocoeqk2zlfb2s1gmr`)
+- ✅ TL;DR component: Returns array of points (visible in blog posts)
+- ✅ FAQ component: Schema ready (empty arrays until content added)
+
+**Next Steps:**
+- Add meaningful TL;DR content to blog posts (currently placeholder text)
+- Add FAQ content to blog posts
+- Test frontend AuthorBox, TldrBlock, FaqSection components with production data
+- Add profileImage to author via Strapi Admin UI
+
+---
+
+## Previous: Strapi Database Migration & Author Setup (2026-01-26)
+- **Goal**: Apply missing Strapi schema changes directly to Railway PostgreSQL.
+- **Status**: ✅ COMPLETED - Database migration executed successfully.
+- **Accomplishments**:
+  - Created and executed [`scripts/strapi-db-migration.sql`](scripts/strapi-db-migration.sql:1) with all required tables
+  - Created [`scripts/run-strapi-migration.js`](scripts/run-strapi-migration.js:1) to execute the migration
+  - Successfully migrated Railway PostgreSQL database
+  - New tables: `authors`, `components_blog_tldr_items`, `components_blog_faq_items`, link tables
+  - New columns added to `blog_posts` table
+  - `/api/authors` endpoint now returns 200 (was 404 before)
+  - Created [`scripts/migrate-authors.js`](scripts/migrate-authors.js:1) to update blog posts
+  - Updated all 36 blog posts with Author="Niels Maas"
 
 ## Recently Completed: Canonical Tags Implementation (2026-01-25)
 - **Metadata Base**: Set `metadataBase` to `https://maasiso.nl` in `app/layout.tsx`.
@@ -160,3 +202,8 @@
 ## Recently Completed: Redirect Cleanup (2026-01-25)
 - **Legacy HTML Redirect**: Added 301 redirect for `/contact.html` to `/contact` via `src/middleware.ts`.
 - **Blog Content Redirect**: Added 301 redirect for `/blog/iso-27001-checklist` to `/blog/iso-27001-checklist-augustus-2025` to resolve "crawled not indexed" issues.
+
+## Recently Completed: Claude Code Installation (2026-01-26)
+- **Installation**: Successfully installed Claude Code version 2.1.19.
+- **Environment Configuration**: Added `C:\Users\niels\.local\bin` to the User PATH environment variable to allow global access to the `claude` command.
+- **Verification**: Confirmed successful installation and PATH configuration by running `claude --version`.

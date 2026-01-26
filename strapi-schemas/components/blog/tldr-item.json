@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_blog_tldr_items",
+  "info": {
+    "displayName": "TldrItem",
+    "description": "Key takeaway point for TL;DR sections - optimized for AI citations and featured snippets",
+    "icon": "bolt"
+  },
+  "options": {},
+  "attributes": {
+    "point": {
+      "type": "text",
+      "required": true,
+      "maxLength": 300
+    }
+  }
+}

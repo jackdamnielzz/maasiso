@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "authors",
+  "info": {
+    "singularName": "author",
+    "pluralName": "authors",
+    "displayName": "Author",
+    "description": "Author profiles with E-E-A-T optimization for SEO"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "unique": false
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "bio": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "credentials": {
+      "type": "string",
+      "maxLength": 150
+    },
+    "expertise": {
+      "type": "json",
+      "description": "Array of expertise areas like [\"ISO 9001\", \"ISO 27001\"]"
+    },
+    "profileImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "linkedIn": {
+      "type": "string",
+      "regex": "^(https?:\\/\\/)?(www\\.)?linkedin\\.com\\/(in|pub)\\/[a-zA-Z0-9-]+\\/?$"
+    },
+    "email": {
+      "type": "email"
+    },
+    "blog_posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-post.blog-post",
+      "mappedBy": "author"
+    }
+  }
+}

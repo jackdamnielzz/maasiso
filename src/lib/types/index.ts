@@ -36,18 +36,97 @@ export interface Category extends BaseModel {
   description: string;
 }
 
-// Blog post types
+// Author type
+export interface Author extends BaseModel {
+  name: string;
+  slug: string;
+  bio: string;
+  credentials?: string;
+  expertise?: string[];
+  profileImage?: Image;
+  linkedIn?: string;
+  email?: string;
+}
+
+// Blog post component types
+export interface TldrItem {
+  id?: string;
+  point: string;
+}
+
+export interface FaqItem {
+  id?: string;
+  question: string;
+  answer: string;
+}
+
+// Blog post enums
+export enum SchemaType {
+  ARTICLE = 'Article',
+  HOWTO = 'HowTo',
+  FAQPAGE = 'FAQPage'
+}
+
+export enum SearchIntent {
+  INFORMATIONAL = 'Informational',
+  COMMERCIAL = 'Commercial',
+  TRANSACTIONAL = 'Transactional'
+}
+
+export enum CtaVariant {
+  CONTACT = 'contact',
+  DOWNLOAD = 'download',
+  NEWSLETTER = 'newsletter',
+  NONE = 'none'
+}
+
+// Enhanced Blog post type with all SEO/GEO fields
 export interface BlogPost extends BaseModel {
+  // Core content fields
   title: string;
   slug: string;
   content: string;
-  author: string | undefined;
+  excerpt?: string;
+
+  // Author (can be string for backward compatibility or Author object for new structure)
+  author?: string | Author;
+
+  // Relations
   tags: Tag[];
   categories?: Category[];
+  relatedPosts?: BlogPost[];
+
+  // SEO fields
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  primaryKeyword?: string;
+
+  // Images
   featuredImage?: Image;
+  featuredImageAltText?: string;
+  ogImage?: Image;
+
+  // Dates
+  publicationDate?: string;
+
+  // Components
+  tldr?: TldrItem[];
+  faq?: FaqItem[];
+
+  // Schema and intent
+  schemaType?: SchemaType | string;
+  searchIntent?: SearchIntent | string;
+  ctaVariant?: CtaVariant | string;
+
+  // Robots directives
+  robotsIndex?: boolean;
+  robotsFollow?: boolean;
+
+  // Video fields
+  videoUrl?: string;
+  videoTitle?: string;
+  videoDuration?: string;
 }
 
 export interface PaginatedBlogPosts {
