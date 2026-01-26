@@ -55,7 +55,7 @@ export function AuthorBox({ author, className = '' }: AuthorBoxProps) {
             <Link href={authorUrl} aria-label={`Bekijk profiel van ${author.name}`}>
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-2 ring-blue-100 hover:ring-blue-300 transition-all duration-200">
                 <Image
-                  src={author.profileImage.url}
+                  src={author.profileImage!.url}
                   alt={author.name}
                   fill
                   className="object-cover"

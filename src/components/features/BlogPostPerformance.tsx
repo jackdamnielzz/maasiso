@@ -40,7 +40,7 @@ export default function BlogPostPerformance({ post }: BlogPostPerformanceProps) 
             metadata={{
               tags: post.tags?.map(tag => tag.name) || [],
               categories: post.categories?.map(category => category.name) || [],
-              author: post.author,
+              author: typeof post.author === 'string' ? post.author : post.author?.name,
               publishedAt: post.publishedAt,
               readingTime: Math.ceil(post.content.split(/\s+/).length / 200)
             }}

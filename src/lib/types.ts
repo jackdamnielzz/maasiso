@@ -121,6 +121,40 @@ export interface Category {
 }
 
 /**
+ * Author content type - normalized structure
+ * Used for E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)
+ */
+export interface Author {
+  id: number | string;
+  documentId?: string;
+  name: string;
+  slug: string;
+  bio?: string;
+  credentials?: string;
+  expertise?: string[];
+  linkedIn?: string;
+  email?: string;
+  profileImage?: Image;
+}
+
+/**
+ * TL;DR item for blog posts
+ */
+export interface TldrItem {
+  id: number;
+  point: string;
+}
+
+/**
+ * FAQ item for blog posts
+ */
+export interface FaqItem {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+/**
  * Whitepaper type
  */
 export interface Whitepaper extends BaseContent {
@@ -146,13 +180,28 @@ export interface ContentMetadata {
 export interface BlogPost extends BaseContent {
   content: string;
   summary?: string;
+  excerpt?: string;
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  primaryKeyword?: string;
   featuredImage?: Image;
+  featuredImageAltText?: string;
+  ogImage?: Image;
   tags?: Tag[];
   categories?: Category[];
-  author?: string;
+  author?: Author | string;
+  tldr?: TldrItem[];
+  faq?: FaqItem[];
+  relatedPosts?: BlogPost[];
+  robotsIndex?: boolean;
+  robotsFollow?: boolean;
+  schemaType?: string;
+  searchIntent?: string;
+  ctaVariant?: string;
+  videoUrl?: string;
+  videoTitle?: string;
+  videoDuration?: string;
 }
 
 /**

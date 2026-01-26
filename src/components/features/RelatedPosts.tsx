@@ -7,15 +7,29 @@ import Link from 'next/link';
 import { formatDate } from '../../lib/utils';
 
 interface RelatedPostsProps {
-  currentSlug: string;
+  currentSlug?: string;
   categoryIds?: string[];
+  posts?: BlogPost[];
 }
 
-export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsProps) {
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function RelatedPosts({ currentSlug, categoryIds, posts }: RelatedPostsProps) {
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>(posts || []);
+  const [loading, setLoading] = useState(!posts);
 
   useEffect(() => {
+    // If posts are provided directly, use them
+    if (posts && posts.length > 0) {
+      setRelatedPosts(posts);
+      setLoading(false);
+      return;
+    }
+
+    // If no currentSlug, skip fetching
+    if (!currentSlug) {
+      setLoading(false);
+      return;
+    }
+
     async function fetchRelatedPosts() {
       try {
         // Use the proxy API endpoint instead of directly accessing Strapi
@@ -41,7 +55,7 @@ export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsP
           return;
         }
 
-        const posts = data.data
+        const fetchedPosts = data.data
           .filter((post: any) => post && post.attributes && post.attributes.title)
           .map((post: any) => ({
             id: post.id,
@@ -57,7 +71,7 @@ export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsP
             } : undefined
           }));
 
-        setRelatedPosts(posts);
+        setRelatedPosts(fetchedPosts);
       } catch (error) {
         console.error('Error fetching related posts:', error);
       } finally {
@@ -66,7 +80,7 @@ export default function RelatedPosts({ currentSlug, categoryIds }: RelatedPostsP
     }
 
     fetchRelatedPosts();
-  }, [currentSlug]);
+  }, [currentSlug, posts]);
 
   if (loading) {
     return <div>Loading related posts...</div>;

@@ -86,7 +86,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
                 <>
                   <span className="text-[#091E42]/40">•</span>
                   <span className="font-medium">
-                    {post.author}
+                    {typeof post.author === 'string' ? post.author : post.author.name}
                   </span>
                 </>
               )}
