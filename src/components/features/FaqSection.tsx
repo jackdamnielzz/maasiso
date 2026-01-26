@@ -9,6 +9,36 @@ interface FaqSectionProps {
 }
 
 /**
+ * Parse markdown bold (**text**) into React elements
+ * @param text - Text that may contain **bold** markers
+ * @returns React nodes with bold text rendered as <strong>
+ */
+function parseMarkdownBold(text: string): React.ReactNode {
+  if (!text || !text.includes('**')) {
+    return text;
+  }
+  
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return parts.map((part, index) =>
+    index % 2 === 1 ? <strong key={index}>{part}</strong> : part
+  );
+}
+
+/**
+ * Convert markdown bold (**text**) to HTML bold (<strong>text</strong>)
+ * Used for dangerouslySetInnerHTML contexts
+ * @param text - Text that may contain **bold** markers
+ * @returns Text with <strong> HTML tags instead of ** markers
+ */
+function markdownBoldToHtml(text: string): string {
+  if (!text || !text.includes('**')) {
+    return text;
+  }
+  
+  return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+/**
  * FaqSection component displays frequently asked questions
  * Optimized for:
  * - People Also Ask (PAA) boxes in Google
@@ -71,7 +101,7 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                 className="w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
               >
                 <span itemProp="name" className="pr-8">
-                  {item.question}
+                  {parseMarkdownBold(item.question)}
                 </span>
                 <svg
                   className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
@@ -107,7 +137,7 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                   <div
                     itemProp="text"
                     className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: item.answer }}
+                    dangerouslySetInnerHTML={{ __html: markdownBoldToHtml(item.answer) }}
                   />
                 </div>
               </div>

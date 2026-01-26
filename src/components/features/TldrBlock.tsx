@@ -9,6 +9,22 @@ interface TldrBlockProps {
 }
 
 /**
+ * Parse markdown bold (**text**) into React elements
+ * @param text - Text that may contain **bold** markers
+ * @returns React nodes with bold text rendered as <strong>
+ */
+function parseMarkdownBold(text: string): React.ReactNode {
+  if (!text || !text.includes('**')) {
+    return text;
+  }
+  
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return parts.map((part, index) =>
+    index % 2 === 1 ? <strong key={index}>{part}</strong> : part
+  );
+}
+
+/**
  * TldrBlock component displays a "TL;DR" (Too Long; Didn't Read) summary
  * Optimized for AI citation and featured snippets in search engines
  * Includes semantic markup for better crawling by AI-powered search
@@ -74,7 +90,7 @@ export function TldrBlock({ items, className = '' }: TldrBlockProps) {
               />
             </svg>
             <span className="flex-1 leading-relaxed">
-              {item.point}
+              {parseMarkdownBold(item.point)}
             </span>
           </li>
         ))}

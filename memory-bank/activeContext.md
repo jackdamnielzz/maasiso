@@ -2,6 +2,17 @@
 
 ## Current Status (2026-01-26)
 
+### TL;DR Position & Markdown Rendering FIXED ✅
+
+**Fixed (2026-01-26 23:28):**
+- Moved TL;DR block from above the page to inside [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71), positioned directly after "Terug naar Blog" link
+- Added `parseMarkdownBold()` function to [`TldrBlock.tsx`](src/components/features/TldrBlock.tsx:15) to render `**bold**` as `<strong>bold</strong>`
+- Added `parseMarkdownBold()` and `markdownBoldToHtml()` functions to [`FaqSection.tsx`](src/components/features/FaqSection.tsx:15) for both question and answer fields
+- Updated [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:31) to accept `tldrItems` prop and render TldrBlock component
+- Removed duplicate TldrBlock rendering from [`app/blog/[slug]/page.tsx`](app/blog/[slug]/page.tsx:285)
+
+**Build Status:** ✅ PASSING (`npm run build` completed successfully)
+
 ### TypeScript Build Errors FIXED ✅
 
 **Fixed (2026-01-26 22:28):**
@@ -14,7 +25,7 @@
 - Fixed [`BlogPostPerformance.tsx`](src/components/features/BlogPostPerformance.tsx:43) author type handling
 - Changed `TldrItem.text` to `TldrItem.point` to match component usage
 
-**Build Status:** ✅ PASSING (`npm run build` completed successfully)
+**Build Status:** ✅ PASSING
 
 ### SEO/GEO Enhancement - Phase 2 COMPLETE ✅
 

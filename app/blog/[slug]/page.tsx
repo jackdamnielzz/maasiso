@@ -282,14 +282,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           }}
         />
 
-        {/* TL;DR Section - appears before main content */}
-        {blogPost.tldr && blogPost.tldr.length > 0 && (
-          <div className="container mx-auto px-4 max-w-4xl mt-8">
-            <TldrBlock items={blogPost.tldr} />
-          </div>
-        )}
-
-        <BlogPostContent post={blogPost} />
+        <BlogPostContent post={blogPost} tldrItems={blogPost.tldr} />
 
         {/* FAQ Section */}
         {blogPost.faq && blogPost.faq.length > 0 && (

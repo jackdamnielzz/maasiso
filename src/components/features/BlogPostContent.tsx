@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { getBlogPosts } from '@/lib/api';
 import Link from 'next/link';
-import { BlogPost } from '../../lib/types';
+import { BlogPost, TldrItem } from '../../lib/types';
 import dynamic from 'next/dynamic';
 import LazyImage from '../common/LazyImage';
 import ErrorBoundary from '../common/ErrorBoundary';
 import ScrollToTop from '../common/ScrollToTop';
 import BackToBlog from '../common/BackToBlog';
+import TldrBlock from './TldrBlock';
 import remarkGfm from 'remark-gfm';
 
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
@@ -26,9 +27,10 @@ function preprocessContent(content: string): string {
 
 interface BlogPostContentProps {
   post: BlogPost;
+  tldrItems?: TldrItem[];
 }
 
-export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
+export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItems }) => {
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
         <article className="flex-1 lg:px-6 relative z-0 transform-gpu">
           <Link
             href="/blog"
-            className="inline-flex items-center text-[#0052CC] hover:text-[#0065FF] mb-12 mt-4 group transition-colors duration-200"
+            className="inline-flex items-center text-[#0052CC] hover:text-[#0065FF] mb-8 mt-4 group transition-colors duration-200"
           >
             <svg
               className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
@@ -67,6 +69,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post }) => {
             </svg>
             Terug naar Blog
           </Link>
+          
+          {/* TL;DR Section - positioned after "Terug naar Blog" link */}
+          {tldrItems && tldrItems.length > 0 && (
+            <TldrBlock items={tldrItems} className="mb-8" />
+          )}
           
           <header className="mb-16">
             <h1 className="text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold text-[#091E42] mb-8 leading-[1.2] break-words hyphens-auto max-w-[90%]">
