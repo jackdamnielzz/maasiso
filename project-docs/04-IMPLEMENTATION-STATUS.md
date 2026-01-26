@@ -44,6 +44,16 @@
 
 ## Recent Updates (2026-01-26)
 
+### TL;DR Position + Markdown Bold Rendering (2026-01-26) ✅
+- **TL;DR placement**: Moved TL;DR block to render directly under "Terug naar Blog" inside [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71).
+- **Markdown bold rendering**: Added `parseMarkdownBold()` for TL;DR in [`TldrBlock.tsx`](src/components/features/TldrBlock.tsx:15) and bold parsing utilities in [`FaqSection.tsx`](src/components/features/FaqSection.tsx:15) so `**bold**` is rendered correctly.
+- **Cleanup**: Removed duplicate TL;DR rendering from [`app/blog/[slug]/page.tsx`](app/blog/[slug]/page.tsx:285).
+- **Build**: ✅ Successful.
+- **Commit**: `3d5dba8`.
+
+### TL;DR Position Adjustment (2026-01-26) ✅
+- **TL;DR placement**: Now renders between the featured image and the intro content in [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:103).
+
 ### SEO/GEO Enhancement - Phase 2 COMPLETE (2026-01-26) ✅
 - **Author Content Type**: Created and deployed to production Railway Strapi
 - **Author Profile**: "Niels Maas" created with:

@@ -79,6 +79,10 @@
   - [x] Railway connected to GitHub for automatic deployments
 
 ## Recent Changes
+- COMPLETED: TL;DR block moved to render under "Terug naar Blog" in [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71).
+- COMPLETED: Markdown bold rendering enabled for TL;DR and FAQ via utilities in [`TldrBlock.tsx`](src/components/features/TldrBlock.tsx:15) and [`FaqSection.tsx`](src/components/features/FaqSection.tsx:15).
+- COMPLETED: Build passed; changes pushed in commit `3d5dba8`.
+- COMPLETED: Repositioned TL;DR block to render between the featured image and the intro content in [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:103).
 - MILESTONE: SEO/GEO Enhancement Phase 2 COMPLETE (2026-01-26)
 - COMPLETED: Author "Niels Maas" created with full bio, credentials, 12 expertise areas
 - COMPLETED: All 36 blog posts linked to author relation

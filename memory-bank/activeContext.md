@@ -11,6 +11,11 @@
 - Updated [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:31) to accept `tldrItems` prop and render TldrBlock component
 - Removed duplicate TldrBlock rendering from [`app/blog/[slug]/page.tsx`](app/blog/[slug]/page.tsx:285)
 
+**Update (2026-01-26):**
+- Moved TL;DR block to render between the featured image and the intro content in [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:103).
+
+**Commit:** `3d5dba8`
+
 **Build Status:** ✅ PASSING (`npm run build` completed successfully)
 
 ### TypeScript Build Errors FIXED ✅

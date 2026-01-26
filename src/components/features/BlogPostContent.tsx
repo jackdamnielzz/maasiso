@@ -70,11 +70,6 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
             Terug naar Blog
           </Link>
           
-          {/* TL;DR Section - positioned after "Terug naar Blog" link */}
-          {tldrItems && tldrItems.length > 0 && (
-            <TldrBlock items={tldrItems} className="mb-8" />
-          )}
-          
           <header className="mb-16">
             <h1 className="text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold text-[#091E42] mb-8 leading-[1.2] break-words hyphens-auto max-w-[90%]">
               {post.title}
@@ -114,6 +109,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
                 className="object-cover"
               />
             </div>
+          )}
+
+          {/* TL;DR Section - positioned after featured image and before intro */}
+          {tldrItems && tldrItems.length > 0 && (
+            <TldrBlock items={tldrItems} className="mb-8" />
           )}
 
           <div className="prose prose-lg max-w-none text-[#42526E] relative z-0
