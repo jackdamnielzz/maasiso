@@ -160,12 +160,20 @@ export default async function OverNielsMaasPage() {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {expertise.map((item, i) => (
-                  <div key={item.title} className="p-6 rounded-2xl bg-[#F4F7F9] border border-gray-100 hover:border-[#00875A]/30 transition-all group">
-                    <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center mb-4 text-[#00875A] group-hover:scale-110 transition-transform">
-                       <span className="font-bold text-xs">{item.title.split(' ')[0]}</span>
+                  <div key={`${item.title}-${i}`} className="flex flex-col p-6 rounded-2xl bg-[#F4F7F9] border border-gray-100 hover:border-[#00875A]/30 transition-all group h-full">
+                    <div className="w-fit min-w-[40px] px-3 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center mb-4 text-[#00875A] group-hover:scale-110 transition-transform">
+                       <span className="font-bold text-[10px] uppercase tracking-wider whitespace-nowrap">
+                         {item.title.includes('ISO') ? 'ISO' : item.title.split(' ')[0]}
+                       </span>
                     </div>
-                    <h4 className="font-bold text-[#091E42] mb-1">{item.title}</h4>
-                    <p className="text-sm text-gray-500 font-medium uppercase tracking-tight">{item.description}</p>
+                    <h4 className="font-bold text-[#091E42] mb-2 leading-tight break-words">
+                      {item.title}
+                    </h4>
+                    {item.description && (
+                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider leading-relaxed mt-auto">
+                        {item.description}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
