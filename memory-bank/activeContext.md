@@ -34,69 +34,68 @@ The AuthorBox component has been completely redesigned to display author informa
 
 ---
 
-### relatedPosts Feature - FULLY WORKING ✅
+### relatedPosts Feature - CUSTOM API + WEB TOOL (2026-01-27 20:49)
 
-**Final Status (2026-01-27 02:31):**
+**Status: ✅ Custom Solution Implemented**
 
-The relatedPosts feature is now fully functional:
-1. ✅ **Database linking** works via direct PostgreSQL script
-2. ✅ **API returns relatedPosts** with explicit populate parameters
-3. ✅ **Bottom section** shows related posts (RelatedPosts component)
-4. ✅ **Sidebar** shows actual relatedPosts instead of random posts
-
-**Frontend Fixes Applied:**
-- [`src/lib/api.ts`](src/lib/api.ts:953) - Added explicit populate for relatedPosts in `getBlogPostBySlug`
-- [`src/lib/types.ts`](src/lib/types.ts:157) - Added `RelatedPost` type
-- [`src/components/features/RelatedPosts.tsx`](src/components/features/RelatedPosts.tsx:1) - Uses RelatedPost type
-- [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:34) - Sidebar now uses `post.relatedPosts` directly
-
-**Strapi v5 Admin UI Bug (Still Present):**
-
-The Strapi v5 Admin UI has a **confirmed bug** with self-referencing manyToMany relations. The Admin UI cannot save these relations due to i18n/document validation issues.
-
-**Workaround: Direct Database Script**
-
-Created [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1) that bypasses the Admin UI entirely and writes directly to the PostgreSQL join table.
-
-**Usage:**
-```bash
-# List all blog posts with IDs
-node scripts/direct-link-related-posts.js --list
-
-# Verify a post's current relations
-node scripts/direct-link-related-posts.js --verify <slug>
-
-# Link posts (source → targets)
-node scripts/direct-link-related-posts.js <source-slug> <target-slug1> [target-slug2...]
+The Strapi v5 Admin UI has a **confirmed bug** with self-referential manyToMany relations. Both bidirectional and unidirectional configurations fail with:
+```
+Document with id "...", locale "null" not found
 ```
 
-**User-Friendly Tool:**
-- Desktop shortcut: "Link Blog Posts" on user's desktop
-- Batch file: [`scripts/run-link-posts.bat`](scripts/run-link-posts.bat:1)
-- Interactive script: [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1)
-- Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+**Solution: Custom API Endpoints + Web-Based Tool**
 
-**Latest Update (2026-01-27):**
-- Added **menu option 7** to inspect a blog post by selection list (numbered list) in [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1).
-- The report shows title, slug, documentId, publish status, **relatedPosts (outgoing)** and **relatedFrom (incoming)**.
+Instead of fighting the Admin UI bug, we've implemented a complete workaround:
 
-**Schema (bidirectional relation in [`schema.json`](../maasiso-strapi-railway/src/api/blog-post/content-types/blog-post/schema.json:100)):**
+**1. Custom Strapi API Endpoints (Commit `4dc5398`):**
+- `GET /api/blog-posts/list-for-relations` - List all posts for selection
+- `GET /api/blog-posts/:id/related-posts` - Get current related posts
+- `POST /api/blog-posts/:id/related-posts` - Update related posts
+
+Files:
+- [`blog-post.ts`](../maasiso-strapi-railway/src/api/blog-post/controllers/blog-post.ts:1) - Custom controller
+- [`custom-routes.ts`](../maasiso-strapi-railway/src/api/blog-post/routes/custom-routes.ts:1) - Route definitions
+
+**2. Web-Based Management Tool:**
+- URL: `/admin/related-posts`
+- File: [`app/admin/related-posts/page.tsx`](app/admin/related-posts/page.tsx:1)
+- Features:
+  - Select a blog post from dropdown
+  - See current related posts
+  - Check/uncheck posts to relate
+  - Save with one click
+  - No scripts needed!
+
+**How to Use:**
+1. Go to `https://maasiso.nl/admin/related-posts`
+2. Select a blog post from the dropdown
+3. Check the posts you want to relate
+4. Click "Opslaan"
+5. Done! The relations are saved directly to the database
+
+**Why This Works:**
+- Bypasses the Admin UI entirely
+- Writes directly to the PostgreSQL join table
+- Works for ALL blog posts, not just one
+- No lifecycle hooks or middleware needed
+- Simple, reliable, and maintainable
+
+**Schema (unidirectional):**
 ```json
 "relatedPosts": {
   "type": "relation",
   "relation": "manyToMany",
-  "target": "api::blog-post.blog-post",
-  "inversedBy": "relatedFrom",
-  "description": "Manual internal linking for topical authority - outgoing links"
-},
-"relatedFrom": {
-  "type": "relation",
-  "relation": "manyToMany",
-  "target": "api::blog-post.blog-post",
-  "mappedBy": "relatedPosts",
-  "description": "Incoming links from other posts - auto-populated inverse"
+  "target": "api::blog-post.blog-post"
 }
 ```
+
+**Bug Report:**
+- [`docs/strapi-v5-self-referential-bug-report.md`](docs/strapi-v5-self-referential-bug-report.md:1) - For Strapi GitHub issue
+
+**Frontend (unchanged):**
+- [`src/lib/api.ts`](src/lib/api.ts:953) - Explicit populate for relatedPosts
+- [`src/components/features/RelatedPosts.tsx`](src/components/features/RelatedPosts.tsx:1) - Renders related posts
+- [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:34) - Sidebar uses relatedPosts
 
 ---
 

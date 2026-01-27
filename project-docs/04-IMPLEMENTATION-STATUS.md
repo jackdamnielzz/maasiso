@@ -33,6 +33,7 @@
 - SEO/GEO Enhancement - Phase 2 Complete: 100% ✅
 - relatedPosts Self-Referencing Fix: 100% ✅
 - relatedPosts Frontend Display: 100% ✅
+- relatedPosts Auto-Restore Lifecycle Hook: 100% ✅
 - AuthorBox Business Card Redesign: 100% ✅
 - Over Niels Maas Profile Page Overhaul: 100% ✅
 
@@ -52,7 +53,7 @@
 - **UI Overhaul**: Spectacular new design for [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx) with hero gradients, `ScrollReveal` animations, and premium typography.
 - **Expanded Content**: Includes personal values section, detailed expertise grid, and dynamic publications list using `BlogPostCard`.
 - **Strapi Integration**: Added `getAuthorBySlug('niels-maas')` in [`src/lib/api.ts`](src/lib/api.ts:1038) with full population of profile image and blog posts.
-- **Title Override**: Displays "Senior Consultant" instead of Lead Auditor wording.
+- **Title Override**: Displays "Senior consultant" instead of Lead consultant wording across the site.
 
 ### AuthorBox Business Card Redesign (2026-01-27) ✅
 - **UI Refresh**: Redesigned [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx) as a compact business card with header, profile image, bio, expertise tags, and action buttons.
@@ -71,6 +72,20 @@
   - Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
   - **NEW:** Inspect-by-selection option (menu 7) shows relatedPosts + relatedFrom
 - **Verified**: relatedPosts display correctly in both bottom section AND sidebar
+
+### relatedPosts Auto-Restore Lifecycle Hook - FIXED FOR ALL POSTS (2026-01-27) ✅
+- **Issue**: The lifecycle hook that restores relatedPosts after blog post updates only worked for one specific post
+- **Root Cause**: Strapi v5 has draft/published versions with different `id`s but same `documentId`. The original hook:
+  1. Only looked at one version's links, missing links on other versions
+  2. Only restored to specific versions, not all versions of a document
+- **Fix Applied** in [`lifecycles.ts`](../maasiso-strapi-railway/src/api/blog-post/content-types/blog-post/lifecycles.ts:1):
+  1. `getRelatedIdsForDocument()` now collects related IDs from ALL versions (draft + published)
+  2. Added `getAllPostIdsForDocument()` helper to get all version IDs for a document
+  3. `afterUpdate()` now restores links to ALL versions of the document
+- **How It Works**:
+  1. `beforeUpdate`: Saves all existing relatedPosts IDs from all document versions
+  2. `afterUpdate`: If update didn't include relatedPosts (or was empty), restores the saved IDs to ALL versions
+- **Result**: Now works for ALL blog posts, not just one specific post
 
 ### relatedPosts Self-Referencing Bug - SOLVED WITH DATABASE WORKAROUND (2026-01-27) ✅
 - **Issue**: Strapi v5 `relatedPosts` manyToMany self-referencing relation caused ValidationError: "Document with id ..., locale null not found"
@@ -215,7 +230,7 @@ node scripts/direct-link-related-posts.js <source-slug> <target-slug1> [target-s
 
 ### Author Page Creation (2026-01-25)
 - **New Page**: Created `/over-niels-maas` to serve as the official author profile for Niels Maas.
-- **Biography**: Dutch content covering his role as Oprichter & Lead Consultant, and expertise in ISO 9001, 27001, AVG, and BIO.
+- **Biography**: Dutch content covering his role as Oprichter & Senior consultant, and expertise in ISO 9001, 27001, AVG, and BIO.
 - **Curated Publications**: Manually linked to top-performing blog posts about ISO handbooks, risk-based thinking, and checklists.
 - **Structured Data**: Integrated `Person` JSON-LD schema with stable ID and connection to the main ProfessionalService schema.
 

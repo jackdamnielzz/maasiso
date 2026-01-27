@@ -260,6 +260,7 @@ function printMenu() {
   console.log('  │   4. 👁️  Gerelateerde posts bekijken van een post          │');
   console.log('  │   5. ➖ Gerelateerde post verwijderen                       │');
   console.log('  │   6. 📖 Instructies lezen                                  │');
+  console.log('  │   7. 🧾 Post inspecteren (slug)                             │');
   console.log('  │   0. 🚪 Afsluiten                                          │');
   console.log('  │                                                             │');
   console.log('  └─────────────────────────────────────────────────────────────┘');
@@ -630,6 +631,71 @@ async function verwijderGerelateerdePost(client, joinInfo, allePosts) {
   }
 }
 
+async function inspecteerPost(client, joinInfo) {
+  clearScreen();
+  printHeader();
+  console.log('  🧾 POST INSPECTEREN (SLUG)');
+  console.log('  ─────────────────────────────────────────────────────────────────\n');
+
+  const slug = await vraag('  Voer de slug in: ');
+  const cleanSlug = slug.trim();
+  if (!cleanSlug) {
+    console.log('\n  ⚠️ Geen slug ingevoerd.\n');
+    return;
+  }
+
+  const post = await getPostBySlug(client, cleanSlug);
+  if (!post) {
+    console.log(`\n  ❌ Geen post gevonden met slug: ${cleanSlug}\n`);
+    return;
+  }
+
+  const status = post.published_at ? 'PUBLISHED' : 'DRAFT';
+
+  console.log('\n  ─────────────────────────────────────────────────────────────────');
+  console.log(`  Titel: ${post.title}`);
+  console.log(`  Slug: ${post.slug}`);
+  console.log(`  ID: ${post.id}`);
+  console.log(`  DocumentID: ${post.document_id}`);
+  console.log(`  Status: ${status}`);
+  console.log('  ─────────────────────────────────────────────────────────────────\n');
+
+  // Outgoing related posts
+  const relatedPosts = await getRelatedPostsForPost(client, post.id, joinInfo);
+  if (relatedPosts.length === 0) {
+    console.log('  Gerelateerde posts (relatedPosts): (geen)');
+  } else {
+    console.log(`  Gerelateerde posts (relatedPosts): ${relatedPosts.length}`);
+    for (const r of relatedPosts) {
+      console.log(`    - ${r.title}`);
+      console.log(`      └─ ${r.slug}`);
+    }
+  }
+
+  // Incoming related posts (relatedFrom)
+  let incomingPosts = [];
+  if (joinInfo.columns.includes('blog_post_id') && joinInfo.columns.includes('inv_blog_post_id')) {
+    const result = await client.query(`
+      SELECT bp.id, bp.slug, bp.title
+      FROM ${joinInfo.table} jt
+      JOIN blog_posts bp ON bp.id = jt.blog_post_id
+      WHERE jt.inv_blog_post_id = $1
+    `, [post.id]);
+    incomingPosts = result.rows;
+  }
+
+  if (incomingPosts.length === 0) {
+    console.log('\n  Inkomende links (relatedFrom): (geen)');
+  } else {
+    console.log(`\n  Inkomende links (relatedFrom): ${incomingPosts.length}`);
+    for (const r of incomingPosts) {
+      console.log(`    - ${r.title}`);
+      console.log(`      └─ ${r.slug}`);
+    }
+  }
+  console.log('');
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -697,6 +763,11 @@ async function main() {
           
         case '6':
           printInstructies();
+          await vraag('\n  Druk op Enter om terug te gaan...');
+          break;
+
+        case '7':
+          await inspecteerPost(client, joinInfo);
           await vraag('\n  Druk op Enter om terug te gaan...');
           break;
           

@@ -14,9 +14,9 @@ async function linkBlogPostsToAuthor() {
     'Content-Type': 'application/json'
   };
 
-  // 1. Fetch all blog posts with all fields
+  // 1. Fetch all blog posts with all fields INCLUDING relatedPosts
   console.log('Fetching all blog posts...');
-  const response = await fetch(`${API_URL}/api/blog-posts?pagination[pageSize]=100&populate=*`, { headers });
+  const response = await fetch(`${API_URL}/api/blog-posts?pagination[pageSize]=100&populate[relatedPosts][fields][0]=documentId&populate[featuredImage][fields][0]=url&populate[author][fields][0]=documentId&populate[tldr]=*&populate[faq]=*`, { headers });
   const data = await response.json();
   
   if (!data.data) {
