@@ -94,6 +94,7 @@
   - [x] **TEST SUCCESS**: Linked "avg-beeldmateriaal-toestemming" (ID: 30) → "checklist-iso-14001" (ID: 41)
 - [x] **relatedPosts Frontend Display - FULLY WORKING** (2026-01-27) ✅
  - [x] **AuthorBox Business Card Redesign** (2026-01-27) ✅
+ - [x] **Over Niels Maas Profile Page Spectacular Overhaul** (2026-01-27) ✅
   - [x] Fixed API: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
   - [x] Fixed Types: Added `RelatedPost` type to [`src/lib/types.ts`](src/lib/types.ts:157)
   - [x] Fixed Mapping: `mapRelatedPosts` now handles both Strapi v4 and v5 structures
@@ -102,8 +103,8 @@
   - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- COMPLETED: Spectacular overhaul of Over Niels Maas profile page with hero gradients, expertise grid, dynamic publications, and personal values (2026-01-27).
 - COMPLETED: Overrode Niels Maas title to "Senior Consultant" on the profile page to remove Lead Auditor wording in [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx).
-- IN PROGRESS: Over Niels Maas page now pulls full author details from Strapi via `getAuthorBySlug` and renders expanded hero with image and contact chips.
 - COMPLETED: Niels Maas author profile link now points to `/over-niels-maas` in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
 - COMPLETED: AuthorBox redesigned as professional business card with author image, bio, expertise tags, and action buttons in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
 - COMPLETED: Updated `mapAuthor()` to support Strapi v4 and v5 author structures in [`src/lib/api.ts`](src/lib/api.ts:181).

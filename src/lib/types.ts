@@ -135,6 +135,7 @@ export interface Author {
   linkedIn?: string;
   email?: string;
   profileImage?: Image;
+  blog_posts?: BlogPost[];
 }
 
 /**

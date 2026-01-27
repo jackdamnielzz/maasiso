@@ -34,6 +34,7 @@
 - relatedPosts Self-Referencing Fix: 100% ✅
 - relatedPosts Frontend Display: 100% ✅
 - AuthorBox Business Card Redesign: 100% ✅
+- Over Niels Maas Profile Page Overhaul: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -47,10 +48,11 @@
 
 ## Recent Updates (2026-01-27)
 
-### Over Niels Maas Page - Strapi Data Expansion (2026-01-27) 🔧
-- **Data Source**: Added `getAuthorBySlug('niels-maas')` in [`src/lib/api.ts`](src/lib/api.ts:1038) to fetch full author details from Strapi.
-- **Page Update**: [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx) now renders author name, bio, credentials, expertise, LinkedIn, email, and profile image from Strapi.
-- **Title Override**: Displays "Senior Consultant" instead of Lead Auditor wording on the Niels Maas profile page.
+### Over Niels Maas Profile Page Overhaul (2026-01-27) ✅
+- **UI Overhaul**: Spectacular new design for [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx) with hero gradients, `ScrollReveal` animations, and premium typography.
+- **Expanded Content**: Includes personal values section, detailed expertise grid, and dynamic publications list using `BlogPostCard`.
+- **Strapi Integration**: Added `getAuthorBySlug('niels-maas')` in [`src/lib/api.ts`](src/lib/api.ts:1038) with full population of profile image and blog posts.
+- **Title Override**: Displays "Senior Consultant" instead of Lead Auditor wording.
 
 ### AuthorBox Business Card Redesign (2026-01-27) ✅
 - **UI Refresh**: Redesigned [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx) as a compact business card with header, profile image, bio, expertise tags, and action buttons.

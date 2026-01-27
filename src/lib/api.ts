@@ -164,6 +164,7 @@ const mapAuthor = (authorData: any) => {
       createdAt: attr.createdAt || new Date().toISOString(),
       updatedAt: attr.updatedAt || new Date().toISOString(),
       publishedAt: attr.publishedAt,
+      blog_posts: attr.blog_posts?.data ? attr.blog_posts.data.map((p: any) => mapBlogPost(p.attributes ? { id: p.id, ...p.attributes } : p)) : undefined,
     };
   }
 
@@ -183,6 +184,7 @@ const mapAuthor = (authorData: any) => {
       createdAt: authorData.createdAt || new Date().toISOString(),
       updatedAt: authorData.updatedAt || new Date().toISOString(),
       publishedAt: authorData.publishedAt,
+      blog_posts: authorData.blog_posts ? authorData.blog_posts.map((p: any) => mapBlogPost(p)) : undefined,
     };
   }
 
