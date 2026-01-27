@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { getBlogPosts } from '@/lib/api';
+import React from 'react';
 import Link from 'next/link';
-import { BlogPost, TldrItem } from '../../lib/types';
+import { BlogPost, TldrItem, RelatedPost } from '../../lib/types';
 import dynamic from 'next/dynamic';
 import LazyImage from '../common/LazyImage';
 import ErrorBoundary from '../common/ErrorBoundary';
@@ -31,20 +30,8 @@ interface BlogPostContentProps {
 }
 
 export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItems }) => {
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-
-  useEffect(() => {
-    const fetchRelatedPosts = async () => {
-      try {
-        const { posts } = await getBlogPosts(1, 3);
-        setRelatedPosts(posts.filter(p => p.slug !== post.slug));
-      } catch (error) {
-        console.error('Error fetching related posts:', error);
-      }
-    };
-
-    fetchRelatedPosts();
-  }, [post.slug]);
+  // Use the relatedPosts from the post data directly (from database links)
+  const sidebarPosts: RelatedPost[] = post.relatedPosts || [];
 
   return (
     <ErrorBoundary>
@@ -165,32 +152,37 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
               Gerelateerde artikelen
             </h2>
             <div className="space-y-8">
-              {relatedPosts.map(post => (
+              {sidebarPosts.length === 0 && (
+                <p className="text-[#6B778C] text-sm italic">
+                  Geen gerelateerde artikelen beschikbaar.
+                </p>
+              )}
+              {sidebarPosts.map(relatedPost => (
                 <Link
-                  key={post.id}
-                  href={`/blog/${post.slug}`}
+                  key={relatedPost.id}
+                  href={`/blog/${relatedPost.slug}`}
                   className="block group px-6 py-4 -mx-6 transition-all duration-200 hover:bg-[#F8F9FA]/50 first:pt-0 last:pb-0"
                 >
-                  {post.featuredImage && (
+                  {relatedPost.featuredImage && (
                     <div className="relative aspect-[2/1] w-full mb-4 overflow-hidden">
                       <LazyImage
                         src={
-                          post.featuredImage.url.startsWith('http')
-                            ? post.featuredImage.url
-                            : `/api/proxy/assets/uploads/${post.featuredImage.url.split('/uploads/').pop()}`
+                          relatedPost.featuredImage.url.startsWith('http')
+                            ? relatedPost.featuredImage.url
+                            : `/api/proxy/assets/uploads/${relatedPost.featuredImage.url.split('/uploads/').pop()}`
                         }
-                        alt={post.featuredImage.alternativeText || post.title}
+                        alt={relatedPost.featuredImage.alternativeText || relatedPost.title}
                         fill
                         className="object-cover transition-all duration-200 group-hover:scale-102 group-hover:brightness-102"
                       />
                     </div>
                   )}
                   <h3 className="text-[1.125rem] font-medium text-[#172B4D] group-hover:text-[#0052CC] line-clamp-2 leading-snug transition-colors duration-200">
-                    {post.title}
+                    {relatedPost.title}
                   </h3>
-                  {post.publishedAt && (
+                  {relatedPost.publishedAt && (
                     <div className="flex items-center mt-3 text-sm text-[#6B778C]">
-                      <time dateTime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                      <time dateTime={relatedPost.publishedAt}>{new Date(relatedPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
                     </div>
                   )}
                 </Link>

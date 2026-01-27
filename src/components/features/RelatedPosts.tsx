@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BlogPost } from '../../lib/types';
+import { RelatedPost } from '../../lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatDate } from '../../lib/utils';
@@ -9,11 +9,11 @@ import { formatDate } from '../../lib/utils';
 interface RelatedPostsProps {
   currentSlug?: string;
   categoryIds?: string[];
-  posts?: BlogPost[];
+  posts?: RelatedPost[];
 }
 
 export default function RelatedPosts({ currentSlug, categoryIds, posts }: RelatedPostsProps) {
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>(posts || []);
+  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>(posts || []);
   const [loading, setLoading] = useState(!posts);
 
   useEffect(() => {

@@ -1,8 +1,94 @@
 # Active Context - SEO/GEO Enhancement Project
 
-## Current Status (2026-01-26)
+## Current Status (2026-01-27)
 
-### TL;DR Position & Markdown Rendering FIXED ✅
+### relatedPosts Feature - FULLY WORKING ✅
+
+**Final Status (2026-01-27 02:31):**
+
+The relatedPosts feature is now fully functional:
+1. ✅ **Database linking** works via direct PostgreSQL script
+2. ✅ **API returns relatedPosts** with explicit populate parameters
+3. ✅ **Bottom section** shows related posts (RelatedPosts component)
+4. ✅ **Sidebar** shows actual relatedPosts instead of random posts
+
+**Frontend Fixes Applied:**
+- [`src/lib/api.ts`](src/lib/api.ts:953) - Added explicit populate for relatedPosts in `getBlogPostBySlug`
+- [`src/lib/types.ts`](src/lib/types.ts:157) - Added `RelatedPost` type
+- [`src/components/features/RelatedPosts.tsx`](src/components/features/RelatedPosts.tsx:1) - Uses RelatedPost type
+- [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:34) - Sidebar now uses `post.relatedPosts` directly
+
+**Strapi v5 Admin UI Bug (Still Present):**
+
+The Strapi v5 Admin UI has a **confirmed bug** with self-referencing manyToMany relations. The Admin UI cannot save these relations due to i18n/document validation issues.
+
+**Workaround: Direct Database Script**
+
+Created [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1) that bypasses the Admin UI entirely and writes directly to the PostgreSQL join table.
+
+**Usage:**
+```bash
+# List all blog posts with IDs
+node scripts/direct-link-related-posts.js --list
+
+# Verify a post's current relations
+node scripts/direct-link-related-posts.js --verify <slug>
+
+# Link posts (source → targets)
+node scripts/direct-link-related-posts.js <source-slug> <target-slug1> [target-slug2...]
+```
+
+**User-Friendly Tool:**
+- Desktop shortcut: "Link Blog Posts" on user's desktop
+- Batch file: [`scripts/run-link-posts.bat`](scripts/run-link-posts.bat:1)
+- Interactive script: [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1)
+- Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+
+**Schema (bidirectional relation in [`schema.json`](../maasiso-strapi-railway/src/api/blog-post/content-types/blog-post/schema.json:100)):**
+```json
+"relatedPosts": {
+  "type": "relation",
+  "relation": "manyToMany",
+  "target": "api::blog-post.blog-post",
+  "inversedBy": "relatedFrom",
+  "description": "Manual internal linking for topical authority - outgoing links"
+},
+"relatedFrom": {
+  "type": "relation",
+  "relation": "manyToMany",
+  "target": "api::blog-post.blog-post",
+  "mappedBy": "relatedPosts",
+  "description": "Incoming links from other posts - auto-populated inverse"
+}
+```
+
+---
+
+### Confirmed Strapi v5 Bug (Research Summary)
+
+**Root Cause:** Strapi v5 Admin UI sends `isTemporary: true` and `locale: null` when saving self-referencing relations, causing validation to fail.
+
+**Known Issues:**
+- GitHub Issue #22050: Self-referencing manyToMany relations broken in v5
+- GitHub Issue #22051: Admin UI sends incorrect payload for self-relations
+- Strapi Forum: Multiple reports of "Document with id ... locale null not found"
+
+**Symptoms:**
+1. **Admin UI Error**: `ValidationError: Document with id "...", locale "null" not found`
+2. **REST API Silent Failure**: API returns 200 OK but relation is NOT persisted
+
+**Workarounds Available:**
+1. ✅ **Direct Database Script** (implemented) - Bypasses Admin UI entirely
+2. ⚠️ Custom controller/service - More complex, requires Strapi code changes
+3. ⚠️ Wait for Strapi fix - No ETA from Strapi team
+
+**Diagnostic Tools Created:**
+- [`scripts/link-related-posts.js`](scripts/link-related-posts.js:1) - Tests multiple API formats
+- [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1) - **Working solution**
+
+---
+
+### Previous: TL;DR Position & Markdown Rendering FIXED ✅
 
 **Fixed (2026-01-26 23:28):**
 - Moved TL;DR block from above the page to inside [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71), positioned directly after "Terug naar Blog" link

@@ -77,8 +77,34 @@
   - [x] TL;DR and FAQ components added to blog-post schema
   - [x] Production API verified working
   - [x] Railway connected to GitHub for automatic deployments
+- [x] **relatedPosts ValidationError Fix - Initial** (2026-01-27) ✅
+  - [x] Identified root cause: circular `mappedBy: "relatedPosts"` in Strapi v5 self-referencing manyToMany
+  - [x] Removed `mappedBy` attribute from blog-post schema for unidirectional relation
+  - [x] ValidationError in Admin UI persists - deeper Strapi v5 bug identified
+- [x] **relatedPosts Self-Referencing Bug - SOLVED WITH DATABASE WORKAROUND** (2026-01-27) ✅
+  - [x] Created diagnostic script [`scripts/link-related-posts.js`](scripts/link-related-posts.js:1)
+  - [x] Tested 5 different API payload formats - all fail to save relation
+  - [x] Root cause: Strapi v5 bug with self-referencing manyToMany relations
+  - [x] Admin UI error: `Document with id "...", locale "null" not found`
+  - [x] API accepts requests but silently fails to persist the relation
+  - [x] Changed schema to bidirectional (`relatedPosts` + `relatedFrom`) - Admin UI still fails
+  - [x] Commit `6c716e9` pushed to Railway
+  - [x] **FINAL SOLUTION**: Created [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1)
+  - [x] Direct database script bypasses Admin UI and writes to PostgreSQL join table
+  - [x] **TEST SUCCESS**: Linked "avg-beeldmateriaal-toestemming" (ID: 30) → "checklist-iso-14001" (ID: 41)
+- [x] **relatedPosts Frontend Display - FULLY WORKING** (2026-01-27) ✅
+  - [x] Fixed API: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
+  - [x] Fixed Types: Added `RelatedPost` type to [`src/lib/types.ts`](src/lib/types.ts:157)
+  - [x] Fixed Mapping: `mapRelatedPosts` now handles both Strapi v4 and v5 structures
+  - [x] Fixed Sidebar: [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:34) now uses actual `post.relatedPosts`
+  - [x] Created user-friendly tools: Desktop shortcut, batch file, interactive script, README
+  - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- COMPLETED: Direct database workaround for relatedPosts - script successfully links posts via PostgreSQL (2026-01-27).
+- COMPLETED: relatedPosts bidirectional workaround implemented - schema now has `relatedPosts` (inversedBy) + `relatedFrom` (mappedBy) (2026-01-27).
+- COMPLETED: Created [`scripts/link-related-posts.js`](scripts/link-related-posts.js:1) diagnostic tool (2026-01-27).
+- COMPLETED: relatedPosts ValidationError partially fixed by removing circular `mappedBy` from blog-post schema (2026-01-27).
 - COMPLETED: TL;DR block moved to render under "Terug naar Blog" in [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71).
 - COMPLETED: Markdown bold rendering enabled for TL;DR and FAQ via utilities in [`TldrBlock.tsx`](src/components/features/TldrBlock.tsx:15) and [`FaqSection.tsx`](src/components/features/FaqSection.tsx:15).
 - COMPLETED: Build passed; changes pushed in commit `3d5dba8`.

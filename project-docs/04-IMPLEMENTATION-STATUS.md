@@ -31,6 +31,8 @@
 - SEO/GEO Enhancement - Strapi Content-Type Schema: 100% ✅
 - SEO/GEO Enhancement - Full Author Relation: 100% ✅
 - SEO/GEO Enhancement - Phase 2 Complete: 100% ✅
+- relatedPosts Self-Referencing Fix: 100% ✅
+- relatedPosts Frontend Display: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -42,7 +44,72 @@
 - [x] Query validation and sanitization
 - [x] Paginated search results
 
-## Recent Updates (2026-01-26)
+## Recent Updates (2026-01-27)
+
+### relatedPosts Frontend Display - FULLY WORKING (2026-01-27) ✅
+- **API Fix**: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
+- **Type Fix**: Added `RelatedPost` type to [`src/lib/types.ts`](src/lib/types.ts:157)
+- **Mapping Fix**: `mapRelatedPosts` now handles both Strapi v4 (nested) and v5 (flat) structures
+- **Sidebar Fix**: [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:34) now uses actual `post.relatedPosts` instead of random posts
+- **User Tools Created**:
+  - Desktop shortcut: "Link Blog Posts"
+  - Batch file: [`scripts/run-link-posts.bat`](scripts/run-link-posts.bat:1)
+  - Interactive script: [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1)
+  - Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+- **Verified**: relatedPosts display correctly in both bottom section AND sidebar
+
+### relatedPosts Self-Referencing Bug - SOLVED WITH DATABASE WORKAROUND (2026-01-27) ✅
+- **Issue**: Strapi v5 `relatedPosts` manyToMany self-referencing relation caused ValidationError: "Document with id ..., locale null not found"
+- **Root Cause**: Strapi v5 has a **confirmed bug** with self-referencing manyToMany relations - Admin UI sends `isTemporary: true` and `locale: null` which causes validation to fail
+- **Known Issues**:
+  - GitHub Issue #22050: Self-referencing manyToMany relations broken in v5
+  - GitHub Issue #22051: Admin UI sends incorrect payload for self-relations
+  - Strapi Forum: Multiple reports of "Document with id ... locale null not found"
+
+**Attempted Fixes (All Failed in Admin UI):**
+1. Removed `mappedBy` attribute - didn't solve persistence issue
+2. Bidirectional relation (`relatedPosts` + `relatedFrom`) - Admin UI still fails
+
+**Schema (bidirectional, commit `6c716e9`):**
+```json
+"relatedPosts": {
+  "type": "relation",
+  "relation": "manyToMany",
+  "target": "api::blog-post.blog-post",
+  "inversedBy": "relatedFrom",
+  "description": "Manual internal linking for topical authority - outgoing links"
+},
+"relatedFrom": {
+  "type": "relation",
+  "relation": "manyToMany",
+  "target": "api::blog-post.blog-post",
+  "mappedBy": "relatedPosts",
+  "description": "Incoming links from other posts - auto-populated inverse"
+}
+```
+
+**FINAL SOLUTION: Direct Database Script** ✅
+- Created [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1) that bypasses Admin UI entirely
+- Writes directly to PostgreSQL join table `blog_posts_related_posts_lnk`
+- **Test Success**: Linked "avg-beeldmateriaal-toestemming" (ID: 30) → "checklist-iso-14001" (ID: 41)
+
+**Usage:**
+```bash
+# List all blog posts with IDs
+node scripts/direct-link-related-posts.js --list
+
+# Verify a post's current relations
+node scripts/direct-link-related-posts.js --verify <slug>
+
+# Link posts (source → targets)
+node scripts/direct-link-related-posts.js <source-slug> <target-slug1> [target-slug2...]
+```
+
+**Diagnostic Tools Created:**
+- [`scripts/link-related-posts.js`](scripts/link-related-posts.js:1) - Tests multiple API formats (all fail)
+- [`scripts/direct-link-related-posts.js`](scripts/direct-link-related-posts.js:1) - **Working solution** via direct database access
+
+## Previous Updates (2026-01-26)
 
 ### TL;DR Position + Markdown Bold Rendering (2026-01-26) ✅
 - **TL;DR placement**: Moved TL;DR block to render directly under "Terug naar Blog" inside [`BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:71).

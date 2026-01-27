@@ -208,23 +208,42 @@ function mapBlogPost(data: any | null): BlogPost | null {
   };
 
   // Map related posts if they exist
+  // Strapi v5 returns flat array, not nested data.attributes structure
   const mapRelatedPosts = (relatedData: any) => {
-    if (!relatedData?.data || !Array.isArray(relatedData.data)) {
+    // Handle both Strapi v4 (nested) and v5 (flat) structures
+    let posts: any[] = [];
+    
+    if (Array.isArray(relatedData)) {
+      // Strapi v5: flat array of posts
+      posts = relatedData;
+    } else if (relatedData?.data && Array.isArray(relatedData.data)) {
+      // Strapi v4: nested { data: [...] } structure
+      posts = relatedData.data;
+    } else {
+      console.log('[mapRelatedPosts] No related posts found, data:', relatedData);
       return [];
     }
 
-    return relatedData.data.map((post: any) => ({
-      id: String(post.id),
-      title: post.attributes?.title || '',
-      slug: post.attributes?.slug || '',
-      excerpt: post.attributes?.excerpt,
-      featuredImage: post.attributes?.featuredImage
-        ? flattenMedia(post.attributes.featuredImage)
-        : undefined,
-      createdAt: post.attributes?.createdAt || new Date().toISOString(),
-      updatedAt: post.attributes?.updatedAt || new Date().toISOString(),
-      publishedAt: post.attributes?.publishedAt,
-    }));
+    console.log('[mapRelatedPosts] Processing', posts.length, 'related posts');
+
+    return posts.map((post: any) => {
+      // Handle both flat (v5) and nested (v4) post structure
+      const postData = post.attributes || post;
+      const postId = post.id;
+      
+      return {
+        id: String(postId),
+        title: postData.title || '',
+        slug: postData.slug || '',
+        excerpt: postData.excerpt,
+        featuredImage: postData.featuredImage
+          ? flattenMedia(postData.featuredImage)
+          : undefined,
+        createdAt: postData.createdAt || new Date().toISOString(),
+        updatedAt: postData.updatedAt || new Date().toISOString(),
+        publishedAt: postData.publishedAt,
+      };
+    });
   };
 
   return {
@@ -950,8 +969,22 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
     const validatedSlug = validateSlug(slug);
     console.log('Fetching blog post with slug:', validatedSlug);
 
+    // Use indexed populate to explicitly include relatedPosts with their details
+    const populateParams = [
+      'populate[0]=featuredImage',
+      'populate[1]=ogImage',
+      'populate[2]=categories',
+      'populate[3]=tags',
+      'populate[4]=author',
+      'populate[5]=author.profileImage',
+      'populate[6]=tldr',
+      'populate[7]=faq',
+      'populate[8]=relatedPosts',
+      'populate[9]=relatedPosts.featuredImage'
+    ].join('&');
+
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
-      `/api/blog-posts?filters[slug][$eq]=${validatedSlug}&populate=*`,
+      `/api/blog-posts?filters[slug][$eq]=${validatedSlug}&${populateParams}`,
       {
         next: { revalidate: 60 },
         headers: {

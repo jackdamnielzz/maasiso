@@ -155,6 +155,21 @@ export interface FaqItem {
 }
 
 /**
+ * Related Post type - simplified version of BlogPost for related posts display
+ * Contains only the fields needed to render a related post card
+ */
+export interface RelatedPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  featuredImage?: Image;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+/**
  * Whitepaper type
  */
 export interface Whitepaper extends BaseContent {
@@ -193,7 +208,7 @@ export interface BlogPost extends BaseContent {
   author?: Author | string;
   tldr?: TldrItem[];
   faq?: FaqItem[];
-  relatedPosts?: BlogPost[];
+  relatedPosts?: RelatedPost[];
   robotsIndex?: boolean;
   robotsFollow?: boolean;
   schemaType?: string;
