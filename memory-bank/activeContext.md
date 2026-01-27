@@ -30,6 +30,7 @@ The AuthorBox component has been completely redesigned to display author informa
 - Fetches author details from Strapi via `getAuthorBySlug('niels-maas')`
 - Uses Strapi data (name, bio, credentials, expertise, LinkedIn, email, profile image)
 - Renders expanded hero with author image + contact chips
+- Overrides title display to "Senior Consultant" for Niels Maas (replaces Lead Auditor wording)
 
 ---
 

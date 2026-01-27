@@ -22,13 +22,17 @@ export default async function OverNielsMaasPage() {
     return `${baseUrl}${author.profileImage.url.startsWith('/') ? '' : '/'}${author.profileImage.url}`;
   })();
 
+  const displayCredentials = author?.slug === 'niels-maas'
+    ? 'Senior Consultant'
+    : author?.credentials || 'Senior Consultant';
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: author?.name || 'Niels Maas',
     url: 'https://maasiso.nl/over-niels-maas',
     '@id': 'https://maasiso.nl/over-niels-maas#author',
-    jobTitle: author?.credentials || 'Lead Consultant & Oprichter',
+    jobTitle: displayCredentials,
     worksFor: { '@id': 'https://maasiso.nl/#professionalservice' },
     description: author?.bio,
     sameAs: author?.linkedIn ? [author.linkedIn] : undefined,
@@ -88,11 +92,11 @@ export default async function OverNielsMaasPage() {
                 {author?.bio || 'Niels Maas is een doorgewinterde expert in ISO-normen (9001, 27001), AVG/GDPR en de BIO. Als oprichter en lead consultant bij MaasISO helpt hij organisaties met het professionaliseren en beveiligen van hun bedrijfsvoering.'}
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
-                {author?.credentials && (
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white/10 border border-white/20">
-                    {author.credentials}
-                  </span>
-                )}
+              {displayCredentials && (
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white/10 border border-white/20">
+                    {displayCredentials}
+                </span>
+              )}
                 {author?.linkedIn && (
                   <a
                     href={author.linkedIn}
@@ -134,9 +138,9 @@ export default async function OverNielsMaasPage() {
             <div>
               <h2 className="text-3xl font-bold text-[#091E42] mb-6">Mijn Rol</h2>
               <p className="text-[#091E42]/80 text-lg mb-6 leading-relaxed">
-                {author?.credentials
-                  ? `${author.credentials} bij MaasISO. Met jarenlange ervaring in diverse sectoren vertaalt ${author.name || 'Niels Maas'} complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.`
-                  : 'Als Oprichter en Lead Consultant bij MaasISO is Niels de drijvende kracht achter de strategische begeleiding van onze cliënten. Met jarenlange ervaring in diverse sectoren vertaalt hij complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.'}
+                {displayCredentials
+                  ? `${displayCredentials} bij MaasISO. Met jarenlange ervaring in diverse sectoren vertaalt ${author?.name || 'Niels Maas'} complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.`
+                  : 'Als Senior Consultant bij MaasISO is Niels de drijvende kracht achter de strategische begeleiding van onze cliënten. Met jarenlange ervaring in diverse sectoren vertaalt hij complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.'}
               </p>
               <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
                 <h3 className="font-bold text-[#091E42] mb-4">Expertise</h3>

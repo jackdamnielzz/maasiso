@@ -102,6 +102,7 @@
   - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- COMPLETED: Overrode Niels Maas title to "Senior Consultant" on the profile page to remove Lead Auditor wording in [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx).
 - IN PROGRESS: Over Niels Maas page now pulls full author details from Strapi via `getAuthorBySlug` and renders expanded hero with image and contact chips.
 - COMPLETED: Niels Maas author profile link now points to `/over-niels-maas` in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
 - COMPLETED: AuthorBox redesigned as professional business card with author image, bio, expertise tags, and action buttons in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
