@@ -185,11 +185,12 @@ function mapBlogPost(data: any | null): BlogPost | null {
       return authorData;
     }
 
-    // If it's a relation with data
+    // Strapi v4: nested { data: { attributes: {...} } } structure
     if (authorData?.data?.attributes) {
       const attr = authorData.data.attributes;
       return {
         id: String(authorData.data.id),
+        documentId: authorData.data.documentId,
         name: attr.name || '',
         slug: attr.slug || '',
         bio: attr.bio || '',
@@ -201,6 +202,25 @@ function mapBlogPost(data: any | null): BlogPost | null {
         createdAt: attr.createdAt || new Date().toISOString(),
         updatedAt: attr.updatedAt || new Date().toISOString(),
         publishedAt: attr.publishedAt,
+      };
+    }
+
+    // Strapi v5: flat object structure (direct author object)
+    if (authorData && typeof authorData === 'object' && authorData.name) {
+      return {
+        id: String(authorData.id || authorData.documentId),
+        documentId: authorData.documentId,
+        name: authorData.name || '',
+        slug: authorData.slug || '',
+        bio: authorData.bio || '',
+        credentials: authorData.credentials,
+        expertise: authorData.expertise,
+        profileImage: authorData.profileImage ? flattenMedia(authorData.profileImage) : undefined,
+        linkedIn: authorData.linkedIn,
+        email: authorData.email,
+        createdAt: authorData.createdAt || new Date().toISOString(),
+        updatedAt: authorData.updatedAt || new Date().toISOString(),
+        publishedAt: authorData.publishedAt,
       };
     }
 

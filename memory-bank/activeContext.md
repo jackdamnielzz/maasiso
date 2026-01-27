@@ -2,6 +2,31 @@
 
 ## Current Status (2026-01-27)
 
+### AuthorBox Component - Redesigned as Business Card ✅
+
+**Updated (2026-01-27 15:36):**
+
+The AuthorBox component has been completely redesigned to display author information as a professional "business card" (visitekaartje) on blog posts:
+
+**Design Features:**
+- **Section Header**: "Geschreven door" label with subtle styling
+- **Card Design**: Gradient background (slate-50 → white → blue-50) with rounded corners and shadow
+- **Profile Image**: Rounded square (2xl radius) with ring effect and hover zoom
+- **Author Info**: Name (linked to profile), credentials, bio (line-clamped to 3 lines)
+- **Expertise Tags**: Blue badges showing up to 5 skills with "+X meer" indicator
+- **Action Buttons**: LinkedIn (branded blue), Email (gray), "Bekijk profiel" link
+
+**Technical Updates:**
+- [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx:1) - Complete redesign with business card styling
+- [`src/lib/api.ts`](src/lib/api.ts:181) - Updated `mapAuthor()` to support both Strapi v4 (nested) and v5 (flat) structures
+
+**Data Flow:**
+1. Blog post fetched via `getBlogPostBySlug()` with `populate[4]=author&populate[5]=author.profileImage`
+2. Author data mapped by `mapAuthor()` function (supports string, v4 nested, v5 flat)
+3. AuthorBox component renders the business card with all available fields
+
+---
+
 ### relatedPosts Feature - FULLY WORKING ✅
 
 **Final Status (2026-01-27 02:31):**
@@ -43,6 +68,10 @@ node scripts/direct-link-related-posts.js <source-slug> <target-slug1> [target-s
 - Batch file: [`scripts/run-link-posts.bat`](scripts/run-link-posts.bat:1)
 - Interactive script: [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1)
 - Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+
+**Latest Update (2026-01-27):**
+- Added **menu option 7** to inspect a blog post by selection list (numbered list) in [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1).
+- The report shows title, slug, documentId, publish status, **relatedPosts (outgoing)** and **relatedFrom (incoming)**.
 
 **Schema (bidirectional relation in [`schema.json`](../maasiso-strapi-railway/src/api/blog-post/content-types/blog-post/schema.json:100)):**
 ```json

@@ -33,6 +33,7 @@
 - SEO/GEO Enhancement - Phase 2 Complete: 100% ✅
 - relatedPosts Self-Referencing Fix: 100% ✅
 - relatedPosts Frontend Display: 100% ✅
+- AuthorBox Business Card Redesign: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -46,6 +47,10 @@
 
 ## Recent Updates (2026-01-27)
 
+### AuthorBox Business Card Redesign (2026-01-27) ✅
+- **UI Refresh**: Redesigned [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx) as a compact business card with header, profile image, bio, expertise tags, and action buttons.
+- **Data Support**: Updated `mapAuthor()` in [`src/lib/api.ts`](src/lib/api.ts:181) to handle both Strapi v4 nested data and Strapi v5 flat data.
+
 ### relatedPosts Frontend Display - FULLY WORKING (2026-01-27) ✅
 - **API Fix**: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
 - **Type Fix**: Added `RelatedPost` type to [`src/lib/types.ts`](src/lib/types.ts:157)
@@ -56,6 +61,7 @@
   - Batch file: [`scripts/run-link-posts.bat`](scripts/run-link-posts.bat:1)
   - Interactive script: [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1)
   - Documentation: [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+  - **NEW:** Inspect-by-selection option (menu 7) shows relatedPosts + relatedFrom
 - **Verified**: relatedPosts display correctly in both bottom section AND sidebar
 
 ### relatedPosts Self-Referencing Bug - SOLVED WITH DATABASE WORKAROUND (2026-01-27) ✅

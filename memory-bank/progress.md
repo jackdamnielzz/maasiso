@@ -93,6 +93,7 @@
   - [x] Direct database script bypasses Admin UI and writes to PostgreSQL join table
   - [x] **TEST SUCCESS**: Linked "avg-beeldmateriaal-toestemming" (ID: 30) → "checklist-iso-14001" (ID: 41)
 - [x] **relatedPosts Frontend Display - FULLY WORKING** (2026-01-27) ✅
+ - [x] **AuthorBox Business Card Redesign** (2026-01-27) ✅
   - [x] Fixed API: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
   - [x] Fixed Types: Added `RelatedPost` type to [`src/lib/types.ts`](src/lib/types.ts:157)
   - [x] Fixed Mapping: `mapRelatedPosts` now handles both Strapi v4 and v5 structures
@@ -101,7 +102,10 @@
   - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- COMPLETED: AuthorBox redesigned as professional business card with author image, bio, expertise tags, and action buttons in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
+- COMPLETED: Updated `mapAuthor()` to support Strapi v4 and v5 author structures in [`src/lib/api.ts`](src/lib/api.ts:181).
 - COMPLETED: Direct database workaround for relatedPosts - script successfully links posts via PostgreSQL (2026-01-27).
+- COMPLETED: Added inspect-by-slug option to [`scripts/link-gerelateerde-posts.js`](scripts/link-gerelateerde-posts.js:1) to show relatedPosts + relatedFrom (2026-01-27).
 - COMPLETED: relatedPosts bidirectional workaround implemented - schema now has `relatedPosts` (inversedBy) + `relatedFrom` (mappedBy) (2026-01-27).
 - COMPLETED: Created [`scripts/link-related-posts.js`](scripts/link-related-posts.js:1) diagnostic tool (2026-01-27).
 - COMPLETED: relatedPosts ValidationError partially fixed by removing circular `mappedBy` from blog-post schema (2026-01-27).
