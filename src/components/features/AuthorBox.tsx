@@ -34,7 +34,9 @@ export function AuthorBox({ author, className = '' }: AuthorBoxProps) {
   }
 
   // Full Author object with all details - Business Card Style
-  const authorUrl = `/auteurs/${author.slug}`;
+  const authorUrl = author.slug === 'niels-maas'
+    ? '/over-niels-maas'
+    : `/auteurs/${author.slug}`;
   const hasImage = author.profileImage?.url;
 
   // Construct proper image URL

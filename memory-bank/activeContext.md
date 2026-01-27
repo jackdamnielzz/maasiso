@@ -15,6 +15,7 @@ The AuthorBox component has been completely redesigned to display author informa
 - **Author Info**: Name (linked to profile), credentials, bio (line-clamped to 3 lines)
 - **Expertise Tags**: Blue badges showing up to 5 skills with "+X meer" indicator
 - **Action Buttons**: LinkedIn (branded blue), Email (gray), "Bekijk profiel" link
+- **Author Link**: Niels Maas now links to `/over-niels-maas` instead of `/auteurs/niels-maas`
 
 **Technical Updates:**
 - [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx:1) - Complete redesign with business card styling

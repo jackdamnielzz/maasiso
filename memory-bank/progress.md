@@ -102,6 +102,7 @@
   - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- COMPLETED: Niels Maas author profile link now points to `/over-niels-maas` in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
 - COMPLETED: AuthorBox redesigned as professional business card with author image, bio, expertise tags, and action buttons in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).
 - COMPLETED: Updated `mapAuthor()` to support Strapi v4 and v5 author structures in [`src/lib/api.ts`](src/lib/api.ts:181).
 - COMPLETED: Direct database workaround for relatedPosts - script successfully links posts via PostgreSQL (2026-01-27).

@@ -50,6 +50,7 @@
 ### AuthorBox Business Card Redesign (2026-01-27) ✅
 - **UI Refresh**: Redesigned [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx) as a compact business card with header, profile image, bio, expertise tags, and action buttons.
 - **Data Support**: Updated `mapAuthor()` in [`src/lib/api.ts`](src/lib/api.ts:181) to handle both Strapi v4 nested data and Strapi v5 flat data.
+- **Author Link**: Niels Maas now links to `/over-niels-maas` instead of `/auteurs/niels-maas`.
 
 ### relatedPosts Frontend Display - FULLY WORKING (2026-01-27) ✅
 - **API Fix**: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)
