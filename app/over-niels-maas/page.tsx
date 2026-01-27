@@ -8,7 +8,7 @@ import BlogPostCard from '@/components/features/BlogPostCard';
 
 export const metadata: Metadata = {
   title: 'Over Niels Maas | Senior Consultant MaasISO',
-  description: 'MaasISO verbindt complexe normen met de dagelijkse praktijk. Leer meer over Niels Maas, Senior Consultant en oprichter van MaasISO.',
+  description: 'MaasISO verbindt complexe normen met de dagelijkse praktijk. Leer meer over Niels Maas, Senior consultant en oprichter van MaasISO.',
   alternates: {
     canonical: "/over-niels-maas",
   },
@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 export default async function OverNielsMaasPage() {
   const author = await getAuthorBySlug('niels-maas');
 
-  const displayCredentials = author?.slug === 'niels-maas'
-    ? 'Senior Consultant'
-    : author?.credentials || 'Senior Consultant';
+  const displayCredentials = 'Senior consultant';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -27,7 +25,7 @@ export default async function OverNielsMaasPage() {
     name: author?.name || 'Niels Maas',
     url: 'https://maasiso.nl/over-niels-maas',
     '@id': 'https://maasiso.nl/over-niels-maas#author',
-    jobTitle: displayCredentials,
+    jobTitle: 'Senior consultant',
     worksFor: { '@id': 'https://maasiso.nl/#professionalservice' },
     description: author?.bio,
     sameAs: author?.linkedIn ? [author.linkedIn] : undefined,
@@ -151,7 +149,7 @@ export default async function OverNielsMaasPage() {
               </h2>
               <div className="prose prose-lg text-gray-600 max-w-none mb-10">
                 <p className="text-xl leading-relaxed mb-6 font-medium text-[#091E42]/80">
-                  {displayCredentials} bij MaasISO. Met jarenlange ervaring in diverse sectoren vertaalt Niels complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.
+                  Senior consultant bij MaasISO. Met jarenlange ervaring in diverse sectoren vertaalt Niels complexe normenkaders naar praktische, werkbare oplossingen die echt waarde toevoegen aan een organisatie.
                 </p>
                 <p className="leading-relaxed">
                   {author?.bio || 'Niels gelooft dat een goed managementsysteem de basis is voor elke succesvolle en veilige organisatie. Of het nu gaat om kwaliteitsborging (ISO 9001), informatiebeveiliging (ISO 27001) of privacy-naleving (AVG), de insteek is altijd hetzelfde: pragmatisch, duidelijk en resultaatgericht.'}

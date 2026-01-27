@@ -181,7 +181,7 @@ export default function OverOnsContent() {
                       </svg>
                     </div>
                     <h4 className="text-white text-2xl font-bold mb-2">Niels Maas</h4>
-                    <p className="text-white/60 text-lg">Lead Consultant & Oprichter</p>
+                    <p className="text-white/60 text-lg">Senior consultant & Oprichter</p>
                   </div>
                 </div>
               </ScrollReveal>
@@ -195,7 +195,7 @@ export default function OverOnsContent() {
                     Over <span className="text-[#00875A]">Niels Maas</span>
                   </h2>
                   <p className="text-xl text-gray-600 leading-relaxed mb-6">
-                    Niels Maas is een doorgewinterde expert in ISO-normen (9001, 27001), AVG/GDPR en de BIO. Als oprichter en lead consultant bij MaasISO helpt hij organisaties met het professionaliseren en beveiligen van hun bedrijfsvoering.
+                    Niels Maas is een doorgewinterde expert in ISO-normen (9001, 27001), AVG/GDPR en de BIO. Als oprichter en Senior consultant bij MaasISO helpt hij organisaties met het professionaliseren en beveiligen van hun bedrijfsvoering.
                   </p>
                   <p className="text-lg text-gray-600 leading-relaxed mb-10">
                     Met een nuchtere en resultaatgerichte aanpak vertaalt hij complexe normen naar praktische meerwaarde. Zijn passie ligt in het creëren van systemen die écht werken voor de organisatie.
