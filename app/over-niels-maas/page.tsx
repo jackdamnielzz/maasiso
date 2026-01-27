@@ -158,22 +158,21 @@ export default async function OverNielsMaasPage() {
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
                 {expertise.map((item, i) => (
-                  <div key={`${item.title}-${i}`} className="flex flex-col p-6 rounded-2xl bg-[#F4F7F9] border border-gray-100 hover:border-[#00875A]/30 transition-all group h-full">
-                    <div className="w-fit min-w-[40px] px-3 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center mb-4 text-[#00875A] group-hover:scale-110 transition-transform">
-                       <span className="font-bold text-[10px] uppercase tracking-wider whitespace-nowrap">
-                         {item.title.includes('ISO') ? 'ISO' : item.title.split(' ')[0]}
-                       </span>
+                  <div key={`${item.title}-${i}`} className="relative group flex flex-col">
+                    <div className="flex items-center gap-3 mb-2">
+                       <div className="w-2 h-2 rounded-full bg-[#00875A] group-hover:scale-150 transition-transform duration-300"></div>
+                       <h4 className="font-bold text-[#091E42] text-lg group-hover:text-[#00875A] transition-colors duration-300">
+                         {item.title}
+                       </h4>
                     </div>
-                    <h4 className="font-bold text-[#091E42] mb-2 leading-tight break-words">
-                      {item.title}
-                    </h4>
                     {item.description && (
-                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider leading-relaxed mt-auto">
+                      <p className="pl-5 text-sm text-gray-600 leading-relaxed font-medium">
                         {item.description}
                       </p>
                     )}
+                    <div className="absolute -left-4 top-0 bottom-0 w-px bg-gray-100 group-hover:bg-[#00875A]/20 transition-colors"></div>
                   </div>
                 ))}
               </div>
