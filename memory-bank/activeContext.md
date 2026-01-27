@@ -34,48 +34,59 @@ The AuthorBox component has been completely redesigned to display author informa
 
 ---
 
-### relatedPosts Feature - CUSTOM API + WEB TOOL (2026-01-27 20:49)
+### relatedPosts Feature - FULL WEB-BASED TOOL (2026-01-27 21:19)
 
-**Status: ✅ Custom Solution Implemented**
+**Status: ✅ Complete Web-Based Solution Implemented**
 
 The Strapi v5 Admin UI has a **confirmed bug** with self-referential manyToMany relations. Both bidirectional and unidirectional configurations fail with:
 ```
 Document with id "...", locale "null" not found
 ```
 
-**Solution: Custom API Endpoints + Web-Based Tool**
+**Solution: Full Web-Based Management Tool with Direct Database Access**
 
-Instead of fighting the Admin UI bug, we've implemented a complete workaround:
+Instead of fighting the Admin UI bug, we've implemented a complete web-based workaround:
 
-**1. Custom Strapi API Endpoints (Commit `4dc5398`):**
-- `GET /api/blog-posts/list-for-relations` - List all posts for selection
-- `GET /api/blog-posts/:id/related-posts` - Get current related posts
-- `POST /api/blog-posts/:id/related-posts` - Update related posts
-
-Files:
-- [`blog-post.ts`](../maasiso-strapi-railway/src/api/blog-post/controllers/blog-post.ts:1) - Custom controller
-- [`custom-routes.ts`](../maasiso-strapi-railway/src/api/blog-post/routes/custom-routes.ts:1) - Route definitions
+**1. Next.js API Route (Direct Database Access):**
+- File: [`app/api/related-posts/route.ts`](app/api/related-posts/route.ts:1)
+- Endpoints:
+  - `GET /api/related-posts?action=list` - List all posts
+  - `GET /api/related-posts?documentId=xxx` - Get related posts for a document
+  - `POST /api/related-posts` - Save related posts (body: `{documentId, relatedDocumentIds[]}`)
+- Uses `pg` package for direct PostgreSQL access
+- Falls back to Strapi API for read-only if DATABASE_URL not configured
 
 **2. Web-Based Management Tool:**
 - URL: `/admin/related-posts`
 - File: [`app/admin/related-posts/page.tsx`](app/admin/related-posts/page.tsx:1)
 - Features:
-  - Select a blog post from dropdown
-  - See current related posts
-  - Check/uncheck posts to relate
-  - Save with one click
-  - No scripts needed!
+  - ✅ Select a blog post from dropdown
+  - ✅ Search/filter posts
+  - ✅ Two-column layout: available posts (left) + selected posts (right)
+  - ✅ Click to toggle selection
+  - ✅ Visual indicators for new vs existing relations
+  - ✅ Unsaved changes warning
+  - ✅ Save with one click
+  - ✅ No scripts needed!
 
 **How to Use:**
-1. Go to `https://maasiso.nl/admin/related-posts`
-2. Select a blog post from the dropdown
-3. Check the posts you want to relate
-4. Click "Opslaan"
-5. Done! The relations are saved directly to the database
+1. Start dev server: `npm run dev`
+2. Go to `http://localhost:3000/admin/related-posts`
+3. Select a blog post from the dropdown
+4. Click on posts in the left column to add/remove relations
+5. Click "Opslaan" to save
+6. Done! The relations are saved directly to the database
+
+**Configuration Required:**
+Add to `.env.local`:
+```env
+DATABASE_URL=postgresql://user:password@host:port/database
+```
 
 **Why This Works:**
-- Bypasses the Admin UI entirely
-- Writes directly to the PostgreSQL join table
+- Bypasses the Strapi Admin UI entirely
+- Writes directly to the PostgreSQL join table (`blog_posts_related_posts_lnk`)
+- Updates ALL versions (draft + published) of a document
 - Works for ALL blog posts, not just one
 - No lifecycle hooks or middleware needed
 - Simple, reliable, and maintainable
@@ -89,8 +100,8 @@ Files:
 }
 ```
 
-**Bug Report:**
-- [`docs/strapi-v5-self-referential-bug-report.md`](docs/strapi-v5-self-referential-bug-report.md:1) - For Strapi GitHub issue
+**Documentation:**
+- [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1) - Complete user guide
 
 **Frontend (unchanged):**
 - [`src/lib/api.ts`](src/lib/api.ts:953) - Explicit populate for relatedPosts

@@ -1,20 +1,57 @@
 # 🔗 Gerelateerde Blog Posts Linken - Handleiding
 
-## Waarom dit script?
+## Waarom deze tools?
 
-De Strapi Admin UI heeft een bug waardoor je geen gerelateerde posts kunt selecteren. Dit script omzeilt die bug door direct naar de database te schrijven.
+De Strapi Admin UI heeft een bug waardoor je geen gerelateerde posts kunt selecteren. We hebben twee oplossingen:
+
+1. **🌐 Web-based Tool** (aanbevolen) - Gebruiksvriendelijke interface
+2. **📟 CLI Script** - Voor gevorderden of automatisering
 
 ---
 
-## 🚀 Hoe te starten
+## 🌐 Optie 1: Web-based Tool (Aanbevolen)
 
-### Optie 1: Dubbelklik (makkelijkst)
+### Hoe te openen
+
+1. Start je Next.js development server:
+   ```cmd
+   npm run dev
+   ```
+
+2. Ga naar: **http://localhost:3000/admin/related-posts**
+
+### Wat kun je doen?
+
+- ✅ Alle blog posts bekijken
+- ✅ Zoeken in posts
+- ✅ Gerelateerde posts selecteren met één klik
+- ✅ Wijzigingen direct opslaan
+- ✅ Visuele feedback over status
+
+### Vereisten voor opslaan
+
+De web tool heeft directe database toegang nodig. Voeg toe aan je `.env.local`:
+
+```env
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
+**Railway database URL vind je in:**
+Railway Dashboard → Project → PostgreSQL → Connect → Connection String
+
+---
+
+## 📟 Optie 2: CLI Script
+
+### Hoe te starten
+
+#### Dubbelklik (makkelijkst)
 
 1. Ga naar: `D:\Programmeren\MaasISO\New without errors\maasiso-strapi-railway\scripts`
 2. Dubbelklik op: **`run-link-posts.bat`**
 3. Het interactieve menu opent automatisch
 
-### Optie 2: Via Terminal
+#### Via Terminal
 
 1. Open een terminal (Command Prompt of PowerShell)
 2. Voer uit:
@@ -23,11 +60,7 @@ De Strapi Admin UI heeft een bug waardoor je geen gerelateerde posts kunt select
    node scripts/link-gerelateerde-posts.js
    ```
 
----
-
-## 📋 Wat kun je doen?
-
-Het script heeft een interactief menu met deze opties:
+### Menu opties
 
 | Optie | Functie |
 |-------|---------|
@@ -43,7 +76,15 @@ Het script heeft een interactief menu met deze opties:
 
 ## 📝 Stap-voor-stap: Posts linken
 
-### Na het publiceren van een nieuwe blog post:
+### Via Web Tool (aanbevolen)
+
+1. Open http://localhost:3000/admin/related-posts
+2. Selecteer een blog post uit de dropdown
+3. Klik op posts in de linker kolom om ze te selecteren
+4. Bekijk je selectie in de rechter kolom
+5. Klik op "Opslaan"
+
+### Via CLI Script
 
 1. **Start het script** (dubbelklik op `run-link-posts.bat`)
 
@@ -115,29 +156,45 @@ De slug is het laatste deel van de URL:
 - URL: `https://maasiso.nl/blog/iso-9001-certificering`
 - Slug: `iso-9001-certificering`
 
-Of gebruik **optie 1** of **optie 2** in het script om alle slugs te zien.
+Of gebruik de web tool of **optie 1/2** in het CLI script om alle slugs te zien.
 
 ### Kan ik meerdere posts tegelijk linken?
 
-Ja! Bij optie 3 kun je meerdere slugs invoeren (één per regel).
+- **Web tool:** Ja, klik op meerdere posts en sla dan op
+- **CLI script:** Ja, voer meerdere slugs in (één per regel)
 
 ### Wat als ik een verkeerde link heb gemaakt?
 
-Gebruik **optie 5** om een link te verwijderen.
+- **Web tool:** Klik op de ✕ naast de post en sla op
+- **CLI script:** Gebruik **optie 5** om een link te verwijderen
 
 ### Werkt dit ook voor de productie database?
 
-Ja, het script gebruikt de database credentials uit je `.env` bestand. Zorg dat je de juiste credentials hebt voor productie (Railway).
+Ja! Beide tools gebruiken de database credentials uit je `.env` of `.env.local` bestand. Zorg dat je de juiste credentials hebt voor productie (Railway).
 
 ### Waarom werkt de Strapi Admin UI niet?
 
 Strapi v5 heeft een bug met "self-referencing" relaties. De Admin UI geeft een foutmelding: `Document with id "...", locale "null" not found`. Dit is een bekend probleem dat nog niet is opgelost door Strapi.
 
+### Web tool toont "Read-only (Strapi API)"
+
+Dit betekent dat DATABASE_URL niet is geconfigureerd. Voeg de database URL toe aan `.env.local`:
+
+```env
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
 ---
 
 ## 🔧 Troubleshooting
 
-### "Database configuratie niet gevonden"
+### Web tool: "Cannot save relations"
+
+1. Controleer of DATABASE_URL is ingesteld in `.env.local`
+2. Controleer of de database URL correct is
+3. Herstart de development server na wijzigingen in `.env.local`
+
+### CLI: "Database configuratie niet gevonden"
 
 Zorg dat je in de juiste folder bent:
 ```cmd
@@ -162,8 +219,10 @@ Controleer of:
 
 | Bestand | Beschrijving |
 |---------|--------------|
-| `link-gerelateerde-posts.js` | Het hoofdscript met interactief menu |
-| `run-link-posts.bat` | Dubbelklik om te starten |
+| `/admin/related-posts` | Web-based tool (Next.js pagina) |
+| `/api/related-posts` | API endpoint voor web tool |
+| `link-gerelateerde-posts.js` | CLI script met interactief menu |
+| `run-link-posts.bat` | Dubbelklik om CLI te starten |
 | `README-gerelateerde-posts.md` | Deze handleiding |
 | `direct-link-related-posts.js` | Origineel CLI script (voor gevorderden) |
 
@@ -175,3 +234,14 @@ Controleer of:
 2. **Gebruik relevante anchors**: De titel van de gelinkte post wordt automatisch gebruikt
 3. **Bouw clusters**: Groepeer posts per onderwerp (ISO 9001, AVG, etc.)
 4. **Update regelmatig**: Voeg nieuwe posts toe aan bestaande clusters
+
+---
+
+## 🔒 Database URL vinden (Railway)
+
+1. Ga naar https://railway.app/dashboard
+2. Open je project
+3. Klik op de PostgreSQL service
+4. Ga naar "Connect" tab
+5. Kopieer de "Connection String"
+6. Plak in `.env.local` als `DATABASE_URL=...`
