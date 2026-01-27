@@ -22,6 +22,7 @@ import {
   PageComponent,
   StrapiRawPage
 } from './types';
+import type { Author } from './types';
 import { extractFeatures } from './featureExtractor';
 import { monitoredFetch } from './monitoredFetch';
 import { validateSlug } from './utils/slugUtils';
@@ -130,6 +131,64 @@ async function fetchWithBaseUrl<T>(
   }
 }
 
+// Helper to flatten Strapi media fields
+const flattenMedia = (media: any) => {
+  if (!media) return undefined;
+  if (media.data && media.data.attributes) {
+    return { id: media.data.id, ...media.data.attributes };
+  }
+  return media;
+};
+
+// Helper to map author (can be string or relation)
+const mapAuthor = (authorData: any) => {
+  // Backward compatibility: if it's a string, return as-is
+  if (typeof authorData === 'string') {
+    return authorData;
+  }
+
+  // Strapi v4: nested { data: { attributes: {...} } } structure
+  if (authorData?.data?.attributes) {
+    const attr = authorData.data.attributes;
+    return {
+      id: String(authorData.data.id),
+      documentId: authorData.data.documentId,
+      name: attr.name || '',
+      slug: attr.slug || '',
+      bio: attr.bio || '',
+      credentials: attr.credentials,
+      expertise: attr.expertise,
+      profileImage: attr.profileImage ? flattenMedia(attr.profileImage) : undefined,
+      linkedIn: attr.linkedIn,
+      email: attr.email,
+      createdAt: attr.createdAt || new Date().toISOString(),
+      updatedAt: attr.updatedAt || new Date().toISOString(),
+      publishedAt: attr.publishedAt,
+    };
+  }
+
+  // Strapi v5: flat object structure (direct author object)
+  if (authorData && typeof authorData === 'object' && authorData.name) {
+    return {
+      id: String(authorData.id || authorData.documentId),
+      documentId: authorData.documentId,
+      name: authorData.name || '',
+      slug: authorData.slug || '',
+      bio: authorData.bio || '',
+      credentials: authorData.credentials,
+      expertise: authorData.expertise,
+      profileImage: authorData.profileImage ? flattenMedia(authorData.profileImage) : undefined,
+      linkedIn: authorData.linkedIn,
+      email: authorData.email,
+      createdAt: authorData.createdAt || new Date().toISOString(),
+      updatedAt: authorData.updatedAt || new Date().toISOString(),
+      publishedAt: authorData.publishedAt,
+    };
+  }
+
+  return undefined;
+};
+
 function mapNewsArticle(data: any | null): NewsArticle | null {
   if (!data) {
     return null;
@@ -168,64 +227,6 @@ function mapBlogPost(data: any | null): BlogPost | null {
     console.log('Invalid blog post data:', data);
     return null;
   }
-
-  // Helper to flatten Strapi media fields
-  const flattenMedia = (media: any) => {
-    if (!media) return undefined;
-    if (media.data && media.data.attributes) {
-      return { id: media.data.id, ...media.data.attributes };
-    }
-    return media;
-  };
-
-  // Helper to map author (can be string or relation)
-  const mapAuthor = (authorData: any) => {
-    // Backward compatibility: if it's a string, return as-is
-    if (typeof authorData === 'string') {
-      return authorData;
-    }
-
-    // Strapi v4: nested { data: { attributes: {...} } } structure
-    if (authorData?.data?.attributes) {
-      const attr = authorData.data.attributes;
-      return {
-        id: String(authorData.data.id),
-        documentId: authorData.data.documentId,
-        name: attr.name || '',
-        slug: attr.slug || '',
-        bio: attr.bio || '',
-        credentials: attr.credentials,
-        expertise: attr.expertise,
-        profileImage: attr.profileImage ? flattenMedia(attr.profileImage) : undefined,
-        linkedIn: attr.linkedIn,
-        email: attr.email,
-        createdAt: attr.createdAt || new Date().toISOString(),
-        updatedAt: attr.updatedAt || new Date().toISOString(),
-        publishedAt: attr.publishedAt,
-      };
-    }
-
-    // Strapi v5: flat object structure (direct author object)
-    if (authorData && typeof authorData === 'object' && authorData.name) {
-      return {
-        id: String(authorData.id || authorData.documentId),
-        documentId: authorData.documentId,
-        name: authorData.name || '',
-        slug: authorData.slug || '',
-        bio: authorData.bio || '',
-        credentials: authorData.credentials,
-        expertise: authorData.expertise,
-        profileImage: authorData.profileImage ? flattenMedia(authorData.profileImage) : undefined,
-        linkedIn: authorData.linkedIn,
-        email: authorData.email,
-        createdAt: authorData.createdAt || new Date().toISOString(),
-        updatedAt: authorData.updatedAt || new Date().toISOString(),
-        publishedAt: authorData.publishedAt,
-      };
-    }
-
-    return undefined;
-  };
 
   // Map related posts if they exist
   // Strapi v5 returns flat array, not nested data.attributes structure
@@ -1032,6 +1033,41 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
   } catch (error) {
     console.error('Error fetching blog post:', error);
     return { blogPost: null };
+  }
+}
+
+export async function getAuthorBySlug(slug: string): Promise<Author | null> {
+  try {
+    const validatedSlug = validateSlug(slug);
+    console.log('Fetching author with slug:', validatedSlug);
+
+    const populateParams = [
+      'populate[0]=profileImage',
+      'populate[1]=blog_posts',
+      'populate[2]=blog_posts.featuredImage'
+    ].join('&');
+
+    const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
+      `/api/authors?filters[slug][$eq]=${validatedSlug}&${populateParams}`,
+      {
+        next: { revalidate: 60 },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!data?.data || data.data.length === 0) {
+      console.log('No author found for slug:', validatedSlug);
+      return null;
+    }
+
+    const authorData = data.data[0].attributes ? { data: data.data[0] } : data.data[0];
+    return mapAuthor(authorData) as Author;
+  } catch (error) {
+    console.error('Error fetching author:', error);
+    return null;
   }
 }
 

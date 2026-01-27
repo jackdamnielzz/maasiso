@@ -26,6 +26,11 @@ The AuthorBox component has been completely redesigned to display author informa
 2. Author data mapped by `mapAuthor()` function (supports string, v4 nested, v5 flat)
 3. AuthorBox component renders the business card with all available fields
 
+**Over Niels Maas Page Upgrade (In Progress):**
+- Fetches author details from Strapi via `getAuthorBySlug('niels-maas')`
+- Uses Strapi data (name, bio, credentials, expertise, LinkedIn, email, profile image)
+- Renders expanded hero with author image + contact chips
+
 ---
 
 ### relatedPosts Feature - FULLY WORKING ✅

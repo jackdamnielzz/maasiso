@@ -47,6 +47,10 @@
 
 ## Recent Updates (2026-01-27)
 
+### Over Niels Maas Page - Strapi Data Expansion (2026-01-27) 🔧
+- **Data Source**: Added `getAuthorBySlug('niels-maas')` in [`src/lib/api.ts`](src/lib/api.ts:1038) to fetch full author details from Strapi.
+- **Page Update**: [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx) now renders author name, bio, credentials, expertise, LinkedIn, email, and profile image from Strapi.
+
 ### AuthorBox Business Card Redesign (2026-01-27) ✅
 - **UI Refresh**: Redesigned [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx) as a compact business card with header, profile image, bio, expertise tags, and action buttons.
 - **Data Support**: Updated `mapAuthor()` in [`src/lib/api.ts`](src/lib/api.ts:181) to handle both Strapi v4 nested data and Strapi v5 flat data.
