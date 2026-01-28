@@ -2,6 +2,70 @@
 
 ## Current Status (2026-01-28)
 
+### "Laatst bijgewerkt" Date Added to Blog Posts ✅
+
+**Updated (2026-01-28 20:27):**
+
+Added "Last Updated" (Bijgewerkt) date display to blog posts on the frontend for improved SEO and user experience.
+
+**Implementation:**
+- Modified [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:60) to show both publication and update dates
+- "Bijgewerkt" date only shows if it differs from "Gepubliceerd" by at least 1 day
+- Changed date format from English to Dutch locale (`nl-NL`)
+- Also updated related posts sidebar to use Dutch date formatting
+
+**Display Format:**
+```
+Gepubliceerd: 15 januari 2025 | Bijgewerkt: 28 januari 2025 • Niels Maas
+```
+
+**Technical Details:**
+- Uses Strapi's automatic `updatedAt` field (already mapped in `mapBlogPost()`)
+- TypeScript types already include `updatedAt` in `BaseContent` interface
+- Semantic `<time>` elements with `dateTime` attributes for SEO
+- Comparison logic prevents showing "Bijgewerkt" for minor edits (< 1 day)
+
+**Files Changed:**
+- [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:60) - Added update date display with Dutch labels
+
+---
+
+### DATABASE_URL Added to Vercel Production ✅
+
+**Updated (2026-01-28 16:55):**
+
+The `DATABASE_URL` environment variable has been added to Vercel production, enabling the Related Posts Manager to save relations directly to the PostgreSQL database.
+
+**Problem:**
+- The Related Posts Manager on https://maasiso.nl/admin/related-posts showed error:
+  ```
+  DATABASE_URL not configured. Cannot save relations without direct database access.
+  ```
+
+**Solution:**
+- Added `DATABASE_URL` to Vercel project `maasiso-copy-2` for production environment
+- Value: `postgresql://postgres:pgdTOwRehSRwOVocgKXAVIhJTHXEdaEQ@centerbeam.proxy.rlwy.net:52159/railway`
+- Note: Uses the **public proxy URL** (not internal Railway URL) because Vercel needs external access
+
+**Verification:**
+- API now returns `"source":"database"` confirming direct database access
+- Test: `curl "https://maasiso.nl/api/related-posts?action=list"` returns posts from database
+- Related Posts Manager can now save relations on production
+
+**Commands Used:**
+```bash
+# Remove incorrect internal URL
+npx vercel env rm DATABASE_URL production --yes
+
+# Add correct external proxy URL
+echo postgresql://postgres:...@centerbeam.proxy.rlwy.net:52159/railway | npx vercel env add DATABASE_URL production
+
+# Trigger deployment
+npx vercel --prod
+```
+
+---
+
 ### Related Posts Manager - PRODUCTION CONFIGURED ✅
 
 **Updated (2026-01-28 16:45):**
@@ -15,7 +79,9 @@ Production environment for the Related Posts Manager is now fully configured:
 
 **Production Configuration:**
 - **Vercel Project**: `maasiso-copy-2` (linked to `maasiso.nl`)
-- **Environment Variable**: `ADMIN_PASSWORD` set in Production environment
+- **Environment Variables**:
+  - `ADMIN_PASSWORD` - Authentication for the web tool
+  - `DATABASE_URL` - PostgreSQL connection for direct database access
 - **Password**: Same as local `.env.local` (`MaasISO2024!Admin`)
 - **API Endpoint**: `https://maasiso.nl/api/admin-auth` ✅ Working
 - **Web Tool URL**: `https://maasiso.nl/admin/related-posts`

@@ -61,16 +61,40 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
             <h1 className="text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold text-[#091E42] mb-8 leading-[1.2] break-words hyphens-auto max-w-[90%]">
               {post.title}
             </h1>
-            <div className="flex flex-wrap items-center text-[15px] text-[#6B778C] space-x-2">
+            <div className="flex flex-wrap items-center text-[15px] text-[#6B778C] gap-2">
               {post.publishedAt && (
-                <span>
-                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                <time dateTime={post.publishedAt} className="flex items-center">
+                  <span className="text-[#6B778C]/80 mr-1">Gepubliceerd:</span>
+                  {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}
-                </span>
+                </time>
               )}
+              {/* Show "Laatst bijgewerkt" only if it differs from publishedAt by at least 1 day */}
+              {post.updatedAt && post.publishedAt && (() => {
+                const publishedDate = new Date(post.publishedAt);
+                const updatedDate = new Date(post.updatedAt);
+                const diffInDays = Math.abs(updatedDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
+                
+                if (diffInDays >= 1) {
+                  return (
+                    <>
+                      <span className="text-[#091E42]/40">|</span>
+                      <time dateTime={post.updatedAt} className="flex items-center">
+                        <span className="text-[#6B778C]/80 mr-1">Bijgewerkt:</span>
+                        {updatedDate.toLocaleDateString('nl-NL', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </time>
+                    </>
+                  );
+                }
+                return null;
+              })()}
               {post.author && (
                 <>
                   <span className="text-[#091E42]/40">•</span>
@@ -182,7 +206,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
                   </h3>
                   {relatedPost.publishedAt && (
                     <div className="flex items-center mt-3 text-sm text-[#6B778C]">
-                      <time dateTime={relatedPost.publishedAt}>{new Date(relatedPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                      <time dateTime={relatedPost.publishedAt}>{new Date(relatedPost.publishedAt).toLocaleDateString('nl-NL', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
                     </div>
                   )}
                 </Link>
