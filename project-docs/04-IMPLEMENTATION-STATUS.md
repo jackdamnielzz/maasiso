@@ -73,6 +73,10 @@
   - **NEW:** Inspect-by-selection option (menu 7) shows relatedPosts + relatedFrom
 - **Verified**: relatedPosts display correctly in both bottom section AND sidebar
 
+### relatedPosts Web Tool - Test Harness Added (2026-01-28) ✅
+- **Test Script**: Added [`scripts/test-related-posts-webtool.js`](scripts/test-related-posts-webtool.js:1) to verify list/save/persistence via `/api/related-posts`
+- **Docs Update**: Added test instructions to [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1)
+
 ### relatedPosts Auto-Restore Lifecycle Hook - FIXED FOR ALL POSTS (2026-01-27) ✅
 - **Issue**: The lifecycle hook that restores relatedPosts after blog post updates only worked for one specific post
 - **Root Cause**: Strapi v5 has draft/published versions with different `id`s but same `documentId`. The original hook:

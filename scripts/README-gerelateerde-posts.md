@@ -41,6 +41,33 @@ Railway Dashboard → Project → PostgreSQL → Connect → Connection String
 
 ---
 
+## ✅ Testen van de web tool (API)
+
+Gebruik dit script om te verifiëren dat de web tool echt kan lezen + schrijven in de database:
+
+```cmd
+# 1) Start de Next.js dev server (nodig voor /api/related-posts)
+npm run dev
+
+# 2) Toon of je posts kunt ophalen
+node scripts/test-related-posts-webtool.js --list
+
+# 3) Test opslaan + persistence
+#    Vervang door echte documentId waarden
+node scripts/test-related-posts-webtool.js --source <documentId> --targets <docId1,docId2>
+```
+
+**Wat het script controleert:**
+1. De tool kan blogposts ophalen via `/api/related-posts?action=list`
+2. De tool kan relatedPosts opslaan via `POST /api/related-posts`
+3. De relaties blijven bestaan (direct opnieuw ophalen na opslaan)
+
+**Let op:**
+- Voor stap 3 is `DATABASE_URL` verplicht (anders is de API read-only)
+- De `documentId` waarden vind je via de lijst in stap 2 of via de web tool dropdown
+
+---
+
 ## 📟 Optie 2: CLI Script
 
 ### Hoe te starten

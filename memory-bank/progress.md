@@ -93,6 +93,9 @@
   - [x] Direct database script bypasses Admin UI and writes to PostgreSQL join table
   - [x] **TEST SUCCESS**: Linked "avg-beeldmateriaal-toestemming" (ID: 30) → "checklist-iso-14001" (ID: 41)
 - [x] **relatedPosts Frontend Display - FULLY WORKING** (2026-01-27) ✅
+ - [x] **relatedPosts Web Tool Test Harness Added** (2026-01-28) ✅
+  - [x] Added [`scripts/test-related-posts-webtool.js`](scripts/test-related-posts-webtool.js:1) for list/save/persistence checks
+  - [x] Updated [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1) with testing instructions
  - [x] **AuthorBox Business Card Redesign** (2026-01-27) ✅
  - [x] **Over Niels Maas Profile Page Spectacular Overhaul** (2026-01-27) ✅
   - [x] Fixed API: Added explicit populate for relatedPosts in [`src/lib/api.ts`](src/lib/api.ts:953)

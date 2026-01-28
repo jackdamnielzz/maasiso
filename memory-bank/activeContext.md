@@ -1,6 +1,72 @@
 # Active Context - SEO/GEO Enhancement Project
 
-## Current Status (2026-01-27)
+## Current Status (2026-01-28)
+
+### Related Posts Web Tool - UI UPGRADED & SECURED ✅
+
+**Updated (2026-01-28 16:13):**
+
+The web-based related posts tool has been upgraded with improved UI and security:
+
+**New Features:**
+1. ✅ **Searchable Post Selector** - Search by title or slug instead of simple dropdown
+2. ✅ **Alphabetical Sorting** - Posts sorted A-Z by title (Dutch locale)
+3. ✅ **Slug Display** - Each post shows both title and slug (e.g., `/iso-27001-certificering`)
+4. ✅ **"Terug naar begin" Button** - Reset to start page when editing a post
+5. ✅ **Password Authentication** - Secure login required before accessing the tool
+6. ✅ **Session Management** - Token-based auth with 24-hour expiry
+7. ✅ **Logout Button** - Clear session and return to login screen
+
+**Security Implementation:**
+- Password stored in environment variable `ADMIN_PASSWORD` (not in code)
+- Server-side authentication via [`app/api/admin-auth/route.ts`](app/api/admin-auth/route.ts:1)
+- Token stored in sessionStorage (cleared on browser close)
+- Token expires after 24 hours
+
+**Configuration:**
+Add to `.env.local`:
+```env
+ADMIN_PASSWORD=YourSecurePassword
+```
+
+**Files Updated:**
+- [`app/admin/related-posts/page.tsx`](app/admin/related-posts/page.tsx:1) - Complete UI overhaul with auth
+- [`app/api/admin-auth/route.ts`](app/api/admin-auth/route.ts:1) - New authentication API endpoint
+- [`.env.local`](.env.local:8) - Added ADMIN_PASSWORD variable
+
+---
+
+### Related Posts Web Tool - FULLY TESTED ✅
+
+**Tested (2026-01-28 15:40):**
+
+The web-based related posts tool has been fully tested and verified working:
+
+**Test Results:**
+1. ✅ **List Posts** - Successfully retrieved 36 posts from database
+2. ✅ **Save Relations** - Successfully linked 2 related posts to 2 versions (draft + published)
+3. ✅ **Persistence** - Relations confirmed persisted after re-fetch
+
+**Configuration Fix Applied:**
+- Changed `DATABASE_URL` from internal Railway URL (`postgres.railway.internal`) to public proxy URL (`centerbeam.proxy.rlwy.net:52159`)
+- Internal URLs only work within Railway network; public proxy required for local development
+
+**Test Script:**
+```bash
+# List all posts
+node scripts/test-related-posts-webtool.js --list
+
+# Save relations (example)
+node scripts/test-related-posts-webtool.js --source afg9frnaefhlgak63piqrpc2 --targets aqa988euutjs64a097t4ryoo,awrbw0p9tzoxruu3nigikuj0
+```
+
+**Files Updated:**
+- [`.env.local`](.env.local:5) - DATABASE_URL now uses public proxy
+- [`scripts/test-related-posts-webtool.js`](scripts/test-related-posts-webtool.js:1) - Test script for automated verification
+
+---
+
+## Previous Status (2026-01-27)
 
 ### AuthorBox Component - Redesigned as Business Card ✅
 
@@ -102,6 +168,10 @@ DATABASE_URL=postgresql://user:password@host:port/database
 
 **Documentation:**
 - [`scripts/README-gerelateerde-posts.md`](scripts/README-gerelateerde-posts.md:1) - Complete user guide
+
+**Testing (2026-01-28):**
+- Added test script [`scripts/test-related-posts-webtool.js`](scripts/test-related-posts-webtool.js:1) to verify list/save/persistence via `/api/related-posts`
+- README updated with step-by-step test instructions
 
 **Frontend (unchanged):**
 - [`src/lib/api.ts`](src/lib/api.ts:953) - Explicit populate for relatedPosts
