@@ -11,8 +11,20 @@ export async function POST(request: NextRequest) {
     
     if (!adminPassword) {
       console.error('ADMIN_PASSWORD environment variable is not set');
+      // Debug info - shows if env var exists but is empty
+      const hasEnvVar = 'ADMIN_PASSWORD' in process.env;
+      const envVarLength = process.env.ADMIN_PASSWORD?.length ?? 0;
       return NextResponse.json(
-        { success: false, error: 'Server configuration error' },
+        {
+          success: false,
+          error: 'Server configuration error',
+          debug: {
+            hasEnvVar,
+            envVarLength,
+            envVarIsEmpty: envVarLength === 0,
+            trimmedLength: process.env.ADMIN_PASSWORD?.trim()?.length ?? 0
+          }
+        },
         { status: 500 }
       );
     }
