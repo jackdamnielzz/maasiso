@@ -2,6 +2,46 @@
 
 ## Current Status (2026-01-28)
 
+### Related Posts Manager - PRODUCTION CONFIGURED ✅
+
+**Updated (2026-01-28 16:45):**
+
+Production environment for the Related Posts Manager is now fully configured:
+
+**Problem Found & Fixed:**
+- The `ADMIN_PASSWORD` environment variable was added to the wrong Vercel project
+- `maasiso.nl` domain is hosted on project `maasiso-copy-2`, NOT `maasiso-copy`
+- After adding the env var to the correct project, authentication works
+
+**Production Configuration:**
+- **Vercel Project**: `maasiso-copy-2` (linked to `maasiso.nl`)
+- **Environment Variable**: `ADMIN_PASSWORD` set in Production environment
+- **Password**: Same as local `.env.local` (`MaasISO2024!Admin`)
+- **API Endpoint**: `https://maasiso.nl/api/admin-auth` ✅ Working
+- **Web Tool URL**: `https://maasiso.nl/admin/related-posts`
+
+**Vercel Projects Overview:**
+| Project | Domain | Purpose |
+|---------|--------|---------|
+| `maasiso-copy-2` | maasiso.nl | **Production** |
+| `maasiso-copy` | maasiso-copy.vercel.app | Development/Preview |
+| `iso-selector` | iso-selector.maasiso.nl | ISO selector tool |
+
+**How to Add Environment Variables:**
+```bash
+# Link to the correct project first
+npx vercel link --project maasiso-copy-2 --yes
+
+# Then add the variable
+echo "YourValue" > env_value.txt
+type env_value.txt | npx vercel env add VAR_NAME production
+
+# Trigger a deployment
+git commit --allow-empty -m "chore: trigger deployment" && git push
+```
+
+---
+
 ### Related Posts Web Tool - UI UPGRADED & SECURED ✅
 
 **Updated (2026-01-28 16:13):**
