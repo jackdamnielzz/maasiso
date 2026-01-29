@@ -11,6 +11,91 @@ import BackToBlog from '../common/BackToBlog';
 import TldrBlock from './TldrBlock';
 import remarkGfm from 'remark-gfm';
 
+const DOWNLOAD_EXTENSIONS = new Set([
+  'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'csv',
+  'zip',
+  'rar',
+  '7z',
+  'txt'
+]);
+
+const isDownloadLink = (link: string | undefined): boolean => {
+  if (!link) return false;
+
+  try {
+    const url = new URL(link, window.location.origin);
+    const pathname = url.pathname.toLowerCase();
+    const ext = pathname.split('.').pop();
+
+    return !!ext && DOWNLOAD_EXTENSIONS.has(ext);
+  } catch {
+    const lowercase = link.toLowerCase();
+    const ext = lowercase.split('.').pop();
+    return !!ext && DOWNLOAD_EXTENSIONS.has(ext);
+  }
+};
+
+const getDownloadMetadata = (link: string) => {
+  try {
+    const url = new URL(link, window.location.origin);
+    const pathname = url.pathname;
+    const filename = pathname.split('/').filter(Boolean).pop() || '';
+    const ext = filename.includes('.') ? filename.split('.').pop() || '' : '';
+
+    return {
+      fileName: filename,
+      fileExt: ext.toLowerCase(),
+      fileUrl: url.toString()
+    };
+  } catch {
+    const parts = link.split('/');
+    const filename = parts[parts.length - 1] || '';
+    const ext = filename.includes('.') ? filename.split('.').pop() || '' : '';
+
+    return {
+      fileName: filename,
+      fileExt: ext.toLowerCase(),
+      fileUrl: link
+    };
+  }
+};
+
+const pushDownloadEvent = (link: string, linkText?: string) => {
+  if (typeof window === 'undefined') return;
+
+  const analyticsEnabled = window.localStorage.getItem('analytics_enabled') === 'true';
+  if (!analyticsEnabled) return;
+
+  const { fileName, fileExt, fileUrl } = getDownloadMetadata(link);
+  const pagePath = window.location.pathname;
+  const contentGroup = pagePath.startsWith('/blog/')
+    ? 'blog'
+    : pagePath.startsWith('/news/')
+      ? 'news'
+      : 'page';
+  const postSlug = pagePath.startsWith('/blog/') ? pagePath.replace('/blog/', '') : undefined;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'file_download',
+    file_name: fileName,
+    file_ext: fileExt,
+    file_url: fileUrl,
+    link_text: linkText,
+    page_path: pagePath,
+    content_group: contentGroup,
+    post_slug: postSlug,
+    download_method: 'public_url'
+  });
+};
+
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false
 });
@@ -160,7 +245,21 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
                 pre: ({ node, ...props }) => <pre {...props} className="bg-[#F4F5F7] p-6 my-6 overflow-x-auto rounded-lg" />,
                 code: ({ node, ...props }) => <code {...props} className="font-mono text-[1rem] text-[#42526E]" />,
                 blockquote: ({ node, ...props }) => <blockquote {...props} className="border-l-4 border-[#DFE1E6] pl-6 my-10 text-[1.125rem] text-[#42526E] leading-[1.8] italic" />,
-                a: ({ node, ...props }) => <a {...props} className="text-[#0052CC] hover:text-[#0065FF] hover:underline transition-colors duration-200" />,
+                a: ({ node, ...props }) => (
+                  <a
+                    {...props}
+                    className="text-[#0052CC] hover:text-[#0065FF] hover:underline transition-colors duration-200"
+                    onClick={(event) => {
+                      props.onClick?.(event);
+
+                      if (event.defaultPrevented) return;
+                      if (isDownloadLink(props.href)) {
+                        const linkText = typeof props.children === 'string' ? props.children : undefined;
+                        pushDownloadEvent(String(props.href), linkText);
+                      }
+                    }}
+                  />
+                ),
                 hr: ({ node, ...props }) => <hr {...props} className="my-12 border-t border-[#DFE1E6]" />
               }}
             >

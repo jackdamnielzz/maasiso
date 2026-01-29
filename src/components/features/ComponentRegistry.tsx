@@ -16,6 +16,91 @@ import { FeatureGridSkeleton } from './FeatureGridSkeleton';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { monitoringService } from '@/lib/monitoring/service';
 
+const DOWNLOAD_EXTENSIONS = new Set([
+  'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'csv',
+  'zip',
+  'rar',
+  '7z',
+  'txt'
+]);
+
+const isDownloadLink = (link: string): boolean => {
+  if (!link) return false;
+
+  try {
+    const url = new URL(link, window.location.origin);
+    const pathname = url.pathname.toLowerCase();
+    const ext = pathname.split('.').pop();
+
+    return !!ext && DOWNLOAD_EXTENSIONS.has(ext);
+  } catch {
+    const lowercase = link.toLowerCase();
+    const ext = lowercase.split('.').pop();
+    return !!ext && DOWNLOAD_EXTENSIONS.has(ext);
+  }
+};
+
+const getDownloadMetadata = (link: string) => {
+  try {
+    const url = new URL(link, window.location.origin);
+    const pathname = url.pathname;
+    const filename = pathname.split('/').filter(Boolean).pop() || '';
+    const ext = filename.includes('.') ? filename.split('.').pop() || '' : '';
+
+    return {
+      fileName: filename,
+      fileExt: ext.toLowerCase(),
+      fileUrl: url.toString()
+    };
+  } catch {
+    const parts = link.split('/');
+    const filename = parts[parts.length - 1] || '';
+    const ext = filename.includes('.') ? filename.split('.').pop() || '' : '';
+
+    return {
+      fileName: filename,
+      fileExt: ext.toLowerCase(),
+      fileUrl: link
+    };
+  }
+};
+
+const pushDownloadEvent = (link: string, linkText: string) => {
+  if (typeof window === 'undefined') return;
+
+  const analyticsEnabled = window.localStorage.getItem('analytics_enabled') === 'true';
+  if (!analyticsEnabled) return;
+
+  const { fileName, fileExt, fileUrl } = getDownloadMetadata(link);
+  const pagePath = window.location.pathname;
+  const contentGroup = pagePath.startsWith('/blog/')
+    ? 'blog'
+    : pagePath.startsWith('/news/')
+      ? 'news'
+      : 'page';
+  const postSlug = pagePath.startsWith('/blog/') ? pagePath.replace('/blog/', '') : undefined;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'file_download',
+    file_name: fileName,
+    file_ext: fileExt,
+    file_url: fileUrl,
+    link_text: linkText,
+    page_path: pagePath,
+    content_group: contentGroup,
+    post_slug: postSlug,
+    download_method: 'public_url'
+  });
+};
+
 // Base component type that all components extend
 interface BaseComponent {
   id: string;
@@ -135,7 +220,15 @@ export function ComponentRegistry({ component, className }: ComponentRegistryPro
           className={`${className} px-4 py-2 ${
             buttonData.style === 'primary' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
           } rounded hover:opacity-90 transition-opacity`}
-          onClick={() => buttonData.link && window.location.assign(buttonData.link)}
+          onClick={() => {
+            if (!buttonData.link) return;
+
+            if (isDownloadLink(buttonData.link)) {
+              pushDownloadEvent(buttonData.link, buttonData.text || 'Download');
+            }
+
+            window.location.assign(buttonData.link);
+          }}
         >
           {buttonData.text || 'Click Me'}
         </button>

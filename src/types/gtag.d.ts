@@ -10,4 +10,5 @@ interface Window {
       [key: string]: any;
     }
   ) => void;
+  dataLayer?: Array<Record<string, unknown>>;
 }

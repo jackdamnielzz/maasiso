@@ -1,6 +1,73 @@
 # Active Context - SEO/GEO Enhancement Project
 
-## Current Status (2026-01-28)
+## Current Status (2026-01-29)
+
+### Download Tracking via GA4/GTM for CTA Buttons ✅
+
+**Updated (2026-01-29):**
+
+Implemented client-side download tracking for CTA buttons that link to files. The tracking pushes a `file_download` event to the GTM `dataLayer` only when analytics consent is granted (based on the `analytics_enabled` localStorage flag set by the cookie consent flow).
+
+**Behavior:**
+- Detects common download file extensions on CTA button links
+- Pushes metadata for analytics: file name, extension, URL, page path, content group, blog slug (if applicable), and download method
+- Preserves existing button navigation behavior
+
+**Files Modified:**
+- [`src/components/features/ComponentRegistry.tsx`](src/components/features/ComponentRegistry.tsx:1) - Added download detection + GTM event push on CTA button clicks
+
+### Download Tracking for Links in Blog Content ✅
+
+**Updated (2026-01-29):**
+
+Added download tracking for file links inside blog post content (Markdown links). Links pointing to common file types now push a `file_download` event to GTM `dataLayer` on click, respecting analytics consent.
+
+**Files Modified:**
+- [`src/components/features/BlogPostContent.tsx`](src/components/features/BlogPostContent.tsx:1) - Added download detection + GTM event push on markdown links
+- [`src/types/gtag.d.ts`](src/types/gtag.d.ts:1) - Added `dataLayer` typing on `window`
+
+### GTM Container Added for maasiso.nl ✅
+
+**Updated (2026-01-29):**
+
+Injected GTM container `GTM-556J8S8K` into the root layout so Tag Assistant can connect on `https://maasiso.nl` and events can flow to GA4.
+
+**Files Modified:**
+- [`app/layout.tsx`](app/layout.tsx:1) - Added GTM script via `next/script` and noscript iframe
+
+### Fixed: Blog Post Dates No Longer Change on Deploy ✅
+
+**Updated (2026-01-29):**
+
+Fixed a bug where all blog posts showed January 28th (yesterday's deployment date) as their "last updated" date instead of the actual dates stored in Strapi.
+
+**Root Cause:**
+The `mapBlogPost()` function and other mappers in `src/lib/api.ts` used `new Date().toISOString()` as fallback when `updatedAt` was falsy:
+```typescript
+// OLD (problematic)
+updatedAt: data.updatedAt || new Date().toISOString(),
+```
+This meant if Strapi didn't return an `updatedAt` field (or it was null/undefined), the current date was used instead of the Strapi-stored date.
+
+**Solution:**
+Changed all date fallback logic to use Strapi's `publishedAt` or `createdAt` as fallback, never the current date:
+```typescript
+// NEW (fixed)
+updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
+```
+
+**Files Modified:**
+- [`src/lib/api.ts`](src/lib/api.ts:285) - Fixed `mapBlogPost`, `mapAuthor`, `mapNewsArticle`, `mapWhitepaper`, `mapPage`, `mapImage`, and all inline mapping functions
+- [`src/lib/featureExtractor.ts`](src/lib/featureExtractor.ts:37) - Fixed `mapImage` function
+- [`src/lib/api/mappers/image.ts`](src/lib/api/mappers/image.ts:23) - Fixed `mapImage` export
+
+**Impact:**
+- Blog posts now correctly show their Strapi `updatedAt` date
+- News articles now correctly show their Strapi `updatedAt` date
+- Sitemap `lastModified` dates now reflect actual content changes, not deployment time
+- SEO freshness signals are now accurate
+
+---
 
 ### "Laatst bijgewerkt" Date Added to Blog Posts ✅
 

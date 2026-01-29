@@ -20,8 +20,8 @@ export function mapImage(data: any) {
     previewUrl: data.previewUrl,
     provider: data.provider || '',
     provider_metadata: data.provider_metadata,
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
-    publishedAt: data.publishedAt || new Date().toISOString()
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.createdAt,
+    publishedAt: data.publishedAt
   };
 }

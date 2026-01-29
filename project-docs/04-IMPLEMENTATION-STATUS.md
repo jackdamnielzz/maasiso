@@ -36,6 +36,9 @@
 - relatedPosts Auto-Restore Lifecycle Hook: 100% ✅
 - AuthorBox Business Card Redesign: 100% ✅
 - Over Niels Maas Profile Page Overhaul: 100% ✅
+- Download Tracking (GA4/GTM file_download event): 100% ✅
+- Blog Content Download Link Tracking (Markdown links): 100% ✅
+- GTM Container Injection for maasiso.nl: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration

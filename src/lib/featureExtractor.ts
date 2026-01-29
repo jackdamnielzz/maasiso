@@ -34,9 +34,9 @@ function mapImage(imageData: any): Image | undefined {
       previewUrl: attributes.previewUrl,
       provider: attributes.provider || '',
       provider_metadata: attributes.provider_metadata,
-      createdAt: attributes.createdAt || new Date().toISOString(),
-      updatedAt: attributes.updatedAt || new Date().toISOString(),
-      publishedAt: attributes.publishedAt || new Date().toISOString()
+      createdAt: attributes.createdAt,
+      updatedAt: attributes.updatedAt || attributes.createdAt,
+      publishedAt: attributes.publishedAt
     };
   }
 
@@ -57,9 +57,9 @@ function mapImage(imageData: any): Image | undefined {
     previewUrl: imageData.previewUrl,
     provider: imageData.provider || '',
     provider_metadata: imageData.provider_metadata,
-    createdAt: imageData.createdAt || new Date().toISOString(),
-    updatedAt: imageData.updatedAt || new Date().toISOString(),
-    publishedAt: imageData.publishedAt || new Date().toISOString()
+    createdAt: imageData.createdAt,
+    updatedAt: imageData.updatedAt || imageData.createdAt,
+    publishedAt: imageData.publishedAt
   };
 }
 

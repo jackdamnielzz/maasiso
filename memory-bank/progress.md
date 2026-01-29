@@ -22,6 +22,9 @@
   - [x] Implemented stats section and quote block
   - [x] Added ScrollReveal animations throughout
 - [x] **Over Ons Page Spectacular Redesign** (2026-01-23) ✅
+- [x] **Download Tracking for CTA Buttons (GTM dataLayer)** (2026-01-29) ✅
+- [x] **Blog Content Download Link Tracking (GTM dataLayer)** (2026-01-29) ✅
+- [x] **GTM Container Injection for maasiso.nl** (2026-01-29) ✅
   - [x] Created new `OverOnsContent.tsx` with spectacular visual effects
   - [x] Implemented Parallax Hero and directional ScrollReveal
   - [x] Interactive expertise cards with expandable information

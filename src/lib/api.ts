@@ -161,8 +161,8 @@ const mapAuthor = (authorData: any) => {
       profileImage: attr.profileImage ? flattenMedia(attr.profileImage) : undefined,
       linkedIn: attr.linkedIn,
       email: attr.email,
-      createdAt: attr.createdAt || new Date().toISOString(),
-      updatedAt: attr.updatedAt || new Date().toISOString(),
+      createdAt: attr.createdAt,
+      updatedAt: attr.updatedAt || attr.publishedAt || attr.createdAt,
       publishedAt: attr.publishedAt,
       blog_posts: attr.blog_posts?.data ? attr.blog_posts.data.map((p: any) => mapBlogPost(p.attributes ? { id: p.id, ...p.attributes } : p)) : undefined,
     };
@@ -181,8 +181,8 @@ const mapAuthor = (authorData: any) => {
       profileImage: authorData.profileImage ? flattenMedia(authorData.profileImage) : undefined,
       linkedIn: authorData.linkedIn,
       email: authorData.email,
-      createdAt: authorData.createdAt || new Date().toISOString(),
-      updatedAt: authorData.updatedAt || new Date().toISOString(),
+      createdAt: authorData.createdAt,
+      updatedAt: authorData.updatedAt || authorData.publishedAt || authorData.createdAt,
       publishedAt: authorData.publishedAt,
       blog_posts: authorData.blog_posts ? authorData.blog_posts.map((p: any) => mapBlogPost(p)) : undefined,
     };
@@ -201,8 +201,8 @@ function mapNewsArticle(data: any | null): NewsArticle | null {
     content: data.content || '',
     summary: data.summary || '',
     slug: data.slug || '',
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
     publishedAt: data.publishedAt,
     author: data.author || '',
     tags: data.tags?.map((tag: any) => ({
@@ -214,8 +214,8 @@ function mapNewsArticle(data: any | null): NewsArticle | null {
       name: category.name,
       slug: category.slug || '',
       description: category.description || '',
-      createdAt: category.createdAt || new Date().toISOString(),
-      updatedAt: category.updatedAt || new Date().toISOString()
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt || category.createdAt
     })) || [],
     featuredImage: data.featuredImage ? mapImage(data.featuredImage) : undefined,
     seoTitle: data.seoTitle || '',
@@ -262,8 +262,8 @@ function mapBlogPost(data: any | null): BlogPost | null {
         featuredImage: postData.featuredImage
           ? flattenMedia(postData.featuredImage)
           : undefined,
-        createdAt: postData.createdAt || new Date().toISOString(),
-        updatedAt: postData.updatedAt || new Date().toISOString(),
+        createdAt: postData.createdAt,
+        updatedAt: postData.updatedAt || postData.publishedAt || postData.createdAt,
         publishedAt: postData.publishedAt,
       };
     });
@@ -279,9 +279,10 @@ function mapBlogPost(data: any | null): BlogPost | null {
     // Author (backward compatible)
     author: mapAuthor(data.author || data.Author),
 
-    // Dates
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
+    // Dates - use createdAt/publishedAt as fallback for updatedAt, never use current date
+    // This ensures blog post dates reflect Strapi data, not deployment/build time
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
     publishedAt: data.publishedAt,
     publicationDate: data.publicationDate,
 
@@ -298,8 +299,8 @@ function mapBlogPost(data: any | null): BlogPost | null {
           name: tag.name || '',
           slug: tag.slug || '',
           description: tag.description,
-          createdAt: tag.createdAt || new Date().toISOString(),
-          updatedAt: tag.updatedAt || new Date().toISOString(),
+          createdAt: tag.createdAt,
+          updatedAt: tag.updatedAt || tag.createdAt,
           publishedAt: tag.publishedAt,
         }))
       : [],
@@ -309,8 +310,8 @@ function mapBlogPost(data: any | null): BlogPost | null {
           name: cat.name || '',
           slug: cat.slug || '',
           description: cat.description || '',
-          createdAt: cat.createdAt || new Date().toISOString(),
-          updatedAt: cat.updatedAt || new Date().toISOString(),
+          createdAt: cat.createdAt,
+          updatedAt: cat.updatedAt || cat.createdAt,
           publishedAt: cat.publishedAt,
         }))
       : [],
@@ -355,8 +356,8 @@ function mapWhitepaper(data: any | null): Whitepaper | null {
     version: data.version || '1.0',
     author: data.author || '',
     downloadLink: data.file?.data?.attributes?.url || '',
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
     publishedAt: data.publishedAt
   };
 }
@@ -382,9 +383,9 @@ function mapImage(data: any): Image | undefined {
     previewUrl: data.previewUrl,
     provider: data.provider || '',
     provider_metadata: data.provider_metadata,
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString(),
-    publishedAt: data.publishedAt || new Date().toISOString()
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.createdAt,
+    publishedAt: data.publishedAt
   };
 }
 
@@ -529,8 +530,8 @@ function mapPage(data: any | null): Page | null {
       }
     }) || [],
     publishedAt: data.publishedAt,
-    createdAt: data.createdAt || new Date().toISOString(),
-    updatedAt: data.updatedAt || new Date().toISOString()
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt || data.publishedAt || data.createdAt
   };
 }
 
@@ -696,8 +697,8 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
           title: article.title,
           content: article.content || '',
           slug: article.slug || '',
-          createdAt: article.createdAt || new Date().toISOString(),
-          updatedAt: article.updatedAt || new Date().toISOString(),
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt || article.publishedAt || article.createdAt,
           // Optional fields
           summary: article.summary || undefined,
           publishedAt: article.publishedAt || undefined,
@@ -719,8 +720,8 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
                 name: category.attributes?.name || category.name || 'Untitled Category',
                 slug: category.attributes?.slug || category.slug || '',
                 description: category.attributes?.description || category.description || '',
-                createdAt: category.attributes?.createdAt || category.createdAt || new Date().toISOString(),
-                updatedAt: category.attributes?.updatedAt || category.updatedAt || new Date().toISOString()
+                createdAt: category.attributes?.createdAt || category.createdAt,
+                updatedAt: category.attributes?.updatedAt || category.updatedAt || category.createdAt
               }))
             : Array.isArray(article.categories)
               ? article.categories.map((category: any) => ({
@@ -728,8 +729,8 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
                   name: category.name || 'Untitled Category',
                   slug: category.slug || '',
                   description: category.description || '',
-                  createdAt: category.createdAt || new Date().toISOString(),
-                  updatedAt: category.updatedAt || new Date().toISOString()
+                  createdAt: category.createdAt,
+                  updatedAt: category.updatedAt || category.createdAt
                 }))
               : [],
           featuredImage: article.featuredImage?.data?.attributes
@@ -847,9 +848,9 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
       content: article.content,
       summary: article.summary || '',
       slug: article.slug || validatedSlug,
-      createdAt: article.createdAt || new Date().toISOString(),
-      updatedAt: article.updatedAt || new Date().toISOString(),
-      publishedAt: article.publishedAt || article.createdAt || new Date().toISOString(),
+      createdAt: article.createdAt,
+      updatedAt: article.updatedAt || article.publishedAt || article.createdAt,
+      publishedAt: article.publishedAt || article.createdAt,
       author: article.author || '',
       tags: Array.isArray(article.tags?.data)
         ? article.tags.data.map((tag: any) => ({
@@ -863,8 +864,8 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
             name: category.attributes?.name || 'Untitled Category',
             slug: category.attributes?.slug || '',
             description: category.attributes?.description || '',
-            createdAt: category.attributes?.createdAt || new Date().toISOString(),
-            updatedAt: category.attributes?.updatedAt || new Date().toISOString()
+            createdAt: category.attributes?.createdAt,
+            updatedAt: category.attributes?.updatedAt || category.attributes?.createdAt
           }))
         : [],
       featuredImage: article.featuredImage?.data?.attributes
@@ -940,8 +941,8 @@ export async function getRelatedNewsArticles(currentSlug: string): Promise<NewsA
         content: article.content || '',
         summary: article.summary || '',
         slug: article.slug || '',
-        createdAt: article.createdAt || new Date().toISOString(),
-        updatedAt: article.updatedAt || new Date().toISOString(),
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt || article.publishedAt || article.createdAt,
         publishedAt: article.publishedAt,
         author: article.author || '',
         tags: Array.isArray(article.tags?.data)
@@ -961,8 +962,8 @@ export async function getRelatedNewsArticles(currentSlug: string): Promise<NewsA
               name: category.attributes?.name || category.name || '',
               slug: category.attributes?.slug || category.slug || '',
               description: category.attributes?.description || category.description || '',
-              createdAt: category.attributes?.createdAt || category.createdAt || new Date().toISOString(),
-              updatedAt: category.attributes?.updatedAt || category.updatedAt || new Date().toISOString()
+              createdAt: category.attributes?.createdAt || category.createdAt,
+              updatedAt: category.attributes?.updatedAt || category.updatedAt || category.createdAt
             }))
           : Array.isArray(article.categories)
             ? article.categories.map((category: any) => ({
@@ -970,8 +971,8 @@ export async function getRelatedNewsArticles(currentSlug: string): Promise<NewsA
                 name: category.name || '',
                 slug: category.slug || '',
                 description: category.description || '',
-                createdAt: category.createdAt || new Date().toISOString(),
-                updatedAt: category.updatedAt || new Date().toISOString()
+                createdAt: category.createdAt,
+                updatedAt: category.updatedAt || category.createdAt
               }))
             : [],
         featuredImage: article.featuredImage?.data?.attributes || article.featuredImage,
