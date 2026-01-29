@@ -16,6 +16,24 @@ export type WebVitalName = 'CLS' | 'FID' | 'LCP' | 'TTFB' | 'FCP';
 
 let isInitialized = false;
 
+/**
+ * Send event to Google Analytics via GTM
+ * Uses gtag which respects Google Consent Mode v2
+ */
+const sendToGA = (eventName: string, params?: Record<string, unknown>) => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return;
+  }
+
+  try {
+    window.gtag('event', eventName, {
+      ...params,
+    });
+  } catch (error) {
+    console.error('[Analytics] Error sending event:', error);
+  }
+};
+
 // Initialize analytics and Google Analytics
 export const initGA = () => {
   if (isInitialized) return;
@@ -23,14 +41,11 @@ export const initGA = () => {
   // Initialize monitoring service
   monitoringService.cleanup(); // Clear old metrics
   
-  // Initialize Google Analytics (if needed)
-  if (process.env.NEXT_PUBLIC_GA_ID) {
-    // Add GA initialization here if needed
-    console.log('GA initialized with ID:', process.env.NEXT_PUBLIC_GA_ID);
-  }
-  
   isInitialized = true;
-  console.log('Analytics initialized');
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Analytics] Initialized');
+  }
 };
 
 // Track page views and user behavior
@@ -39,24 +54,34 @@ export const usePageTracking = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     // Track page view
-    const url = searchParams?.toString()
-      ? `${pathname}?${searchParams.toString()}`
-      : pathname;
+    const params = searchParams?.toString();
+    const url = params ? `${pathname}?${params}` : pathname;
     
-    console.log('Page view:', url);
-    // Add your analytics tracking code here
+    // Send page_view to Google Analytics
+    sendToGA('page_view', {
+      page_path: pathname,
+      page_location: typeof window !== 'undefined' ? window.location.href : url,
+      page_title: typeof document !== 'undefined' ? document.title : undefined,
+    });
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Analytics] Page view:', url);
+    }
   }, [pathname, searchParams]);
 };
 
 // Track web vitals metrics
 export const trackWebVital = (metric: Metric) => {
   if (!isInitialized) {
-    console.warn('Analytics not initialized');
     return;
   }
 
-  const { name, value, rating } = metric;
+  const { name, value, rating, id } = metric;
+  
+  // Send to internal monitoring
   monitoringService.updateWebVital({
     id: `${name}-${Date.now()}`,
     name,
@@ -65,36 +90,117 @@ export const trackWebVital = (metric: Metric) => {
     timestamp: Date.now()
   });
 
-  // Log to console in development
+  // Send to Google Analytics (as recommended by Google)
+  sendToGA(name.toLowerCase(), {
+    value: Math.round(name === 'CLS' ? value * 1000 : value), // CLS needs multiplication
+    metric_id: id,
+    metric_value: value,
+    metric_rating: rating,
+    non_interaction: true, // Don't affect bounce rate
+  });
+
   if (process.env.NODE_ENV === 'development') {
-    console.log(`Web Vital: ${name}`, {
+    console.log(`[Analytics] Web Vital: ${name}`, {
       value: Math.round(value * 100) / 100,
       rating
     });
-  }
-
-  // Send to GA if configured
-  if (process.env.NEXT_PUBLIC_GA_ID) {
-    // Add GA tracking here if needed
   }
 };
 
 // Track custom events and interactions
 export const trackEvent = (event: AnalyticsEvent) => {
   if (!isInitialized) {
-    console.warn('Analytics not initialized');
     return;
   }
 
-  // Log to console in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Event:', event);
-  }
+  // Send to Google Analytics
+  sendToGA(event.name, event.params);
 
-  // Send to GA if configured
-  if (process.env.NEXT_PUBLIC_GA_ID) {
-    // Add GA tracking here if needed
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Analytics] Event:', event);
   }
+};
+
+/**
+ * Track file downloads (for blog post documents)
+ */
+export const trackDownload = (fileName: string, fileType: string, blogPostTitle?: string) => {
+  trackEvent({
+    name: 'file_download',
+    params: {
+      file_name: fileName,
+      file_extension: fileType,
+      link_text: blogPostTitle || fileName,
+      content_type: 'document',
+    }
+  });
+};
+
+/**
+ * Track outbound link clicks
+ */
+export const trackOutboundLink = (url: string, linkText?: string) => {
+  trackEvent({
+    name: 'click',
+    params: {
+      link_url: url,
+      link_text: linkText || url,
+      outbound: true,
+    }
+  });
+};
+
+/**
+ * Track form submissions
+ */
+export const trackFormSubmission = (formName: string, success: boolean) => {
+  trackEvent({
+    name: 'form_submit',
+    params: {
+      form_name: formName,
+      success,
+    }
+  });
+};
+
+/**
+ * Track scroll depth
+ */
+export const trackScrollDepth = (percentage: number, pagePath: string) => {
+  trackEvent({
+    name: 'scroll',
+    params: {
+      percent_scrolled: percentage,
+      page_path: pagePath,
+    }
+  });
+};
+
+/**
+ * Track search queries
+ */
+export const trackSearch = (searchTerm: string, resultsCount: number) => {
+  trackEvent({
+    name: 'search',
+    params: {
+      search_term: searchTerm,
+      results_count: resultsCount,
+    }
+  });
+};
+
+/**
+ * Track content engagement (time on page, interactions)
+ */
+export const trackEngagement = (pagePath: string, timeOnPage: number, scrollDepth: number) => {
+  trackEvent({
+    name: 'user_engagement',
+    params: {
+      page_path: pagePath,
+      engagement_time_msec: timeOnPage,
+      scroll_depth: scrollDepth,
+    }
+  });
 };
 
 // Export monitoring service methods for direct access
@@ -102,7 +208,6 @@ export const getPerformanceMetrics = () => {
   return {
     webVitals: monitoringService.getMetrics(),
     apiPerformance: {
-      // These metrics are not available in the current monitoring service
       averageResponseTime: 0,
       errorRate: 0
     }

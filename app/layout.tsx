@@ -69,6 +69,25 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="theme-color" content="#ffffff" />
+        {/* Google Consent Mode v2 - Default to denied */}
+        <Script
+          id="google-consent-mode"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'analytics_storage': 'denied',
+                'wait_for_update': 500
+              });
+              gtag('set', 'ads_data_redaction', true);
+            `,
+          }}
+        />
         <Script
           id="gtm-init"
           strategy="afterInteractive"
