@@ -25,6 +25,21 @@
 - [x] **Download Tracking for CTA Buttons (GTM dataLayer)** (2026-01-29) ✅
 - [x] **Blog Content Download Link Tracking (GTM dataLayer)** (2026-01-29) ✅
 - [x] **GTM Container Injection for maasiso.nl** (2026-01-29) ✅
+- [x] **🎯 Google Analytics & Tag Manager API Access - FULL CONTROL** (2026-01-30) ✅
+  - [x] Service Account created: `maasiso-analytics-bot@gen-lang-client-0994431140.iam.gserviceaccount.com`
+  - [x] API access to GTM (GTM-556J8S8K) - Publish rights
+  - [x] API access to GA4 (Property 467095380, Measurement ID: G-QHY9D9XR7G) - Editor rights
+  - [x] Verification script: `scripts/check-google-analytics.js`
+  - [x] Complete documentation: `google-analytics-management/`
+- [x] **Google Consent Mode v2 Implementation** (2026-01-30) ✅
+  - [x] Default consent: all denied (`analytics_storage`, `ad_storage`, etc.)
+  - [x] Consent updates via `cookieManager.ts` → `gtag('consent', 'update', ...)`
+  - [x] AVG/GDPR compliant: no tracking until explicit consent
+- [x] **Enhanced Analytics Tracking** (2026-01-30) ✅
+  - [x] Page view tracking to GA4
+  - [x] Scroll depth tracking (25%, 50%, 75%, 90%, 100%)
+  - [x] Engagement tracking (time on page)
+  - [x] Helper functions: `trackDownload()`, `trackSearch()`, `trackFormSubmission()`
   - [x] Created new `OverOnsContent.tsx` with spectacular visual effects
   - [x] Implemented Parallax Hero and directional ScrollReveal
   - [x] Interactive expertise cards with expandable information

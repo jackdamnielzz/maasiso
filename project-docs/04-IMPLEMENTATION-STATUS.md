@@ -39,6 +39,9 @@
 - Download Tracking (GA4/GTM file_download event): 100% ✅
 - Blog Content Download Link Tracking (Markdown links): 100% ✅
 - GTM Container Injection for maasiso.nl: 100% ✅
+- **🎯 Google Analytics & Tag Manager API Access**: 100% ✅
+- **Google Consent Mode v2 Implementation**: 100% ✅
+- **Enhanced Analytics Tracking (Page Views, Scroll, Engagement)**: 100% ✅
 
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
@@ -49,6 +52,114 @@
 - [x] Search analytics tracking
 - [x] Query validation and sanitization
 - [x] Paginated search results
+
+## Recent Updates (2026-01-30)
+
+### 🎯 Google Analytics & Tag Manager API Access - FULL CONTROL (2026-01-30) ✅
+
+We now have **programmatic API access** to both Google Tag Manager and Google Analytics 4, allowing automated management of all analytics configuration without manual UI interaction.
+
+**Documentation:** See [`/google-analytics-management/`](google-analytics-management/) for complete details.
+
+**Configuration:**
+| Item | Value |
+|------|-------|
+| GTM Container | GTM-556J8S8K |
+| GTM Account ID | 6303356117 |
+| GTM Container ID | 224608008 |
+| GA4 Property ID | 467095380 |
+| GA4 Measurement ID | **G-QHY9D9XR7G** |
+| Service Account | `maasiso-analytics-bot@gen-lang-client-0994431140.iam.gserviceaccount.com` |
+| Credentials | `secrets/google-service-account.json` (in .gitignore) |
+
+**What We Can Do:**
+
+| GTM Capabilities | GA4 Capabilities |
+|-----------------|------------------|
+| ✅ Create/edit/delete tags | ✅ Read property settings |
+| ✅ Create/edit triggers | ✅ Create conversions |
+| ✅ Create/edit variables | ✅ Create custom dimensions |
+| ✅ Publish changes | ✅ Create audiences |
+| ✅ Version control | ✅ Generate reports |
+| ✅ Backup containers | ✅ Query real-time data |
+
+**Verification Script:**
+```bash
+node scripts/check-google-analytics.js
+```
+
+**Files Created:**
+- [`google-analytics-management/README.md`](google-analytics-management/README.md) - Main documentation
+- [`google-analytics-management/CAPABILITIES.md`](google-analytics-management/CAPABILITIES.md) - Detailed API capabilities
+- [`google-analytics-management/CURRENT-STATE.md`](google-analytics-management/CURRENT-STATE.md) - Current GTM/GA4 configuration snapshot
+- [`scripts/check-google-analytics.js`](scripts/check-google-analytics.js) - Verification script
+
+---
+
+### Google Consent Mode v2 Implementation (2026-01-30) ✅
+
+Implemented Google Consent Mode v2 for full AVG/GDPR compliance. All tracking is blocked by default until user provides explicit consent.
+
+**Implementation:**
+- [`app/layout.tsx`](app/layout.tsx:72) - Consent defaults script (runs before GTM)
+- [`src/lib/cookies/cookieManager.ts`](src/lib/cookies/cookieManager.ts:14) - Sends consent updates to Google
+- [`src/types/gtag.d.ts`](src/types/gtag.d.ts) - TypeScript types for gtag consent commands
+
+**Default Consent State:**
+```javascript
+gtag('consent', 'default', {
+  'ad_storage': 'denied',
+  'ad_user_data': 'denied',
+  'ad_personalization': 'denied',
+  'analytics_storage': 'denied',
+  'wait_for_update': 500
+});
+```
+
+**After User Accepts:**
+```javascript
+gtag('consent', 'update', {
+  'ad_storage': 'granted',
+  'ad_user_data': 'granted',
+  'ad_personalization': 'granted',
+  'analytics_storage': 'granted',
+});
+```
+
+---
+
+### Enhanced Analytics Tracking (2026-01-30) ✅
+
+Complete analytics implementation with page views, scroll depth, and engagement tracking - all respecting consent mode.
+
+**Features Implemented:**
+- ✅ Page view tracking to GA4
+- ✅ Scroll depth tracking (25%, 50%, 75%, 90%, 100% milestones)
+- ✅ Engagement tracking (time on page, max scroll depth on leave)
+- ✅ Helper functions for custom events
+
+**Available Tracking Functions:**
+```typescript
+import { trackDownload, trackSearch, trackFormSubmission, trackOutboundLink } from '@/lib/analytics';
+
+// Track file downloads
+trackDownload('ISO-checklist.pdf', 'pdf', 'ISO 27001 Blog');
+
+// Track search queries
+trackSearch('iso 27001', 15);
+
+// Track form submissions
+trackFormSubmission('contact_form', true);
+
+// Track outbound link clicks
+trackOutboundLink('https://example.com', 'Link text');
+```
+
+**Files Modified:**
+- [`src/lib/analytics.ts`](src/lib/analytics.ts) - Complete tracking implementation
+- [`src/components/common/Analytics.tsx`](src/components/common/Analytics.tsx) - Enhanced page tracking component
+
+---
 
 ## Recent Updates (2026-01-27)
 
