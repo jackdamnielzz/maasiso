@@ -265,3 +265,106 @@ CREATE INDEX IF NOT EXISTS blog_posts_schema_type_idx ON blog_posts(schema_type)
 CREATE INDEX IF NOT EXISTS blog_posts_search_intent_idx ON blog_posts(search_intent);
 CREATE INDEX IF NOT EXISTS blog_posts_cta_variant_idx ON blog_posts(cta_variant);
 CREATE INDEX IF NOT EXISTS blog_posts_author_id_idx ON blog_posts(author_id);
+
+-- =========================
+-- 6) PAGE COMPONENTS + FIELDS
+-- =========================
+
+-- FAQ items
+CREATE TABLE IF NOT EXISTS components_page_blocks_faq_items (
+  id SERIAL PRIMARY KEY,
+  question VARCHAR(255) NOT NULL,
+  answer TEXT NOT NULL
+);
+
+-- FAQ section (container for items)
+CREATE TABLE IF NOT EXISTS components_page_blocks_faq_sections (
+  id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS components_page_blocks_faq_sections_cmps (
+  id SERIAL PRIMARY KEY,
+  entity_id INTEGER NOT NULL,
+  cmp_id INTEGER NOT NULL,
+  component_type VARCHAR(255) NOT NULL,
+  field VARCHAR(255) NOT NULL,
+  "order" DOUBLE PRECISION NOT NULL
+);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'components_page_blocks_faq_sections_entity_fk'
+  ) THEN
+    ALTER TABLE components_page_blocks_faq_sections_cmps
+      ADD CONSTRAINT components_page_blocks_faq_sections_entity_fk
+      FOREIGN KEY (entity_id) REFERENCES components_page_blocks_faq_sections(id)
+      ON DELETE CASCADE;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'components_page_blocks_faq_sections_uq'
+  ) THEN
+    ALTER TABLE components_page_blocks_faq_sections_cmps
+      ADD CONSTRAINT components_page_blocks_faq_sections_uq
+      UNIQUE (entity_id, cmp_id, field, component_type);
+  END IF;
+END $$;
+
+-- Key takeaway items
+CREATE TABLE IF NOT EXISTS components_page_blocks_key_takeaway_items (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  value VARCHAR(255) NOT NULL
+);
+
+-- Key takeaways (container for items)
+CREATE TABLE IF NOT EXISTS components_page_blocks_key_takeaways (
+  id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS components_page_blocks_key_takeaways_cmps (
+  id SERIAL PRIMARY KEY,
+  entity_id INTEGER NOT NULL,
+  cmp_id INTEGER NOT NULL,
+  component_type VARCHAR(255) NOT NULL,
+  field VARCHAR(255) NOT NULL,
+  "order" DOUBLE PRECISION NOT NULL
+);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'components_page_blocks_key_takeaways_entity_fk'
+  ) THEN
+    ALTER TABLE components_page_blocks_key_takeaways_cmps
+      ADD CONSTRAINT components_page_blocks_key_takeaways_entity_fk
+      FOREIGN KEY (entity_id) REFERENCES components_page_blocks_key_takeaways(id)
+      ON DELETE CASCADE;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'components_page_blocks_key_takeaways_uq'
+  ) THEN
+    ALTER TABLE components_page_blocks_key_takeaways_cmps
+      ADD CONSTRAINT components_page_blocks_key_takeaways_uq
+      UNIQUE (entity_id, cmp_id, field, component_type);
+  END IF;
+END $$;
+
+-- Fact block (repeatable on page layout)
+CREATE TABLE IF NOT EXISTS components_page_blocks_fact_blocks (
+  id SERIAL PRIMARY KEY,
+  label VARCHAR(255) NOT NULL,
+  value VARCHAR(255) NOT NULL,
+  source VARCHAR(255)
+);
+
+-- Page fields
+ALTER TABLE pages
+  ADD COLUMN IF NOT EXISTS primary_keyword VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS schema_type VARCHAR(255);

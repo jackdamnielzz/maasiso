@@ -34,6 +34,8 @@ export interface PageData {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  primaryKeyword?: string;
+  schemaType?: string;
   layout?: any[];
   publishedAt?: string;
   createdAt: string;

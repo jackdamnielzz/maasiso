@@ -12,6 +12,8 @@ export interface Page {
   title: string;
   slug: string;
   seoMetadata: SEOMetadata;
+  primaryKeyword?: string;
+  schemaType?: string;
   layout: Array<{
     id: number;
     __component: string;
@@ -35,6 +37,16 @@ export interface Page {
     text?: string;
     link?: string;
     style?: string;
+    items?: Array<{
+      id?: string | number;
+      question?: string;
+      answer?: string;
+      title?: string;
+      value?: string;
+    }>;
+    label?: string;
+    value?: string;
+    source?: string;
   }>;
   publishedAt?: string;
   createdAt: string;
@@ -49,6 +61,8 @@ export interface PageData {
   seoTitle: string;
   seoDescription: string;
   seoKeywords: string;
+  primaryKeyword?: string;
+  schemaType?: string;
   layout?: any[];
   publishedAt?: string;
   createdAt: string;

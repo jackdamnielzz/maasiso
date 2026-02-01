@@ -38,6 +38,8 @@ export function mapPage(data: PageData): Page | null {
     title: data.title || data.Title || '',
     slug: data.slug,
     seoMetadata,
+    primaryKeyword: data.primaryKeyword,
+    schemaType: data.schemaType,
     layout: data.layout?.map(mapComponent) || [],
     publishedAt: data.publishedAt,
     createdAt: data.createdAt,

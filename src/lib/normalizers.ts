@@ -18,12 +18,20 @@ import {
   ImageGalleryComponent,
   Feature,
   FeatureGridComponent,
+  FaqSectionComponent,
+  KeyTakeawaysComponent,
+  FactBlockComponent,
   StrapiRawCTAButton,
   StrapiRawHeroComponent,
   StrapiRawTextBlockComponent,
   StrapiRawImageGalleryComponent,
   StrapiRawFeature,
   StrapiRawFeatureGridComponent,
+  StrapiRawFaqSectionComponent,
+  StrapiRawKeyTakeawaysComponent,
+  StrapiRawFactBlockComponent,
+  StrapiRawFaqItem,
+  StrapiRawKeyTakeawayItem,
   Page,
   StrapiRawPage,
   StrapiRawPageAttributes,
@@ -321,7 +329,15 @@ function hasRequiredAttributes(data: unknown, attributes: string[]): data is Str
   return true;
 }
 
-type StrapiComponent = StrapiRawHeroComponent | StrapiRawTextBlockComponent | StrapiRawImageGalleryComponent | StrapiRawFeatureGridComponent | StrapiRawButtonComponent;
+type StrapiComponent =
+  | StrapiRawHeroComponent
+  | StrapiRawTextBlockComponent
+  | StrapiRawImageGalleryComponent
+  | StrapiRawFeatureGridComponent
+  | StrapiRawButtonComponent
+  | StrapiRawFaqSectionComponent
+  | StrapiRawKeyTakeawaysComponent
+  | StrapiRawFactBlockComponent;
 
 function hasRequiredComponentAttributes<T extends StrapiComponent>(
   data: unknown,
@@ -714,7 +730,9 @@ function isBaseComponent(value: unknown): value is BaseComponent {
   return isObject(value) && typeof value.__component === 'string';
 }
 
-function normalizeLayoutComponent(rawComponent: unknown): HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | undefined {
+function normalizeLayoutComponent(
+  rawComponent: unknown
+): HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent | undefined {
   if (!rawComponent) {
     console.warn('Received null or undefined component');
     return undefined;
@@ -795,6 +813,58 @@ function normalizeLayoutComponent(rawComponent: unknown): HeroComponent | TextBl
           }))
         };
       }
+      case 'faq-section':
+      case 'page-blocks.faq-section': {
+        if (!('id' in rawComponent)) {
+          console.warn('Invalid faq-section component: missing id');
+          return undefined;
+        }
+        const items = Array.isArray((rawComponent as StrapiRawFaqSectionComponent).items)
+          ? (rawComponent as StrapiRawFaqSectionComponent).items as StrapiRawFaqItem[]
+          : [];
+        return {
+          id: `faq-section-${String(rawComponent.id)}`,
+          __component: 'page-blocks.faq-section' as const,
+          items: items.map((item) => ({
+            id: Number(item.id) || 0,
+            question: item.question || '',
+            answer: item.answer || ''
+          }))
+        };
+      }
+      case 'key-takeaways':
+      case 'page-blocks.key-takeaways': {
+        if (!('id' in rawComponent)) {
+          console.warn('Invalid key-takeaways component: missing id');
+          return undefined;
+        }
+        const items = Array.isArray((rawComponent as StrapiRawKeyTakeawaysComponent).items)
+          ? (rawComponent as StrapiRawKeyTakeawaysComponent).items as StrapiRawKeyTakeawayItem[]
+          : [];
+        return {
+          id: `key-takeaways-${String(rawComponent.id)}`,
+          __component: 'page-blocks.key-takeaways' as const,
+          items: items.map((item) => ({
+            id: item.id || '',
+            title: item.title || '',
+            value: item.value || ''
+          }))
+        };
+      }
+      case 'fact-block':
+      case 'page-blocks.fact-block': {
+        if (!('id' in rawComponent)) {
+          console.warn('Invalid fact-block component: missing id');
+          return undefined;
+        }
+        return {
+          id: `fact-block-${String(rawComponent.id)}`,
+          __component: 'page-blocks.fact-block' as const,
+          label: String((rawComponent as StrapiRawFactBlockComponent).label || ''),
+          value: String((rawComponent as StrapiRawFactBlockComponent).value || ''),
+          source: (rawComponent as StrapiRawFactBlockComponent).source
+        };
+      }
       default:
         console.warn(`Unknown component type: ${componentType} (full: ${rawComponent.__component})`);
     }
@@ -822,9 +892,11 @@ export function normalizePage(raw: StrapiRawPage): Page {
       metaDescription: data.seoDescription || '',
       keywords: data.seoKeywords || ''
     },
+    primaryKeyword: data.primaryKeyword,
+    schemaType: data.schemaType,
     layout: data.layout
       ?.map(normalizeLayoutComponent)
-      .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
+      .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
     publishedAt: data.publishedAt || '',
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || ''

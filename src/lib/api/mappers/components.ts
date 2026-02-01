@@ -33,6 +33,30 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
     case 'feature-grid':
       console.log('[API Validation] Feature grid component found, considering valid for frontend fallback rendering');
       return true;
+    case 'faq-section': {
+      const items = (component as any).items;
+      if (items !== undefined && !Array.isArray(items)) {
+        console.warn(`[API Validation] FAQ section items is not an array at index ${index}`);
+        isValid = false;
+      }
+      break;
+    }
+    case 'key-takeaways': {
+      const items = (component as any).items;
+      if (items !== undefined && !Array.isArray(items)) {
+        console.warn(`[API Validation] Key takeaways items is not an array at index ${index}`);
+        isValid = false;
+      }
+      break;
+    }
+    case 'fact-block': {
+      const factComponent = component as any;
+      if (!factComponent.label || !factComponent.value) {
+        console.warn(`[API Validation] Fact block missing label or value at index ${index}`);
+        isValid = false;
+      }
+      break;
+    }
       
     case 'text-block':
       const textBlockComponent = component as RawTextBlockComponent;
@@ -122,6 +146,47 @@ export function mapComponent(component: RawStrapiComponent) {
         text: buttonComponent.text || '',
         link: buttonComponent.link || '',
         style: buttonComponent.style || 'primary'
+      };
+    case 'page-blocks.faq-section': {
+      const rawItems = Array.isArray((component as any).items)
+        ? (component as any).items
+        : (component as any).items?.data || [];
+      const items = rawItems.map((item: any) => {
+        const itemData = item?.attributes || item || {};
+        return {
+          id: String(item?.id || itemData?.id || ''),
+          question: itemData.question || '',
+          answer: itemData.answer || ''
+        };
+      });
+      return {
+        ...baseComponent,
+        items
+      };
+    }
+    case 'page-blocks.key-takeaways': {
+      const rawItems = Array.isArray((component as any).items)
+        ? (component as any).items
+        : (component as any).items?.data || [];
+      const items = rawItems.map((item: any) => {
+        const itemData = item?.attributes || item || {};
+        return {
+          id: String(item?.id || itemData?.id || ''),
+          title: itemData.title || '',
+          value: itemData.value || ''
+        };
+      });
+      return {
+        ...baseComponent,
+        items
+      };
+    }
+    case 'page-blocks.fact-block':
+      return {
+        ...baseComponent,
+        label: (component as any).label || '',
+        value: (component as any).value || '',
+        source: (component as any).source || undefined
       };
 
     default:

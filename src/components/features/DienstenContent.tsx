@@ -10,6 +10,9 @@ import FeatureCard from '@/components/ui/FeatureCard';
 import FeatureCarousel from '@/components/ui/FeatureCarousel';
 import ProcessTimeline from '@/components/ui/ProcessTimeline';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import { FaqSection } from './FaqSection';
+import { KeyTakeaways } from './KeyTakeaways';
+import { FactBlock } from './FactBlock';
 
 interface DienstenContentProps {
   pageData: any;
@@ -467,6 +470,33 @@ export default function DienstenContent({ pageData }: DienstenContentProps) {
                       </a>
                     </div>
                   </ScrollReveal>
+                </div>
+              </section>
+            );
+
+          case 'page-blocks.key-takeaways':
+            return (
+              <section key={block.id} className="py-16 md:py-24 bg-white">
+                <div className="container-custom px-4 sm:px-6 lg:px-8">
+                  <KeyTakeaways items={block.items} />
+                </div>
+              </section>
+            );
+
+          case 'page-blocks.fact-block':
+            return (
+              <section key={block.id} className="py-10 md:py-16 bg-[#F8FAFC]">
+                <div className="container-custom px-4 sm:px-6 lg:px-8">
+                  <FactBlock data={block} />
+                </div>
+              </section>
+            );
+
+          case 'page-blocks.faq-section':
+            return (
+              <section key={block.id} className="py-16 md:py-24 bg-white">
+                <div className="container-custom px-4 sm:px-6 lg:px-8">
+                  <FaqSection items={block.items} />
                 </div>
               </section>
             );

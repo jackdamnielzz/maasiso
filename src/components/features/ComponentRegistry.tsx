@@ -7,7 +7,10 @@ import {
   TextBlockComponent,
   ImageGalleryComponent,
   FeatureGridComponent,
-  ButtonComponent
+  ButtonComponent,
+  FaqSectionComponent,
+  KeyTakeawaysComponent,
+  FactBlockComponent
 } from '@/lib/types';
 import { ImageGallerySkeleton } from './ImageGallerySkeleton';
 import { HeroComponentSkeleton } from './HeroComponentSkeleton';
@@ -156,8 +159,23 @@ const FeatureGrid = dynamic(() => import('./FeatureGrid').then(mod => mod.Featur
   ssr: true
 });
 
+const FaqSection = dynamic(() => import('./FaqSection').then(mod => mod.FaqSection), {
+  loading: () => null,
+  ssr: true
+});
+
+const KeyTakeaways = dynamic(() => import('./KeyTakeaways').then(mod => mod.KeyTakeaways), {
+  loading: () => null,
+  ssr: true
+});
+
+const FactBlock = dynamic(() => import('./FactBlock').then(mod => mod.FactBlock), {
+  loading: () => null,
+  ssr: true
+});
+
 interface ComponentRegistryProps {
-  component: HeroComponentType | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent;
+  component: HeroComponentType | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent;
   className?: string;
 }
 
@@ -241,6 +259,33 @@ export function ComponentRegistry({ component, className }: ComponentRegistryPro
           onError={handleComponentError('FeatureGridComponent', 'feature-grid')}
         >
           <FeatureGrid data={component as FeatureGridComponent} className={className} />
+        </ErrorBoundary>
+      );
+    case 'faq-section':
+      return (
+        <ErrorBoundary
+          fallback={null}
+          onError={handleComponentError('FaqSection', 'faq-section')}
+        >
+          <FaqSection items={(component as FaqSectionComponent).items} className={className} />
+        </ErrorBoundary>
+      );
+    case 'key-takeaways':
+      return (
+        <ErrorBoundary
+          fallback={null}
+          onError={handleComponentError('KeyTakeaways', 'key-takeaways')}
+        >
+          <KeyTakeaways items={(component as KeyTakeawaysComponent).items} className={className} />
+        </ErrorBoundary>
+      );
+    case 'fact-block':
+      return (
+        <ErrorBoundary
+          fallback={null}
+          onError={handleComponentError('FactBlock', 'fact-block')}
+        >
+          <FactBlock data={component as FactBlockComponent} className={className} />
         </ErrorBoundary>
       );
     default:

@@ -150,9 +150,28 @@ export interface TldrItem {
  * FAQ item for blog posts
  */
 export interface FaqItem {
-  id: number;
+  id: number | string;
   question: string;
   answer: string;
+}
+
+/**
+ * Key takeaway item for pages
+ */
+export interface KeyTakeawayItem {
+  id?: number | string;
+  title: string;
+  value: string;
+}
+
+/**
+ * Fact block for pages
+ */
+export interface FactBlock {
+  id?: number | string;
+  label: string;
+  value: string;
+  source?: string;
 }
 
 /**
@@ -417,7 +436,15 @@ export interface SEOFields {
 /**
  * Page Builder Component Types
  */
-export type PageComponentType = 'page-blocks.hero' | 'page-blocks.text-block' | 'page-blocks.gallery' | 'page-blocks.feature-grid' | 'page-blocks.button';
+export type PageComponentType =
+  | 'page-blocks.hero'
+  | 'page-blocks.text-block'
+  | 'page-blocks.gallery'
+  | 'page-blocks.feature-grid'
+  | 'page-blocks.button'
+  | 'page-blocks.faq-section'
+  | 'page-blocks.key-takeaways'
+  | 'page-blocks.fact-block';
 
 // Raw component types (before normalization)
 export type {
@@ -486,6 +513,32 @@ export interface StrapiRawImageGalleryComponent extends RawStrapiComponent {
   layout?: 'grid' | 'carousel' | 'masonry';
 }
 
+export interface StrapiRawFaqItem {
+  id?: string;
+  question?: string;
+  answer?: string;
+}
+
+export interface StrapiRawFaqSectionComponent extends RawStrapiComponent {
+  items?: StrapiRawFaqItem[];
+}
+
+export interface StrapiRawKeyTakeawayItem {
+  id?: string;
+  title?: string;
+  value?: string;
+}
+
+export interface StrapiRawKeyTakeawaysComponent extends RawStrapiComponent {
+  items?: StrapiRawKeyTakeawayItem[];
+}
+
+export interface StrapiRawFactBlockComponent extends RawStrapiComponent {
+  label?: string;
+  value?: string;
+  source?: string;
+}
+
 export interface PageComponent {
   id: string;
   __component: PageComponentType;
@@ -537,6 +590,23 @@ export interface ButtonComponent extends PageComponent {
   style: 'primary' | 'secondary';
 }
 
+export interface FaqSectionComponent extends PageComponent {
+  __component: 'page-blocks.faq-section';
+  items: FaqItem[];
+}
+
+export interface KeyTakeawaysComponent extends PageComponent {
+  __component: 'page-blocks.key-takeaways';
+  items: KeyTakeawayItem[];
+}
+
+export interface FactBlockComponent extends PageComponent {
+  __component: 'page-blocks.fact-block';
+  label: string;
+  value: string;
+  source?: string;
+}
+
 /**
  * Page types
  */
@@ -552,7 +622,18 @@ export interface Page {
   title: string;
   slug: string;
   seoMetadata?: SEOMetadata;
-  layout?: (HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent)[];
+  primaryKeyword?: string;
+  schemaType?: string;
+  layout?: (
+    | HeroComponent
+    | TextBlockComponent
+    | ImageGalleryComponent
+    | FeatureGridComponent
+    | ButtonComponent
+    | FaqSectionComponent
+    | KeyTakeawaysComponent
+    | FactBlockComponent
+  )[];
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -565,6 +646,8 @@ export interface StrapiRawPageAttributes {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  primaryKeyword?: string;
+  schemaType?: string;
   layout?: any[];
   publishedAt?: string;
   createdAt: string;
