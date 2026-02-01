@@ -1,37 +1,61 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
+import { getPage } from '@/lib/api';
+import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 
 export const metadata: Metadata = {
   title: 'ISO 45001 | MaasISO',
   description: 'ISO 45001 advies en begeleiding voor gezond en veilig werken. MaasISO helpt u pragmatisch op weg.',
   alternates: {
-    canonical: 'https://maasiso.nl/iso-45001',
+    canonical: '/iso-45001',
   },
 };
 
-export default function Iso45001Page() {
-  return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white">
-      <section className="py-16 md:py-24">
-        <div className="container-custom px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-3xl mx-auto relative">
-            <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00]"></div>
-            <div className="p-8 md:p-10 text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-6 text-[#091E42]">
-                ISO 45001 advies & begeleiding
-              </h1>
-              <p className="text-gray-600 mb-6">
-                MaasISO ondersteunt organisaties met een pragmatische aanpak voor gezond en veilig werken volgens ISO 45001.
-              </p>
-              <a
-                href="/contact"
-                className="primary-button inline-block"
-              >
-                Neem contact op
-              </a>
+// Force dynamic rendering to ensure fresh content from Strapi
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function Iso45001Page() {
+  let pageData = null;
+  let hasValidContent = false;
+
+  try {
+    pageData = await getPage('iso-45001');
+    hasValidContent = Boolean(pageData && pageData.layout && pageData.layout.length > 0);
+  } catch (error) {
+    hasValidContent = false;
+  }
+
+  // Fallback content if Strapi data is missing
+  if (!hasValidContent) {
+    return (
+      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white" data-testid="iso45001-fallback-content">
+        <section className="py-16 md:py-24">
+          <div className="container-custom px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-3xl mx-auto relative">
+              <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00]"></div>
+              <div className="p-8 md:p-10 text-center">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-[#091E42]">
+                  ISO 45001 advies & begeleiding
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  De inhoud van deze pagina wordt geladen vanuit het Content Management Systeem (Strapi).
+                </p>
+                <p className="text-gray-600">
+                  Neem contact op met de beheerder als deze melding blijft bestaan.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <AuthorityPageContent
+      layout={pageData?.layout}
+      testId="iso45001-dynamic-content"
+      featureGridTestId="iso45001-feature-cards-grid"
+    />
   );
 }

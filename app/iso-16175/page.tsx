@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { getPage } from '@/lib/api';
-import Iso16175Wrapper from './Iso16175Wrapper';
-import { Block } from './Iso16175Client';
+import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 
 export const metadata: Metadata = {
   title: 'ISO 16175 Certificering | MaasISO',
@@ -46,22 +45,13 @@ export default async function Iso16175Page() {
       return <FallbackContent />;
     }
 
-    // Transform the layout data to match the Block interface
-    const transformedLayout = pageData.layout.map((block: any) => ({
-      id: typeof block.id === 'string' ? parseInt(block.id, 10) : block.id,
-      __component: block.__component,
-      title: block.title,
-      subtitle: block.subtitle,
-      content: block.content,
-      alignment: block.alignment,
-      features: block.features,
-      ctaButton: block.ctaButton,
-      description: block.description,
-      link: block.link,
-      text: block.text
-    })) as Block[];
-
-    return <Iso16175Wrapper layout={transformedLayout} />;
+    return (
+      <AuthorityPageContent
+        layout={pageData.layout}
+        testId="iso16175-dynamic-content"
+        featureGridTestId="iso16175-feature-cards-grid"
+      />
+    );
   } catch (error) {
     console.error('Error loading ISO 16175 page:', error);
     return <FallbackContent />;

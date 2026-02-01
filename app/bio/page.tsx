@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { getPage } from '@/lib/api';
-import BioClient from './BioClient';
-import { Block } from './BioClient';
+import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 
 export const metadata: Metadata = {
   title: 'BIO Certificering | MaasISO',
@@ -46,22 +45,13 @@ export default async function BioPage() {
       return <FallbackContent />;
     }
 
-    // Transform the layout data to match the Block interface
-    const transformedLayout = pageData.layout.map((block: any) => ({
-      id: typeof block.id === 'string' ? parseInt(block.id, 10) : block.id,
-      __component: block.__component,
-      title: block.title,
-      subtitle: block.subtitle,
-      content: block.content,
-      alignment: block.alignment,
-      features: block.features,
-      ctaButton: block.ctaButton,
-      description: block.description,
-      link: block.link,
-      text: block.text
-    })) as Block[];
-
-    return <BioClient layout={transformedLayout} />;
+    return (
+      <AuthorityPageContent
+        layout={pageData.layout}
+        testId="bio-dynamic-content"
+        featureGridTestId="bio-feature-cards-grid"
+      />
+    );
   } catch (error) {
     console.error('Error loading BIO page:', error);
     return <FallbackContent />;
