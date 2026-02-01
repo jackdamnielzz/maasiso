@@ -248,20 +248,25 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.button':
             return (
-              <section key={block.id} className="py-16 md:py-24 bg-white">
-                <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="max-w-4xl mx-auto rounded-2xl border border-slate-200 bg-slate-50 px-8 py-10 md:px-12 md:py-14 text-center">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4 text-[#091E42] leading-tight">
+              <section key={block.id} className="relative overflow-hidden bg-[#091E42] text-white py-16 md:py-24">
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
+                  <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
+                  <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
+                </div>
+                <div className="container-custom px-4 sm:px-6 lg:px-8 relative z-10">
+                  <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
                       {block.title || 'Klaar om de volgende stap te zetten?'}
                     </h2>
                     {block.description && (
-                      <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed">
+                      <p className="text-base md:text-lg text-white/85 mb-8 leading-relaxed">
                         {block.description}
                       </p>
                     )}
                     <a
                       href={block.link || block.ctaButton?.link || '/contact'}
-                      className="inline-flex items-center justify-center rounded-md border border-[#00875A] px-6 py-3 text-[#00875A] font-semibold hover:bg-[#00875A]/10 transition-colors"
+                      className="primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                     >
                       {block.text || block.ctaButton?.text || 'Neem contact op'}
                     </a>
