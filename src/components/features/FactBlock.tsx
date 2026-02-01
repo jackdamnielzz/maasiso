@@ -15,17 +15,17 @@ export function FactBlock({ data, className = '' }: FactBlockProps) {
 
   return (
     <aside
-      className={`fact-block rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm ${className}`}
+      className={`fact-block rounded-xl bg-white/70 px-5 py-4 md:px-6 md:py-5 border border-slate-100 ${className}`}
       aria-label="Fact"
     >
-      <div className="text-xs uppercase tracking-widest text-slate-500">
+      <div className="text-[0.7rem] uppercase tracking-[0.2em] text-slate-500">
         {data.label}
       </div>
-      <div className="mt-2 text-3xl font-bold text-slate-900">
+      <div className="mt-3 text-2xl md:text-3xl font-semibold text-slate-900 leading-snug">
         {data.value}
       </div>
       {data.source ? (
-        <div className="mt-2 text-xs text-slate-500">
+        <div className="mt-3 text-[0.7rem] text-slate-400">
           Bron: {data.source}
         </div>
       ) : null}

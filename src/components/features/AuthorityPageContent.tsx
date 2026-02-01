@@ -106,10 +106,12 @@ export default function AuthorityPageContent({
             return (
               <section key={block.id} className="pt-2 pb-12 md:pt-4 md:pb-16 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-5 py-6 md:px-8 md:py-7 shadow-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                     {block.items.map((fact: any, index: number) => (
                       <FactBlock key={fact.id || index} data={fact} className="h-full" />
                     ))}
+                    </div>
                   </div>
                 </div>
               </section>
