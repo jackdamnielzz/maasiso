@@ -104,16 +104,24 @@ export default function AuthorityPageContent({
               return null;
             }
             const factCount = block.items.length;
+            const isSingle = factCount === 1;
             const remainder = factCount % 4;
             const shouldCenterLast = remainder === 1 && factCount > 4;
             const shouldCenterLastTwo = remainder === 2 && factCount > 4;
+            const wrapperClass = isSingle ? 'max-w-3xl mx-auto' : '';
+            const gridClass = isSingle
+              ? 'relative grid grid-cols-1 place-items-center gap-4 sm:gap-6 md:gap-8'
+              : 'relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8';
+            const itemBaseClass = isSingle ? 'w-full max-w-sm' : 'w-full';
             return (
               <section key={block.id} className="py-10 md:py-16 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md">
+                  <div
+                    className={`relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md ${wrapperClass}`}
+                  >
                     <div className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-[#00875A]/10 blur-3xl"></div>
                     <div className="absolute -bottom-16 left-0 h-40 w-40 rounded-full bg-[#FF8B00]/10 blur-3xl"></div>
-                    <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                    <div className={gridClass}>
                       {block.items.map((fact: any, index: number) => {
                         const isLast = index === factCount - 1;
                         const isSecondLast = index === factCount - 2;
@@ -123,7 +131,7 @@ export default function AuthorityPageContent({
                             ? 'xl:col-start-2'
                             : '';
                         return (
-                          <div key={fact.id || index} className={`w-full ${balanceClass}`}>
+                          <div key={fact.id || index} className={`${itemBaseClass} ${balanceClass}`}>
                             <FactBlock data={fact} className="h-full" />
                           </div>
                         );

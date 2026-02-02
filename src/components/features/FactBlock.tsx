@@ -23,10 +23,10 @@ export function FactBlock({ data, className = '' }: FactBlockProps) {
       <div className="relative flex items-start gap-4">
         <span className="mt-1 h-3 w-3 rounded-full bg-gradient-to-br from-[#00875A] to-[#FF8B00] shadow-sm"></span>
         <div>
-          <div className="text-base md:text-lg font-semibold text-[#091E42] leading-snug">
+          <div className="text-base md:text-lg font-semibold text-[#091E42] leading-snug break-words">
             {data.label}
           </div>
-          <div className="mt-2 text-sm md:text-base text-slate-700 leading-relaxed">
+          <div className="mt-2 text-sm md:text-base text-slate-700 leading-relaxed break-words">
             {data.value}
           </div>
           {data.source ? (
