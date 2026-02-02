@@ -99,23 +99,41 @@ export default function AuthorityPageContent({
               </section>
             );
 
-          case 'page-blocks.fact-block-group':
+          case 'page-blocks.fact-block-group': {
             if (!block.items || block.items.length === 0) {
               return null;
             }
+            const factCount = block.items.length;
+            const remainder = factCount % 4;
+            const shouldCenterLast = remainder === 1 && factCount > 4;
+            const shouldCenterLastTwo = remainder === 2 && factCount > 4;
             return (
-              <section key={block.id} className="pt-2 pb-10 md:pt-4 md:pb-16 bg-white">
+              <section key={block.id} className="py-10 md:py-16 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-5 md:px-8 md:py-7 shadow-sm">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-                    {block.items.map((fact: any, index: number) => (
-                      <FactBlock key={fact.id || index} data={fact} className="h-full" />
-                    ))}
+                  <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md">
+                    <div className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-[#00875A]/10 blur-3xl"></div>
+                    <div className="absolute -bottom-16 left-0 h-40 w-40 rounded-full bg-[#FF8B00]/10 blur-3xl"></div>
+                    <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                      {block.items.map((fact: any, index: number) => {
+                        const isLast = index === factCount - 1;
+                        const isSecondLast = index === factCount - 2;
+                        const balanceClass = shouldCenterLast && isLast
+                          ? 'xl:col-span-2 xl:col-start-2 xl:justify-self-center xl:max-w-[320px]'
+                          : shouldCenterLastTwo && isSecondLast
+                            ? 'xl:col-start-2'
+                            : '';
+                        return (
+                          <div key={fact.id || index} className={`w-full ${balanceClass}`}>
+                            <FactBlock data={fact} className="h-full" />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
               </section>
             );
+          }
 
           case 'page-blocks.text-block':
             return (
