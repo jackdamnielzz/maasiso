@@ -55,6 +55,7 @@ export default async function AvgPage() {
     <AuthorityPageContent
       layout={pageData?.layout}
       testId="avg-dynamic-content"
+      featureGridTitleFallback="De 6 stappen"
       featureGridTestId="avg-feature-cards-carousel"
     />
   );
