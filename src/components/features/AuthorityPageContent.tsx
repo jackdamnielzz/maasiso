@@ -121,7 +121,7 @@ export default function AuthorityPageContent({
                   >
                     <div className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-[#00875A]/10 blur-3xl"></div>
                     <div className="absolute -bottom-16 left-0 h-40 w-40 rounded-full bg-[#FF8B00]/10 blur-3xl"></div>
-                    <div className={gridClass}>
+                    <div className={`${gridClass} min-w-0`}>
                       {block.items.map((fact: any, index: number) => {
                         const isLast = index === factCount - 1;
                         const isSecondLast = index === factCount - 2;
@@ -131,7 +131,7 @@ export default function AuthorityPageContent({
                             ? 'xl:col-start-2'
                             : '';
                         return (
-                          <div key={fact.id || index} className={`${itemBaseClass} ${balanceClass}`}>
+                          <div key={fact.id || index} className={`${itemBaseClass} ${balanceClass} min-w-0`}>
                             <FactBlock data={fact} className="h-full" />
                           </div>
                         );
