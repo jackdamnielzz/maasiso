@@ -73,7 +73,7 @@ export default function HomeContent() {
                 <h3 className="text-xl font-bold mb-4">{service.title}</h3>
                 <p className="text-gray-600 mb-6">{service.description}</p>
                 <Link 
-                  href="/diensten" 
+                  href="/iso-certificering" 
                   className="text-[#00875A] font-medium hover:text-[#006C48]"
                 >
                   Lees meer

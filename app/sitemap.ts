@@ -1,6 +1,6 @@
-import { getBlogPosts, getNewsArticles, getWhitepapers } from '@/lib/api';
+import { getBlogPosts, getWhitepapers } from '@/lib/api';
 import { MetadataRoute } from 'next';
-import { BlogPost, NewsArticle, Page, StrapiCollectionResponse, StrapiData, Whitepaper } from '@/lib/types';
+import { BlogPost, Page, StrapiCollectionResponse, StrapiData, Whitepaper } from '@/lib/types';
 import { REMOVED_PATHS } from '@/config/removed-urls';
 
 export const revalidate = 0;
@@ -138,22 +138,6 @@ async function fetchAllBlogPosts(): Promise<{ posts: BlogPost[]; total: number }
   return { posts, total };
 }
 
-async function fetchAllNewsArticles(): Promise<{ articles: NewsArticle[]; total: number }> {
-  const pageSize = 100;
-  let page = 1;
-  let articles: NewsArticle[] = [];
-  let total = 0;
-
-  do {
-    const result = await getNewsArticles(page, pageSize);
-    articles = articles.concat(result.articles);
-    total = result.total || articles.length;
-    page += 1;
-  } while (articles.length < total);
-
-  return { articles, total };
-}
-
 async function fetchAllWhitepapers(): Promise<{ whitepapers: { data: StrapiData<Whitepaper>[] }; total: number }> {
   const pageSize = 100;
   let page = 1;
@@ -177,22 +161,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     '',
     '/over-ons',
-    '/diensten',
     '/contact',
     '/blog',
-    '/news',
-    '/onze-voordelen',
+    '/waarom-maasiso',
     '/privacy-policy',
     '/terms-and-conditions',
     '/whitepaper',
-    '/iso-9001',
-    '/iso-14001',
-    '/iso-45001',
-    '/iso-16175',
-    '/iso-27001',
+    '/iso-certificering/iso-9001',
+    '/iso-certificering/iso-14001',
+    '/iso-certificering/iso-45001',
+    '/iso-certificering/iso-16175',
+    '/informatiebeveiliging/iso-27001',
+    '/iso-certificering',
     '/cookie-policy',
-    '/avg',
-    '/bio',
+    '/avg-wetgeving/avg',
+    '/informatiebeveiliging/bio',
   ]
     .filter(route => !REMOVED_PATHS.has(route))
     .map((route) => ({
@@ -204,14 +187,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all dynamic content in parallel with individual error handling
-    const [blogResult, newsResult, whitepaperResult, pagesData] = await Promise.all([
+    const [blogResult, whitepaperResult, pagesData] = await Promise.all([
       fetchAllBlogPosts().catch(err => {
         console.error('Sitemap: Failed to fetch blog posts:', err);
         return { posts: [] };
-      }),
-      fetchAllNewsArticles().catch(err => {
-        console.error('Sitemap: Failed to fetch news articles:', err);
-        return { articles: [] };
       }),
       fetchAllWhitepapers().catch(err => {
         console.error('Sitemap: Failed to fetch whitepapers:', err);
@@ -224,7 +203,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
 
     // Log counts for debugging
-    console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${newsResult.articles.length} news articles, ${whitepaperResult.whitepapers.data.length} whitepapers, ${pagesData.length} pages`);
+    console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${whitepaperResult.whitepapers.data.length} whitepapers, ${pagesData.length} pages`);
 
     // Map Blog Posts
     // Use updatedAt as priority for freshness signals (important for SEO)
@@ -236,18 +215,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(post.updatedAt || post.publishedAt || new Date()),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
-      }));
-
-    // Map News Articles
-    // Use updatedAt as priority for freshness signals (important for SEO)
-    const newsEntries: MetadataRoute.Sitemap = newsResult.articles
-      .filter(article => article.slug)
-      .filter(article => !REMOVED_PATHS.has(`/news/${normalizeSlug(article.slug)}`))
-      .map(article => ({
-        url: buildUrl(baseUrl, `/news/${normalizeSlug(article.slug)}`),
-        lastModified: new Date(article.updatedAt || article.publishedAt || new Date()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
       }));
 
     // Map Whitepapers
@@ -275,17 +242,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           'blog',
           'news',
           'onze-voordelen',
+          'waarom-maasiso',
           'privacy-policy',
           'terms-and-conditions',
           'whitepaper',
-          'iso-9001',
-          'iso-14001',
-          'iso-45001',
-          'iso-16175',
-          'iso-27001',
+          'iso-certificering/iso-9001',
+          'iso-certificering/iso-14001',
+          'iso-certificering/iso-45001',
+          'iso-certificering/iso-16175',
+          'informatiebeveiliging/iso-27001',
+          'iso-certificering',
           'cookie-policy',
-          'avg',
-          'bio',
+          'avg-wetgeving/avg',
+          'informatiebeveiliging/bio',
           'home'
         ];
 
@@ -305,7 +274,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
       ...staticPages,
       ...blogEntries,
-      ...newsEntries,
       ...whitepaperEntries,
       ...dynamicPageEntries
     ];

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'BIO Certificering | MaasISO',
   description: 'BIO certificering en informatiebeveiliging met MaasISO. Professionele begeleiding voor uw organisatie naar BIO certificering.',
   alternates: {
-    canonical: "/bio",
+    canonical: "/informatiebeveiliging/bio",
   },
 };
 

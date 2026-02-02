@@ -229,7 +229,7 @@ export default function DienstenContent({ pageData }: DienstenContentProps) {
                               delay={idx * 100}
                             >
                               <Link
-                                href={item.linkHref === '#' ? '/diensten' : item.linkHref}
+                                href={item.linkHref === '#' ? '/iso-certificering' : item.linkHref}
                                 className={`group relative block h-full ${style.bg} rounded-2xl p-8 border-l-4 ${style.border} shadow-sm transition-all duration-500 ${style.hover} transform hover:-translate-y-2`}
                               >
                                 <div className="relative z-10 h-full flex flex-col">
@@ -271,7 +271,7 @@ export default function DienstenContent({ pageData }: DienstenContentProps) {
                                 delay={(idx + 3) * 100}
                               >
                                 <Link
-                                  href={item.linkHref === '#' ? '/diensten' : item.linkHref}
+                                  href={item.linkHref === '#' ? '/iso-certificering' : item.linkHref}
                                   className={`group relative block h-full ${style.bg} rounded-2xl p-8 border-l-4 ${style.border} shadow-sm transition-all duration-500 ${style.hover} transform hover:-translate-y-2`}
                                 >
                                   <div className="relative z-10 h-full flex flex-col">

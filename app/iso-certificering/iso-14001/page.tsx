@@ -1,12 +1,14 @@
 import { Metadata } from 'next';
 import { getPage } from '@/lib/api';
 import AuthorityPageContent from '@/components/features/AuthorityPageContent';
+import SchemaMarkup from '@/components/ui/SchemaMarkup';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'ISO 14001 Certificering | MaasISO',
   description: 'ISO 14001 certificering en milieumanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 14001 certificering.',
   alternates: {
-    canonical: "/iso-14001",
+    canonical: "/iso-certificering/iso-14001",
   },
 };
 
@@ -14,8 +16,32 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'ISO-certificering', href: '/iso-certificering' },
+  { label: 'ISO 14001', href: '/iso-certificering/iso-14001' }
+];
+
 const FallbackContent = () => (
-  <main className="flex-1 bg-gradient-to-b from-blue-50 to-white" data-testid="iso14001-fallback-content">
+  <main
+    className="flex-1 bg-gradient-to-b from-blue-50 to-white"
+    data-testid="iso14001-fallback-content"
+    data-topic="iso-certificering"
+  >
+    <SchemaMarkup
+      breadcrumbs={{
+        items: [
+          { name: 'Home', item: 'https://maasiso.nl' },
+          { name: 'ISO-certificering', item: 'https://maasiso.nl/iso-certificering' },
+          { name: 'ISO 14001', item: 'https://maasiso.nl/iso-certificering/iso-14001' }
+        ]
+      }}
+    />
+    <div className="bg-white/80 border-b border-slate-200">
+      <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+    </div>
     <section className="py-16 md:py-24">
       <div className="container-custom px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-3xl mx-auto relative">
@@ -50,6 +76,8 @@ export default async function Iso14001Page() {
         layout={pageData.layout}
         testId="iso14001-dynamic-content"
         featureGridTestId="iso14001-feature-cards-grid"
+        breadcrumbs={breadcrumbs}
+        dataTopic="iso-certificering"
       />
     );
   } catch (error) {

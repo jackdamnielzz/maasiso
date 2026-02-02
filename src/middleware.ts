@@ -20,6 +20,32 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
 
+  if (request.nextUrl.pathname === '/diensten') {
+    return NextResponse.redirect(new URL('/iso-certificering', request.url), 301);
+  }
+
+  if (request.nextUrl.pathname === '/onze-voordelen') {
+    return NextResponse.redirect(new URL('/waarom-maasiso', request.url), 301);
+  }
+
+  if (request.nextUrl.pathname === '/news') {
+    return NextResponse.redirect(new URL('/blog', request.url), 301);
+  }
+
+  if (request.nextUrl.pathname.startsWith('/news/')) {
+    const slug = request.nextUrl.pathname.replace('/news/', '');
+    return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
+  }
+
+  if (request.nextUrl.pathname.startsWith('/blog-posts/')) {
+    const slug = request.nextUrl.pathname.replace('/blog-posts/', '');
+    return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
+  }
+
+  if (request.nextUrl.pathname === '/admin/related-posts') {
+    return NextResponse.redirect(new URL('/_admin/related-posts', request.url), 301);
+  }
+
   if (request.nextUrl.pathname === '/index.html') {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
@@ -29,13 +55,20 @@ export function middleware(request: NextRequest) {
   }
 
   const redirectMap: Record<string, string> = {
-    '/diensten/iso-9001-consultancy': '/iso-9001',
-    '/diensten/iso-9001': '/iso-9001',
-    '/diensten/iso-14001': '/iso-14001',
-    '/diensten/iso-27001': '/iso-27001',
-    '/diensten/iso-45001': '/iso-45001',
-    '/diensten/gdpr-avg': '/avg',
-    '/diensten/bio': '/bio',
+    '/iso-9001': '/iso-certificering/iso-9001',
+    '/iso-14001': '/iso-certificering/iso-14001',
+    '/iso-45001': '/iso-certificering/iso-45001',
+    '/iso-16175': '/iso-certificering/iso-16175',
+    '/iso-27001': '/informatiebeveiliging/iso-27001',
+    '/avg': '/avg-wetgeving/avg',
+    '/bio': '/informatiebeveiliging/bio',
+    '/diensten/iso-9001-consultancy': '/iso-certificering/iso-9001',
+    '/diensten/iso-9001': '/iso-certificering/iso-9001',
+    '/diensten/iso-14001': '/iso-certificering/iso-14001',
+    '/diensten/iso-27001': '/informatiebeveiliging/iso-27001',
+    '/diensten/iso-45001': '/iso-certificering/iso-45001',
+    '/diensten/gdpr-avg': '/avg-wetgeving/avg',
+    '/diensten/bio': '/informatiebeveiliging/bio',
     '/algemene-voorwaarden': '/terms-and-conditions',
     '/contact.html': '/contact',
     '/blog/iso-27001-checklist': '/blog/iso-27001-checklist-augustus-2025',
@@ -62,13 +95,24 @@ export const config = {
   matcher: [
     '/sitemap.xml',
     '/home',
+    '/diensten',
+    '/onze-voordelen',
+    '/news/:path*',
+    '/blog-posts/:path*',
+    '/admin/:path*',
+    '/iso-9001',
+    '/iso-14001',
+    '/iso-45001',
+    '/iso-16175',
+    '/iso-27001',
+    '/avg',
+    '/bio',
     '/index.html',
     '/contact.html',
     '/algemene-voorwaarden',
     '/$',
     '/diensten/:path*',
     '/blog/:path*',
-    '/news/:path*',
     '/test-deploy',
   ],
 };

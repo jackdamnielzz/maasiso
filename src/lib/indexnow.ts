@@ -153,19 +153,6 @@ export async function notifyBlogPost(slug: string): Promise<boolean> {
 }
 
 /**
- * Notify IndexNow about a news article
- * Helper function specifically for news articles
- *
- * @param slug - The news article slug
- * @returns Promise<boolean> - true if successful, false otherwise
- */
-export async function notifyNewsArticle(slug: string): Promise<boolean> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl';
-  const url = `${siteUrl}/news/${slug}`;
-  return notifyIndexNow(url);
-}
-
-/**
  * Notify IndexNow about a page
  * Helper function for any page on the site
  *
@@ -183,6 +170,5 @@ export default {
   notifyIndexNow,
   notifyIndexNowBatch,
   notifyBlogPost,
-  notifyNewsArticle,
   notifyPage,
 };

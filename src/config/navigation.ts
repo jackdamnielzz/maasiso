@@ -34,7 +34,7 @@ export const navigationConfig: NavigationConfig = {
     },
     {
       label: 'Diensten',
-      href: '/diensten',
+      href: '/iso-certificering',
     },
     {
       label: 'Kennisbank',
@@ -46,17 +46,17 @@ export const navigationConfig: NavigationConfig = {
         },
         {
           label: 'Nieuws',
-          href: '/nieuws',
+          href: '/blog',
         },
         {
           label: 'Whitepapers',
-          href: '/whitepapers',
+          href: '/whitepaper',
         },
       ],
     },
     {
-      label: 'Onze Voordelen',
-      href: '/onze-voordelen',
+      label: 'Waarom MaasISO',
+      href: '/waarom-maasiso',
     },
     {
       label: 'Over Ons',
@@ -94,7 +94,7 @@ export const navigationConfig: NavigationConfig = {
         },
         {
           label: 'Diensten',
-          href: '/diensten',
+          href: '/iso-certificering',
         },
       ],
     },
@@ -103,15 +103,15 @@ export const navigationConfig: NavigationConfig = {
       links: [
         {
           label: 'ISO 9001 Consultancy',
-          href: '/iso-9001',
+          href: '/iso-certificering/iso-9001',
         },
         {
           label: 'ISO 27001 Consultancy',
-          href: '/iso-27001',
+          href: '/informatiebeveiliging/iso-27001',
         },
         {
           label: 'AVG/GDPR Compliance',
-          href: '/avg-compliance',
+          href: '/avg-wetgeving/avg',
         },
       ],
     },
@@ -119,15 +119,15 @@ export const navigationConfig: NavigationConfig = {
   legalLinks: [
     {
       label: 'Privacyverklaring',
-      href: '/privacyverklaring',
+      href: '/privacy-policy',
     },
     {
       label: 'Algemene Voorwaarden',
-      href: '/algemene-voorwaarden',
+      href: '/terms-and-conditions',
     },
     {
       label: 'Cookiebeleid',
-      href: '/cookiebeleid',
+      href: '/cookie-policy',
     },
   ],
   socialLinks: [

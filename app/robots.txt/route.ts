@@ -5,7 +5,7 @@ export async function GET() {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/admin/'],
+      disallow: ['/api/', '/admin/', '/_admin/'],
     },
     sitemap: 'https://maasiso.nl/sitemap.xml',
   }
@@ -15,6 +15,7 @@ export async function GET() {
 Allow: /
 Disallow: /api/
 Disallow: /admin/
+Disallow: /_admin/
 
 Sitemap: https://maasiso.nl/sitemap.xml`,
     {

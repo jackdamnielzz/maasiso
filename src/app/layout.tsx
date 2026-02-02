@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl">
+    <html lang="nl" data-scroll-behavior="smooth">
       <body className={`${inter.variable} font-sans antialiased`}>
         <ExperimentProvider>
           <Layout>{children}</Layout>

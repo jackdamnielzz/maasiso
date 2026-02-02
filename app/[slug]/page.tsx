@@ -59,9 +59,9 @@ export default async function DynamicPage({ params }: PageProps) {
     return (
       <main className="min-h-screen">
         {page.layout?.length ? (
-          page.layout.map((component) => (
+          page.layout.map((component, index) => (
             <ComponentRegistry
-              key={component.id}
+              key={`${component.__component ?? 'component'}-${component.id ?? 'x'}-${index}`}
               component={component as any}
               className="mb-8 last:mb-0"
             />

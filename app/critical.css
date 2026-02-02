@@ -39,11 +39,21 @@ main {
 .hero-section {
   background-color: var(--primary-color);
   color: white;
-  padding: 3rem 0;
-  min-height: 400px;
-  display: flex;
-  align-items: center;
+  /* Pull hero background under the fixed header, but keep content visible below it */
   margin-top: -80px;
+  padding-top: calc(80px + 2rem);
+  padding-bottom: 2rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    padding-top: calc(80px + 3rem);
+    padding-bottom: 3rem;
+  }
 }
 
 .primary-button {

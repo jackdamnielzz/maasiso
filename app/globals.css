@@ -43,6 +43,8 @@ main {
 .hero-section {
   background-color: var(--primary-color);
   color: white;
+  /* Pull the hero background into main's 80px top padding (fixed header) */
+  margin-top: -80px;
   padding-top: calc(80px + 2rem);
   padding-bottom: 2rem;
   width: 100%;
@@ -141,8 +143,8 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Section Spacing */
-section {
+/* Section Spacing (avoid overriding hero padding/top-offset logic) */
+section:not(.hero-section) {
   margin: 0 auto;
   padding: 4rem 0;
 }

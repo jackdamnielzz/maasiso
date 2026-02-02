@@ -22,11 +22,6 @@ export const REMOVED_URLS: RemovedUrl[] = [
     path: '/test-deploy',
     reason: 'Test page removed',
     removedAt: '2026-01-25'
-  },
-  {
-    path: '/news/avg-iso-9001-integratie',
-    reason: 'Content archived/deleted',
-    removedAt: '2026-01-25'
   }
 ];
 

@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: AnalyticsConfig = {
   errorTracking: true,
   consentRequired: true,
   anonymizeIp: true,
-  excludedRoutes: ['/api/', '/admin/', '/_next/'],
+  excludedRoutes: ['/api/', '/admin/', '/_admin/', '/_next/'],
 };
 
 // Event Queue Implementation

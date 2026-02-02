@@ -5,6 +5,8 @@ import { getIconForFeature } from '@/lib/utils/iconMapper';
 import { KeyTakeaways } from '@/components/features/KeyTakeaways';
 import { FactBlock } from '@/components/features/FactBlock';
 import { FaqSection } from '@/components/features/FaqSection';
+import SchemaMarkup from '@/components/ui/SchemaMarkup';
+import Breadcrumbs, { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 
 type AuthorityPageContentProps = {
@@ -12,6 +14,9 @@ type AuthorityPageContentProps = {
   testId?: string;
   featureGridTitleFallback?: string;
   featureGridTestId?: string;
+  breadcrumbs?: BreadcrumbItem[];
+  showBreadcrumbs?: boolean;
+  dataTopic?: string;
 };
 
 const groupFactBlocks = (layout: NonNullable<Page['layout']> = []) => {
@@ -51,17 +56,40 @@ export default function AuthorityPageContent({
   layout = [],
   testId,
   featureGridTitleFallback = 'De 5 stappen',
-  featureGridTestId
+  featureGridTestId,
+  breadcrumbs,
+  showBreadcrumbs = true,
+  dataTopic
 }: AuthorityPageContentProps) {
   const layoutBlocks = groupFactBlocks(layout);
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl').replace(/\/+$/g, '');
+  const breadcrumbSchemaItems = breadcrumbs?.length
+    ? breadcrumbs.map((item) => ({
+      name: item.label,
+      item: item.href.startsWith('http') ? item.href : `${siteUrl}${item.href}`
+    }))
+    : null;
 
   return (
-    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white" data-testid={testId}>
-      {layoutBlocks.map((block: any) => {
+    <main className="flex-1 bg-gradient-to-b from-blue-50 to-white" data-testid={testId} data-topic={dataTopic}>
+      {breadcrumbSchemaItems ? (
+        <>
+          <SchemaMarkup breadcrumbs={{ items: breadcrumbSchemaItems }} />
+          {showBreadcrumbs ? (
+            <div className="bg-white/80 border-b border-slate-200">
+              <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
+                <Breadcrumbs items={breadcrumbs ?? []} />
+              </div>
+            </div>
+          ) : null}
+        </>
+      ) : null}
+      {layoutBlocks.map((block: any, index: number) => {
+        const blockKey = `${block?.__component ?? 'block'}-${block?.id ?? 'x'}-${index}`;
         switch (block.__component) {
           case 'page-blocks.hero':
             return (
-              <section key={block.id} className="hero-section relative overflow-hidden bg-[#091E42]">
+              <section key={blockKey} className="hero-section relative overflow-hidden bg-[#091E42]">
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                   <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
                   <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
@@ -92,7 +120,7 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.key-takeaways':
             return (
-              <section key={block.id} className="pt-8 pb-4 md:pt-12 md:pb-8 bg-white">
+              <section key={blockKey} className="pt-8 pb-4 md:pt-12 md:pb-8 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <KeyTakeaways items={block.items} className="max-w-5xl mx-auto" />
                 </div>
@@ -114,7 +142,7 @@ export default function AuthorityPageContent({
               : 'relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8';
             const itemBaseClass = isSingle ? 'w-full max-w-sm' : 'w-full';
             return (
-              <section key={block.id} className="py-10 md:py-16 bg-white">
+              <section key={blockKey} className="py-10 md:py-16 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div
                     className={`relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md ${wrapperClass}`}
@@ -145,7 +173,7 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.text-block':
             return (
-              <section key={block.id} className="py-12 md:py-24">
+              <section key={blockKey} className="py-12 md:py-24">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-4xl mx-auto relative hover:shadow-xl transition-all duration-300">
                     <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00]"></div>
@@ -181,7 +209,7 @@ export default function AuthorityPageContent({
           case 'page-blocks.feature-grid': {
             const features = Array.isArray(block.features) ? block.features : [];
             return (
-              <section key={block.id} className="py-12 md:py-24 bg-[#F8FAFC]">
+              <section key={blockKey} className="py-12 md:py-24 bg-[#F8FAFC]">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   {features.length > 0 ? (
                     <>
@@ -270,7 +298,7 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.faq-section':
             return (
-              <section key={block.id} className="py-12 md:py-24 bg-white">
+              <section key={blockKey} className="py-12 md:py-24 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="max-w-4xl mx-auto">
                     <FaqSection items={block.items} />
@@ -281,7 +309,7 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.button':
             return (
-              <section key={block.id} className="relative overflow-hidden bg-[#091E42] text-white py-14 md:py-24">
+              <section key={blockKey} className="relative overflow-hidden bg-[#091E42] text-white py-14 md:py-24">
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                   <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
                   <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>

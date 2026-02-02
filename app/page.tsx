@@ -120,7 +120,7 @@ const services = [
     title: "ISO 9001 – Kwaliteitsmanagement",
     description:
       "Wilt u processen verbeteren, uw kwaliteit verhogen en klanten tevreden maken? Als ervaren ISO 9001 consultant ondersteunt MaasISO u bij elke stap: van analyse tot implementatie en certificering.",
-    link: "/iso-9001",
+    link: "/iso-certificering/iso-9001",
     linkText: "Meer over onze ISO 9001 diensten",
     icon: <img src="/icons/quality.svg" alt="ISO 9001" className="w-16 h-16" />,
   },
@@ -129,7 +129,7 @@ const services = [
     title: "ISO 27001 – Informatiebeveiliging",
     description:
       "Heeft u behoefte aan structurele beveiliging van gevoelige bedrijfsinformatie? Onze ISO 27001 consultants begeleiden u bij risicoanalyse, implementatie van controles en voorbereiding op certificering.",
-    link: "/iso-27001",
+    link: "/informatiebeveiliging/iso-27001",
     linkText: "Ontdek onze ISO 27001 aanpak",
     icon: <img src="/icons/shield.svg" alt="ISO 27001" className="w-16 h-16" />,
   },
@@ -138,7 +138,7 @@ const services = [
     title: "BIO – Baseline Informatiebeveiliging Overheid",
     description:
       "Voor overheidsinstanties en toeleveranciers ondersteunen wij bij de implementatie van de BIO. Wij helpen u voldoen aan de Baseline Informatiebeveiliging Overheid met praktisch advies.",
-    link: "/bio",
+    link: "/informatiebeveiliging/bio",
     linkText: "Lees meer over BIO ondersteuning",
     icon: <img src="/icons/compliance.svg" alt="BIO" className="w-16 h-16" />,
   },
@@ -147,7 +147,7 @@ const services = [
     title: "AVG/GDPR – Privacy compliance",
     description:
       "MaasISO helpt als privacy consultant bij alle aspecten van privacywetgeving – van AVG quickscan tot beleid, DPIA’s en awareness. Wij zorgen voor duidelijke implementatie en blijvende privacy-compliance.",
-    link: "/avg",
+    link: "/avg-wetgeving/avg",
     linkText: "Bekijk onze AVG diensten",
     icon: <img src="/icons/privacy.svg" alt="AVG" className="w-16 h-16" />,
   },
@@ -156,7 +156,7 @@ const services = [
     title: "ISO 14001 – Milieumanagement",
     description:
       "Wilt u milieukansen benutten en risico’s managen? Met ISO 14001 advies van MaasISO zet u een effectief milieumanagementsysteem op, afgestemd op uw organisatie.",
-    link: "/iso-14001",
+    link: "/iso-certificering/iso-14001",
     linkText: "Lees meer over ISO 14001 ondersteuning",
     icon: <img src="/icons/consulting.svg" alt="ISO 14001" className="w-16 h-16" />,
   },
@@ -165,7 +165,7 @@ const services = [
     title: "ISO 16175 – Digitaal Informatiebeheer",
     description:
       "Grip op uw digitale documenten en archieven met onze adviesdiensten rond ISO 16175 en informatiebeheer. Wij helpen structuur, compliance en vindbaarheid duurzaam te verbeteren.",
-    link: "/iso-16175",
+    link: "/iso-certificering/iso-16175",
     linkText: "Advies over informatiebeheer en ISO 16175",
     icon: <img src="/icons/certificate.svg" alt="ISO 16175" className="w-16 h-16" />,
   },
@@ -222,7 +222,7 @@ function Home() {
             Met pragmatische ISO-consultancy helpt MaasISO het MKB om processen efficiënter, veiliger en compliant te maken. Geen gedoe, wél resultaten.
           </p>
           <a
-            href="/diensten"
+            href="/iso-certificering"
             className="primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
           >
             Ontdek onze Diensten
@@ -305,7 +305,7 @@ function Home() {
           </div>
           <div className="flex justify-center mt-10 w-full">
             <a
-              href="/diensten"
+              href="/iso-certificering"
               className="mx-auto block max-w-xs w-full text-center primary-button hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
             >
               Bekijk het volledige dienstenoverzicht
@@ -399,7 +399,7 @@ function Home() {
           </div>
           <div className="flex justify-center mt-10">
             <a
-              href="/onze-voordelen"
+              href="/waarom-maasiso"
               className="text-primary font-medium underline"
             >
               Lees meer over onze voordelen
@@ -442,7 +442,7 @@ function Home() {
               Neem Contact Op
             </a>
             <a
-              href="/diensten"
+              href="/iso-certificering"
               className="primary-button bg-white text-[#091E42] hover:bg-gray-200 hover:text-[#091E42] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
             >
               Bekijk Alle Diensten
