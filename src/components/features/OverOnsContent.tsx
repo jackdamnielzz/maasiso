@@ -81,7 +81,8 @@ export default function OverOnsContent() {
   return (
     <main className="flex-1 bg-white overflow-hidden">
       {/* Spectacular Hero Section with Parallax Effect */}
-      <section className="relative h-[80vh] flex items-center justify-center bg-[#091E42] text-white">
+      {/* Use hero-section to pull the background up under the fixed navbar (avoid white gap). */}
+      <section className="hero-section relative overflow-hidden flex items-center justify-center bg-[#091E42] text-white min-h-[80vh]">
         <div 
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{ transform: `translateY(${scrollY * 0.3}px)` }}
