@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { getPage } from '@/lib/api';
 import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
-import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'ISO 9001 Certificering | MaasISO',
@@ -50,11 +49,6 @@ export default async function Iso9001Page() {
             ]
           }}
         />
-        <div className="bg-white/80 border-b border-slate-200">
-          <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
-            <Breadcrumbs items={breadcrumbs} />
-          </div>
-        </div>
         <section className="py-16 md:py-24">
           <div className="container-custom px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-3xl mx-auto relative">
@@ -83,6 +77,7 @@ export default async function Iso9001Page() {
       testId="iso9001-dynamic-content"
       featureGridTestId="iso9001-feature-cards-grid"
       breadcrumbs={breadcrumbs}
+      showBreadcrumbs={false}
       dataTopic="iso-certificering"
     />
   );
