@@ -15,6 +15,15 @@ export function middleware(request: NextRequest) {
     });
   }
 
+  // Admin tooling lives under /_admin; /admin should not exist.
+  if (request.nextUrl.pathname === '/admin' || request.nextUrl.pathname.startsWith('/admin/')) {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
+  if (request.nextUrl.pathname === '/_admin') {
+    return NextResponse.redirect(new URL('/_admin/related-posts', request.url), 301);
+  }
+
   // Redirect /home to / to prevent duplicate content
   if (request.nextUrl.pathname === '/home') {
     return NextResponse.redirect(new URL('/', request.url), 301);
@@ -40,10 +49,6 @@ export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/blog-posts/')) {
     const slug = request.nextUrl.pathname.replace('/blog-posts/', '');
     return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
-  }
-
-  if (request.nextUrl.pathname === '/admin/related-posts') {
-    return NextResponse.redirect(new URL('/_admin/related-posts', request.url), 301);
   }
 
   if (request.nextUrl.pathname === '/index.html') {
@@ -99,7 +104,10 @@ export const config = {
     '/onze-voordelen',
     '/news/:path*',
     '/blog-posts/:path*',
+    '/admin',
     '/admin/:path*',
+    '/_admin',
+    '/_admin/:path*',
     '/iso-9001',
     '/iso-14001',
     '/iso-45001',

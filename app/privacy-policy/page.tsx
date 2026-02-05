@@ -4,6 +4,7 @@ import React from 'react';
 import TableOfContents from '@/components/features/TableOfContents';
 import MarkdownContent from '@/components/features/MarkdownContent';
 import { Metadata } from 'next';
+import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
 
 export const metadata: Metadata = {
   title: 'Privacy Beleid | MaasISO',
@@ -23,7 +24,13 @@ export default async function PrivacyPolicyPage() {
   const privacyPolicyContent = await getPrivacyPolicyContent();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50">
+      <CoreBreadcrumbBar
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Privacybeleid', href: '/privacy-policy' },
+        ]}
+      />
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-6">
         <div className="text-center mt-6 mb-4 break-words">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight break-words">
@@ -38,6 +45,6 @@ export default async function PrivacyPolicyPage() {
           <MarkdownContent content={privacyPolicyContent} />
         </div>
       </div>
-    </div>
+    </main>
   );
 }

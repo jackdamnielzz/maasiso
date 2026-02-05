@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
+import { requireAdminAuth } from '@/lib/admin/apiAuth';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://peaceful-insight-production.up.railway.app';
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -37,6 +38,9 @@ function getPool(): Pool | null {
 
 // GET: Fetch all posts or related posts for a specific post
 export async function GET(request: NextRequest) {
+  const authResponse = requireAdminAuth(request);
+  if (authResponse) return authResponse;
+
   const { searchParams } = new URL(request.url);
   const documentId = searchParams.get('documentId');
   const action = searchParams.get('action');
@@ -175,6 +179,9 @@ async function handleStrapiGet(action: string | null, documentId: string | null)
 
 // POST: Update related posts for a document
 export async function POST(request: NextRequest) {
+  const authResponse = requireAdminAuth(request);
+  if (authResponse) return authResponse;
+
   const dbPool = getPool();
   
   if (!dbPool) {

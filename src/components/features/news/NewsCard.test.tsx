@@ -73,7 +73,7 @@ describe('NewsCard', () => {
   it('generates correct article link', () => {
     const { container } = render(<NewsCard article={mockArticle} />);
     const links = container.getElementsByTagName('a');
-    expect(links[0].getAttribute('href')).toBe('/news/test-news-article');
+    expect(links[0].getAttribute('href')).toBe('/blog/test-news-article');
   });
 
   it('applies custom className', () => {

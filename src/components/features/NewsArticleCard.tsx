@@ -89,7 +89,7 @@ export const NewsArticleCard: React.FC<NewsArticleCardProps> = ({ article }) => 
   };
 
   return (
-    <Link href={`/news/${article.slug}`}>
+    <Link href={`/blog/${article.slug}`}>
       <article className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
         <div className="h-56 w-full bg-gray-100 overflow-hidden">
           {article.featuredImage && !imageError ? (

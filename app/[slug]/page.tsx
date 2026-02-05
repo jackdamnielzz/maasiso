@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ComponentRegistry } from '../../src/components/features/ComponentRegistry';
 import { getPage } from '../../src/lib/api';
-import { Page as PageType } from '../../src/lib/types';
+import { isReservedSingleSlug } from '@/lib/governance/coreRoutes';
 
 type PageParams = { slug: string };
 
@@ -14,8 +14,30 @@ type PageProps = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+/**
+ * This route used to act as a generic Strapi page builder. That breaks governance:
+ * - Core pages must be explicitly routed and templated (no generic fallback).
+ * - CMS and developer work must stay separated for core structure.
+ *
+ * If you really need CMS-driven standalone pages, add their slugs to this allowlist,
+ * and keep them strictly non-core.
+ */
+const ALLOWED_CMS_PAGE_SLUGS: ReadonlySet<string> = new Set([]);
+
+function isAllowedCmsSlug(slug: string): boolean {
+  if (isReservedSingleSlug(slug)) return false;
+  return ALLOWED_CMS_PAGE_SLUGS.has(slug);
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
+  if (!isAllowedCmsSlug(resolvedParams.slug)) {
+    return {
+      title: 'Page Not Found',
+      description: 'The requested page could not be found.',
+    };
+  }
+
   try {
     console.log(`[Metadata] Fetching page data for slug: ${resolvedParams.slug}`);
     const page = await getPage(resolvedParams.slug);
@@ -48,6 +70,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicPage({ params }: PageProps) {
   const resolvedParams = await params;
+  if (!isAllowedCmsSlug(resolvedParams.slug)) {
+    return notFound();
+  }
   try {
     console.log(`[DynamicPage] Fetching page data for slug: ${resolvedParams.slug} directly from Strapi`);
     const page = await getPage(resolvedParams.slug);
@@ -102,7 +127,5 @@ export default async function DynamicPage({ params }: PageProps) {
 }
 
 export function generateStaticParams() {
-  // This is a placeholder for future static page generation
-  // We'll implement this when we have a way to get all page slugs
-  return [];
+  return Array.from(ALLOWED_CMS_PAGE_SLUGS).map((slug) => ({ slug }));
 }

@@ -28,7 +28,7 @@ const SearchInput: React.FC = () => {
             params.delete('search');
           }
           params.delete('page'); // Reset to first page on new search
-          router.replace(`/news?${params.toString()}`);
+          router.replace(`/blog?${params.toString()}`);
         } catch (e) {
           console.error('Error updating search params:', e);
         }
@@ -47,7 +47,7 @@ const SearchInput: React.FC = () => {
     <div className="mb-8">
       <input
         type="text"
-        placeholder="Zoek nieuws..."
+        placeholder="Zoek in blog..."
         value={searchTerm}
         onChange={handleSearchChange}
         className={`w-full max-w-md px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${

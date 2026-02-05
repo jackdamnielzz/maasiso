@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 // Disable caching for this endpoint
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     // Get direct access to Strapi
     const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;

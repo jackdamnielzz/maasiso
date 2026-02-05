@@ -33,6 +33,7 @@ export default function Analytics() {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const safePathname = pathname || '/';
   
   // Track scroll depth
   const scrollMilestonesRef = useRef<Set<number>>(new Set());
@@ -64,7 +65,7 @@ export default function Analytics() {
     if (!state.initialized) return;
 
     const params = searchParams?.toString();
-    const url = params ? `${pathname}?${params}` : pathname;
+    const url = params ? `${safePathname}?${params}` : safePathname;
 
     // Send page view to GA
     sendPageView(url);
@@ -77,7 +78,7 @@ export default function Analytics() {
     if (process.env.NODE_ENV === 'development') {
       console.log('[Analytics] Page view:', url);
     }
-  }, [pathname, searchParams, state.initialized]);
+  }, [safePathname, searchParams, state.initialized]);
 
   // Track scroll depth
   const handleScroll = useCallback(() => {
@@ -104,14 +105,14 @@ export default function Analytics() {
         !scrollMilestonesRef.current.has(milestone)
       ) {
         scrollMilestonesRef.current.add(milestone);
-        trackScrollDepth(milestone, pathname);
+        trackScrollDepth(milestone, safePathname);
         
         if (process.env.NODE_ENV === 'development') {
           console.log(`[Analytics] Scroll depth: ${milestone}%`);
         }
       }
     }
-  }, [pathname, state.initialized]);
+  }, [safePathname, state.initialized]);
 
   // Track engagement on page leave
   const handlePageLeave = useCallback(() => {
@@ -121,9 +122,9 @@ export default function Analytics() {
     
     // Only track if user spent meaningful time on page (> 5 seconds)
     if (timeOnPage > 5000) {
-      trackEngagement(pathname, timeOnPage, maxScrollDepthRef.current);
+      trackEngagement(safePathname, timeOnPage, maxScrollDepthRef.current);
     }
-  }, [pathname, state.initialized]);
+  }, [safePathname, state.initialized]);
 
   // Set up scroll and visibility listeners
   useEffect(() => {

@@ -2,6 +2,20 @@
 
 ## Current Status (2026-01-30)
 
+## Current Focus (2026-02-03)
+
+### Architecture Control & Validation Phase (started)
+
+Single source of truth: [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:1)
+
+Work started on page-by-page validation (strict compare vs wireframes/rules). Findings are tracked in:
+- [`001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md`](001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md:1)
+
+Immediate technical fix discovered during validation:
+- Header main nav “Informatiebeveiliging” incorrectly linked to detail page `/informatiebeveiliging/iso-27001` (should link to hub `/informatiebeveiliging`).
+  - Fixed in [`src/components/layout/Header.tsx`](src/components/layout/Header.tsx:54)
+
+
 ### 🎯 Google Analytics & Tag Manager API Access - FULL CONTROL ✅
 
 **Updated (2026-01-30):**

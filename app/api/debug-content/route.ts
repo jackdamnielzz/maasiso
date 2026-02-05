@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 // Disable caching for this endpoint
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,9 @@ interface StrapiLayoutItem {
 }
 
 export async function GET(request: NextRequest) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const slug = searchParams.get('slug') || 'diensten';

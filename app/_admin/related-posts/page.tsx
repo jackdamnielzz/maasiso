@@ -41,6 +41,19 @@ export default function RelatedPostsManager() {
   const [postSearchTerm, setPostSearchTerm] = useState('');
   const [showPostSelector, setShowPostSelector] = useState(false);
 
+  const getAuthToken = () => {
+    try {
+      return sessionStorage.getItem('relatedPostsAuthToken');
+    } catch {
+      return null;
+    }
+  };
+
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = getAuthToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   // Check if already authenticated (session storage with token verification)
   useEffect(() => {
     const verifyAuth = async () => {
@@ -98,17 +111,31 @@ export default function RelatedPostsManager() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('relatedPostsAuthToken');
+    setPosts([]);
     setSelectedPost('');
+    setCurrentRelated([]);
     setSelectedRelated(new Set());
+    setHasChanges(false);
+    setError(null);
+    setSuccess(null);
   };
 
-  // Fetch all posts on mount
+  // Fetch all posts after successful auth
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (!authLoading && isAuthenticated) {
+      fetchPosts();
+    }
+  }, [authLoading, isAuthenticated]);
 
   // Fetch related posts when a post is selected
   useEffect(() => {
+    if (!isAuthenticated) {
+      setCurrentRelated([]);
+      setSelectedRelated(new Set());
+      setHasChanges(false);
+      return;
+    }
+
     if (selectedPost) {
       fetchRelatedPosts(selectedPost);
     } else {
@@ -116,13 +143,22 @@ export default function RelatedPostsManager() {
       setSelectedRelated(new Set());
       setHasChanges(false);
     }
-  }, [selectedPost]);
+  }, [selectedPost, isAuthenticated]);
 
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/related-posts?action=list');
+      const response = await fetch('/api/related-posts?action=list', {
+        headers: getAuthHeaders(),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        handleLogout();
+        setAuthError('Sessie verlopen. Log opnieuw in.');
+        return;
+      }
+
       const data: ApiResponse = await response.json();
       
       if (data.success && data.posts) {
@@ -143,7 +179,16 @@ export default function RelatedPostsManager() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/related-posts?documentId=${documentId}`);
+      const response = await fetch(`/api/related-posts?documentId=${documentId}`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        handleLogout();
+        setAuthError('Sessie verlopen. Log opnieuw in.');
+        return;
+      }
+
       const data: ApiResponse = await response.json();
       
       if (data.success) {
@@ -186,12 +231,18 @@ export default function RelatedPostsManager() {
     try {
       const response = await fetch('/api/related-posts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({
           documentId: selectedPost,
           relatedDocumentIds: Array.from(selectedRelated)
         })
       });
+
+      if (response.status === 401 || response.status === 403) {
+        handleLogout();
+        setAuthError('Sessie verlopen. Log opnieuw in.');
+        return;
+      }
       
       const data: ApiResponse = await response.json();
       

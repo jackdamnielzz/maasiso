@@ -8,7 +8,7 @@ import { clientEnv } from '@/lib/config/client-env';
 import LazyImage from '../common/LazyImage';
 import ErrorBoundary from '../common/ErrorBoundary';
 import ScrollToTop from '../common/ScrollToTop';
-import BackToNews from '../common/BackToNews';
+import BackToBlog from '../common/BackToBlog';
 import { getRelatedNewsArticles } from '@/lib/api';
 import ContentAnalytics from '@/components/features/ContentAnalytics';
 
@@ -56,7 +56,7 @@ const NewsArticleContent: React.FC<NewsArticleContentProps> = ({ article }) => {
       <div className="container-custom pt-32 pb-12 flex flex-col lg:flex-row gap-12">
         <article className="flex-1 lg:px-6 relative z-0 transform-gpu">
           <Link
-            href="/news"
+            href="/blog"
             className="inline-flex items-center text-[#0052CC] hover:text-[#0065FF] mb-8 group transition-colors duration-200"
           >
             <svg
@@ -72,7 +72,7 @@ const NewsArticleContent: React.FC<NewsArticleContentProps> = ({ article }) => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Terug naar Nieuws
+            Terug naar Blog
           </Link>
           <header className="mb-16">
             <h1 className="text-[1.75rem] sm:text-[2rem] md:text-[2.25rem] lg:text-[2.75rem] font-semibold text-[#091E42] mb-8 leading-[1.2] break-words hyphens-auto lg:max-w-[90%]">
@@ -175,7 +175,7 @@ const NewsArticleContent: React.FC<NewsArticleContentProps> = ({ article }) => {
               {relatedArticles.map(article => (
                 <Link
                   key={article.id}
-                  href={`/news/${article.slug}`}
+                  href={`/blog/${article.slug}`}
                   className="block group px-6 py-4 -mx-6 transition-all duration-200 hover:bg-[#F8F9FA]/50 first:pt-0 last:pb-0"
                 >
                   {article.featuredImage && (
@@ -215,7 +215,7 @@ const NewsArticleContent: React.FC<NewsArticleContentProps> = ({ article }) => {
           </div>
         </aside>
         <ScrollToTop />
-        <BackToNews />
+        <BackToBlog />
       </div>
     </ErrorBoundary>
   );

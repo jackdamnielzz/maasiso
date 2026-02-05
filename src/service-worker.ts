@@ -170,8 +170,8 @@ const contentRoute = new Route(
   ({ url }) => {
     const path = url.pathname;
     if (path.startsWith('/api/')) {
-      if (path.includes('/news/')) return 'news';
-      if (path.includes('/blog/')) return 'content';
+      if (path.includes('/news-articles')) return 'news';
+      if (path.includes('/blog-posts')) return 'content';
       if (path.includes('/pages/')) return 'pages';
       return false;
     }
@@ -185,8 +185,8 @@ const contentRoute = new Route(
     const path = options.url.pathname;
     let strategy;
     
-    if (path.includes('/news/')) strategy = cacheStrategies.news;
-    else if (path.includes('/blog/')) strategy = cacheStrategies.content;
+    if (path.includes('/news-articles')) strategy = cacheStrategies.news;
+    else if (path.includes('/blog-posts')) strategy = cacheStrategies.content;
     else if (path.includes('/pages/')) strategy = cacheStrategies.pages;
     else return fetch(options.request);
 

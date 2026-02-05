@@ -75,11 +75,7 @@ const pushDownloadEvent = (link: string, linkText?: string) => {
 
   const { fileName, fileExt, fileUrl } = getDownloadMetadata(link);
   const pagePath = window.location.pathname;
-  const contentGroup = pagePath.startsWith('/blog/')
-    ? 'blog'
-    : pagePath.startsWith('/news/')
-      ? 'news'
-      : 'page';
+  const contentGroup = pagePath.startsWith('/blog/') ? 'blog' : 'page';
   const postSlug = pagePath.startsWith('/blog/') ? pagePath.replace('/blog/', '') : undefined;
 
   window.dataLayer = window.dataLayer || [];

@@ -23,7 +23,7 @@ export default function CategoryFilter({ categories, selectedCategory }: Categor
       params.delete('category');
     }
     params.delete('page'); // Reset to first page on category change
-    router.replace(`/news?${params.toString()}`);
+    router.replace(`/blog?${params.toString()}`);
   };
 
   return (
@@ -33,7 +33,7 @@ export default function CategoryFilter({ categories, selectedCategory }: Categor
         value={selectedCategory || ''}
         onChange={(e) => handleCategoryChange(e.target.value)}
       >
-        <option value="">Alle nieuwscategorieën</option>
+        <option value="">Alle categorieën</option>
         {categories.map((category) => (
           <option key={category.id} value={category.slug}>
             {category.name}

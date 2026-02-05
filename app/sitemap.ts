@@ -1,6 +1,6 @@
 import { getBlogPosts, getWhitepapers } from '@/lib/api';
 import { MetadataRoute } from 'next';
-import { BlogPost, Page, StrapiCollectionResponse, StrapiData, Whitepaper } from '@/lib/types';
+import { BlogPost, StrapiData, Whitepaper } from '@/lib/types';
 import { REMOVED_PATHS } from '@/config/removed-urls';
 
 export const revalidate = 0;
@@ -103,25 +103,6 @@ async function fetchStrapiPaginated<T>(path: string): Promise<StrapiPaginatedRes
   }
 }
 
-async function fetchAllStrapiPages(): Promise<any[]> {
-  const pageSize = 100;
-  let page = 1;
-  let results: any[] = [];
-  let total = 0;
-
-  do {
-    const response = await fetchStrapiPaginated<any>(
-      `/api/pages?pagination[page]=${page}&pagination[pageSize]=${pageSize}`
-    );
-    const data = response.data || [];
-    results = results.concat(data);
-    total = response.meta?.pagination?.total || results.length;
-    page += 1;
-  } while (results.length < total);
-
-  return results;
-}
-
 async function fetchAllBlogPosts(): Promise<{ posts: BlogPost[]; total: number }> {
   const pageSize = 100;
   let page = 1;
@@ -167,6 +148,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacy-policy',
     '/terms-and-conditions',
     '/whitepaper',
+    '/informatiebeveiliging',
     '/iso-certificering/iso-9001',
     '/iso-certificering/iso-14001',
     '/iso-certificering/iso-45001',
@@ -174,6 +156,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/informatiebeveiliging/iso-27001',
     '/iso-certificering',
     '/cookie-policy',
+    '/avg-wetgeving',
     '/avg-wetgeving/avg',
     '/informatiebeveiliging/bio',
   ]
@@ -187,7 +170,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all dynamic content in parallel with individual error handling
-    const [blogResult, whitepaperResult, pagesData] = await Promise.all([
+    const [blogResult, whitepaperResult] = await Promise.all([
       fetchAllBlogPosts().catch(err => {
         console.error('Sitemap: Failed to fetch blog posts:', err);
         return { posts: [] };
@@ -196,14 +179,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         console.error('Sitemap: Failed to fetch whitepapers:', err);
         return { whitepapers: { data: [] } };
       }),
-      fetchAllStrapiPages().catch(err => {
-        console.error('Sitemap: Failed to fetch pages:', err);
-        return [];
-      })
     ]);
 
     // Log counts for debugging
-    console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${whitepaperResult.whitepapers.data.length} whitepapers, ${pagesData.length} pages`);
+    console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${whitepaperResult.whitepapers.data.length} whitepapers`);
 
     // Map Blog Posts
     // Use updatedAt as priority for freshness signals (important for SEO)
@@ -227,55 +206,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.5,
       }));
 
-    // Map Dynamic Pages
-    const dynamicPageEntries: MetadataRoute.Sitemap = pagesData
-      .filter(item => {
-        const rawSlug = item.attributes?.slug || item.slug;
-        if (!rawSlug) return false;
-
-        const slug = normalizeSlug(rawSlug);
-        const staticSlugs = [
-          '',
-          'over-ons',
-          'diensten',
-          'contact',
-          'blog',
-          'news',
-          'onze-voordelen',
-          'waarom-maasiso',
-          'privacy-policy',
-          'terms-and-conditions',
-          'whitepaper',
-          'iso-certificering/iso-9001',
-          'iso-certificering/iso-14001',
-          'iso-certificering/iso-45001',
-          'iso-certificering/iso-16175',
-          'informatiebeveiliging/iso-27001',
-          'iso-certificering',
-          'cookie-policy',
-          'avg-wetgeving/avg',
-          'informatiebeveiliging/bio',
-          'home'
-        ];
-
-        return slug && !staticSlugs.includes(slug);
-      })
-      .map(item => {
-        const attributes = item.attributes || item;
-        const slug = normalizeSlug(attributes.slug || '');
-        return {
-          url: buildUrl(baseUrl, `/${slug}`),
-          lastModified: new Date(attributes.publishedAt || attributes.updatedAt || new Date()),
-          changeFrequency: 'weekly',
-          priority: 0.7,
-        };
-      });
-
     return [
       ...staticPages,
       ...blogEntries,
-      ...whitepaperEntries,
-      ...dynamicPageEntries
+      ...whitepaperEntries
     ];
 
   } catch (error) {

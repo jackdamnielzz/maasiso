@@ -56,23 +56,23 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
             <Link
               href="/iso-certificering"
               className={`text-[13px] leading-none whitespace-nowrap hover:text-[#FF8B00] transition-colors duration-200 ${
-                pathname === '/iso-certificering' ? 'text-[#FF8B00]' : 'text-white'
+                pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
               }`}
             >
               ISO-certificering
             </Link>
             <Link
-              href="/informatiebeveiliging/iso-27001"
+              href="/informatiebeveiliging"
               className={`text-[13px] leading-none whitespace-nowrap hover:text-[#FF8B00] transition-colors duration-200 ${
-                pathname === '/informatiebeveiliging/iso-27001' ? 'text-[#FF8B00]' : 'text-white'
+                pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
               }`}
             >
               Informatiebeveiliging
             </Link>
             <Link
-              href="/avg-wetgeving/avg"
+              href="/avg-wetgeving"
               className={`text-[13px] leading-none whitespace-nowrap hover:text-[#FF8B00] transition-colors duration-200 ${
-                pathname === '/avg-wetgeving/avg' ? 'text-[#FF8B00]' : 'text-white'
+                pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
               }`}
             >
               AVG & Wetgeving
@@ -144,25 +144,25 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               <Link
                 href="/iso-certificering"
                 className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
-                  pathname === '/iso-certificering' ? 'text-[#FF8B00]' : 'text-white'
+                  pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 ISO-certificering
               </Link>
               <Link
-                href="/informatiebeveiliging/iso-27001"
+                href="/informatiebeveiliging"
                 className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
-                  pathname === '/informatiebeveiliging/iso-27001' ? 'text-[#FF8B00]' : 'text-white'
+                  pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Informatiebeveiliging
               </Link>
               <Link
-                href="/avg-wetgeving/avg"
+                href="/avg-wetgeving"
                 className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
-                  pathname === '/avg-wetgeving/avg' ? 'text-[#FF8B00]' : 'text-white'
+                  pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >

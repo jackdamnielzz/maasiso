@@ -60,6 +60,12 @@
 - [x] **Automated Verification Script** (2026-01-25) ✅
 - [x] **Final Repository Sync & SEO/Sitemap Implementation** (2026-01-25) ✅
 
+- [x] **Architecture Control & Validation started** (2026-02-03) ✅
+  - [x] “Holy” folder created at project root for single source of truth + progress tracking:
+    - [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:1)
+    - [`001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md`](001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md:1)
+  - [x] Fixed header main nav hub links (Informatiebeveiliging + AVG) to point to hub routes instead of detail routes in [`src/components/layout/Header.tsx`](src/components/layout/Header.tsx:54)
+
 - [x] **Project Metadata Analysis** (2026-01-25) ✅
   - [x] Identified root `app/` as active directory
   - [x] Audited `app/layout.tsx` for metadataBase

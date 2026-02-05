@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { getAuthorBySlug } from '@/lib/api';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import BlogPostCard from '@/components/features/BlogPostCard';
+import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
 
 export const metadata: Metadata = {
   title: 'Over Niels Maas | Senior Consultant MaasISO',
@@ -67,6 +68,13 @@ export default async function OverNielsMaasPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <CoreBreadcrumbBar
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Over ons', href: '/over-ons' },
+          { label: 'Niels Maas', href: '/over-niels-maas' },
+        ]}
       />
 
       {/* Spectacular Hero Section */}

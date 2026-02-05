@@ -32,7 +32,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
 
   return (
     <article className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full border border-gray-100 hover:border-gray-200">
-      <Link href={`/news/${validatedSlug}`} className="block flex-grow">
+      <Link href={`/blog/${validatedSlug}`} className="block flex-grow">
         <div className="relative h-56 w-full">
           {featuredImage ? (
             <LazyImage

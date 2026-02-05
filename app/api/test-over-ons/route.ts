@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
-import { getPage } from '../../../src/lib/api';
+import { getPage } from '@/lib/api';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     console.log('Testing Over Ons page with deep populate...');
     // Test het ophalen van de Over Ons pagina

@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { extractFeatures } from '@/lib/featureExtractor';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug') || 'diensten';

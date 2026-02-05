@@ -89,7 +89,7 @@ export default function NewsCard({ article, className }: NewsCardProps) {
         <CardDescription>
           {article.publishedAt && dateFormatter.format(new Date(article.publishedAt))}
         </CardDescription>
-        <Link href={`/news/${validatedSlug}`}>
+        <Link href={`/blog/${validatedSlug}`}>
           <CardTitle className="hover:text-[#FF8B00] transition-colors">
             {article.title}
           </CardTitle>
@@ -107,7 +107,7 @@ export default function NewsCard({ article, className }: NewsCardProps) {
       
       <CardFooter>
         <Link 
-          href={`/news/${validatedSlug}`}
+          href={`/blog/${validatedSlug}`}
           className="text-[#FF8B00] hover:text-[#E67E00] font-medium transition-colors"
         >
           Lees meer

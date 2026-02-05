@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 export async function GET(request: NextRequest) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   // Log some debugging information
   console.log('Contact test route called');
   console.log('Environment variables:', {

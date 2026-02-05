@@ -10,6 +10,7 @@ import AuthorBox from '@/components/features/AuthorBox';
 import { Category, BlogPost, Author } from '@/lib/types';
 import logger from '@/lib/logger';
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
+import { hasInternalLinkToCorePage } from '@/lib/governance/blogContent';
 
 const DEFAULT_IMAGE = '/placeholder-blog.jpg';
 
@@ -236,6 +237,17 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const authorSameAs = typeof blogPost.author === 'object' && blogPost.author?.linkedIn
       ? [blogPost.author.linkedIn]
       : undefined;
+
+    const contentForGovernanceCheck =
+      blogPost.content ||
+      (blogPost as unknown as { Content?: string }).Content ||
+      '';
+
+    if (!hasInternalLinkToCorePage(contentForGovernanceCheck)) {
+      logger.warn('[Governance] Blog post mist interne link naar core page', {
+        slug: blogPost.slug,
+      });
+    }
 
     return (
       <div className="bg-white pb-16 relative z-0">

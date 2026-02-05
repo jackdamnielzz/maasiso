@@ -7,11 +7,11 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">Over MaasISO</h3>
             <p className="text-gray-400">
-              Wij helpen organisaties met het implementeren en certificeren van ISO-normen.
+              Pragmatische ISO-consultancy voor MKB. MaasISO begeleidt, de certificerende instelling toetst.
             </p>
           </div>
           
@@ -19,38 +19,44 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Diensten</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/iso-certificering/iso-9001" className="text-gray-400 hover:text-white">
-                  ISO 9001
+                <Link href="/iso-certificering" className="text-gray-400 hover:text-white">
+                  ISO-certificering
                 </Link>
               </li>
               <li>
-                <Link href="/informatiebeveiliging/iso-27001" className="text-gray-400 hover:text-white">
-                  ISO 27001
+                <Link href="/informatiebeveiliging" className="text-gray-400 hover:text-white">
+                  Informatiebeveiliging
                 </Link>
               </li>
               <li>
-                <Link href="/iso-certificering/iso-14001" className="text-gray-400 hover:text-white">
-                  ISO 14001
-                </Link>
-              </li>
-              <li>
-                <Link href="/iso-certificering/iso-16175" className="text-gray-400 hover:text-white">
-                  ISO 16175
-                </Link>
-              </li>
-              <li>
-                <Link href="/informatiebeveiliging/bio" className="text-gray-400 hover:text-white">
-                  BIO
-                </Link>
-              </li>
-              <li>
-                <Link href="/avg-wetgeving/avg" className="text-gray-400 hover:text-white">
-                  AVG
+                <Link href="/avg-wetgeving" className="text-gray-400 hover:text-white">
+                  AVG & Wetgeving
                 </Link>
               </li>
             </ul>
           </div>
-          
+
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Kennis</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/kennis/blog" className="text-gray-400 hover:text-white">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/kennis/whitepapers" className="text-gray-400 hover:text-white">
+                  Whitepapers
+                </Link>
+              </li>
+              <li>
+                <Link href="/kennis/e-learning" className="text-gray-400 hover:text-white">
+                  E-learning
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">

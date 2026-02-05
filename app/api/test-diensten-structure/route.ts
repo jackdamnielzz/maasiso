@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPage } from '@/lib/api';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 // Disable caching for this endpoint
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     // 1. Test the getPage function
     console.log('Testing getPage function for diensten...');

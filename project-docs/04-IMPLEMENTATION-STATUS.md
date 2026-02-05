@@ -43,6 +43,15 @@
 - **Google Consent Mode v2 Implementation**: 100% ✅
 - **Enhanced Analytics Tracking (Page Views, Scroll, Engagement)**: 100% ✅
 
+## Architecture Control & Validation (2026-02-03)
+
+- Page-by-page validation process started (strict compare vs definitive architecture).
+- “Holy” folder created at project root for single source of truth + progress tracking:
+  - Architecture: [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:1)
+  - Validation progress: [`001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md`](001-HEILIG-ARCHITECTUUR/CONTROL-VALIDATION-PROGRESS.md:1)
+- Quick fix applied: header nav links now point to hub routes (e.g. `/informatiebeveiliging`, `/avg-wetgeving`) instead of detail pages.
+  - Implementation: [`src/components/layout/Header.tsx`](src/components/layout/Header.tsx:54)
+
 ### Search & Filtering (100%)
 - [x] Basic search functionality with Strapi integration
 - [x] Content type filtering (blog/news)

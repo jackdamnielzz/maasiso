@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createAdminToken, getBearerToken, verifyAdminToken } from '@/lib/admin/auth';
 
 // Simple admin authentication endpoint
 // The password is stored in environment variable ADMIN_PASSWORD
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,8 +21,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (password === adminPassword) {
-      // Generate a simple session token (in production, use proper JWT or session management)
-      const sessionToken = Buffer.from(`admin:${Date.now()}`).toString('base64');
+      const sessionToken = createAdminToken();
       
       return NextResponse.json({
         success: true,
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
 
 // Verify token endpoint
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+  const token = getBearerToken(request.headers.get('Authorization'));
   
   if (!token) {
     return NextResponse.json(
@@ -52,34 +54,22 @@ export async function GET(request: NextRequest) {
     );
   }
   
-  try {
-    // Decode and verify the token (simple check - in production use proper JWT)
-    const decoded = Buffer.from(token, 'base64').toString('utf-8');
-    const [prefix, timestamp] = decoded.split(':');
-    
-    if (prefix !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Invalid token' },
-        { status: 401 }
-      );
-    }
-    
-    // Token expires after 24 hours
-    const tokenAge = Date.now() - parseInt(timestamp);
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    
-    if (tokenAge > maxAge) {
-      return NextResponse.json(
-        { success: false, error: 'Token expired' },
-        { status: 401 }
-      );
-    }
-    
+  const result = verifyAdminToken(token);
+
+  if (result.ok) {
     return NextResponse.json({ success: true, message: 'Token valid' });
-  } catch {
+  }
+
+  if (result.error === 'misconfigured') {
     return NextResponse.json(
-      { success: false, error: 'Invalid token format' },
-      { status: 401 }
+      { success: false, error: 'Server configuration error' },
+      { status: 500 }
     );
   }
+
+  const status = result.error === 'expired' ? 401 : 403;
+  return NextResponse.json(
+    { success: false, error: result.error },
+    { status }
+  );
 }

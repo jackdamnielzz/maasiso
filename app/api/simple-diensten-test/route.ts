@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
+import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const guard = guardDebugEndpoint(request);
+  if (guard) return guard;
+
   try {
     const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
     const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;

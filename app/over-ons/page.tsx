@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import OverOnsContent from "@/components/features/OverOnsContent";
+import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
 
 export const metadata: Metadata = {
   title: "Over MaasISO | Experts in ISO-normering & Informatiebeveiliging",
@@ -13,5 +14,16 @@ export const metadata: Metadata = {
 };
 
 export default function OverOnsPage() {
-  return <OverOnsContent />;
+  return (
+    <CoreHubPageTemplate
+      variant="custom"
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Over ons', href: '/over-ons' },
+      ]}
+      dataTopic="over-ons"
+    >
+      <OverOnsContent />
+    </CoreHubPageTemplate>
+  );
 }

@@ -69,15 +69,35 @@ async function fetchWithBaseUrl<T>(
 
     const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
     
+    const normalizeHeaders = (headers: RequestInit['headers']): Record<string, string> => {
+      if (!headers) return {};
+      if (headers instanceof Headers) {
+        return Object.fromEntries(headers.entries());
+      }
+      if (Array.isArray(headers)) {
+        return Object.fromEntries(headers);
+      }
+      return headers as Record<string, string>;
+    };
+
+    const requestHeaders: Record<string, string> = {
+      ...getAuthHeaders(),
+      ...normalizeHeaders(options.headers),
+    };
+
+    const safeHeaders: Record<string, string> = { ...requestHeaders };
+    for (const key of Object.keys(safeHeaders)) {
+      if (key.toLowerCase() === 'authorization') {
+        safeHeaders[key] = '[REDACTED]';
+      }
+    }
+
     console.log('[API Request] Detailed Debug:', {
       baseUrl,
       path,
       fullUrl: url,
       method: options.method || 'GET',
-      headers: {
-        ...getAuthHeaders(),
-        ...options.headers
-      }
+      headers: safeHeaders
     });
 
     const response = await monitoredFetch(
@@ -86,8 +106,7 @@ async function fetchWithBaseUrl<T>(
       {
         ...options,
         headers: {
-          ...getAuthHeaders(),
-          ...options.headers
+          ...requestHeaders,
         }
       }
     );

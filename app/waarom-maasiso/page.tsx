@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import OnzeVoordelenContent from '@/components/features/OnzeVoordelenContent';
+import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
 
 export const metadata: Metadata = {
   title: 'Waarom MaasISO | ISO-certificering & Informatiebeveiliging',
@@ -11,5 +12,16 @@ export const metadata: Metadata = {
 };
 
 export default function OnzeVoordelenPage() {
-  return <OnzeVoordelenContent />;
+  return (
+    <CoreHubPageTemplate
+      variant="custom"
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Waarom MaasISO', href: '/waarom-maasiso' },
+      ]}
+      dataTopic="waarom-maasiso"
+    >
+      <OnzeVoordelenContent />
+    </CoreHubPageTemplate>
+  );
 }
