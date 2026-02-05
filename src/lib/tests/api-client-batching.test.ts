@@ -53,6 +53,14 @@ describe('API Client Request Batching', () => {
         maxDelay: 1000
       };
 
+      // Mock batch response before enqueue; queue can process immediately at max size
+      fetchMock.mockResolvedValueOnce(createMockResponse({
+        data: [
+          { data: { id: 1 } },
+          { data: { id: 2 } }
+        ]
+      }));
+
       // Queue up to limit
       const promise1 = client.get('/users/1', { batch: batchConfig });
       const promise2 = client.get('/users/2', { batch: batchConfig });
@@ -61,14 +69,6 @@ describe('API Client Request Batching', () => {
       await expect(
         client.get('/users/3', { batch: batchConfig })
       ).rejects.toThrow(QueueFullError);
-
-      // Mock batch response
-      fetchMock.mockResolvedValueOnce(createMockResponse({
-        data: [
-          { data: { id: 1 } },
-          { data: { id: 2 } }
-        ]
-      }));
 
       // Process batch
       await vi.advanceTimersByTimeAsync(60);
@@ -84,6 +84,7 @@ describe('API Client Request Batching', () => {
       // Queue requests
       const promise1 = client.get('/users/1', { batch: batchConfig });
       const promise2 = client.get('/users/error', { batch: batchConfig });
+      const failedRequestCheck = expect(promise2).rejects.toThrow('Not found');
 
       // Mock response with mixed success/failure
       fetchMock.mockResolvedValueOnce(createMockResponse({
@@ -99,7 +100,7 @@ describe('API Client Request Batching', () => {
       // First request should succeed
       await expect(promise1).resolves.toEqual({ id: 1 });
       // Second request should fail
-      await expect(promise2).rejects.toThrow('Not found');
+      await failedRequestCheck;
     });
 
     it('should handle batch request failures', async () => {
@@ -111,6 +112,8 @@ describe('API Client Request Batching', () => {
       // Queue requests
       const promise1 = client.get('/users/1', { batch: batchConfig });
       const promise2 = client.get('/users/2', { batch: batchConfig });
+      const firstFailureCheck = expect(promise1).rejects.toThrow('Network error');
+      const secondFailureCheck = expect(promise2).rejects.toThrow('Network error');
 
       // Mock batch failure
       fetchMock.mockRejectedValueOnce(new Error('Network error'));
@@ -119,8 +122,8 @@ describe('API Client Request Batching', () => {
       await vi.advanceTimersByTimeAsync(60);
 
       // All requests should fail
-      await expect(promise1).rejects.toThrow('Network error');
-      await expect(promise2).rejects.toThrow('Network error');
+      await firstFailureCheck;
+      await secondFailureCheck;
     });
 
     it('should deduplicate identical requests', async () => {

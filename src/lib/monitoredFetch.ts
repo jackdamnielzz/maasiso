@@ -1,11 +1,8 @@
 import { fetchWithRetry, RetryConfig } from './retry';
 import { monitoringService } from './monitoring/service';
 import { FetchOptions } from './api/cache';
-import { clientEnv } from './config/client-env';
 import logger from './logger';
 import { MonitoringEventTypes } from './monitoring/types';
-
-const DEBUG = true; // Always enable debug mode
 
 function getFullUrl(url: string): string {
   // If it's already a full URL, return it
@@ -48,33 +45,16 @@ export async function monitoredFetch(
       body: options?.body ? JSON.stringify(options.body) : 'No body'
     });
 
-    // Get the token directly from environment variables
-    const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-    if (!token) {
-      throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
-    }
-
-    const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-
-    console.log('[Token Debug] Token present:', !!token);
-    console.log('[Token Debug] Formatted Token:', formattedToken ? '[REDACTED]' : 'MISSING');
-
     const response = await fetchWithRetry(fullUrl, {
       ...options,
       method: options?.method || 'GET',
       mode: 'cors',
       headers: {
         ...options?.headers,
-        'Authorization': formattedToken,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
     }, retryConfig);
-
-    if (response.status === 401) {
-      console.error('[Auth Error] Token:', token ? '[REDACTED]' : 'MISSING');
-      throw new Error('Authentication failed: Invalid or expired token');
-    }
 
     if (!response.ok) {
       // Log response details for debugging

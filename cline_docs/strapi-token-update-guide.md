@@ -5,7 +5,7 @@ This document provides information about the Strapi API token used for authentic
 
 ## Current Token (Updated March 18, 2025)
 ```
-3c4ac08a200558b9283d56e31422487e9aebf3435a61b247b25c380b9950ea723ac2564b294f02491f28d184fc45d7fefe5d51db43e9fd0fcd81a3343c3cdc690311b89a418a177149b14347a5ebf749dd78c801aa7310bf2731c1233e9f2438bf113c2b020585bf0dcd76ea61f80ceee59cb1c5aabb23402440c30aa163c7cb
+[REDACTED_STRAPI_TOKEN]
 ```
 
 ## Token Usage

@@ -67,10 +67,12 @@ describe('Input', () => {
     );
     const input = screen.getByRole('textbox', { name: 'Username' });
     const errorMessage = screen.getByRole('alert');
+    const describedBy = input.getAttribute('aria-describedby') || '';
     
     // Help text should not be visible when there's an error
     expect(screen.queryByText('Must be at least 3 characters')).not.toBeInTheDocument();
-    expect(input).toHaveAttribute('aria-describedby', errorMessage.id);
+    expect(describedBy).toContain(errorMessage.id);
+    expect(describedBy).toContain('-help');
   });
 
   it('renders icons with proper accessibility attributes', () => {

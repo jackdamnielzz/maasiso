@@ -1,40 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-interface SMTPError {
-  code?: string;
-  message?: string;
-  responseCode?: number;
-  command?: string;
-  stack?: string;
-}
 
-// Define the expected request body structure
 interface ContactFormData {
   name: string;
   email: string;
   subject: string;
   message: string;
-}
-
-interface SMTPError {
-  code?: string;
-  message?: string;
-  responseCode?: number;
-  command?: string;
-  stack?: string;
+  website?: string; // honeypot
 }
 
 interface EmailError {
   code?: string;
   name?: string;
   message?: string;
-  responseCode?: number;
-  command?: string;
-  stack?: string;
 }
 
-// Valid subject options
-const validSubjects = [
+const validSubjects = new Set([
   'ISO 27001',
   'ISO 9001',
   'ISO 14001',
@@ -43,191 +24,173 @@ const validSubjects = [
   'Privacy/AVG',
   'Advies',
   'Samenwerking',
-  'Anders'
-];
+  'Anders',
+]);
+
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const current = rateLimitStore.get(ip);
+
+  if (!current || current.resetAt <= now) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  current.count += 1;
+  rateLimitStore.set(ip, current);
+  return false;
+}
+
+function validatePayload(body: ContactFormData): string | null {
+  if (!body.name || !body.email || !body.subject || !body.message) {
+    return 'Alle velden zijn verplicht.';
+  }
+
+  if (body.name.length > 120 || body.subject.length > 120 || body.message.length > 5000) {
+    return 'Ingevoerde gegevens zijn te lang.';
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(body.email)) {
+    return 'Ongeldig e-mailadres.';
+  }
+
+  if (!validSubjects.has(body.subject)) {
+    return 'Selecteer een geldig onderwerp.';
+  }
+
+  return null;
+}
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { success: false, message: 'Te veel aanvragen. Probeer het later opnieuw.' },
+      { status: 429 }
+    );
+  }
+
+  let body: ContactFormData;
   try {
-    // Parse the request body
-    const body = await request.json() as ContactFormData;
-    
-    // Validate the required fields
-    if (!body.name || !body.email || !body.subject || !body.message) {
-      return NextResponse.json(
-        { success: false, message: 'Alle velden zijn verplicht.' },
-        { status: 400 }
-      );
-    }
+    body = (await request.json()) as ContactFormData;
+  } catch {
+    return NextResponse.json(
+      { success: false, message: 'Ongeldige aanvraag.' },
+      { status: 400 }
+    );
+  }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
-      return NextResponse.json(
-        { success: false, message: 'Ongeldig e-mailadres.' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate subject is from the allowed list
-    if (!validSubjects.includes(body.subject)) {
-      return NextResponse.json(
-        { success: false, message: 'Selecteer een geldig onderwerp.' },
-        { status: 400 }
-      );
-    }
+  // Honeypot field for simple bot filtering.
+  if (body.website && body.website.trim().length > 0) {
+    return NextResponse.json(
+      { success: true, message: 'Uw bericht is succesvol verzonden.' },
+      { status: 200 }
+    );
+  }
 
-   // Log the form submission and environment variables (password masked for security)
-   console.log('Contact form submission:', body);
-   console.log('EMAIL_PASSWORD set:', process.env.EMAIL_PASSWORD ? 'Yes (value hidden)' : 'No');
-   console.log('Environment variables:', {
-     NODE_ENV: process.env.NODE_ENV,
-     // Add other relevant env vars here, but DON'T log the actual password
-   });
+  const validationError = validatePayload(body);
+  if (validationError) {
+    return NextResponse.json(
+      { success: false, message: validationError },
+      { status: 400 }
+    );
+  }
 
-   // Create a nodemailer transporter
-   const transporter = nodemailer.createTransport({
-     host: 'smtp.hostinger.com', // Hostinger SMTP server
-     port: 465,
-     secure: true, // true for 465, false for other ports
-     auth: {
-       user: 'info@maasiso.nl', // Your email address
-       pass: process.env.EMAIL_PASSWORD, // Email password from environment variables
-     },
-     debug: true, // Enable debug output
-     logger: true // Log information about the mail
-   });
-   
-   // Test SMTP connection before sending
-   try {
-     console.log('Testing SMTP connection...');
-     await transporter.verify();
-     console.log('SMTP connection successful!');
-   } catch (error) {
-     const smtpError = error as SMTPError;
-     console.error('SMTP connection failed:', smtpError);
-     
-     // Include detailed error in response (only in development)
-     const isDev = process.env.NODE_ENV === 'development';
-     
-     return NextResponse.json(
-       {
-         success: false,
-         message: 'Er is een fout opgetreden bij de verbinding met de mailserver.',
-         error: isDev ? {
-           code: smtpError.code,
-           message: smtpError.message,
-           responseCode: smtpError.responseCode,
-           command: smtpError.command,
-           stack: smtpError.stack
-         } : 'Details alleen zichtbaar in development mode'
-       },
-       { status: 500 }
-     );
-   }
+  if (!process.env.EMAIL_PASSWORD) {
+    console.error('[Contact API] EMAIL_PASSWORD ontbreekt');
+    return NextResponse.json(
+      { success: false, message: 'Bericht kon niet worden verzonden. Probeer later opnieuw.' },
+      { status: 500 }
+    );
+  }
 
-    // Prepare email content
-    const mailOptions = {
-      from: '"MaasISO Website" <info@maasiso.nl>',
-      to: 'info@maasiso.nl',
-      replyTo: body.email,
-      subject: `Contactformulier: ${body.subject}`,
-      text: `
-Naam: ${body.name}
-E-mail: ${body.email}
-Onderwerp: ${body.subject}
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'info@maasiso.nl',
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    debug: false,
+    logger: false,
+  });
 
-Bericht:
-${body.message}
-      `,
-      html: `
+  const sanitizedName = body.name.trim();
+  const sanitizedEmail = body.email.trim();
+  const sanitizedSubject = body.subject.trim();
+  const sanitizedMessage = body.message.trim();
+
+  const mailOptions = {
+    from: '"MaasISO Website" <info@maasiso.nl>',
+    to: 'info@maasiso.nl',
+    replyTo: sanitizedEmail,
+    subject: `Contactformulier: ${sanitizedSubject}`,
+    text: `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nOnderwerp: ${sanitizedSubject}\n\nBericht:\n${sanitizedMessage}`,
+    html: `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
   <h2 style="color: #091E42;">Nieuw bericht via contactformulier</h2>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #eee; width: 120px;"><strong>Naam:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.name}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;">${sanitizedName}</td>
     </tr>
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>E-mail:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${body.email}" style="color: #FF8B00;">${body.email}</a></td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmail}" style="color: #FF8B00;">${sanitizedEmail}</a></td>
     </tr>
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Onderwerp:</strong></td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${body.subject}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;">${sanitizedSubject}</td>
     </tr>
   </table>
-  
   <div style="margin-top: 20px;">
     <strong>Bericht:</strong>
     <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
-      ${body.message.replace(/\n/g, '<br>')}
+      ${sanitizedMessage.replace(/\n/g, '<br>')}
     </div>
   </div>
-  
-  <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px;">
-    <p>Dit bericht is verzonden via het contactformulier op de MaasISO website.</p>
-  </div>
 </div>
-      `,
-    };
+    `,
+  };
 
-    try {
-      // Send the email
-      console.log('Attempting to send email...');
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully!');
-      console.log('Message ID:', info.messageId);
-      console.log('Response:', info.response);
-      
-      // Return a success response
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.'
-        },
-        { status: 200 }
-      );
-    } catch (error) {
-      const emailError = error as EmailError;
-      console.error('Error sending email:', emailError);
-      // Log the specific error details for debugging
-      console.error('Error name:', emailError.name);
-      console.error('Error message:', emailError.message);
-      console.error('Stack trace:', emailError.stack);
-      
-      if (emailError.code) {
-        console.error('Error code:', emailError.code);
-      }
-      
-      // Include detailed error in response (always include for troubleshooting)
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Er is een fout opgetreden bij het versturen van de e-mail. Probeer het later opnieuw.',
-          debug: {
-            emailError: {
-              code: emailError.code,
-              name: emailError.name,
-              message: emailError.message,
-              responseCode: emailError.responseCode,
-              command: emailError.command
-            },
-            auth: {
-              user: 'info@maasiso.nl',
-              pass: process.env.EMAIL_PASSWORD ? '***PASSWORD SET***' : '***PASSWORD NOT SET***'
-            },
-            env: process.env.NODE_ENV
-          }
-        },
-        { status: 500 }
-      );
-    }
+  try {
+    await transporter.sendMail(mailOptions);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.',
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Error processing contact form:', error);
+    const emailError = error as EmailError;
+    console.error('[Contact API] Verzenden mislukt', {
+      code: emailError.code,
+      name: emailError.name,
+      message: emailError.message,
+    });
+
     return NextResponse.json(
       {
         success: false,
-        message: 'Er is een fout opgetreden bij het verwerken van uw aanvraag. Probeer het later opnieuw.'
+        message: 'Er is een fout opgetreden bij het versturen van de e-mail. Probeer het later opnieuw.',
       },
       { status: 500 }
     );

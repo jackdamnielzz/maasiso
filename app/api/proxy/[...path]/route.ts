@@ -1,162 +1,194 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-// Route segment config
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Token validation utility
-function validateToken(token: string | undefined): boolean {
-  return token !== undefined && token.length > 0;
-}
-
-// Enhanced error logging utility
-function logError(context: string, error: any, details?: any) {
-  console.error(`[Proxy Error][${new Date().toISOString()}] ${context}:`, {
-    message: error.message || error,
-    stack: error.stack,
-    details,
-    timestamp: new Date().toISOString()
-  });
-}
-
-// Request logging utility
-function logRequest(method: string, url: string, path: string, searchParams: string) {
-  console.log(`[Proxy Request][${new Date().toISOString()}]`, {
-    url,
-    method,
-    path,
-    searchParams,
-    timestamp: new Date().toISOString()
-  });
-}
-
-// Route segment type
 type RouteSegment = {
   path: string[];
 };
 
-// Route handler
+const ALLOWED_ENDPOINTS = new Set([
+  'pages',
+  'blog-posts',
+  'news-articles',
+  'authors',
+  'tags',
+  'categories',
+  'whitepapers',
+  'over-ons',
+]);
+
+const ALLOWED_QUERY_PREFIXES = new Set([
+  'filters',
+  'populate',
+  'pagination',
+  'sort',
+  'fields',
+  'locale',
+  'publicationState',
+  'status',
+  'cacheBust',
+]);
+
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.PROXY_RATE_LIMIT_MAX || 120);
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(request: NextRequest): string {
+  const xForwardedFor = request.headers.get('x-forwarded-for');
+  if (xForwardedFor) {
+    return xForwardedFor.split(',')[0].trim();
+  }
+
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function enforceRateLimit(key: string): boolean {
+  const now = Date.now();
+  const current = rateLimitStore.get(key);
+
+  if (!current || current.resetAt <= now) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+
+  current.count += 1;
+  rateLimitStore.set(key, current);
+  return true;
+}
+
+function isAllowedQuery(searchParams: URLSearchParams): boolean {
+  for (const key of searchParams.keys()) {
+    const prefix = key.split('[')[0];
+    if (!ALLOWED_QUERY_PREFIXES.has(prefix)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function sanitizePath(pathSegments: string[]): string | null {
+  if (pathSegments.length === 0) return null;
+
+  if (pathSegments.some((segment) => segment.includes('..') || segment.includes('\\'))) {
+    return null;
+  }
+
+  const endpoint = pathSegments[0];
+  if (!ALLOWED_ENDPOINTS.has(endpoint)) {
+    return null;
+  }
+
+  return pathSegments.join('/');
+}
+
+function isAuthorized(request: NextRequest): boolean {
+  const requiredToken = process.env.PROXY_AUTH_TOKEN?.trim();
+  if (!requiredToken) return true;
+
+  const providedToken = request.headers.get('x-proxy-auth')?.trim();
+  return !!providedToken && providedToken === requiredToken;
+}
+
+function flattenBlogPostData(data: unknown): unknown {
+  if (!Array.isArray(data)) return data;
+
+  return data.map((post: any) => {
+    const base = post?.attributes ? { ...post.attributes, id: post.id } : post;
+    const featuredImage = base?.featuredImage?.data?.attributes
+      ? { id: base.featuredImage.data.id, ...base.featuredImage.data.attributes }
+      : base?.featuredImage;
+
+    return {
+      ...base,
+      featuredImage,
+    };
+  });
+}
+
 export async function GET(
   request: NextRequest,
   context: { params: Promise<RouteSegment> }
 ): Promise<Response> {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const clientIp = getClientIp(request);
+  if (!enforceRateLimit(clientIp)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
+  const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+  const token = process.env.STRAPI_TOKEN;
+
+  if (!strapiUrl || !token) {
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
+  const params = await context.params;
+  const sanitizedPath = sanitizePath(params.path);
+  if (!sanitizedPath) {
+    return NextResponse.json({ error: 'Unsupported endpoint' }, { status: 403 });
+  }
+
+  if (!isAllowedQuery(request.nextUrl.searchParams)) {
+    return NextResponse.json({ error: 'Unsupported query parameter' }, { status: 400 });
+  }
+
+  const targetUrl = `${strapiUrl}/api/${sanitizedPath}${request.nextUrl.search ? request.nextUrl.search : ''}`;
+
   try {
-    const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (!strapiUrl) {
-      logError('Configuration', 'Strapi URL not configured');
-      return new Response(
-        JSON.stringify({ error: 'Server configuration error' }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Get token directly from environment variables
-    const token = process.env.STRAPI_TOKEN || process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-    if (!token) {
-      logError('Authentication', 'Invalid or missing token');
-      return new Response(
-        JSON.stringify({
-          error: 'Authentication configuration error',
-          message: 'The API token is not properly configured.'
-        }),
-        { 
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    const params = await context.params;
-    const path = params.path.join('/');
-    
-    // Use URLSearchParams to handle parameter manipulation
-    // Forward all query parameters as-is
-    const searchParams = request.nextUrl.searchParams;
-
-    // Construct URL after parameter manipulation
-    const url = `${strapiUrl}/api/${path}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    logRequest(request.method, url, path, searchParams.toString());
-
-    const response = await fetch(url, {
-      method: request.method,
+    const response = await fetch(targetUrl, {
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
       },
-      cache: 'no-store'
+      cache: 'no-store',
     });
 
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+    const responseBody = isJson ? await response.json() : await response.text();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      logError('Strapi Response', {
-        status: response.status,
-        data: errorData,
-        url
-      });
-
-      const errorMessage = response.status === 401
-        ? 'Authentication failed. Please verify your token configuration.'
-        : response.status === 403
-        ? 'Access forbidden. Please check your permissions.'
-        : response.status === 404
-        ? 'The requested resource was not found.'
-        : 'An error occurred while processing your request.';
-
-      return new Response(
-        JSON.stringify({
-          error: errorMessage,
-          details: errorData,
-          status: response.status
-        }),
-        { 
+      return NextResponse.json(
+        {
+          error: 'Upstream request failed',
           status: response.status,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        },
+        { status: response.status }
       );
     }
 
-    const data = await response.json();
-
-    // Speciale mapping voor blog-posts endpoint
-    if (path === 'blog-posts' && Array.isArray(data.data)) {
-      data.data = data.data.map((post: any) => {
-        // Werkt voor zowel {id, attributes} als vlakke objecten
-        const base = post.attributes ? { ...post.attributes, id: post.id } : post;
-        let featuredImage = base.featuredImage;
-        if (featuredImage && featuredImage.data && featuredImage.data.attributes) {
-          featuredImage = { id: featuredImage.data.id, ...featuredImage.data.attributes };
-        }
-        return {
-          ...base,
-          featuredImage: featuredImage || undefined
-        };
-      });
-      // Log de uiteindelijke data
-      console.log('[Proxy blog-posts] Response data:', JSON.stringify(data.data[0]));
+    if (isJson && sanitizedPath.startsWith('blog-posts')) {
+      const data = responseBody as Record<string, unknown>;
+      return NextResponse.json(
+        {
+          ...data,
+          data: flattenBlogPostData(data.data),
+        },
+        { status: 200 }
+      );
     }
 
-    return new Response(
-      JSON.stringify(data),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    if (isJson) {
+      return NextResponse.json(responseBody, { status: 200 });
+    }
+
+    return new NextResponse(String(responseBody), {
+      status: 200,
+      headers: { 'Content-Type': contentType || 'text/plain; charset=utf-8' },
+    });
   } catch (error) {
-    logError('Unhandled Error', error);
-    return new Response(
-      JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'An unexpected error occurred while processing your request.',
-        timestamp: new Date().toISOString()
-      }),
-      { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    console.error('[Proxy] Unexpected error', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

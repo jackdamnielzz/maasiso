@@ -71,7 +71,7 @@ export default function DienstenContent({ pageData }: DienstenContentProps) {
 
       // SVG Icon Mapping
       const lowTitle = titleLine.toLowerCase();
-      let iconSvg = null;
+      let iconSvg: React.ReactNode = null;
 
       if (lowTitle.includes('kwaliteit') || lowTitle.includes('9001')) {
         // Quality / ISO 9001: Checkmark inside a shield/award

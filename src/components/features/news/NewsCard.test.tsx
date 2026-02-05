@@ -86,7 +86,7 @@ describe('NewsCard', () => {
   it('renders image with correct props when available', () => {
     const { container } = render(<NewsCard article={mockArticle} />);
     const image = container.querySelector('img');
-    expect(image).toHaveAttribute('src', '/test-image.jpg');
+    expect(image).toHaveAttribute('src', '/api/proxy/assets/test-image.jpg');
     expect(image).toHaveAttribute('alt', 'Test News Article');
   });
 

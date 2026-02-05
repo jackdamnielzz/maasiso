@@ -1,6 +1,6 @@
 $sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEVqaO0Rs6c0AYj2ZyHxUTJE/VcbServXr/DVnEovVMI niels@PCNiels"
 $command = "mkdir -p ~/.ssh && echo '$sshKey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
-$password = "Niekties@100"
+$password = "[REDACTED_PASSWORD]"
 
 # Create expect script to handle SSH password authentication
 $expectScript = @"

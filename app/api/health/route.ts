@@ -1,6 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import os from 'os';
 import { performance } from 'perf_hooks';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 interface ExternalAPICheckResult {
   status: boolean;
@@ -8,177 +11,95 @@ interface ExternalAPICheckResult {
   error?: string;
 }
 
-// Function to check external API health
 async function checkExternalAPI(url: string, timeout = 5000): Promise<ExternalAPICheckResult> {
+  if (!url) return { status: false, error: 'missing_url' };
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
     const start = performance.now();
-    const response = await fetch(url, { 
-      signal: controller.signal,
-      method: 'HEAD'
-    });
-    const end = performance.now();
-    
+    const response = await fetch(url, { signal: controller.signal, method: 'HEAD' });
     clearTimeout(timeoutId);
+
     return {
       status: response.ok,
-      responseTime: Math.round(end - start)
+      responseTime: Math.round(performance.now() - start),
     };
   } catch (error) {
     return {
       status: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'unknown_error',
     };
   }
 }
 
-interface DiskSpaceInfo {
-  filesystem?: string;
-  size?: string;
-  used?: string;
-  available?: string;
-  usedPercentage?: string;
-  error?: string;
-  details?: string;
+function isAuthorizedForDetailedHealth(request: NextRequest): boolean {
+  const expectedToken = process.env.HEALTH_CHECK_TOKEN?.trim();
+  if (!expectedToken) return false;
+
+  const providedToken = request.headers.get('x-health-token')?.trim();
+  return !!providedToken && providedToken === expectedToken;
 }
 
-// Function to check disk space
-function checkDiskSpace(): DiskSpaceInfo {
-  const path = '/';
-  try {
-    const { spawnSync } = require('child_process');
-    const df = spawnSync('df', ['-h', path]);
-    const output = df.stdout.toString();
-    const lines = output.split('\n');
-    const info = lines[1].split(/\s+/);
-    return {
-      filesystem: info[0],
-      size: info[1],
-      used: info[2],
-      available: info[3],
-      usedPercentage: info[4]
-    };
-  } catch (error) {
-    return {
-      error: 'Unable to check disk space',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    };
-  }
-}
-
-interface ProcessMetrics {
-  memory: NodeJS.MemoryUsage;
-  cpu: {
-    user: number;
-    system: number;
+function getBasicReport(responseTimeMs: number) {
+  return {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
+    responseTimeMs,
   };
-  resourceUsage: NodeJS.ResourceUsage;
-  uptime: number;
 }
 
-// Function to get process metrics
-function getProcessMetrics(): ProcessMetrics {
-  const metrics = {
-    memory: process.memoryUsage(),
-    cpu: {
-      user: process.cpuUsage().user,
-      system: process.cpuUsage().system
-    },
-    resourceUsage: process.resourceUsage(),
-    uptime: process.uptime()
-  };
-  
-  return metrics;
-}
+export async function GET(request: NextRequest) {
+  const start = performance.now();
 
-export async function GET() {
-  const startTime = performance.now();
-  
   try {
-    // Basic system metrics
-    const systemInfo = {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
+    const responseTimeMs = Math.round(performance.now() - start);
+    const basicReport = getBasicReport(responseTimeMs);
+
+    if (!isAuthorizedForDetailedHealth(request)) {
+      return NextResponse.json(basicReport, {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
+    }
+
+    const [strapiHealth] = await Promise.all([
+      checkExternalAPI(process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL || ''),
+    ]);
+
+    const detailedReport = {
+      ...basicReport,
+      environment: process.env.NODE_ENV || 'unknown',
       host: {
         platform: os.platform(),
         arch: os.arch(),
-        release: os.release(),
-        uptime: os.uptime(),
-        loadavg: os.loadavg(),
-        memory: {
-          total: os.totalmem(),
-          free: os.freemem(),
-          usage: ((1 - os.freemem() / os.totalmem()) * 100).toFixed(2) + '%'
-        },
-        cpu: {
-          model: os.cpus()[0].model,
-          cores: os.cpus().length,
-          speed: os.cpus()[0].speed
-        }
+        nodeVersion: process.version,
       },
-      process: getProcessMetrics(),
-      disk: checkDiskSpace()
+      dependencies: {
+        strapi: strapiHealth,
+      },
     };
 
-    // Check external services
-    const [strapiHealth, cmsHealth] = await Promise.all([
-      checkExternalAPI(process.env.NEXT_PUBLIC_STRAPI_API_URL as string),
-      checkExternalAPI(process.env.NEXT_PUBLIC_API_URL as string)
-    ]);
-
-    const externalServices = {
-      strapi: strapiHealth,
-      cms: cmsHealth
-    };
-
-    // Calculate response time
-    const endTime = performance.now();
-    const responseTime = Math.round(endTime - startTime);
-
-    // Compile final health report
-    const healthReport = {
-      ...systemInfo,
-      externalServices,
-      performance: {
-        responseTime: `${responseTime}ms`,
-        timestamp: new Date().toISOString()
-      }
-    };
-
-    // Log health check for monitoring
-    console.log(`[Health Check] Status: healthy, Response Time: ${responseTime}ms`);
-
-    return NextResponse.json(healthReport, {
+    return NextResponse.json(detailedReport, {
       status: 200,
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'X-Response-Time': responseTime.toString()
-      }
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
     });
   } catch (error) {
-    console.error('[Health Check Failed]', error);
-    
-    const errorReport = {
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      performance: {
-        responseTime: `${Math.round(performance.now() - startTime)}ms`
-      }
-    };
-
-    return NextResponse.json(errorReport, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    });
+    return NextResponse.json(
+      {
+        status: 'error',
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
   }
 }

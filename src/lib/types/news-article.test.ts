@@ -106,7 +106,7 @@ describe('normalizeNewsArticle', () => {
       seoTitle: '',
       seoDescription: '',
       seoKeywords: '',
-      publishedAt: undefined,
+      publishedAt: '',
       createdAt: '2024-01-26T20:30:00.000Z',
       updatedAt: '2024-01-26T20:30:00.000Z'
     });
@@ -340,9 +340,9 @@ describe('normalizeNewsArticle', () => {
       seoTitle: '',
       seoDescription: '',
       seoKeywords: '',
-      publishedAt: undefined,
-      createdAt: '',
-      updatedAt: ''
+      publishedAt: '',
+      createdAt: '2024-01-26T20:30:00.000Z',
+      updatedAt: '2024-01-26T20:30:00.000Z'
     });
   });
 });

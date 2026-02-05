@@ -319,14 +319,25 @@ describe('Navigation Normalizers', () => {
         platform: 'twitter',
         url: 'https://twitter.com/example',
         icon: {
-          data: {
-            id: 'icon1',
-            attributes: {
-              url: 'https://example.com/twitter.png',
-              width: 24,
-              height: 24
-            }
-          }
+          id: 'icon1',
+          documentId: undefined,
+          name: 'twitter.png',
+          alternativeText: undefined,
+          caption: undefined,
+          width: 24,
+          height: 24,
+          formats: {},
+          hash: 'twitter',
+          ext: '.png',
+          mime: 'image/png',
+          size: 0,
+          url: 'https://example.com/twitter.png',
+          previewUrl: undefined,
+          provider: 'strapi',
+          provider_metadata: undefined,
+          createdAt: mockDate,
+          updatedAt: mockDate,
+          publishedAt: mockDate
         },
         order: 1
       });

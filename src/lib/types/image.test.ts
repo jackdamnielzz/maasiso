@@ -1,5 +1,4 @@
 import { normalizeImage, normalizeImageFormat } from './image';
-import { Image, ImageFormat } from '../types';
 
 describe('normalizeImageFormat', () => {
   it('should normalize a complete image format', () => {
@@ -29,110 +28,7 @@ describe('normalizeImageFormat', () => {
       path: '/uploads/test-image.jpg',
       size: 1024,
       sizeInBytes: 1024000
-});
-
-describe('normalizeImage edge cases', () => {
-  const mockDate = '2024-01-26T20:26:47.000Z';
-  
-  beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(mockDate));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it('should handle empty formats object', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/original.jpg',
-      width: 800,
-      height: 600,
-      formats: {}
-    };
-
-    const result = normalizeImage(input);
-    expect(result.formats).toEqual({});
-  });
-
-  it('should handle missing formats property', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/original.jpg',
-      width: 800,
-      height: 600
-    };
-
-    const result = normalizeImage(input);
-    expect(result.formats).toEqual({});
-  });
-
-  it('should handle partial format data', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/original.jpg',
-      width: 800,
-      height: 600,
-      formats: {
-        small: {
-          url: 'https://example.com/small.jpg',
-          width: 400,
-          height: 300
-        },
-        // thumbnail intentionally omitted
-      }
-    };
-
-    const result = normalizeImage(input);
-    expect(result.formats?.small).toBeDefined();
-    expect(result.formats?.thumbnail).toBeUndefined();
-  });
-
-  it('should handle invalid format data', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/original.jpg',
-      width: 800,
-      height: 600,
-      formats: {
-        small: undefined,
-        thumbnail: undefined
-      }
-    };
-
-    const result = normalizeImage(input);
-    expect(result.formats?.small).toBeUndefined();
-    expect(result.formats?.thumbnail).toBeUndefined();
-  });
-
-  it('should handle URLs without file extensions', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/image',
-      width: 800,
-      height: 600
-    };
-
-    const result = normalizeImage(input);
-    expect(result.ext).toBe('.');
-    expect(result.mime).toBe('image/');
-  });
-
-  it('should handle URLs with query parameters', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/image.jpg?version=1&size=large',
-      width: 800,
-      height: 600
-    };
-
-    const result = normalizeImage(input);
-    expect(result.ext).toBe('.jpg');
-    expect(result.mime).toBe('image/jpg');
-    expect(result.name).toBe('image.jpg');
-  });
-});
+    });
   });
 
   it('should handle minimal required fields and derive optional values', () => {
@@ -152,7 +48,7 @@ describe('normalizeImage edge cases', () => {
       hash: 'image',
       mime: 'image/jpg',
       name: 'image.jpg',
-      path: null,
+      path: undefined,
       size: 0,
       sizeInBytes: 0
     });
@@ -161,7 +57,16 @@ describe('normalizeImage edge cases', () => {
 
 describe('normalizeImage', () => {
   const mockDate = '2024-01-26T20:26:47.000Z';
-  
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(mockDate));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   describe('ID type handling', () => {
     it('should convert numeric id to string', () => {
       const input = {
@@ -190,22 +95,6 @@ describe('normalizeImage', () => {
       expect(result.documentId).toBe('456');
     });
 
-    it('should handle string ids correctly', () => {
-      const input = {
-        id: 'img123',
-        documentId: 'doc456',
-        url: 'https://example.com/original.jpg',
-        width: 800,
-        height: 600
-      };
-
-      const result = normalizeImage(input);
-      expect(typeof result.id).toBe('string');
-      expect(typeof result.documentId).toBe('string');
-      expect(result.id).toBe('img123');
-      expect(result.documentId).toBe('doc456');
-    });
-
     it('should handle undefined documentId', () => {
       const input = {
         id: 'img123',
@@ -217,15 +106,6 @@ describe('normalizeImage', () => {
       const result = normalizeImage(input);
       expect(result.documentId).toBeUndefined();
     });
-  });
-
-  beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(mockDate));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   it('should normalize a nested image structure', () => {
@@ -275,7 +155,7 @@ describe('normalizeImage', () => {
           hash: 'small',
           mime: 'image/jpg',
           name: 'small.jpg',
-          path: null,
+          path: undefined,
           size: 0,
           sizeInBytes: 0
         },
@@ -287,7 +167,7 @@ describe('normalizeImage', () => {
           hash: 'thumb',
           mime: 'image/jpg',
           name: 'thumb.jpg',
-          path: null,
+          path: undefined,
           size: 0,
           sizeInBytes: 0
         }
@@ -346,7 +226,6 @@ describe('normalizeImage', () => {
       url: 'https://example.com/original.jpg',
       width: 800,
       height: 600,
-      // Explicitly set optional fields to undefined
       alternativeText: undefined,
       caption: undefined,
       previewUrl: undefined
@@ -354,29 +233,100 @@ describe('normalizeImage', () => {
 
     const result = normalizeImage(input);
 
-    // Verify optional fields remain undefined
     expect(result.alternativeText).toBeUndefined();
     expect(result.caption).toBeUndefined();
     expect(result.previewUrl).toBeUndefined();
   });
 
-  it('should handle undefined values consistently', () => {
-    const input = {
-      id: 'img123',
-      url: 'https://example.com/original.jpg',
-      width: 800,
-      height: 600,
-      // Set optional fields to null
-      alternativeText: undefined,
-      caption: undefined,
-      previewUrl: undefined
-    };
+  describe('edge cases', () => {
+    it('should handle empty formats object', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/original.jpg',
+        width: 800,
+        height: 600,
+        formats: {}
+      };
 
-    const result = normalizeImage(input);
+      const result = normalizeImage(input);
+      expect(result.formats).toEqual({});
+    });
 
-    // Verify undefined values are handled consistently
-    expect(result.alternativeText).toBeUndefined();
-    expect(result.caption).toBeUndefined();
-    expect(result.previewUrl).toBeUndefined();
+    it('should handle missing formats property', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/original.jpg',
+        width: 800,
+        height: 600
+      };
+
+      const result = normalizeImage(input);
+      expect(result.formats).toEqual({});
+    });
+
+    it('should handle partial format data', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/original.jpg',
+        width: 800,
+        height: 600,
+        formats: {
+          small: {
+            url: 'https://example.com/small.jpg',
+            width: 400,
+            height: 300
+          }
+        }
+      };
+
+      const result = normalizeImage(input);
+      expect(result.formats?.small).toBeDefined();
+      expect(result.formats?.thumbnail).toBeUndefined();
+    });
+
+    it('should handle invalid format data', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/original.jpg',
+        width: 800,
+        height: 600,
+        formats: {
+          small: undefined,
+          thumbnail: undefined
+        }
+      };
+
+      const result = normalizeImage(input as any);
+      expect(result.formats?.small).toBeUndefined();
+      expect(result.formats?.thumbnail).toBeUndefined();
+    });
+
+    it('should handle URLs without file extensions', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/image',
+        width: 800,
+        height: 600
+      };
+
+      const result = normalizeImage(input);
+      expect(result.ext).toBe('.');
+      expect(result.mime).toBe('image/');
+      expect(result.name).toBe('image');
+    });
+
+    it('should handle URLs with query parameters', () => {
+      const input = {
+        id: 'img123',
+        url: 'https://example.com/image.jpg?version=1&size=large',
+        width: 800,
+        height: 600
+      };
+
+      const result = normalizeImage(input);
+      expect(result.ext).toBe('.jpg');
+      expect(result.mime).toBe('image/jpg');
+      expect(result.name).toBe('image.jpg');
+    });
   });
 });

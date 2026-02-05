@@ -54,7 +54,7 @@ We hebben de volgende wijzigingen doorgevoerd:
    NODE_ENV=production
    NEXT_PUBLIC_API_URL=http://147.93.62.188:3000
    NEXT_PUBLIC_BACKEND_URL=http://147.93.62.187:1337
-   EMAIL_PASSWORD=Niekties@100
+   EMAIL_PASSWORD=[REDACTED_PASSWORD]
    EOL
 
    # Make sure the file has correct permissions

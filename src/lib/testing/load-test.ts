@@ -103,12 +103,12 @@ export class ApiLoadTester {
     // Create user sessions
     const userSessions = Array.from({ length: concurrentUsers }, async (_, userIndex) => {
       for (let i = 0; i < requestsPerUser; i++) {
-        // Determine request type and options
-        const options = endpoint.includes('static')
+        // Determine request type and options from endpoint semantics
+        const options = endpoint.includes('/pages/')
           ? getStaticFetchOptions(endpoint)
-          : endpoint.includes('list')
-          ? getListFetchOptions(endpoint)
-          : getDynamicFetchOptions();
+          : endpoint.endsWith('/latest')
+          ? getDynamicFetchOptions()
+          : getListFetchOptions(endpoint);
 
         const result = await this.makeRequest(endpoint, options);
         metrics.push(result);
@@ -155,31 +155,32 @@ export class ApiLoadTester {
    */
   async runTestSuite(): Promise<Map<string, LoadTestResult>> {
     const results = new Map<string, LoadTestResult>();
+    const isTestMode = process.env.NODE_ENV === 'test';
 
     // Test static content endpoints
     const staticResult = await this.runTest({
       endpoint: '/api/pages/home',
-      requestsPerSecond: 50,
-      durationSeconds: 30,
-      concurrentUsers: 10
+      requestsPerSecond: isTestMode ? 5 : 50,
+      durationSeconds: isTestMode ? 1 : 30,
+      concurrentUsers: isTestMode ? 2 : 10
     });
     results.set('static', staticResult);
 
     // Test list endpoints
     const listResult = await this.runTest({
       endpoint: '/api/blog-posts',
-      requestsPerSecond: 30,
-      durationSeconds: 30,
-      concurrentUsers: 5
+      requestsPerSecond: isTestMode ? 3 : 30,
+      durationSeconds: isTestMode ? 1 : 30,
+      concurrentUsers: isTestMode ? 1 : 5
     });
     results.set('list', listResult);
 
     // Test dynamic endpoints
     const dynamicResult = await this.runTest({
       endpoint: '/api/blog-posts/latest',
-      requestsPerSecond: 20,
-      durationSeconds: 30,
-      concurrentUsers: 3
+      requestsPerSecond: isTestMode ? 2 : 20,
+      durationSeconds: isTestMode ? 1 : 30,
+      concurrentUsers: isTestMode ? 1 : 3
     });
     results.set('dynamic', dynamicResult);
 

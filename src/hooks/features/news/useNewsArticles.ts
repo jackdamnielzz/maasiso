@@ -15,7 +15,10 @@ async function fetchNewsArticles(params: NewsParams): Promise<NewsArticle[]> {
   if (params.category) searchParams.set('category', params.category);
   if (params.tag) searchParams.set('tag', params.tag);
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news-articles?${searchParams}`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/news-articles?${searchParams}`,
+    { method: 'GET' }
+  );
   if (!response.ok) {
     throw new Error('Failed to fetch news articles');
   }
@@ -29,7 +32,7 @@ export function useNewsArticles(params: NewsParams = {}) {
     queryFn: () => fetchNewsArticles(params),
     staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Cache is kept for 30 minutes
-    throwOnError: true,
+    throwOnError: false,
   });
 }
 
@@ -37,7 +40,9 @@ export function useNewsArticle(slug: string) {
   return useQuery({
     queryKey: ['news', slug],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news-articles/${slug}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news-articles/${slug}`, {
+        method: 'GET',
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch news article');
       }
@@ -45,6 +50,6 @@ export function useNewsArticle(slug: string) {
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
-    throwOnError: true,
+    throwOnError: false,
   });
 }

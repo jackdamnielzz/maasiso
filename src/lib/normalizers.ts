@@ -66,24 +66,72 @@ interface StrapiPaginatedResponse<T> {
 /**
  * Normalize a category from Strapi response
  */
-export function normalizeCategory(data: { id: string; attributes: { name: string; description?: string; slug: string; createdAt: string; updatedAt: string } }): Category {
+export function normalizeCategory(data: {
+  id: string | number;
+  attributes?: {
+    name?: string;
+    description?: string;
+    slug?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    data?: {
+      id?: string | number;
+      attributes?: {
+        name?: string;
+        description?: string;
+        slug?: string;
+        createdAt?: string;
+        updatedAt?: string;
+      };
+    };
+  };
+  name?: string;
+  description?: string;
+  slug?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}): Category {
+  const attrs = isObject(data.attributes) ? data.attributes : data;
+  const nestedAttributes = isObject((attrs as any).data)
+    ? (attrs as any).data?.attributes
+    : undefined;
+  const source = isObject(nestedAttributes) ? nestedAttributes : attrs;
+
   return {
-    id: data.id,
-    name: data.attributes.name,
-    description: data.attributes.description,
-    slug: data.attributes.slug,
-    createdAt: data.attributes.createdAt,
-    updatedAt: data.attributes.updatedAt
+    id: String(data.id),
+    name: typeof source.name === 'string' ? source.name : '',
+    description: typeof source.description === 'string' ? source.description : undefined,
+    slug: typeof source.slug === 'string' ? source.slug : '',
+    createdAt: typeof source.createdAt === 'string' ? source.createdAt : '',
+    updatedAt: typeof source.updatedAt === 'string' ? source.updatedAt : ''
   };
 }
 
 /**
  * Normalize a tag from Strapi response
  */
-export function normalizeTag(data: { id: string; attributes: { name: string } }): Tag {
+export function normalizeTag(data: {
+  id: string | number;
+  attributes?: {
+    name?: string;
+    data?: {
+      id?: string | number;
+      attributes?: {
+        name?: string;
+      };
+    };
+  };
+  name?: string;
+}): Tag {
+  const attrs = isObject(data.attributes) ? data.attributes : data;
+  const nestedAttributes = isObject((attrs as any).data)
+    ? (attrs as any).data?.attributes
+    : undefined;
+  const source = isObject(nestedAttributes) ? nestedAttributes : attrs;
+
   return {
-    id: data.id,
-    name: data.attributes.name
+    id: String(data.id),
+    name: typeof source.name === 'string' ? source.name : ''
   };
 }
 
@@ -128,27 +176,37 @@ export function transformStrapiPaginatedResponse<T>(response: unknown): StrapiPa
  * Normalize a blog post from Strapi response
  */
 export function normalizeBlogPost(raw: StrapiRawBlogPost): BlogPost {
+  const mapCategory = (cat: any) => {
+    const source = isObject(cat?.attributes) ? { id: cat.id, ...cat.attributes } : cat;
+    return {
+      id: String(source?.id ?? ''),
+      name: source?.name || '',
+      description: source?.description || '',
+      slug: source?.slug || '',
+      createdAt: source?.createdAt || '',
+      updatedAt: source?.updatedAt || ''
+    };
+  };
+
+  const mapTag = (tag: any) => {
+    const source = isObject(tag?.attributes) ? { id: tag.id, ...tag.attributes } : tag;
+    return {
+      id: String(source?.id ?? ''),
+      name: source?.name || ''
+    };
+  };
+
   return {
-    id: raw.id,
+    id: String(raw.id),
     title: raw.title || '',
     content: raw.Content || raw.content || '',
     slug: raw.slug || '',
     author: raw.Author || raw.author || undefined,
     categories: Array.isArray(raw.categories) 
-      ? raw.categories.map((cat) => ({
-          id: String(cat.id),
-          name: cat.name || '',
-          description: cat.description || '',
-          slug: cat.slug || '',
-          createdAt: cat.createdAt || '',
-          updatedAt: cat.updatedAt || ''
-        }))
+      ? raw.categories.map(mapCategory)
       : [],
     tags: Array.isArray(raw.tags)
-      ? raw.tags.map((tag) => ({
-          id: String(tag.id),
-          name: tag.name || ''
-        }))
+      ? raw.tags.map(mapTag)
       : [],
     featuredImage: raw.featuredImage ? normalizeImage({
       id: raw.featuredImage.id,
@@ -198,8 +256,8 @@ export function normalizeNewsArticle(raw: StrapiRawNewsArticle): NewsArticle {
 
   // Extract content from the correct location in the response with type checking
   const content = (
-    typeof data.content === 'string' ? data.content :
     typeof data.Content === 'string' ? data.Content :
+    typeof data.content === 'string' ? data.content :
     ''
   );
 
@@ -641,7 +699,7 @@ function isValidSubtitle(value: unknown): value is string | undefined {
 
 export function normalizeHeroComponent(raw: StrapiRawHeroComponent): HeroComponent {
   return {
-    id: raw.id || '',
+    id: String(raw.id ?? ''),
     __component: 'page-blocks.hero',
     title: raw.title || '',
     subtitle: raw.subtitle && typeof raw.subtitle === 'string' ? raw.subtitle : undefined,
@@ -656,10 +714,11 @@ export function normalizeTextBlockComponent(raw: StrapiRawTextBlockComponent): T
     ? raw.content
         .replace(/\\n/g, '\n') // Replace escaped newlines with actual newlines
         .replace(/\\\\/g, '\\') // Replace double escaped backslashes with single backslash
+        .replace(/\\"/g, '"') // Replace escaped double quotes with actual quotes
     : '';
 
   return {
-    id: raw.id || '',
+    id: String(raw.id ?? ''),
     __component: 'page-blocks.text-block' as const,
     content: normalizedContent || '',
     alignment: raw.alignment || 'left'
@@ -668,7 +727,7 @@ export function normalizeTextBlockComponent(raw: StrapiRawTextBlockComponent): T
 
 export function normalizeImageGalleryComponent(raw: StrapiRawImageGalleryComponent): ImageGalleryComponent {
   return {
-    id: raw.id || '',
+    id: String(raw.id ?? ''),
     __component: 'page-blocks.gallery',
     images: raw.images?.data?.map(normalizeImage) || [],
     layout: raw.layout || 'grid'
@@ -677,7 +736,7 @@ export function normalizeImageGalleryComponent(raw: StrapiRawImageGalleryCompone
 
 export function normalizeFeature(raw: StrapiRawFeature): Feature {
   return {
-    id: raw.id || '',
+    id: String(raw.id ?? ''),
     title: raw.title || '',
     description: raw.description || '',
     icon: raw.icon?.data ? normalizeImage(raw.icon.data) : undefined,
@@ -687,7 +746,7 @@ export function normalizeFeature(raw: StrapiRawFeature): Feature {
 
 export function normalizeFeatureGridComponent(raw: StrapiRawFeatureGridComponent): FeatureGridComponent {
   return {
-    id: raw.id || '',
+    id: String(raw.id ?? ''),
     __component: 'page-blocks.feature-grid',
     features: Array.isArray(raw.features)
       ? raw.features.map(normalizeFeature)
@@ -743,9 +802,6 @@ function normalizeLayoutComponent(
   }
 
   try {
-    console.log('[Normalizer] Processing component:', rawComponent.__component);
-    console.log('[Normalizer] Raw component data:', JSON.stringify(rawComponent, null, 2));
-
     // Extract the component type from the full string (e.g., "page-blocks.hero" -> "hero")
     const componentType = rawComponent.__component.replace('page-blocks.', '');
 
@@ -756,12 +812,7 @@ function normalizeLayoutComponent(
           console.warn('Invalid hero component: missing required fields');
           return undefined;
         }
-        return {
-          id: `hero-${String(rawComponent.id)}`,
-          __component: 'page-blocks.hero' as const,
-          title: String(rawComponent.title),
-          subtitle: isValidSubtitle(rawComponent.subtitle) ? rawComponent.subtitle : undefined
-        };
+        return normalizeHeroComponent(rawComponent as unknown as StrapiRawHeroComponent);
       }
       case 'text-block':
       case 'page-blocks.text-block': {
@@ -769,17 +820,7 @@ function normalizeLayoutComponent(
           console.warn('Invalid text-block component: missing required fields');
           return undefined;
         }
-        return {
-          id: `text-block-${String(rawComponent.id)}`,
-          __component: 'page-blocks.text-block' as const,
-          content: String(rawComponent.content)
-            .replace(/\\n/g, '\n')
-            .replace(/\\\\/g, '\\')
-            .replace(/\\"/g, '"')
-            .replace(/\s*\\n\s*/g, '\n')
-            .trim(),
-          alignment: rawComponent.alignment as 'left' | 'center' | 'right'
-        };
+        return normalizeTextBlockComponent(rawComponent as unknown as StrapiRawTextBlockComponent);
       }
       case 'button':
       case 'page-blocks.button': {
@@ -788,7 +829,7 @@ function normalizeLayoutComponent(
           return undefined;
         }
         return {
-          id: `button-${String(rawComponent.id)}`,
+          id: String(rawComponent.id),
           __component: 'page-blocks.button' as const,
           text: String(rawComponent.text),
           link: String(rawComponent.link),
@@ -801,17 +842,7 @@ function normalizeLayoutComponent(
           console.warn('Invalid feature-grid component: missing required fields or invalid features array');
           return undefined;
         }
-        return {
-          id: `feature-grid-${String(rawComponent.id)}`,
-          __component: 'page-blocks.feature-grid' as const,
-          features: rawComponent.features.map((feature: any) => ({
-            id: `feature-${String(feature.id)}`,
-            title: String(feature.title || ''),
-            description: String(feature.description || ''),
-            icon: feature.icon?.data ? normalizeImage(feature.icon.data) : undefined,
-            link: feature.link
-          }))
-        };
+        return normalizeFeatureGridComponent(rawComponent as unknown as StrapiRawFeatureGridComponent);
       }
       case 'faq-section':
       case 'page-blocks.faq-section': {
@@ -823,7 +854,7 @@ function normalizeLayoutComponent(
           ? (rawComponent as StrapiRawFaqSectionComponent).items as StrapiRawFaqItem[]
           : [];
         return {
-          id: `faq-section-${String(rawComponent.id)}`,
+          id: String(rawComponent.id),
           __component: 'page-blocks.faq-section' as const,
           items: items.map((item) => ({
             id: Number(item.id) || 0,
@@ -842,7 +873,7 @@ function normalizeLayoutComponent(
           ? (rawComponent as StrapiRawKeyTakeawaysComponent).items as StrapiRawKeyTakeawayItem[]
           : [];
         return {
-          id: `key-takeaways-${String(rawComponent.id)}`,
+          id: String(rawComponent.id),
           __component: 'page-blocks.key-takeaways' as const,
           items: items.map((item) => ({
             id: item.id || '',
@@ -858,7 +889,7 @@ function normalizeLayoutComponent(
           return undefined;
         }
         return {
-          id: `fact-block-${String(rawComponent.id)}`,
+          id: String(rawComponent.id),
           __component: 'page-blocks.fact-block' as const,
           label: String((rawComponent as StrapiRawFactBlockComponent).label || ''),
           value: String((rawComponent as StrapiRawFactBlockComponent).value || ''),
@@ -882,9 +913,9 @@ function normalizeLayoutComponent(
 export function normalizePage(raw: StrapiRawPage): Page {
   // Handle both flat and nested structures
   const data = raw.attributes || {} as StrapiRawPageAttributes;
-  
-  return {
-    id: raw.id,
+
+  const normalizedPage: Page = {
+    id: String(raw.id),
     title: data.Title || data.title || '',
     slug: data.slug || '',
     seoMetadata: {
@@ -892,8 +923,6 @@ export function normalizePage(raw: StrapiRawPage): Page {
       metaDescription: data.seoDescription || '',
       keywords: data.seoKeywords || ''
     },
-    primaryKeyword: data.primaryKeyword,
-    schemaType: data.schemaType,
     layout: data.layout
       ?.map(normalizeLayoutComponent)
       .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
@@ -901,6 +930,16 @@ export function normalizePage(raw: StrapiRawPage): Page {
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || ''
   };
+
+  if (typeof data.primaryKeyword === 'string') {
+    normalizedPage.primaryKeyword = data.primaryKeyword;
+  }
+
+  if (typeof data.schemaType === 'string') {
+    normalizedPage.schemaType = data.schemaType;
+  }
+
+  return normalizedPage;
 }
 
 /**
@@ -921,7 +960,7 @@ export function normalizeMenuItemSettings(raw: StrapiRawMenuItem['attributes']['
     order: raw.order,
     icon: raw.icon?.data ? {
       data: {
-        id: raw.icon.data.id || '',
+        id: String(raw.icon.data.id || ''),
         attributes: {
           url: raw.icon.data.attributes?.url || '',
           width: raw.icon.data.attributes?.width || 0,
@@ -944,7 +983,7 @@ export function normalizeMenuItemSettings(raw: StrapiRawMenuItem['attributes']['
 
 export function normalizeMenuItem(raw: StrapiRawMenuItem, parentMenu?: Menu): MenuItem {
   const item: MenuItem = {
-    id: raw.id,
+    id: String(raw.id),
     title: raw.attributes.title,
     type: raw.attributes.type,
     path: raw.attributes.path,
@@ -967,7 +1006,7 @@ export function normalizeMenuItem(raw: StrapiRawMenuItem, parentMenu?: Menu): Me
 
 export function normalizeMenu(raw: { id: string; attributes: StrapiRawMenu['attributes'] }): Menu {
   const menu: Menu = {
-    id: raw.id,
+    id: String(raw.id),
     title: raw.attributes.title,
     handle: raw.attributes.handle,
     type: raw.attributes.type,
@@ -983,7 +1022,7 @@ export function normalizeMenu(raw: { id: string; attributes: StrapiRawMenu['attr
 
 export function normalizeMenuSection(raw: StrapiRawMenuSection): MenuSection {
   return {
-    id: raw.id,
+    id: String(raw.id),
     title: raw.attributes.title,
     items: raw.attributes.items.data.map(item => normalizeMenuItem(item)),
     order: raw.attributes.order
@@ -992,7 +1031,7 @@ export function normalizeMenuSection(raw: StrapiRawMenuSection): MenuSection {
 
 export function normalizeSocialLink(raw: StrapiRawSocialLink): SocialLink {
   return {
-    id: raw.id,
+    id: String(raw.id),
     platform: raw.attributes.platform,
     url: raw.attributes.url,
     icon: raw.attributes.icon?.data ? normalizeImage(raw.attributes.icon.data) : undefined,

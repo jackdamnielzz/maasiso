@@ -208,8 +208,13 @@ export function createApiTestScenarios<T>(successData: T) {
     success: () => createMockApiResponse(successData),
     notFound: () => createMockErrorResponse(404, 'Resource not found'),
     serverError: () => createMockErrorResponse(500, 'Internal server error'),
-    timeout: () => new Promise<never>(() => {}),
-    networkError: () => Promise.reject(new Error('Network error')),
+    timeout: (_input: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<never>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      }),
+    networkError: () => Promise.reject(new TypeError('Network error')),
     rateLimited: () => createMockErrorResponse(429, 'Too many requests'),
     unauthorized: () => createMockErrorResponse(401, 'Unauthorized'),
     forbidden: () => createMockErrorResponse(403, 'Forbidden'),

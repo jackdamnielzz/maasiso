@@ -1,6 +1,25 @@
 import { Image, ImageFormat } from '../types';
 import { clientEnv } from '../config/client-env';
 
+function extractFileInfo(url: string): { ext: string; filename: string; hash: string } {
+  let pathname = '';
+
+  try {
+    pathname = new URL(url, clientEnv.apiUrl).pathname;
+  } catch {
+    pathname = url.split('?')[0].split('#')[0];
+  }
+
+  const filename = pathname.split('/').filter(Boolean).pop() || '';
+  const lastDotIndex = filename.lastIndexOf('.');
+  const hasExtension = lastDotIndex > 0;
+
+  const ext = hasExtension ? filename.slice(lastDotIndex + 1) : '';
+  const hash = hasExtension ? filename.slice(0, lastDotIndex) : filename;
+
+  return { ext, filename, hash };
+}
+
 /**
  * Normalize an image format from raw data
  */
@@ -17,10 +36,8 @@ export function normalizeImageFormat(format: {
   sizeInBytes?: number;
 }): ImageFormat {
   const url = format.url || '';
-  const [ext = ''] = url.split('.').slice(-1);
+  const { ext, filename, hash } = extractFileInfo(url);
   const mime = `image/${ext}`;
-  const filename = url.split('/').pop() || '';
-  const hash = filename.split('.')[0] || '';
 
   return {
     ext: format.ext || `.${ext}`,
@@ -28,7 +45,7 @@ export function normalizeImageFormat(format: {
     hash: format.hash || hash,
     mime: format.mime || mime,
     name: format.name || filename,
-    path: format.path || undefined,
+    path: format.path ?? undefined,
     size: format.size || 0,
     width: format.width,
     height: format.height,
@@ -135,11 +152,9 @@ export function normalizeImage(data: {
   
   // Extract URL from either flat or nested structure
   const url = attrs.url || '';
-  const [ext = ''] = url.split('.').slice(-1);
+  const { ext, filename, hash } = extractFileInfo(url);
   const mime = `image/${ext}`;
   const now = new Date().toISOString();
-  const filename = url.split('/').pop() || '';
-  const hash = filename.split('.')[0] || '';
 
   // Normalize formats if they exist
   const formats = attrs.formats ? {

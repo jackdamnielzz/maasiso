@@ -1,0 +1,46 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "@next/next"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-require-imports": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-this-alias": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "no-constant-condition": "off",
+    "no-case-declarations": "off",
+    "no-control-regex": "off",
+    "no-prototype-builtins": "off",
+    "no-useless-escape": "off",
+    "no-var": "off",
+    "prefer-const": "off"
+  },
+  "ignorePatterns": [
+    ".next/",
+    "node_modules/",
+    "test-deploy/",
+    "deploy.tar.gz"
+  ]
+}

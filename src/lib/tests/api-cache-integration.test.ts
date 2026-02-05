@@ -35,7 +35,9 @@ describe('API Cache Integration', () => {
 
     it('should respect cache TTL', async () => {
       const data = { test: 'data' };
-      fetchMock.mockResolvedValueOnce(createMockResponse(data));
+      fetchMock
+        .mockResolvedValueOnce(createMockResponse(data))
+        .mockResolvedValueOnce(createMockResponse(data));
 
       // First request
       await client.get('/test', {
@@ -82,11 +84,13 @@ describe('API Cache Integration', () => {
 
     it('should respect Cache-Control header', async () => {
       const data = { test: 'data' };
-      const headers = new Headers({
+      const headers = {
         'Cache-Control': 'max-age=60' // 60 seconds
-      });
+      };
 
-      fetchMock.mockResolvedValueOnce(createMockResponse(data, { headers }));
+      fetchMock
+        .mockResolvedValueOnce(createMockResponse(data, { headers }))
+        .mockResolvedValueOnce(createMockResponse(data, { headers }));
       await client.get('/test');
 
       // Advance time by 30 seconds (within max-age)
@@ -122,7 +126,9 @@ describe('API Cache Integration', () => {
 
     it('should not cache when disabled', async () => {
       const data = { test: 'data' };
-      fetchMock.mockResolvedValueOnce(createMockResponse(data));
+      fetchMock
+        .mockResolvedValueOnce(createMockResponse(data))
+        .mockResolvedValueOnce(createMockResponse(data));
 
       // First request with caching disabled
       await client.get('/test', {

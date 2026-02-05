@@ -40,11 +40,26 @@ interface QueuedRequest {
   timestamp: number;
 }
 
+interface DedupeGroup {
+  primary: QueuedRequest;
+  duplicates: QueuedRequest[];
+}
+
+export interface RequestQueueStats {
+  totalRequests: number;
+  batchCount: number;
+  oldestRequest: number;
+  failedRequests: number;
+  inFlightRequests: number;
+}
+
 export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
   private queue: QueuedRequest[] = [];
   private processingTimeout?: NodeJS.Timeout;
   private config: Required<BatchConfig>;
   private failedRequests: QueuedRequest[] = [];
+  private inFlightCount = 0;
+  private isProcessing = false;
 
   constructor(config?: BatchConfig) {
     super();
@@ -53,6 +68,12 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
 
   async enqueue<T>(request: Request): Promise<T> {
     return new Promise<T>((resolve, reject) => {
+      const queuedAndInFlight = this.queue.length + this.inFlightCount;
+      if (queuedAndInFlight >= this.config.maxBatchSize) {
+        reject(new QueueFullError());
+        return;
+      }
+
       this.queue.push({
         request,
         resolve,
@@ -108,23 +129,33 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
   private async splitBatchResponse(response: Response): Promise<any[]> {
     const responseData = await response.json();
     
-    if (!responseData.data) {
+    if (!responseData || typeof responseData !== 'object' || !('data' in responseData)) {
       throw new BatchProcessingError(
-        'Invalid response format: missing data property',
+        'Invalid batch response format: missing data property',
         'batch'
       );
     }
 
     if (!Array.isArray(responseData.data)) {
       throw new BatchProcessingError(
-        'Invalid response format: data must be an array',
+        'Invalid batch response format: data must be an array',
         'batch'
       );
     }
 
-    return responseData.data.map((item: any) => ({
-      data: item
-    }));
+    return responseData.data.map((item: any) => {
+      if (item && typeof item === 'object') {
+        if ('error' in item) {
+          return { error: item.error };
+        }
+
+        if ('data' in item) {
+          return { data: item.data };
+        }
+      }
+
+      return { data: item };
+    });
   }
 
   private async processBatch(): Promise<void> {
@@ -135,23 +166,16 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
 
     if (this.queue.length === 0) return;
 
-    let batch = this.queue.splice(0, this.config.maxBatchSize);
-
-    // Deduplicate requests if enabled
-    if (this.config.deduplicate) {
-      const seen = new Set<string>();
-      batch = batch.filter(item => {
-        const key = `${item.request.method}:${item.request.url}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    }
+    const batch = this.queue.splice(0, this.config.maxBatchSize);
+    this.isProcessing = true;
+    this.inFlightCount += batch.length;
+    const groups = this.groupBatch(batch);
+    const batchId = `batch-${Date.now()}`;
     const startTime = Date.now();
 
     try {
       // Create batch request payload
-      const payload = await this.createBatchPayload(batch.map(item => item.request));
+      const payload = await this.createBatchPayload(groups.map(group => group.primary.request));
 
       // Log batch request
       const headers = new Headers();
@@ -170,7 +194,11 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
       requestHeaders.set('Content-Type', 'application/json');
       requestHeaders.set('X-Batch-Request', 'true');
 
-      const response = await fetch(batch[0].request.url, {
+      const firstUrl = groups[0].primary.request.url;
+      const baseUrl = firstUrl.startsWith('http') ? new URL(firstUrl).origin : '';
+      const batchUrl = baseUrl ? `${baseUrl}/api/batch` : '/api/batch';
+
+      const response = await fetch(batchUrl, {
         method: 'POST',
         headers: requestHeaders,
         body: payload
@@ -189,14 +217,22 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
       let successCount = 0;
       let errorCount = 0;
 
+      if (results.length !== groups.length) {
+        throw new BatchProcessingError(
+          `Batch response size mismatch: expected ${groups.length}, received ${results.length}`,
+          batchId
+        );
+      }
+
       results.forEach((result: any, index: number) => {
-        const queueItem = batch[index];
+        const group = groups[index];
+        const queueItems = [group.primary, ...group.duplicates];
         if (result.error) {
-          errorCount++;
-          queueItem.reject(new Error(result.error));
+          errorCount += queueItems.length;
+          queueItems.forEach(item => item.reject(new Error(result.error)));
         } else {
-          successCount++;
-          queueItem.resolve(result.data);
+          successCount += queueItems.length;
+          queueItems.forEach(item => item.resolve(result.data));
         }
       });
 
@@ -211,8 +247,15 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
     } catch (error) {
       // On batch failure, move requests to failed queue
       this.failedRequests.push(...batch);
+      const batchError = error instanceof BatchProcessingError
+        ? error
+        : new BatchProcessingError(
+            (error as Error).message || 'Batch processing failed',
+            batchId
+          );
+
       batch.forEach(item => {
-        item.reject(error as Error);
+        item.reject(batchError);
       });
 
       // Emit metrics
@@ -222,7 +265,52 @@ export class RequestQueue extends TypedEventEmitter<RequestQueueEvents> {
         errorCount: batch.length,
         queueSize: this.queue.length
       });
+    } finally {
+      this.inFlightCount = Math.max(0, this.inFlightCount - batch.length);
+      this.isProcessing = false;
+      if (this.queue.length > 0 && !this.processingTimeout) {
+        this.processingTimeout = setTimeout(() => {
+          this.processBatch();
+        }, this.config.maxDelay);
+      }
     }
+  }
+
+  /**
+   * Returns queue health and sizing metrics for observability and tests.
+   */
+  getStats(): RequestQueueStats {
+    const oldestRequest = this.queue.length > 0
+      ? Math.min(...this.queue.map(item => item.timestamp))
+      : 0;
+
+    return {
+      totalRequests: this.queue.length,
+      batchCount: this.queue.length > 0 ? 1 : 0,
+      oldestRequest,
+      failedRequests: this.failedRequests.length,
+      inFlightRequests: this.inFlightCount
+    };
+  }
+
+  private groupBatch(batch: QueuedRequest[]): DedupeGroup[] {
+    if (!this.config.deduplicate) {
+      return batch.map(item => ({ primary: item, duplicates: [] }));
+    }
+
+    const groupMap = new Map<string, DedupeGroup>();
+    for (const item of batch) {
+      const key = `${item.request.method}:${item.request.url}`;
+      const existing = groupMap.get(key);
+      if (!existing) {
+        groupMap.set(key, { primary: item, duplicates: [] });
+        continue;
+      }
+
+      existing.duplicates.push(item);
+    }
+
+    return Array.from(groupMap.values());
   }
 
   /**

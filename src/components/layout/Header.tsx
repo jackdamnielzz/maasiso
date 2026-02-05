@@ -78,6 +78,14 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               AVG & Wetgeving
             </Link>
             <Link
+              href="/kennis"
+              className={`text-[13px] leading-none whitespace-nowrap hover:text-[#FF8B00] transition-colors duration-200 ${
+                pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
+              }`}
+            >
+              Kennis
+            </Link>
+            <Link
               href="/waarom-maasiso"
               className={`text-[13px] leading-none whitespace-nowrap hover:text-[#FF8B00] transition-colors duration-200 ${
                 pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
@@ -103,14 +111,12 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
             </Link>
 
             {/* ISO Selector Button */}
-            <a
-              href="https://iso-selector.maasiso.nl/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/iso-selector"
               className="text-[13px] font-semibold text-white px-3 py-2 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
             >
               ISO-Selector
-            </a>
+            </Link>
           </div>
 
           <div className="md:hidden">
@@ -169,6 +175,15 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 AVG & Wetgeving
               </Link>
               <Link
+                href="/kennis"
+                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                  pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Kennis
+              </Link>
+              <Link
                 href="/waarom-maasiso"
                 className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
@@ -196,15 +211,13 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               
               {/* ISO Selector Mobile */}
               <div className="pt-4 mt-4 border-t border-gray-700">
-                <a
-                  href="https://iso-selector.maasiso.nl/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/iso-selector"
                   className="block text-center text-base font-medium text-white px-4 py-3 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   ISO-Selector
-                </a>
+                </Link>
               </div>
             </div>
           </div>

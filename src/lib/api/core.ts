@@ -3,25 +3,39 @@ import { monitoredFetch } from '../monitoredFetch';
 
 // Base URL and authentication handling
 const getBaseUrl = () => {
-  // For direct API calls, always use the backend URL
-  if (typeof window === 'undefined') {
-    return process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:1337';
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
   }
-  
-  // For client-side calls, use the current origin
-  return window.location.origin;
+
+  return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 };
 
-const API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+const API_TOKEN = process.env.STRAPI_TOKEN;
+
+const toProxyPath = (path: string): string => {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+
+  if (normalized.startsWith('/api/proxy/')) {
+    return normalized;
+  }
+
+  if (normalized.startsWith('/api/')) {
+    return `/api/proxy/${normalized.slice('/api/'.length)}`;
+  }
+
+  return normalized;
+};
 
 const getAuthHeaders = () => {
-  if (!API_TOKEN) {
-    throw new APIError('API token is missing', 401);
-  }
-  return {
-    'Authorization': `Bearer ${API_TOKEN}`,
-    'Content-Type': 'application/json'
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
   };
+
+  if (API_TOKEN) {
+    headers.Authorization = `Bearer ${API_TOKEN}`;
+  }
+
+  return headers;
 };
 
 // Base fetch function with monitoring
@@ -35,7 +49,8 @@ export async function fetchWithBaseUrl<T>(
       throw new APIError('API base URL is not configured', 500);
     }
 
-    const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const resolvedPath = toProxyPath(path);
+    const url = `${baseUrl}${resolvedPath.startsWith('/') ? '' : '/'}${resolvedPath}`;
     const response = await monitoredFetch(
       path,
       url,
@@ -67,7 +82,7 @@ export async function fetchFromStrapi<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.STRAPI_TOKEN;
 
   if (!strapiUrl || !token) {
     throw new APIError('Missing Strapi configuration', 500);

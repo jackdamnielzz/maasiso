@@ -38,7 +38,7 @@ module.exports = {
       NODE_ENV: "production",
       NEXT_PUBLIC_API_URL: "http://153.92.223.23:1337",
       NEXT_PUBLIC_STRAPI_API_URL: "http://153.92.223.23:1337",
-      NEXT_PUBLIC_STRAPI_TOKEN: "72cf8a3310128157aaf97b9025a799d3b9c6c37fd65fab7e8fe9abff631b61a9305fbe1ff74f65ff3ad0547a981d606944f0c11b150bff7d6b96c1d0ca9df2c1d22950c980ecc97771661811310784aaf11bd4dc8065eaadbb923ec98817401d47cdb19b54ae637df13891c5ffa4622ab99b926e0468b40755af7056097e7d95",
+      NEXT_PUBLIC_STRAPI_TOKEN: "[REDACTED_STRAPI_TOKEN]",
     },
     // Other PM2 configuration options...
   }],
@@ -102,7 +102,7 @@ This is why ensuring the correct process name is crucial - it determines whether
 With this fix, API requests to Strapi will now include the token in the Authorization header:
 
 ```
-Authorization: 'Bearer 72cf8a3310128157aaf97b9025a799d3b9c6c37fd65fab7e8fe9abff631b61a9305fbe1ff74f65ff3ad0547a981d606944f0c11b150bff7d6b96c1d0ca9df2c1d22950c980ecc97771661811310784aaf11bd4dc8065eaadbb923ec98817401d47cdb19b54ae637df13891c5ffa4622ab99b926e0468b40755af7056097e7d95'
+Authorization: 'Bearer [REDACTED_TOKEN]'
 ```
 
 This will allow the application to authenticate with Strapi and receive the protected content.

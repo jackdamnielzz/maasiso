@@ -58,9 +58,9 @@ describe('QueryProvider', () => {
       </QueryProvider>
     );
 
-    // Should retry once (2 total attempts) due to defaultOptions
+    // Retry is disabled in defaultOptions to fail fast in UI.
     await waitFor(() => {
-      expect(mockFn).toHaveBeenCalledTimes(2);
+      expect(mockFn).toHaveBeenCalledTimes(1);
       expect(getByText('Error: test error')).toBeInTheDocument();
     });
   });

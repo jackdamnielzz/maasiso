@@ -95,7 +95,7 @@ describe('News Hooks', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.error).toBeTruthy();
+        expect(result.current.isError).toBe(true);
       });
     });
   });
@@ -132,7 +132,7 @@ describe('News Hooks', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.error).toBeTruthy();
+        expect(result.current.isError).toBe(true);
       });
     });
   });

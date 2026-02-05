@@ -41,20 +41,40 @@ class APIError extends Error {
 
 // Always use the API URL for requests
 const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+
+  return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 };
 
-const API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+const API_TOKEN = process.env.STRAPI_TOKEN;
+
+const toProxyPath = (path: string): string => {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+
+  if (normalized.startsWith('/api/proxy/')) {
+    return normalized;
+  }
+
+  if (normalized.startsWith('/api/')) {
+    return `/api/proxy/${normalized.slice('/api/'.length)}`;
+  }
+
+  return normalized;
+};
 
 // Ensure proper Bearer token format and handle missing token
 const getAuthHeaders = () => {
-  if (!API_TOKEN) {
-    throw new APIError('API token is missing', 401);
-  }
-  return {
-    'Authorization': `Bearer ${API_TOKEN}`,
-    'Content-Type': 'application/json'
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
   };
+
+  if (API_TOKEN) {
+    headers.Authorization = `Bearer ${API_TOKEN}`;
+  }
+
+  return headers;
 };
 
 async function fetchWithBaseUrl<T>(
@@ -67,7 +87,8 @@ async function fetchWithBaseUrl<T>(
       throw new APIError('API base URL is not configured', 500);
     }
 
-    const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+    const resolvedPath = toProxyPath(path);
+    const url = `${baseUrl}${resolvedPath.startsWith('/') ? '' : '/'}${resolvedPath}`;
     
     const normalizeHeaders = (headers: RequestInit['headers']): Record<string, string> => {
       if (!headers) return {};
@@ -95,6 +116,7 @@ async function fetchWithBaseUrl<T>(
     console.log('[API Request] Detailed Debug:', {
       baseUrl,
       path,
+      resolvedPath,
       fullUrl: url,
       method: options.method || 'GET',
       headers: safeHeaders
@@ -994,7 +1016,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
 
 export async function getRelatedNewsArticles(currentSlug: string): Promise<NewsArticle[]> {
   try {
-    const filters = [];
+    const filters: string[] = [];
     // Validate and sanitize the slug
     const validatedSlug = validateSlug(currentSlug);
 
@@ -1166,7 +1188,7 @@ export async function search(params: SearchParams): Promise<{
   newsArticles: { data: NewsArticle[]; meta: { pagination: { total: number } } };
 }> {
   try {
-    const filters = [];
+    const filters: string[] = [];
     if (params.filters?.contentType?.length) {
       filters.push(`filters[type][$in]=${params.filters.contentType.join(',')}`);
     }
@@ -1334,5 +1356,47 @@ export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepa
   } catch (error) {
     console.error('Error fetching whitepapers:', error);
     return { whitepapers: { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } }, total: 0 };
+  }
+}
+
+export async function getWhitepaperBySlug(slug: string): Promise<{ whitepaper: Whitepaper | null }> {
+  try {
+    const validatedSlug = validateSlug(slug);
+    console.log('Fetching whitepaper with slug:', validatedSlug);
+
+    const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
+      `/api/whitepapers?filters[slug][$eq]=${encodeURIComponent(validatedSlug)}&populate=*`,
+      {
+        next: { revalidate: 60 },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!data?.data || data.data.length === 0) {
+      console.log('No whitepaper found for slug:', validatedSlug);
+      return { whitepaper: null };
+    }
+
+    const firstItem = data.data[0];
+    const rawWhitepaper = firstItem?.attributes || firstItem;
+    const mappedWhitepaper = mapWhitepaper(rawWhitepaper);
+
+    if (!mappedWhitepaper) {
+      return { whitepaper: null };
+    }
+
+    return {
+      whitepaper: {
+        ...mappedWhitepaper,
+        id: String(firstItem?.id || rawWhitepaper?.id || mappedWhitepaper.id),
+        slug: mappedWhitepaper.slug || validatedSlug,
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching whitepaper by slug:', error);
+    return { whitepaper: null };
   }
 }

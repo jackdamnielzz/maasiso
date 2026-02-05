@@ -55,7 +55,7 @@ export default function IsoCertificeringHubPage() {
       cards={isoPages}
       ctas={[
         { label: 'Plan een kennismaking', href: '/contact', variant: 'secondary' },
-        { label: 'Doe de ISO-Selector', href: 'https://iso-selector.maasiso.nl/', variant: 'secondary' },
+        { label: 'Doe de ISO-Selector', href: '/iso-selector', variant: 'secondary' },
       ]}
       cardsHeading="Onderwerpen binnen ISO-certificering"
       dataTopic="iso-certificering"

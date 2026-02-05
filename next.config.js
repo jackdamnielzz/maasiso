@@ -8,6 +8,30 @@ const nextConfig = {
       timeStyle: 'long'
     })
   },
+  async redirects() {
+    return [
+      {
+        source: '/blog',
+        destination: '/kennis/blog',
+        permanent: true,
+      },
+      {
+        source: '/blog/:slug',
+        destination: '/kennis/blog/:slug',
+        permanent: true,
+      },
+      {
+        source: '/whitepaper',
+        destination: '/kennis/whitepapers',
+        permanent: true,
+      },
+      {
+        source: '/whitepaper/:slug',
+        destination: '/kennis/whitepapers/:slug',
+        permanent: true,
+      },
+    ];
+  },
   // Enable Turbopack for Next.js 16+
   turbopack: {},
   experimental: {

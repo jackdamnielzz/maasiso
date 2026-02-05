@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Whitepaper } from '@/lib/types';
 import { clientEnv } from '@/lib/config/client-env';
 import WhitepaperDownloadModal, { DownloadFormData } from './WhitepaperDownloadModal';
@@ -93,6 +94,16 @@ export default function WhitepaperCard({ whitepaper }: WhitepaperCardProps) {
               <span className="inline-block text-[#091E42]/60">
                 Download binnenkort beschikbaar
               </span>
+            )}
+            {whitepaper.slug && (
+              <div className="mt-3">
+                <Link
+                  href={`/kennis/whitepapers/${whitepaper.slug}`}
+                  className="inline-block text-sm font-medium text-[#0057B8] hover:text-[#003f80] underline"
+                >
+                  Bekijk details
+                </Link>
+              </div>
             )}
           </div>
         </div>

@@ -8,10 +8,10 @@ export const revalidate = 0;
 // Helper function for authenticated fetch to Strapi for collections not yet in api.ts
 async function fetchStrapiCollection<T>(path: string): Promise<T[]> {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1337';
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.STRAPI_TOKEN;
 
   if (!token) {
-    console.error('Sitemap: NEXT_PUBLIC_STRAPI_TOKEN is missing');
+    console.error('Sitemap: STRAPI_TOKEN is missing');
     return [];
   }
 
@@ -74,10 +74,10 @@ function normalizeSlug(slug: string): string {
 
 async function fetchStrapiPaginated<T>(path: string): Promise<StrapiPaginatedResponse<T>> {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:1337';
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+  const token = process.env.STRAPI_TOKEN;
 
   if (!token) {
-    console.error('Sitemap: NEXT_PUBLIC_STRAPI_TOKEN is missing');
+    console.error('Sitemap: STRAPI_TOKEN is missing');
     return { data: [] };
   }
 
@@ -141,24 +141,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Base static routes
   const staticPages: MetadataRoute.Sitemap = [
     '',
+    '/kennis',
+    '/kennis/blog',
+    '/kennis/whitepapers',
+    '/kennis/e-learning',
     '/over-ons',
+    '/over-niels-maas',
     '/contact',
-    '/blog',
     '/waarom-maasiso',
+    '/iso-selector',
     '/privacy-policy',
     '/terms-and-conditions',
-    '/whitepaper',
+    '/cookie-policy',
     '/informatiebeveiliging',
+    '/informatiebeveiliging/iso-27001',
+    '/informatiebeveiliging/bio',
+    '/iso-certificering',
     '/iso-certificering/iso-9001',
     '/iso-certificering/iso-14001',
     '/iso-certificering/iso-45001',
     '/iso-certificering/iso-16175',
-    '/informatiebeveiliging/iso-27001',
-    '/iso-certificering',
-    '/cookie-policy',
     '/avg-wetgeving',
     '/avg-wetgeving/avg',
-    '/informatiebeveiliging/bio',
   ]
     .filter(route => !REMOVED_PATHS.has(route))
     .map((route) => ({
@@ -170,14 +174,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all dynamic content in parallel with individual error handling
-    const [blogResult, whitepaperResult] = await Promise.all([
+    const [blogResult, whitepaperResult]: [
+      Awaited<ReturnType<typeof fetchAllBlogPosts>>,
+      Awaited<ReturnType<typeof fetchAllWhitepapers>>
+    ] = await Promise.all([
       fetchAllBlogPosts().catch(err => {
         console.error('Sitemap: Failed to fetch blog posts:', err);
-        return { posts: [] };
+        return { posts: [], total: 0 };
       }),
       fetchAllWhitepapers().catch(err => {
         console.error('Sitemap: Failed to fetch whitepapers:', err);
-        return { whitepapers: { data: [] } };
+        return {
+          whitepapers: { data: [] as StrapiData<Whitepaper>[] },
+          total: 0
+        };
       }),
     ]);
 
@@ -188,9 +198,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Use updatedAt as priority for freshness signals (important for SEO)
     const blogEntries: MetadataRoute.Sitemap = blogResult.posts
       .filter(post => post.slug)
-      .filter(post => !REMOVED_PATHS.has(`/blog/${normalizeSlug(post.slug)}`))
+      .filter(post => {
+        const slug = normalizeSlug(post.slug);
+        return (
+          !REMOVED_PATHS.has(`/blog/${slug}`) &&
+          !REMOVED_PATHS.has(`/kennis/blog/${slug}`)
+        );
+      })
       .map(post => ({
-        url: buildUrl(baseUrl, `/blog/${normalizeSlug(post.slug)}`),
+        url: buildUrl(baseUrl, `/kennis/blog/${normalizeSlug(post.slug)}`),
         lastModified: new Date(post.updatedAt || post.publishedAt || new Date()),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
@@ -200,7 +216,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const whitepaperEntries: MetadataRoute.Sitemap = whitepaperResult.whitepapers.data
       .filter(item => item.attributes?.slug)
       .map(item => ({
-        url: buildUrl(baseUrl, `/whitepaper/${normalizeSlug(item.attributes.slug)}`),
+        url: buildUrl(baseUrl, `/kennis/whitepapers/${normalizeSlug(item.attributes.slug)}`),
         lastModified: new Date(item.attributes.publishedAt || item.attributes.updatedAt || new Date()),
         changeFrequency: 'monthly',
         priority: 0.5,

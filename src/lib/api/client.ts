@@ -196,10 +196,6 @@ async function fetchWithRetry(
 
   const headers = new Headers(options.headers);
 
-  if (clientEnv.strapiToken) {
-    headers.set('Authorization', `Bearer ${clientEnv.strapiToken}`);
-  }
-
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
@@ -297,11 +293,18 @@ export class ApiClient {
   private cache: ApiCache;
   private circuitBreakers: Map<string, CircuitBreaker>;
   private requestQueue: RequestQueue;
+  private requestQueues: Map<string, RequestQueue>;
+  private batchProcessedListeners: Array<
+    (metrics: { duration: number; successCount: number; errorCount: number; queueSize: number }) => void
+  > = [];
   private networkMonitor: NetworkMonitor;
 
   // Public methods for monitoring
   public onBatchProcessed(callback: (metrics: { duration: number; successCount: number; errorCount: number; queueSize: number }) => void): void {
-    this.requestQueue.on('batch-processed', callback);
+    this.batchProcessedListeners.push(callback);
+    this.requestQueues.forEach(queue => {
+      queue.on('batch-processed', callback);
+    });
   }
 
   public onCircuitBreakerStateChange(callback: (service: string, state: CircuitBreakerState, stats: { failures: number }) => void): void {
@@ -355,22 +358,49 @@ export class ApiClient {
     });
     this.circuitBreakers = new Map();
     this.requestQueue = new RequestQueue();
+    this.requestQueues = new Map();
+    this.requestQueues.set(this.getBatchQueueKey(), this.requestQueue);
     this.networkMonitor = new BrowserNetworkMonitor();
 
     // Connect network monitor to request queue
     this.networkMonitor.addEventListener('change', (event: NetworkEventMap['change']) => {
       const status = { online: this.networkMonitor.isConnected() };
       if (status.online) {
-        this.requestQueue.flush();
+        this.requestQueues.forEach(queue => queue.flush());
       }
     });
 
     this.networkMonitor.addEventListener('change', (event: NetworkEventMap['change']) => {
       const quality = this.networkMonitor.getConnectionQuality();
       if (quality > 0.7) { // Consider > 0.7 as good quality
-        this.requestQueue.retryFailed();
+        this.requestQueues.forEach(queue => queue.retryFailed());
       }
     });
+  }
+
+  private getBatchQueueKey(config?: BatchConfig): string {
+    const normalized: Required<BatchConfig> = {
+      maxBatchSize: config?.maxBatchSize ?? 5,
+      maxDelay: config?.maxDelay ?? 50,
+      deduplicate: config?.deduplicate ?? true
+    };
+
+    return JSON.stringify(normalized);
+  }
+
+  private getBatchQueue(config?: BatchConfig): RequestQueue {
+    const key = this.getBatchQueueKey(config);
+    const existing = this.requestQueues.get(key);
+    if (existing) {
+      return existing;
+    }
+
+    const queue = new RequestQueue(config);
+    this.batchProcessedListeners.forEach(listener => {
+      queue.on('batch-processed', listener);
+    });
+    this.requestQueues.set(key, queue);
+    return queue;
   }
 
   private getCircuitBreaker(path: string, config?: CircuitBreakerConfig): CircuitBreaker {
@@ -479,13 +509,37 @@ export class ApiClient {
             return cached;
           }
         }
+
+        if (cacheConfig.staleWhileRevalidate) {
+          const stale = this.cache.getStale<T>(url);
+          if (stale !== undefined) {
+            this.revalidate(url, options).catch(error => {
+              apiLogger.logError({
+                method: 'REVALIDATE',
+                url,
+                headers: {},
+                body: null,
+                timestamp: new Date().toISOString()
+              }, error);
+            });
+            return stale;
+          }
+        }
       }
 
       if (options.batch) {
-        return this.requestQueue.enqueue(new Request(url, {
+        const queue = this.getBatchQueue(options.batch);
+        const batchedResult = await queue.enqueue<T>(new Request(url, {
           ...options,
           method: 'GET'
         }));
+
+        if (cacheConfig.enabled) {
+          const ttl = cacheConfig.ttl ?? DEFAULT_CACHE_CONFIG.ttl;
+          this.cache.set(url, batchedResult, ttl);
+        }
+
+        return batchedResult;
       }
 
       const response = await fetchWithRetry(url, {

@@ -10,8 +10,7 @@ module.exports = {
       STRAPI_URL: 'https://maasiso.nl',
       NEXT_PUBLIC_BACKEND_URL: 'https://maasiso.nl',
       NEXT_PUBLIC_SITE_URL: 'https://maasiso.nl',
-      STRAPI_TOKEN: 'd52d11ab3633ba12f38ee5e7b8f79d8507a148b1dd2b4b6dacb02e3057d6ea60ff0f8335e5658a06926d217cc40abdb399c576babe36b3274407b069e840042e5e8b461386dd785838b012652add9aae6d2b44a4c20488e974747ed56acfe034b928d1d9d93ebad4d6d4d80b4e74f9043e7f2ec2e7439144e119d9bbb6fff61d',
-      NEXT_PUBLIC_STRAPI_TOKEN: 'd52d11ab3633ba12f38ee5e7b8f79d8507a148b1dd2b4b6dacb02e3057d6ea60ff0f8335e5658a06926d217cc40abdb399c576babe36b3274407b069e840042e5e8b461386dd785838b012652add9aae6d2b44a4c20488e974747ed56acfe034b928d1d9d93ebad4d6d4d80b4e74f9043e7f2ec2e7439144e119d9bbb6fff61d'
+      STRAPI_TOKEN: process.env.STRAPI_TOKEN || ''
     },
     instances: 1,
     exec_mode: 'fork',
@@ -31,8 +30,7 @@ module.exports = {
     node_args: '--max-old-space-size=1024',
     env_production: {
       NODE_ENV: 'production',
-      STRAPI_TOKEN: 'd52d11ab3633ba12f38ee5e7b8f79d8507a148b1dd2b4b6dacb02e3057d6ea60ff0f8335e5658a06926d217cc40abdb399c576babe36b3274407b069e840042e5e8b461386dd785838b012652add9aae6d2b44a4c20488e974747ed56acfe034b928d1d9d93ebad4d6d4d80b4e74f9043e7f2ec2e7439144e119d9bbb6fff61d',
-      NEXT_PUBLIC_STRAPI_TOKEN: 'd52d11ab3633ba12f38ee5e7b8f79d8507a148b1dd2b4b6dacb02e3057d6ea60ff0f8335e5658a06926d217cc40abdb399c576babe36b3274407b069e840042e5e8b461386dd785838b012652add9aae6d2b44a4c20488e974747ed56acfe034b928d1d9d93ebad4d6d4d80b4e74f9043e7f2ec2e7439144e119d9bbb6fff61d'
+      STRAPI_TOKEN: process.env.STRAPI_TOKEN || ''
     },
     source_map_support: false,
     vizion: false,

@@ -1,17 +1,25 @@
 import { NextResponse } from 'next/server';
-import { clientEnv } from '@/lib/config/client-env';
 
 export async function POST(request: Request) {
   try {
     const data = await request.json();
     const { name, email, company, subscribeNewsletter, whitepaperTitle } = data;
+    const baseUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+    const token = process.env.STRAPI_TOKEN;
+
+    if (!baseUrl || !token) {
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
 
     // Send lead data to Strapi
-    const response = await fetch(`${clientEnv.apiUrl}/api/whitepaper-leads`, {
+    const response = await fetch(`${baseUrl}/api/whitepaper-leads`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${clientEnv.strapiToken}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         data: {
@@ -33,11 +41,11 @@ export async function POST(request: Request) {
 
     // If user opted in for newsletter, add them to the newsletter list
     if (subscribeNewsletter) {
-      await fetch(`${clientEnv.apiUrl}/api/newsletter-subscribers`, {
+      await fetch(`${baseUrl}/api/newsletter-subscribers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${clientEnv.strapiToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           data: {

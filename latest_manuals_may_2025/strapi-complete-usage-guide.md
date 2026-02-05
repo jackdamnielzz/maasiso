@@ -38,7 +38,7 @@ Deze uitgebreide gebruikershandleiding biedt praktische instructies voor het opt
 
 **Login Credentials:**
 - Email: `niels_maas@hotmail.com`
-- Password: `Niekties@100`
+- Password: `[REDACTED_PASSWORD]`
 
 ### Development Mode Workflow
 
@@ -1492,7 +1492,7 @@ Workflow Optimization:
 **Development Access:**
 ```
 Strapi Admin: http://153.92.223.23:1337/admin
-Login: niels_maas@hotmail.com / Niekties@100
+Login: niels_maas@hotmail.com / [REDACTED_PASSWORD]
 
 Development Mode:
 pm2 stop strapi

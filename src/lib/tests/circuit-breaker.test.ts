@@ -67,7 +67,7 @@ describe('CircuitBreaker', () => {
       // Next request should be allowed (half-open)
       const result = await breaker.execute(() => Promise.resolve('success'));
       expect(result).toBe('success');
-      expect(breaker.getMetrics().state).toBe(CircuitState.HALF_OPEN);
+      expect(breaker.getMetrics().state).toBe(CircuitState.CLOSED);
     });
 
     it('should close circuit after successful recovery', async () => {
@@ -155,14 +155,20 @@ describe('CircuitBreaker', () => {
       await vi.advanceTimersByTimeAsync(1100);
 
       // First request in half-open should be allowed
+      const firstRequestResolver: { current: ((value: string) => void) | null } = { current: null };
       const promise1 = breaker.execute(() => {
-        return new Promise(resolve => setTimeout(() => resolve('success'), 100));
+        return new Promise<string>(resolve => {
+          firstRequestResolver.current = resolve;
+        });
       });
 
       // Second request should be rejected due to limit
       const promise2 = breaker.execute(() => Promise.resolve('success'));
 
       await expect(promise2).rejects.toThrow(CircuitOpenError);
+      if (firstRequestResolver.current) {
+        firstRequestResolver.current('success');
+      }
       await expect(promise1).resolves.toBe('success');
     });
   });

@@ -7,11 +7,11 @@ Updated the Strapi API token used for authentication with the Strapi CMS backend
 1. Added the new Strapi API token to the following files:
    - `.env.production` (for production builds):
      ```
-     NEXT_PUBLIC_STRAPI_TOKEN=3c4ac08a200558b9283d56e31422487e9aebf3435a61b247b25c380b9950ea723ac2564b294f02491f28d184fc45d7fefe5d51db43e9fd0fcd81a3343c3cdc690311b89a418a177149b14347a5ebf749dd78c801aa7310bf2731c1233e9f2438bf113c2b020585bf0dcd76ea61f80ceee59cb1c5aabb23402440c30aa163c7cb
+     NEXT_PUBLIC_STRAPI_TOKEN=[REDACTED_STRAPI_TOKEN]
      ```
    - `.env.local` (for local development):
      ```
-     NEXT_PUBLIC_STRAPI_TOKEN=3c4ac08a200558b9283d56e31422487e9aebf3435a61b247b25c380b9950ea723ac2564b294f02491f28d184fc45d7fefe5d51db43e9fd0fcd81a3343c3cdc690311b89a418a177149b14347a5ebf749dd78c801aa7310bf2731c1233e9f2438bf113c2b020585bf0dcd76ea61f80ceee59cb1c5aabb23402440c30aa163c7cb
+     NEXT_PUBLIC_STRAPI_TOKEN=[REDACTED_STRAPI_TOKEN]
      ```
 
 2. Fixed API endpoint paths in `src/lib/api.ts` to correctly use `/api/news-articles` instead of `/news-articles`.

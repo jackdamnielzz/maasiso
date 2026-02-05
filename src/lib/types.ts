@@ -277,65 +277,101 @@ export interface StrapiRawBlogPost {
   updatedAt: string;
 }
 
-export interface StrapiRawNewsArticle {
-  id: string;
+type StrapiRelation<T> = T[] | { data?: T[] };
+
+export interface StrapiRawCategoryRelationItem {
+  id: number | string;
   documentId?: string;
-  title: string;
-  content: string;
-  slug: string;
+  name?: string;
+  slug?: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+  attributes?: {
+    name?: string;
+    slug?: string;
+    description?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+  };
+}
+
+export interface StrapiRawTagRelationItem {
+  id: number | string;
+  documentId?: string;
+  name?: string;
+  slug?: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+  attributes?: {
+    name?: string;
+    slug?: string;
+    description?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+  };
+}
+
+export interface StrapiRawNewsImage {
+  id?: number | string;
+  documentId?: string;
+  name?: string;
+  alternativeText?: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  formats?: {
+    thumbnail?: ImageFormat;
+    [key: string]: ImageFormat | undefined;
+  };
+  hash?: string;
+  ext?: string;
+  mime?: string;
+  size?: number;
+  url?: string;
+  previewUrl?: string;
+  provider?: string;
+  provider_metadata?: any;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+  data?: {
+    id?: number | string;
+    attributes?: Omit<StrapiRawNewsImage, 'data'>;
+  } | null;
+}
+
+export interface StrapiRawNewsArticleCore {
+  documentId?: string;
+  title?: string;
+  Content?: string;
+  content?: string;
+  slug?: string;
   summary?: string;
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
   publicationDate?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   publishedAt?: string;
   readingTime?: number;
   articledescription?: string;
-  categories: Array<{
-    id: number;
-    documentId: string;
-    name: string;
-    slug: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-  }>;
-  tags: Array<{
-    id: number;
-    documentId: string;
-    name: string;
-    slug: string;
-    description?: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-  }>;
-  featuredImage?: {
-    id: number;
-    documentId: string;
-    name: string;
-    alternativeText?: string;
-    caption?: string;
-    width: number;
-    height: number;
-    formats?: {
-      thumbnail?: ImageFormat;
-    };
-    hash: string;
-    ext: string;
-    mime: string;
-    size: number;
-    url: string;
-    previewUrl?: string;
-    provider: string;
-    provider_metadata?: any;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-  };
+  Author?: string;
+  author?: string;
+  categories?: StrapiRelation<StrapiRawCategoryRelationItem>;
+  tags?: StrapiRelation<StrapiRawTagRelationItem>;
+  featuredImage?: StrapiRawNewsImage | null;
+}
+
+export interface StrapiRawNewsArticle extends StrapiRawNewsArticleCore {
+  id: string | number;
+  attributes?: StrapiRawNewsArticleCore;
 }
 
 /**

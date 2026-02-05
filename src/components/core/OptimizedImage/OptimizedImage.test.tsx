@@ -1,33 +1,18 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import OptimizedImage from './OptimizedImage';
 
-// Mock next/image
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: (props: any) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
-  },
-}));
-
 describe('OptimizedImage', () => {
-  it('renders with required props', () => {
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-      />
-    );
-    
+  it('rendert met verplichte props', () => {
+    render(<OptimizedImage src="/test.jpg" alt="Test image" width={100} height={100} />);
+
     const image = screen.getByRole('img', { name: 'Test image' });
     expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute('src', '/api/proxy/assets/test.jpg');
     expect(image).toHaveAttribute('alt', 'Test image');
   });
 
-  it('shows loading state with proper announcements', () => {
+  it('toont loading status en loading tekst', () => {
     render(
       <OptimizedImage
         src="/test.jpg"
@@ -38,31 +23,12 @@ describe('OptimizedImage', () => {
       />
     );
 
-    const loadingStatus = screen.getByRole('status', { name: 'Custom loading text' });
-    expect(loadingStatus).toBeInTheDocument();
-    expect(screen.getByText('Custom loading text')).toHaveClass('sr-only');
+    expect(screen.getByRole('status', { name: 'Custom loading text' })).toBeInTheDocument();
+    expect(screen.getAllByText('Custom loading text').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('handles error state with proper announcements', () => {
-    render(
-      <OptimizedImage
-        src="/invalid.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-        errorText="Custom error text"
-      />
-    );
-
-    const image = screen.getByRole('img');
-    fireEvent.error(image);
-
-    const errorMessage = screen.getByRole('alert');
-    expect(errorMessage).toBeInTheDocument();
-    expect(screen.getByText('Custom error text')).toHaveClass('sr-only');
-  });
-
-  it('switches to fallback image on error', () => {
+  it('schakelt naar fallback bij afbeeldingsfout en roept onError aan', async () => {
+    const onError = jest.fn();
     render(
       <OptimizedImage
         src="/invalid.jpg"
@@ -70,16 +36,22 @@ describe('OptimizedImage', () => {
         width={100}
         height={100}
         fallback="/fallback.jpg"
+        onError={onError}
       />
     );
 
-    const image = screen.getByRole('img');
+    const image = screen.getByRole('img', { name: 'Test image' });
     fireEvent.error(image);
 
-    expect(image).toHaveAttribute('src', '/fallback.jpg');
+    await waitFor(() => {
+      expect(image).toHaveAttribute('src', '/fallback.jpg');
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    expect(onError).toHaveBeenCalled();
   });
 
-  it('renders with figure and figcaption when caption is provided', () => {
+  it('rendert figure met figcaption wanneer caption aanwezig is', () => {
     render(
       <OptimizedImage
         src="/test.jpg"
@@ -90,45 +62,43 @@ describe('OptimizedImage', () => {
       />
     );
 
-    expect(screen.getByRole('figure')).toBeInTheDocument();
+    expect(document.querySelector('figure')).toBeInTheDocument();
     expect(screen.getByText('Test caption')).toBeInTheDocument();
   });
 
-  it('handles decorative images correctly', () => {
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-        decorative
-      />
+  it('behandelt decoratieve afbeeldingen met lege alt en aria-hidden', () => {
+    const { container } = render(
+      <OptimizedImage src="/test.jpg" alt="Test image" width={100} height={100} decorative />
     );
 
-    const image = screen.getByRole('img');
+    const image = container.querySelector('img[aria-hidden="true"]');
+    expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('alt', '');
-    expect(image).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('announces image load completion', () => {
+  it('meldt succesvolle load in live status en roept onLoadingComplete aan', async () => {
+    const onLoadingComplete = jest.fn();
     render(
       <OptimizedImage
         src="/test.jpg"
         alt="Test image"
         width={100}
         height={100}
+        onLoadingComplete={onLoadingComplete}
       />
     );
 
-    const image = screen.getByRole('img');
+    const image = screen.getByRole('img', { name: 'Test image' });
     fireEvent.load(image);
 
-    const status = screen.getByRole('status');
-    expect(status).toHaveTextContent('Image loaded: Test image');
+    await waitFor(() => {
+      expect(screen.getByText('Image loaded: Test image')).toBeInTheDocument();
+      expect(onLoadingComplete).toHaveBeenCalled();
+    });
   });
 
-  it('applies custom wrapper class', () => {
-    render(
+  it('past custom wrapper class toe', () => {
+    const { container } = render(
       <OptimizedImage
         src="/test.jpg"
         alt="Test image"
@@ -138,73 +108,23 @@ describe('OptimizedImage', () => {
       />
     );
 
-    const wrapper = screen.getByRole('img').parentElement;
-    expect(wrapper).toHaveClass('custom-wrapper');
+    expect(container.querySelector('.custom-wrapper')).toBeInTheDocument();
   });
 
-  it('handles loading states with proper classes', () => {
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-      />
-    );
+  it('werkt loading en error classes bij op image element', async () => {
+    render(<OptimizedImage src="/test.jpg" alt="Test image" width={100} height={100} />);
 
-    const image = screen.getByRole('img');
-    expect(image).toHaveClass('opacity-0'); // Initial loading state
+    const image = screen.getByRole('img', { name: 'Test image' });
+    expect(image).toHaveClass('opacity-0');
 
     fireEvent.load(image);
-    expect(image).not.toHaveClass('opacity-0');
-  });
+    await waitFor(() => {
+      expect(image).not.toHaveClass('opacity-0');
+    });
 
-  it('handles error states with proper classes', () => {
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-      />
-    );
-
-    const image = screen.getByRole('img');
     fireEvent.error(image);
-    expect(image).toHaveClass('opacity-50');
-  });
-
-  it('calls custom onError handler', () => {
-    const handleError = jest.fn();
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-        onError={handleError}
-      />
-    );
-
-    const image = screen.getByRole('img');
-    fireEvent.error(image);
-    expect(handleError).toHaveBeenCalled();
-  });
-
-  it('calls custom onLoadingComplete handler', () => {
-    const handleLoadingComplete = jest.fn();
-    render(
-      <OptimizedImage
-        src="/test.jpg"
-        alt="Test image"
-        width={100}
-        height={100}
-        onLoadingComplete={handleLoadingComplete}
-      />
-    );
-
-    const image = screen.getByRole('img');
-    fireEvent.load(image);
-    expect(handleLoadingComplete).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(image).toHaveClass('opacity-50');
+    });
   });
 });

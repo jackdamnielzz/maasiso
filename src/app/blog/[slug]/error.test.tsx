@@ -101,8 +101,10 @@ describe('BlogPostError', () => {
     error.stack = 'Test stack trace';
     const digest = 'test-digest';
     const reset = jest.fn();
+    const errorWithDigest = error as Error & { digest?: string };
+    errorWithDigest.digest = digest;
 
-    render(<BlogPostError error={{ ...error, digest }} reset={reset} />);
+    render(<BlogPostError error={errorWithDigest} reset={reset} />);
 
     expect(mockConsoleGroup).toHaveBeenCalledWith('BlogPostError');
     expect(mockConsoleError).toHaveBeenCalledWith('Error details:', {

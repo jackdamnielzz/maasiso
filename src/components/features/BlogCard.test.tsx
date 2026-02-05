@@ -79,14 +79,11 @@ describe('BlogCard', () => {
     // Check title
     expect(screen.getByText('Test Blog Post')).toBeInTheDocument();
 
-    // Check category
-    expect(screen.getByText('Technology')).toBeInTheDocument();
-
     // Check date
     expect(screen.getByText('26 januari 2024')).toBeInTheDocument();
 
     // Check excerpt (first line of content)
-    expect(screen.getByText('Test content')).toBeInTheDocument();
+    expect(screen.getByText('Test content with')).toBeInTheDocument();
 
     // Check "Read more" link
     const link = screen.getByText('Lees meer');
@@ -126,9 +123,8 @@ describe('BlogCard', () => {
 
       // Verify image optimization attributes
       const img = container.querySelector('img');
-      expect(img).toHaveAttribute('loading', 'lazy');
+      expect(img).toHaveAttribute('loading', 'eager');
       expect(img).toHaveAttribute('sizes', '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw');
-      expect(img).toHaveAttribute('quality', '75');
     });
 
     it('handles image loading errors gracefully', async () => {

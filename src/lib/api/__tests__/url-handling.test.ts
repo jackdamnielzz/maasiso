@@ -3,6 +3,12 @@ import { RequestQueue } from '../request-queue';
 
 describe('URL Handling', () => {
   const requestQueue = new RequestQueue();
+  const makeRequest = (pathOrUrl: string, init?: RequestInit): Request => {
+    const resolved = pathOrUrl.startsWith('http')
+      ? pathOrUrl
+      : new URL(pathOrUrl, 'http://localhost').toString();
+    return new Request(resolved, init);
+  };
 
   describe('URL Transformation Chain', () => {
     const testCases = [
@@ -28,16 +34,16 @@ describe('URL Handling', () => {
         name: 'relative URL',
         input: '/api/batch/1',
         expected: {
-          baseUrl: '',
+          baseUrl: 'http://localhost',
           relativePath: '/api/batch/1',
-          batchUrl: '/api/batch'
+          batchUrl: 'http://localhost/api/batch'
         }
       }
     ];
 
     testCases.forEach(({ name, input, expected }) => {
       describe(name, () => {
-        const request = new Request(input, {
+        const request = makeRequest(input, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -63,10 +69,10 @@ describe('URL Handling', () => {
           expect(batchUrl).toBe(expected.batchUrl);
         });
 
-        it('creates correct batch payload URL', () => {
+        it('creates correct batch payload URL', async () => {
           // Access private method for testing
           const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-          const payload = createBatchPayload([request]);
+          const payload = await createBatchPayload([request]);
           const parsedPayload = JSON.parse(payload);
           
           expect(parsedPayload[0].url).toBe(expected.relativePath);
@@ -84,10 +90,10 @@ describe('URL Handling', () => {
       expect(new URL(batchUrl).pathname).toBe('/api/batch');
     });
 
-    it('validates individual request URLs in batch', () => {
+    it('validates individual request URLs in batch', async () => {
       const requests = Array.from({ length: 3 }, (_, i) => {
         const id = i + 1;
-        return new Request(`http://localhost:3000/api/batch/${id}`, {
+        return makeRequest(`http://localhost:3000/api/batch/${id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -95,7 +101,7 @@ describe('URL Handling', () => {
 
       // Access private method for testing
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload(requests);
+      const payload = await createBatchPayload(requests);
       const parsedPayload = JSON.parse(payload);
 
       parsedPayload.forEach((req: any, index: number) => {
@@ -105,43 +111,43 @@ describe('URL Handling', () => {
   });
 
   describe('Edge Cases', () => {
-    it('handles URLs with query parameters', () => {
-      const request = new Request('http://localhost:3000/api/batch/1?foo=bar', {
+    it('handles URLs with query parameters', async () => {
+      const request = makeRequest('http://localhost:3000/api/batch/1?foo=bar', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
 
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload([request]);
+      const payload = await createBatchPayload([request]);
       const parsedPayload = JSON.parse(payload);
 
       expect(parsedPayload[0].url).toBe('/api/batch/1?foo=bar');
     });
 
-    it('handles URLs with hash fragments', () => {
-      const request = new Request('http://localhost:3000/api/batch/1#section', {
+    it('handles URLs with hash fragments', async () => {
+      const request = makeRequest('http://localhost:3000/api/batch/1#section', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
 
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload([request]);
+      const payload = await createBatchPayload([request]);
       const parsedPayload = JSON.parse(payload);
 
       expect(parsedPayload[0].url).toBe('/api/batch/1#section');
     });
 
-    it('handles URLs with special characters', () => {
-      const request = new Request('http://localhost:3000/api/batch/test space', {
+    it('handles URLs with special characters', async () => {
+      const request = makeRequest('http://localhost:3000/api/batch/test space', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
 
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload([request]);
+      const payload = await createBatchPayload([request]);
       const parsedPayload = JSON.parse(payload);
 
-      expect(parsedPayload[0].url).toBe('/api/batch/test space');
+      expect(parsedPayload[0].url).toBe('/api/batch/test%20space');
     });
   });
 });

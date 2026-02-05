@@ -105,6 +105,10 @@ class PerformanceMonitor implements MonitoringService {
   }
 
   trackPerformanceMetric(metric: PerformanceMetric): void {
+    if (!this.METRICS_ENABLED) return;
+
+    this.metrics.set(metric.name, metric.value);
+
     this.bufferEvent({
       eventType: MonitoringEventTypes.PERFORMANCE,
       data: metric,
@@ -145,7 +149,10 @@ class PerformanceMonitor implements MonitoringService {
   }
 
   getMetrics(): Record<string, number> {
-    return Object.fromEntries(this.webVitals.entries());
+    return {
+      ...Object.fromEntries(this.metrics.entries()),
+      ...Object.fromEntries(this.webVitals.entries())
+    };
   }
 
   getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
@@ -182,12 +189,14 @@ class PerformanceMonitor implements MonitoringService {
   private bufferEvent(event: MonitoringEventData): void {
     if (!this.METRICS_ENABLED) return;
 
+    if (this.eventBuffer.length >= this.BUFFER_SIZE) {
+      this.eventBuffer.shift();
+    }
+
     this.eventBuffer.push(event);
-    
-    const now = Date.now();
-    if (this.eventBuffer.length >= this.BUFFER_SIZE && 
-        now - this.lastFlushTime >= this.MIN_FLUSH_INTERVAL) {
-      this.flushMetrics();
+
+    if (this.eventBuffer.length >= this.BATCH_SIZE) {
+      void this.flushMetrics();
     }
   }
 
@@ -220,11 +229,7 @@ class PerformanceMonitor implements MonitoringService {
 
   async flushMetrics(): Promise<void> {
     if (!this.METRICS_ENABLED || this.eventBuffer.length === 0) return;
-
     const now = Date.now();
-    if (now - this.lastFlushTime < this.MIN_FLUSH_INTERVAL) {
-      return;
-    }
 
     while (this.eventBuffer.length > 0 && !this.isShuttingDown) {
       const batchEvents = this.eventBuffer.splice(0, this.BATCH_SIZE);

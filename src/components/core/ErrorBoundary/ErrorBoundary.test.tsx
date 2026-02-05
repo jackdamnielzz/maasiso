@@ -82,20 +82,24 @@ describe('ErrorBoundary', () => {
   });
 
   it('resets error state when retry button is clicked', () => {
-    const { rerender } = render(
-      <ErrorBoundary>
-        <ThrowError shouldThrow />
-      </ErrorBoundary>
-    );
+    const Harness = () => {
+      const [shouldThrow, setShouldThrow] = React.useState(true);
 
+      return (
+        <>
+          <button onClick={() => setShouldThrow(false)}>Stop throwing</button>
+          <ErrorBoundary>
+            <ThrowError shouldThrow={shouldThrow} />
+          </ErrorBoundary>
+        </>
+      );
+    };
+
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Stop throwing' }));
     const retryButton = screen.getByRole('button', { name: /probeer opnieuw/i });
     fireEvent.click(retryButton);
-
-    rerender(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={false} />
-      </ErrorBoundary>
-    );
 
     expect(screen.getByText('Normal content')).toBeInTheDocument();
   });
@@ -141,7 +145,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    const reloadButton = screen.getByRole('button', { name: /pagina opnieuw laden/i });
+    const reloadButton = screen.getByRole('link', { name: /pagina opnieuw laden/i });
     fireEvent.click(reloadButton);
     expect(mockReload).toHaveBeenCalled();
   });

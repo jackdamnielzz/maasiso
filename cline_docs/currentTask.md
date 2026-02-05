@@ -106,7 +106,7 @@ Create a contact page with a form that allows users to send messages via email, 
 6. Contact information is updated across the site
 
 ## Resources
-- Email Password: Niekties@100
+- Email Password: [REDACTED_PASSWORD]
 - SMTP Server: smtp.hostinger.com
 - Email: info@maasiso.nl
 - Phone Number: +31 (0)6 2357 8344

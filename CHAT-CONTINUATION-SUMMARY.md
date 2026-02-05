@@ -88,7 +88,7 @@ Dit script:
 **Credentials voor script:**
 ```bash
 STRAPI_URL=https://peaceful-insight-production.up.railway.app
-STRAPI_TOKEN=9ff727d730447da883cad384524bc2e9891de14e526d0273c0785710762dc0ef2aa6900a855948e3fa6ed72a1927178b6c725fa34605959aac8cb69794463c1484cd0325548fc3a5c88898cb9099ac114e40c19bb6755c8d2f7d9110330be97031587152e34f6e37992eb31faef66c92f60df20b32b80b95029744047504f9f9
+STRAPI_TOKEN=[REDACTED_STRAPI_TOKEN]
 ```
 
 ### 4. Git Commits (Allemaal gepusht naar GitHub)
@@ -147,7 +147,7 @@ We hebben via de Strapi Admin API het volgende gedaan:
 # Login
 curl -X POST "https://peaceful-insight-production.up.railway.app/admin/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"niels_maas@hotmail.com","password":"Niekties@100"}'
+  -d '{"email":"niels_maas@hotmail.com","password":"[REDACTED_PASSWORD]"}'
 
 # Author collection aangemaakt (SUCCESS)
 curl -X POST ".../content-type-builder/content-types" → {"data":{"uid":"api::author.author"}}
@@ -201,7 +201,7 @@ Alle velden handmatig toevoegen via Content-Type Builder in de browser.
 
 **Stappen:**
 1. Ga naar https://peaceful-insight-production.up.railway.app/admin
-2. Login: niels_maas@hotmail.com / Niekties@100
+2. Login: niels_maas@hotmail.com / [REDACTED_PASSWORD]
 3. Content-Type Builder → Blog Post → Add fields
 4. Voeg elk veld handmatig toe
 5. Save na elke wijziging
@@ -270,11 +270,11 @@ D:\Programmeren\MaasISO\New without errors\maasiso-strapi-railway\
 ### Strapi Admin
 - **URL:** https://peaceful-insight-production.up.railway.app/admin
 - **Email:** niels_maas@hotmail.com
-- **Password:** Niekties@100
+- **Password:** [REDACTED_PASSWORD]
 
 ### Strapi API Token
 ```
-9ff727d730447da883cad384524bc2e9891de14e526d0273c0785710762dc0ef2aa6900a855948e3fa6ed72a1927178b6c725fa34605959aac8cb69794463c1484cd0325548fc3a5c88898cb9099ac114e40c19bb6755c8d2f7d9110330be97031587152e34f6e37992eb31faef66c92f60df20b32b80b95029744047504f9f9
+[REDACTED_STRAPI_TOKEN]
 ```
 
 ### Railway
@@ -390,7 +390,7 @@ Zodra de database is gemigreerd:
 # Test Authors API (zou 200 moeten geven na fix)
 curl -s -o /dev/null -w "%{http_code}" \
   "https://peaceful-insight-production.up.railway.app/api/authors" \
-  -H "Authorization: Bearer 9ff727d730447da883cad384524bc2e9891de14e526d0273c0785710762dc0ef2aa6900a855948e3fa6ed72a1927178b6c725fa34605959aac8cb69794463c1484cd0325548fc3a5c88898cb9099ac114e40c19bb6755c8d2f7d9110330be97031587152e34f6e37992eb31faef66c92f60df20b32b80b95029744047504f9f9"
+  -H "Authorization: Bearer [REDACTED_STRAPI_TOKEN]"
 
 # Test Blog Posts voor nieuwe velden
 curl -s "https://peaceful-insight-production.up.railway.app/api/blog-posts?pagination%5Blimit%5D=1" \
@@ -399,7 +399,7 @@ curl -s "https://peaceful-insight-production.up.railway.app/api/blog-posts?pagin
 # Strapi Admin Login
 curl -X POST "https://peaceful-insight-production.up.railway.app/admin/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"niels_maas@hotmail.com","password":"Niekties@100"}'
+  -d '{"email":"niels_maas@hotmail.com","password":"[REDACTED_PASSWORD]"}'
 ```
 
 ---

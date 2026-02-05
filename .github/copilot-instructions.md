@@ -39,13 +39,15 @@ This is a Next.js 16+ application with Strapi CMS backend, featuring:
 npm run dev          # Development with debugging
 npm run build        # Production build
 npm run start        # Start production server
-npm run build:prod   # Clean build without linting
+npm run build:prod   # Clean production build with lint + build checks
 ```
 
 ### Testing
 ```bash
-npm run test         # Jest tests
-npm run test:watch   # Watch mode
+npm run test         # Combined Jest + Vitest
+npm run test:jest    # Jest test suite
+npm run test:vitest  # Vitest test suite
+npm run test:watch   # Jest watch mode
 npm run lint         # ESLint
 npm run lint:fix     # Auto-fix linting issues
 ```

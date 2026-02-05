@@ -1,6 +1,6 @@
 // Test admin auth endpoint on production
 const BASE_URL = process.env.BASE_URL || 'https://maasiso.nl';
-const PASSWORD = 'MaasISO2024!Admin';
+const PASSWORD = '[REDACTED_PASSWORD]';
 
 async function testAuth() {
   console.log(`Testing auth at ${BASE_URL}/api/admin-auth`);

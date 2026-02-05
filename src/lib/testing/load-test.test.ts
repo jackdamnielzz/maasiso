@@ -7,10 +7,9 @@ import { getStaticFetchOptions, getListFetchOptions, getDynamicFetchOptions } fr
 vi.mock('../monitoredFetch');
 vi.mock('../api/cache');
 vi.mock('../config/client-env', () => ({
-  default: {
-    clientEnv: {
-      apiUrl: 'http://test-api.com'
-    }
+  clientEnv: {
+    apiUrl: 'http://test-api.com',
+    debug: false
   }
 }));
 
@@ -20,6 +19,9 @@ describe('ApiLoadTester', () => {
   beforeEach(() => {
     loadTester = new ApiLoadTester();
     vi.clearAllMocks();
+    (getStaticFetchOptions as any).mockReturnValue({});
+    (getListFetchOptions as any).mockReturnValue({});
+    (getDynamicFetchOptions as any).mockReturnValue({});
     
     // Mock successful response
     (monitoredFetch as any).mockResolvedValue({
@@ -52,7 +54,7 @@ describe('ApiLoadTester', () => {
           setTimeout(() => {
             resolve({
               ok: true,
-              headers: new Map([['x-cache', callCount % 2 ? 'HIT' : 'MISS']])
+              headers: new Map([['x-cache', callCount % 2 === 0 ? 'HIT' : 'MISS']])
             });
           }, 50); // 50ms response time
         });

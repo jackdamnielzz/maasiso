@@ -3,11 +3,13 @@ import { RequestQueue, BatchProcessingError } from '../request-queue';
 
 describe('Payload Schema', () => {
   const requestQueue = new RequestQueue();
+  const makeRequest = (path: string, init?: RequestInit): Request =>
+    new Request(new URL(path, 'http://localhost').toString(), init);
 
   describe('Request Payload Schema', () => {
-    it('validates minimal batch request payload', () => {
+    it('validates minimal batch request payload', async () => {
       const requests = [
-        new Request('/api/test/1', {
+        makeRequest('/api/test/1', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -15,21 +17,22 @@ describe('Payload Schema', () => {
 
       // Access private method for testing
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload(requests);
+      const payload = await createBatchPayload(requests);
       const parsedPayload = JSON.parse(payload);
 
       // Verify schema
       expect(Array.isArray(parsedPayload)).toBe(true);
       expect(parsedPayload[0]).toEqual({
+        id: 1,
         url: '/api/test/1',
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'content-type': 'application/json' }
       });
     });
 
-    it('includes request body when present', () => {
+    it('includes request body when present', async () => {
       const requests = [
-        new Request('/api/test/1', {
+        makeRequest('/api/test/1', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ test: true })
@@ -37,27 +40,28 @@ describe('Payload Schema', () => {
       ];
 
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload(requests);
+      const payload = await createBatchPayload(requests);
       const parsedPayload = JSON.parse(payload);
 
       expect(parsedPayload[0]).toEqual({
+        id: 1,
         url: '/api/test/1',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'content-type': 'application/json' },
         body: { test: true }
       });
     });
 
-    it('omits body property when not present', () => {
+    it('omits body property when not present', async () => {
       const requests = [
-        new Request('/api/test/1', {
+        makeRequest('/api/test/1', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         })
       ];
 
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload(requests);
+      const payload = await createBatchPayload(requests);
       const parsedPayload = JSON.parse(payload);
 
       expect(parsedPayload[0]).not.toHaveProperty('body');
@@ -149,9 +153,9 @@ describe('Payload Schema', () => {
   });
 
   describe('Edge Cases', () => {
-    it('handles empty batch requests', () => {
+    it('handles empty batch requests', async () => {
       const createBatchPayload = (requestQueue as any).createBatchPayload.bind(requestQueue);
-      const payload = createBatchPayload([]);
+      const payload = await createBatchPayload([]);
       const parsedPayload = JSON.parse(payload);
 
       expect(Array.isArray(parsedPayload)).toBe(true);

@@ -1,85 +1,94 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { ProgressiveContent } from '../ProgressiveContent';
 import { monitoringService } from '@/lib/monitoring/service';
 import {
   createMockLoader,
   createFailingMockLoader,
   createDelayedMockLoader,
-  type ProgressiveTestData
+  type ProgressiveTestData,
 } from '@/__tests__/utils/mockLoaders';
+import { useInView } from 'react-intersection-observer';
 
-// Mock monitoringService
 jest.mock('@/lib/monitoring/service', () => ({
   monitoringService: {
-    trackPerformanceMetric: jest.fn()
-  }
+    trackPerformanceMetric: jest.fn(),
+  },
 }));
 
-// Mock IntersectionObserver
-const mockIntersectionObserver = jest.fn();
-mockIntersectionObserver.mockReturnValue({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn()
-});
-window.IntersectionObserver = mockIntersectionObserver;
+jest.mock('react-intersection-observer', () => ({
+  useInView: jest.fn(),
+}));
+
+const mockUseInView = useInView as jest.MockedFunction<typeof useInView>;
+const refMock = jest.fn();
 
 describe('ProgressiveContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(performance, 'now').mockImplementation(() => 1000);
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: false,
+      entry: undefined,
+    });
   });
 
-  it('should render loading state initially', () => {
-    const mockData = { title: 'Test' } as const;
-    const loader = createMockLoader(mockData);
-    const mockRenderContent = jest.fn();
+  it('renders loading state initially', async () => {
+    jest.useFakeTimers();
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
+    const loader = createDelayedMockLoader({ title: 'Test' } as const, 1000);
 
     render(
-      <ProgressiveContent<typeof mockData>
+      <ProgressiveContent loadContent={loader} renderContent={() => <div>content</div>} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
+    });
+    jest.useRealTimers();
+  });
+
+  it('renders custom loading component when provided', async () => {
+    jest.useFakeTimers();
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
+    const loader = createDelayedMockLoader({ title: 'Test' } as const, 1000);
+    render(
+      <ProgressiveContent
         loadContent={loader}
-        renderContent={mockRenderContent}
+        renderContent={() => <div>content</div>}
+        renderLoading={() => <div data-testid="custom-loading">Loading...</div>}
       />
     );
 
-    expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('custom-loading')).toBeInTheDocument();
+    });
+    jest.useRealTimers();
   });
 
-  it('should render custom loading component when provided', () => {
-    const mockData = { title: 'Test' } as const;
-    const loader = createMockLoader(mockData);
-    const mockRenderContent = jest.fn();
-    const CustomLoading = () => <div data-testid="custom-loading">Loading...</div>;
-
-    render(
-      <ProgressiveContent<typeof mockData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
-        renderLoading={() => <CustomLoading />}
-      />
-    );
-
-    expect(screen.getByTestId('custom-loading')).toBeInTheDocument();
-  });
-
-  it('should render content when loaded', async () => {
+  it('renders content when inView is true', async () => {
     const mockData = { title: 'Test Title' } as const;
-    const loader = createMockLoader(mockData);
-    const mockRenderContent = (data: typeof mockData) => (
-      <div data-testid="content">{data.title}</div>
-    );
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
 
     render(
-      <ProgressiveContent<typeof mockData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
+      <ProgressiveContent
+        loadContent={createMockLoader(mockData)}
+        renderContent={(data) => <div data-testid="content">{data.title}</div>}
       />
     );
-
-    // Simulate intersection
-    const [callback] = mockIntersectionObserver.mock.calls[0];
-    callback([{ isIntersecting: true }]);
 
     await waitFor(() => {
       expect(screen.getByTestId('content')).toBeInTheDocument();
@@ -87,21 +96,19 @@ describe('ProgressiveContent', () => {
     });
   });
 
-  it('should render error state when loading fails', async () => {
-    const mockError = new Error('Test error');
-    const loader = createFailingMockLoader(mockError);
-    const mockRenderContent = jest.fn();
+  it('renders error state when loading fails', async () => {
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
 
     render(
       <ProgressiveContent<ProgressiveTestData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
+        loadContent={createFailingMockLoader(new Error('Test error'))}
+        renderContent={() => <div>content</div>}
       />
     );
-
-    // Simulate intersection
-    const [callback] = mockIntersectionObserver.mock.calls[0];
-    callback([{ isIntersecting: true }]);
 
     await waitFor(() => {
       expect(screen.getByText('Error loading content:')).toBeInTheDocument();
@@ -109,44 +116,14 @@ describe('ProgressiveContent', () => {
     });
   });
 
-  it('should render custom error component when provided', async () => {
-    const mockError = new Error('Test error');
-    const loader = createFailingMockLoader(mockError);
-    const mockRenderContent = jest.fn();
-    const CustomError = ({ error }: { error: Error }) => (
-      <div data-testid="custom-error">Custom Error: {error.message}</div>
-    );
-
-    render(
-      <ProgressiveContent<ProgressiveTestData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
-        renderError={(error) => <CustomError error={error} />}
-      />
-    );
-
-    // Simulate intersection
-    const [callback] = mockIntersectionObserver.mock.calls[0];
-    callback([{ isIntersecting: true }]);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('custom-error')).toBeInTheDocument();
-      expect(screen.getByText('Custom Error: Test error')).toBeInTheDocument();
-    });
-  });
-
-  it('should load content immediately when priority is true', async () => {
+  it('loads immediately with priority=true', async () => {
     const mockData = { title: 'Priority Content' } as const;
-    const loader = createMockLoader(mockData);
-    const mockRenderContent = (data: typeof mockData) => (
-      <div data-testid="content">{data.title}</div>
-    );
 
     render(
-      <ProgressiveContent<typeof mockData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
-        priority={true}
+      <ProgressiveContent
+        loadContent={createMockLoader(mockData)}
+        renderContent={(data) => <div data-testid="content">{data.title}</div>}
+        priority
       />
     );
 
@@ -154,70 +131,62 @@ describe('ProgressiveContent', () => {
       expect(screen.getByTestId('content')).toBeInTheDocument();
       expect(screen.getByText('Priority Content')).toBeInTheDocument();
     });
-
-    expect(mockIntersectionObserver).not.toHaveBeenCalled();
   });
 
-  it('should track performance metrics when monitoringKey is provided', async () => {
-    const mockData = { title: 'Test' } as const;
-    const loader = createMockLoader(mockData);
-    const mockRenderContent = (data: typeof mockData) => (
-      <div data-testid="content">{data.title}</div>
-    );
+  it('tracks performance metrics when monitoringKey is provided', async () => {
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
 
     render(
-      <ProgressiveContent<typeof mockData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
+      <ProgressiveContent
+        loadContent={createMockLoader({ title: 'Test' } as const)}
+        renderContent={(data) => <div data-testid="content">{data.title}</div>}
         monitoringKey="test-content"
       />
     );
 
-    // Simulate intersection
-    const [callback] = mockIntersectionObserver.mock.calls[0];
-    callback([{ isIntersecting: true }]);
-
     await waitFor(() => {
       expect(monitoringService.trackPerformanceMetric).toHaveBeenCalledWith({
         name: 'content_load_test-content',
-        value: 0, // mocked performance.now() returns same value
+        value: 0,
         timestamp: expect.any(Number),
         context: {
           priority: false,
-          inView: true
-        }
+          inView: true,
+        },
       });
     });
   });
 
-  it('should handle delayed content loading', async () => {
-    const mockData = { title: 'Delayed Content' } as const;
-    const loader = createDelayedMockLoader(mockData, 1000);
-    const mockRenderContent = (data: typeof mockData) => (
-      <div data-testid="content">{data.title}</div>
-    );
+  it('handles delayed content loading', async () => {
+    jest.useFakeTimers();
+    mockUseInView.mockReturnValue({
+      ref: refMock,
+      inView: true,
+      entry: undefined,
+    });
 
     render(
-      <ProgressiveContent<typeof mockData>
-        loadContent={loader}
-        renderContent={mockRenderContent}
+      <ProgressiveContent
+        loadContent={createDelayedMockLoader({ title: 'Delayed Content' }, 1000)}
+        renderContent={(data) => <div data-testid="content">{data.title}</div>}
       />
     );
 
-    // Simulate intersection
-    const [callback] = mockIntersectionObserver.mock.calls[0];
-    callback([{ isIntersecting: true }]);
-
-    // Should show loading state
     expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
 
-    // Advance timers
-    jest.advanceTimersByTime(1000);
+    await act(async () => {
+      jest.advanceTimersByTime(1000);
+    });
 
-    // Should show content
     await waitFor(() => {
       expect(screen.getByTestId('content')).toBeInTheDocument();
       expect(screen.getByText('Delayed Content')).toBeInTheDocument();
     });
+
+    jest.useRealTimers();
   });
 });

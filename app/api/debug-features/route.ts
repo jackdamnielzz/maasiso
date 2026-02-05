@@ -5,6 +5,21 @@ import { guardDebugEndpoint } from '@/lib/admin/apiAuth';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
+type FeatureGridComponent = {
+  id?: number | string;
+  __component?: string;
+  features?: unknown;
+  [key: string]: unknown;
+};
+
+type PageLayoutResponse = {
+  data?: Array<{
+    attributes?: {
+      layout?: unknown;
+    };
+  }>;
+};
+
 export async function GET(request: NextRequest) {
   const guard = guardDebugEndpoint(request);
   if (guard) return guard;
@@ -12,7 +27,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get direct access to Strapi
     const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-    const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+    const token = process.env.STRAPI_TOKEN;
 
     if (!strapiUrl || !token) {
       return NextResponse.json({
@@ -41,8 +56,8 @@ export async function GET(request: NextRequest) {
     });
     
     // Capture feature collection data
-    let featuresData = null;
-    let featuresError = null;
+    let featuresData: unknown = null;
+    let featuresError: string | null = null;
     
     if (featuresResponse.ok) {
       featuresData = await featuresResponse.json();
@@ -66,8 +81,8 @@ export async function GET(request: NextRequest) {
       cache: 'no-store',
     });
     
-    let pageData = null;
-    let pageError = null;
+    let pageData: PageLayoutResponse | null = null;
+    let pageError: string | null = null;
     
     if (pageResponse.ok) {
       pageData = await pageResponse.json();
@@ -80,20 +95,26 @@ export async function GET(request: NextRequest) {
     }
     
     // Analyze page structure
-    let layoutAnalysis = null;
-    let featureGridComponent = null;
+    let layoutAnalysis: {
+      hasLayout: boolean;
+      layoutCount: number;
+      componentTypes: string[];
+    } | null = null;
+    let featureGridComponent: FeatureGridComponent | null = null;
     
     if (pageData?.data?.[0]?.attributes?.layout) {
       const layout = pageData.data[0].attributes.layout;
       layoutAnalysis = {
         hasLayout: Array.isArray(layout),
-        layoutCount: layout.length,
-        componentTypes: Array.isArray(layout) ? layout.map((item: any) => item.__component) : []
+        layoutCount: Array.isArray(layout) ? layout.length : 0,
+        componentTypes: Array.isArray(layout)
+          ? layout.map((item: any) => String(item?.__component ?? 'unknown'))
+          : []
       };
       
       // Find feature grid component
       if (Array.isArray(layout)) {
-        for (let component of layout) {
+        for (const component of layout as FeatureGridComponent[]) {
           if (component.__component === 'page-blocks.feature-grid') {
             featureGridComponent = component;
             break;
@@ -114,8 +135,8 @@ export async function GET(request: NextRequest) {
       cache: 'no-store',
     });
     
-    let componentsData = null;
-    let componentsError = null;
+    let componentsData: unknown = null;
+    let componentsError: string | null = null;
     
     if (componentsResponse.ok) {
       componentsData = await componentsResponse.json();

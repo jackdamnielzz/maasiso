@@ -25,6 +25,9 @@ describe('API Client Circuit Breaker Integration', () => {
         circuitBreaker: {
           failureThreshold: 2,
           resetTimeout: 1000
+        },
+        retry: {
+          maxRetries: 1
         }
       };
 
@@ -99,6 +102,9 @@ describe('API Client Circuit Breaker Integration', () => {
         circuitBreaker: {
           failureThreshold: 2,
           resetTimeout: 1000
+        },
+        retry: {
+          maxRetries: 1
         }
       };
 

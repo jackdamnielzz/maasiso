@@ -9,8 +9,8 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 30 * 60 * 1000, // 30 minutes
-      retry: 1, // Only retry once
-      throwOnError: true,
+      retry: 0,
+      throwOnError: false,
     },
   },
 });

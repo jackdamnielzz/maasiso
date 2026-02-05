@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ApiClient, ApiError } from '../api/client';
 import { 
   MockFetchFn, 
@@ -17,6 +17,10 @@ describe('ApiClient', () => {
     fetchMock = createFetchMock();
     global.fetch = fetchMock;
     scenarios = createApiTestScenarios({ id: 'test-123' });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('Retry Logic', () => {
@@ -177,14 +181,12 @@ describe('ApiClient', () => {
       
       const data = { name: 'test' };
       await client.post('/test', data);
-      
-      expect(fetchMock.mock.calls[0][1]).toMatchObject({
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+
+      const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
+      const headers = new Headers(requestInit.headers);
+      expect(requestInit.method).toBe('POST');
+      expect(requestInit.body).toBe(JSON.stringify(data));
+      expect(headers.get('Content-Type')).toBe('application/json');
     });
 
     it('should send PUT request with data', async () => {
@@ -192,14 +194,12 @@ describe('ApiClient', () => {
       
       const data = { name: 'test' };
       await client.put('/test', data);
-      
-      expect(fetchMock.mock.calls[0][1]).toMatchObject({
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+
+      const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
+      const headers = new Headers(requestInit.headers);
+      expect(requestInit.method).toBe('PUT');
+      expect(requestInit.body).toBe(JSON.stringify(data));
+      expect(headers.get('Content-Type')).toBe('application/json');
     });
 
     it('should send DELETE request', async () => {
@@ -255,10 +255,11 @@ describe('ApiClient', () => {
       fetchMock.mockImplementationOnce(scenarios.timeout);
 
       const promise = client.get<unknown>('/test', { timeout: 1000 });
+      const timeoutCheck = expect(promise).rejects.toThrow('Request timeout');
       
       await vi.advanceTimersByTimeAsync(1500);
       
-      await expect(promise).rejects.toThrow('Request timeout');
+      await timeoutCheck;
       
       vi.useRealTimers();
     });
@@ -275,10 +276,9 @@ describe('ApiClient', () => {
         }
       });
 
-      expect(fetchMock.mock.calls[0][1].headers).toMatchObject({
-        'X-Custom-Header': 'test',
-        'Authorization': 'Bearer token'
-      });
+      const requestHeaders = new Headers((fetchMock.mock.calls[0][1] as RequestInit).headers);
+      expect(requestHeaders.get('X-Custom-Header')).toBe('test');
+      expect(requestHeaders.get('Authorization')).toBe('Bearer token');
     });
 
     it('should handle query parameters', async () => {
@@ -292,7 +292,8 @@ describe('ApiClient', () => {
         }
       });
 
-      expect(fetchMock.mock.calls[0][0]).toBe('/test?page=1&limit=10&filter=active');
+      const requestedUrl = String(fetchMock.mock.calls[0][0]);
+      expect(requestedUrl).toContain('/test?page=1&limit=10&filter=active');
     });
 
     it('should support response type configuration', async () => {

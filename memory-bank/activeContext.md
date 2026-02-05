@@ -235,7 +235,7 @@ Production environment for the Related Posts Manager is now fully configured:
 - **Environment Variables**:
   - `ADMIN_PASSWORD` - Authentication for the web tool
   - `DATABASE_URL` - PostgreSQL connection for direct database access
-- **Password**: Same as local `.env.local` (`MaasISO2024!Admin`)
+- **Password**: Same as local `.env.local` (`[REDACTED_PASSWORD]`)
 - **API Endpoint**: `https://maasiso.nl/api/admin-auth` ✅ Working
 - **Web Tool URL**: `https://maasiso.nl/admin/related-posts`
 

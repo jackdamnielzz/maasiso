@@ -10,7 +10,7 @@ This document outlines the deployment workflow for the Maasiso website using SFT
 ```bash
 # Connect to VPS with password
 ssh root@147.93.62.188
-# Password: Niekties@100
+# Password: [REDACTED_PASSWORD]
 
 # Generate SSH key on your local machine (if not exists)
 ssh-keygen -t ed25519 -f ~/.ssh/maasiso_vps

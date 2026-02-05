@@ -69,14 +69,12 @@ export default function Home() {
             >
               Plan een kennismaking
             </Link>
-            <a
-              href="https://iso-selector.maasiso.nl/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/iso-selector"
               className="primary-button bg-white text-[#091E42] hover:bg-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
             >
               Doe de ISO-Selector
-            </a>
+            </Link>
           </div>
         </div>
       </section>

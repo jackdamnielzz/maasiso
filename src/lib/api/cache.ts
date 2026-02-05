@@ -1,5 +1,3 @@
-import { clientEnv } from '../config/client-env';
-
 /**
  * Error thrown when cache operations fail
  */
@@ -106,11 +104,29 @@ export class ApiCache {
       if (!entry) return undefined;
 
       if (this.isExpired(entry)) {
-        this.cache.delete(cacheKey);
         return undefined;
       }
 
       return entry.data ?? undefined;
+    } catch (error) {
+      if (error instanceof CacheError) {
+        return undefined;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Get value from cache even when expired.
+   * Used for stale-while-revalidate flows.
+   */
+  getStale<T>(key: string | undefined | null): T | undefined {
+    try {
+      if (!isValidKey(key)) return undefined;
+
+      const cacheKey = this.createCacheKey(key);
+      const entry = this.cache.get(cacheKey) as CacheEntry<T> | undefined;
+      return entry?.data ?? undefined;
     } catch (error) {
       if (error instanceof CacheError) {
         return undefined;
@@ -225,16 +241,21 @@ export interface FetchOptions extends RequestInit {
   };
 }
 
+function getOptionalServerAuthHeaders(): Record<string, string> {
+  const token = process.env.STRAPI_TOKEN;
+  if (!token) return {};
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 // Fetch options for static content (rarely changes)
 export function getStaticFetchOptions(contentType: string): FetchOptions {
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-  if (!token) {
-    throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
-  }
   return {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      ...getOptionalServerAuthHeaders(),
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
@@ -253,7 +274,7 @@ export function getListFetchOptions(contentType: string): FetchOptions {
   return {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${clientEnv.strapiToken}`,
+      ...getOptionalServerAuthHeaders(),
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
@@ -269,14 +290,10 @@ export function getListFetchOptions(contentType: string): FetchOptions {
 
 // Fetch options for dynamic content (changes frequently)
 export function getDynamicFetchOptions(): FetchOptions {
-  const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
-  if (!token) {
-    throw new Error('NEXT_PUBLIC_STRAPI_TOKEN is not set');
-  }
   return {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      ...getOptionalServerAuthHeaders(),
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },

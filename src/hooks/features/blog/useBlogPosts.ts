@@ -15,7 +15,10 @@ async function fetchBlogPosts(params: BlogParams): Promise<BlogPost[]> {
   if (params.category) searchParams.set('category', params.category);
   if (params.tag) searchParams.set('tag', params.tag);
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts?${searchParams}`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts?${searchParams}`,
+    { method: 'GET' }
+  );
   if (!response.ok) {
     throw new Error('Failed to fetch blog posts');
   }
@@ -29,7 +32,7 @@ export function useBlogPosts(params: BlogParams = {}) {
     queryFn: () => fetchBlogPosts(params),
     staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Cache is kept for 30 minutes
-    throwOnError: true,
+    throwOnError: false,
   });
 }
 
@@ -37,7 +40,9 @@ export function useBlogPost(slug: string) {
   return useQuery({
     queryKey: ['blog', slug],
     queryFn: async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts/${slug}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog-posts/${slug}`, {
+        method: 'GET',
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch blog post');
       }
@@ -45,6 +50,6 @@ export function useBlogPost(slug: string) {
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
-    throwOnError: true,
+    throwOnError: false,
   });
 }

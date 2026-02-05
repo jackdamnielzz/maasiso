@@ -13,7 +13,7 @@ This document details the configuration changes made to set up the MaasISO websi
    NEXT_PUBLIC_API_URL=https://maasiso.nl
    NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
    NEXT_PUBLIC_SITE_URL=https://maasiso.nl
-   EMAIL_PASSWORD=Niekties@100
+   EMAIL_PASSWORD=[REDACTED_PASSWORD]
    ```
 
 2. Updated `.env`:

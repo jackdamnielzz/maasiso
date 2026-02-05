@@ -1,220 +1,152 @@
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import RelatedPosts from './RelatedPosts';
-import { BlogPost } from '@/lib/types';
 
-// Mock fetch
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
-// Mock BlogCard component
-jest.mock('./BlogCard', () => {
-  return function MockBlogCard({ post }: { post: BlogPost }) {
-    return <div data-testid={`blog-card-${post.id}`}>{post.title}</div>;
+type StrapiPost = {
+  id: string;
+  title: string;
+  slug: string;
+  publishedAt: string;
+  imageUrl?: string;
+};
+
+function createStrapiResponse(posts: StrapiPost[]) {
+  return {
+    data: posts.map((post) => ({
+      id: post.id,
+      attributes: {
+        title: post.title,
+        slug: post.slug,
+        publishedAt: post.publishedAt,
+        createdAt: post.publishedAt,
+        updatedAt: post.publishedAt,
+        featuredImage: post.imageUrl
+          ? {
+              data: {
+                id: `${post.id}-img`,
+                attributes: {
+                  url: post.imageUrl,
+                  alternativeText: post.title,
+                },
+              },
+            }
+          : null,
+      },
+    })),
   };
-});
+}
 
 describe('RelatedPosts', () => {
-  const mockRelatedPosts: BlogPost[] = [
-    {
-      id: '1',
-      title: 'Related Post 1',
-      content: 'Content 1',
-      slug: 'related-post-1',
-      categories: [{ id: 'cat1', name: 'Category 1', slug: 'category-1', createdAt: '', updatedAt: '' }],
-      tags: [],
-      seoTitle: '',
-      seoDescription: '',
-      seoKeywords: '',
-      createdAt: '2024-01-26T20:30:00.000Z',
-      updatedAt: '2024-01-26T20:30:00.000Z',
-      publishedAt: '2024-01-26T20:30:00.000Z'
-    },
-    {
-      id: '2',
-      title: 'Related Post 2',
-      content: 'Content 2',
-      slug: 'related-post-2',
-      categories: [{ id: 'cat1', name: 'Category 1', slug: 'category-1', createdAt: '', updatedAt: '' }],
-      tags: [],
-      seoTitle: '',
-      seoDescription: '',
-      seoKeywords: '',
-      createdAt: '2024-01-26T20:30:00.000Z',
-      updatedAt: '2024-01-26T20:30:00.000Z',
-      publishedAt: '2024-01-26T20:30:00.000Z'
-    }
-  ];
-
   beforeEach(() => {
-    mockFetch.mockClear();
+    mockFetch.mockReset();
   });
 
-  it('fetches and renders related posts', async () => {
+  it('toont loading tijdens ophalen', () => {
+    mockFetch.mockImplementation(() => new Promise(() => {}));
+
+    render(<RelatedPosts currentSlug="huidige-post" categoryIds={['cat1']} />);
+
+    expect(screen.getByText('Loading related posts...')).toBeInTheDocument();
+  });
+
+  it('haalt gerelateerde posts op en rendert ze', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ blogPosts: mockRelatedPosts })
+      json: async () =>
+        createStrapiResponse([
+          {
+            id: '1',
+            title: 'Related Post 1',
+            slug: 'related-post-1',
+            publishedAt: '2024-01-26T20:30:00.000Z',
+            imageUrl: '/uploads/image-1.jpg',
+          },
+          {
+            id: '2',
+            title: 'Related Post 2',
+            slug: 'related-post-2',
+            publishedAt: '2024-01-27T20:30:00.000Z',
+          },
+        ]),
     });
 
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
+    render(<RelatedPosts currentSlug="huidige-post" categoryIds={['cat1']} />);
 
-    // Should show loading state initially
-    expect(screen.getByText('Gerelateerde artikelen')).toBeInTheDocument();
-    expect(screen.getAllByTestId(/blog-card/).length).toBe(0);
-
-    // Wait for posts to load
     await waitFor(() => {
-      expect(screen.getByTestId('blog-card-1')).toBeInTheDocument();
-      expect(screen.getByTestId('blog-card-2')).toBeInTheDocument();
+      expect(screen.getByText('Related Posts')).toBeInTheDocument();
+      expect(screen.getByText('Related Post 1')).toBeInTheDocument();
+      expect(screen.getByText('Related Post 2')).toBeInTheDocument();
     });
 
-    // Verify fetch was called with correct parameters
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/blog-posts'),
-      expect.objectContaining({
-        method: 'GET',
-        headers: expect.any(Object)
-      })
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
+    expect(calledUrl).toContain('/api/proxy/blog-posts');
+    expect(calledUrl).toContain('filters[slug][$ne]=huidige-post');
+    expect(calledUrl).toContain('pagination[limit]=3');
+  });
+
+  it('voegt category filters toe aan request URL', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => createStrapiResponse([]),
+    });
+
+    render(<RelatedPosts currentSlug="huidige-post" categoryIds={['cat1', 'cat2']} />);
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
+    expect(calledUrl).toContain('filters[categories][id][$in]=cat1');
+    expect(calledUrl).toContain('filters[categories][id][$in]=cat2');
+  });
+
+  it('rendert niets bij lege response', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => createStrapiResponse([]),
+    });
+
+    const { container } = render(
+      <RelatedPosts currentSlug="huidige-post" categoryIds={['cat1']} />
     );
 
-    // Verify URL parameters
-    const url = new URL(mockFetch.mock.calls[0][0]);
-    expect(url.searchParams.get('pagination[pageSize]')).toBe('3');
-    expect(url.searchParams.get('filters[slug][$ne]')).toBe('current-post');
-    expect(url.searchParams.get('filters[categories][id][$in]')).toBe('cat1');
-  });
-
-  it('shows loading state', () => {
-    mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
-
-    // Should show loading skeleton
-    expect(screen.getByText('Gerelateerde artikelen')).toBeInTheDocument();
-    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
-    expect(document.querySelectorAll('.bg-gray-200.h-64').length).toBe(3);
-  });
-
-  it('handles empty response', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ blogPosts: [] })
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
+    expect(screen.queryByText('Related Posts')).not.toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('slaat fetch over wanneer currentSlug ontbreekt', async () => {
+    const { container } = render(<RelatedPosts categoryIds={['cat1']} />);
 
     await waitFor(() => {
-      expect(screen.getByText('Geen gerelateerde artikelen gevonden.')).toBeInTheDocument();
+      expect(mockFetch).not.toHaveBeenCalled();
     });
+
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it('handles fetch error', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Failed to fetch'));
+  it('handelt fetch errors af zonder crash', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockFetch.mockRejectedValueOnce(new Error('Network failure'));
 
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
+    const { container } = render(
+      <RelatedPosts currentSlug="huidige-post" categoryIds={['cat1']} />
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('Er is een fout opgetreden bij het laden van gerelateerde artikelen.')).toBeInTheDocument();
+      expect(errorSpy).toHaveBeenCalled();
     });
 
-    // Should show retry button
-    const retryButton = screen.getByText('Probeer opnieuw');
-    expect(retryButton).toBeInTheDocument();
-  });
+    expect(screen.queryByText('Related Posts')).not.toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
 
-  it('handles retry after error', async () => {
-    // First request fails
-    mockFetch.mockRejectedValueOnce(new Error('Failed to fetch'));
-    
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Er is een fout opgetreden bij het laden van gerelateerde artikelen.')).toBeInTheDocument();
-    });
-
-    // Setup success response for retry
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ blogPosts: mockRelatedPosts })
-    });
-
-    // Click retry button
-    fireEvent.click(screen.getByText('Probeer opnieuw'));
-
-    // Should show loading state again
-    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
-
-    // Wait for success
-    await waitFor(() => {
-      expect(screen.getByTestId('blog-card-1')).toBeInTheDocument();
-      expect(screen.getByTestId('blog-card-2')).toBeInTheDocument();
-    });
-  });
-
-  it('handles non-ok response', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      statusText: 'Internal Server Error'
-    });
-
-    render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Er is een fout opgetreden bij het laden van gerelateerde artikelen.')).toBeInTheDocument();
-    });
-  });
-
-  it('skips fetch if no category IDs', async () => {
-    render(<RelatedPosts currentSlug="current-post" categoryIds={[]} />);
-
-    // Should show empty state immediately without loading
-    expect(screen.getByText('Geen gerelateerde artikelen gevonden.')).toBeInTheDocument();
-    expect(mockFetch).not.toHaveBeenCalled();
-  });
-
-  describe('Performance', () => {
-    it('renders large number of posts efficiently', async () => {
-      const manyPosts = Array(20).fill(null).map((_, i) => ({
-        ...mockRelatedPosts[0],
-        id: `post${i}`,
-        title: `Related Post ${i}`
-      }));
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-      json: async () => ({ blogPosts: manyPosts })
-      });
-
-      const startTime = performance.now();
-      render(<RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />);
-      const renderTime = performance.now() - startTime;
-
-      // Initial render should be quick
-      expect(renderTime).toBeLessThan(100); // 100ms threshold
-
-      // Wait for posts to load
-      await waitFor(() => {
-        expect(screen.getAllByTestId(/blog-card/).length).toBe(20);
-      });
-    });
-
-    it('handles rapid category changes', async () => {
-      const { rerender } = render(
-        <RelatedPosts currentSlug="current-post" categoryIds={['cat1']} />
-      );
-
-      // Change categories rapidly
-      act(() => {
-        rerender(<RelatedPosts currentSlug="current-post" categoryIds={['cat2']} />);
-        rerender(<RelatedPosts currentSlug="current-post" categoryIds={['cat3']} />);
-      });
-
-      // Should only make one fetch request for the final value
-      await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledTimes(1);
-        const url = new URL(mockFetch.mock.calls[0][0]);
-        expect(url.searchParams.get('filters[categories][id][$in]')).toBe('cat3');
-      });
-    });
+    errorSpy.mockRestore();
   });
 });

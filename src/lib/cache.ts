@@ -6,13 +6,22 @@
 /**
  * Get fetch options for content types - always uses no-store to ensure fresh content
  */
+function getServerAuthHeaders(): Record<string, string> {
+  const token = process.env.STRAPI_TOKEN;
+  if (!token) return {};
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 export function getContentFetchOptions(
   options: { priority?: 'high' | 'medium' | 'low' } = {}
 ) {
   return {
     cache: 'no-store' as const,
     headers: {
-      'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      ...getServerAuthHeaders(),
       'Cache-Control': 'no-store, must-revalidate',
     },
   };
@@ -27,7 +36,7 @@ export function getAssetFetchOptions(
   return {
     cache: 'no-store' as const,
     headers: {
-      'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      ...getServerAuthHeaders(),
       'Cache-Control': 'no-store, must-revalidate',
     },
   };
@@ -40,7 +49,7 @@ export function getDynamicFetchOptions() {
   return {
     cache: 'no-store' as const,
     headers: {
-      'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_TOKEN}`,
+      ...getServerAuthHeaders(),
       'Cache-Control': 'no-store, must-revalidate',
     },
   };

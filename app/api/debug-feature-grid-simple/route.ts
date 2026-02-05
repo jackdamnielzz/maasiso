@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-    const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
+    const token = process.env.STRAPI_TOKEN;
 
     if (!strapiUrl || !token) {
       return NextResponse.json({

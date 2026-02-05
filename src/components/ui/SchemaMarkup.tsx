@@ -66,7 +66,7 @@ type SchemaMarkupProps = {
  * It supports Service, FAQ, HowTo, Article, and Breadcrumb schemas
  */
 const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, article, breadcrumbs }) => {
-  const schemas = [];
+  const schemas: Array<Record<string, unknown>> = [];
 
   // Add Service schema if provided
   if (service) {

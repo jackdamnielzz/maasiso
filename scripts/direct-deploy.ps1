@@ -60,6 +60,10 @@ function Stop-NodeProcesses {
 
 try {
     $startTime = Get-Date
+
+    if (-not $env:STRAPI_TOKEN) {
+        throw "Missing STRAPI_TOKEN in local environment. Set it before deployment."
+    }
     
     # 0. Check Node.js version on server
     Write-Step "Checking Server Environment"
@@ -91,7 +95,7 @@ npm install -g npm@latest
 NEXT_PUBLIC_API_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_SITE_URL=https://maasiso.nl
-NEXT_PUBLIC_STRAPI_TOKEN=3c4ac08a200558b9283d56e31422487e9aebf3435a61b247b25c380b9950ea723ac2564b294f02491f28d184fc45d7fefe5d51db43e9fd0fcd81a3343c3cdc690311b89a418a177149b14347a5ebf749dd78c801aa7310bf2731c1233e9f2438bf113c2b020585bf0dcd76ea61f80ceee59cb1c5aabb23402440c30aa163c7cb
+STRAPI_TOKEN=$env:STRAPI_TOKEN
 NEXT_PUBLIC_BUILD_NUMBER=$buildNumber
 "@
     Set-Content -Path (Join-Path $tempDir ".env.production") -Value $envContent -NoNewline -Encoding UTF8
@@ -181,7 +185,7 @@ NODE_ENV=production
 NEXT_PUBLIC_API_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_SITE_URL=https://maasiso.nl
-NEXT_PUBLIC_STRAPI_TOKEN=3c4ac08a200558b9283d56e31422487e9aebf3435a61b247b25c380b9950ea723ac2564b294f02491f28d184fc45d7fefe5d51db43e9fd0fcd81a3343c3cdc690311b89a418a177149b14347a5ebf749dd78c801aa7310bf2731c1233e9f2438bf113c2b020585bf0dcd76ea61f80ceee59cb1c5aabb23402440c30aa163c7cb
+STRAPI_TOKEN=\${STRAPI_TOKEN:-__SET_ON_SERVER__}
 NEXT_PUBLIC_BUILD_NUMBER='$buildNumber'
 EOL
 

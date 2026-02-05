@@ -125,8 +125,9 @@ describe('Card', () => {
     // Simulate keyboard navigation
     fireEvent.keyDown(document, { key: 'Tab' });
     card.focus();
-    
-    expect(card).toHaveClass('focus:ring-2');
+
+    expect(card).toHaveClass('cursor-pointer');
+    expect(card).toHaveAttribute('tabIndex', '0');
   });
 
   it('renders different variants', () => {

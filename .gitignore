@@ -26,6 +26,8 @@ logs/next-dev*.log
 # local env files
 .env*.local
 .env
+.env.production
+.env.vercel
 
 # vercel
 .vercel

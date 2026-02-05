@@ -14,7 +14,7 @@ This guide explains how to deploy and maintain the frontend application on VPS2,
    # Generate SSH key
    ssh-keygen -t ed25519 -f ~/.ssh/maasiso_vps
    
-   # Add key to VPS2 (Password: Niekties@100)
+   # Add key to VPS2 (Password: [REDACTED_PASSWORD])
    ssh root@147.93.62.188
    # Then manually add the public key content to ~/.ssh/authorized_keys
    ```

@@ -10,7 +10,12 @@ import {
 } from '../types';
 
 describe('PerformanceMonitor', () => {
+  let originalDebug: string | undefined;
+
   beforeEach(() => {
+    originalDebug = process.env.DEBUG;
+    process.env.DEBUG = 'true';
+
     // Mock fetch
     global.fetch = vi.fn().mockImplementation(() =>
       Promise.resolve({ ok: true })
@@ -22,9 +27,18 @@ describe('PerformanceMonitor', () => {
 
     // Reset timers
     vi.useFakeTimers();
+
+    performanceLog.cleanup();
   });
 
   afterEach(() => {
+    performanceLog.cleanup();
+    if (originalDebug === undefined) {
+      delete process.env.DEBUG;
+    } else {
+      process.env.DEBUG = originalDebug;
+    }
+
     vi.restoreAllMocks();
     vi.useRealTimers();
   });
@@ -158,9 +172,8 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should handle failed requests by keeping metrics in buffer', async () => {
-      global.fetch = vi.fn().mockImplementation(() => 
-        Promise.resolve({ ok: false })
-      );
+      const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 500 });
+      global.fetch = fetchMock as unknown as typeof fetch;
 
       performanceLog.trackEvent(MonitoringEventTypes.BATCH_PROCESSING, {
         duration: 100,
@@ -169,15 +182,17 @@ describe('PerformanceMonitor', () => {
         queue_size: 10
       });
 
+      const firstFlushPromise = performanceLog.flushMetrics();
+      await vi.runAllTimersAsync();
+      await firstFlushPromise;
+
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+
+      // Should try to send again on next flush after previous retries failed
+      fetchMock.mockResolvedValue({ ok: true });
       await performanceLog.flushMetrics();
 
-      // Should try to send again on next flush
-      global.fetch = vi.fn().mockImplementation(() => 
-        Promise.resolve({ ok: true })
-      );
-      await performanceLog.flushMetrics();
-
-      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(4);
     });
 
     it('should flush metrics when buffer size is reached', async () => {

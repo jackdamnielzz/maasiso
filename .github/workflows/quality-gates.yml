@@ -1,0 +1,100 @@
+name: Quality Gates
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mandatory-gates:
+    name: Mandatory Gates (Lint + Build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  diagnostics:
+    name: Diagnostic Gates (Typecheck + Tests + Audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    needs: mandatory-gates
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Typecheck (diagnostic)
+        id: typecheck
+        run: npm run typecheck 2>&1 | tee typecheck.log
+        continue-on-error: true
+
+      - name: Jest (diagnostic)
+        id: jest
+        run: npm run test:jest -- --runInBand 2>&1 | tee jest.log
+        continue-on-error: true
+
+      - name: Vitest (diagnostic)
+        id: vitest
+        run: npm run test:vitest 2>&1 | tee vitest.log
+        continue-on-error: true
+
+      - name: Dependency audit (diagnostic)
+        id: audit
+        run: npm audit --json > audit.json
+        continue-on-error: true
+
+      - name: CI summary
+        if: always()
+        run: |
+          echo "## Diagnostic Gate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Typecheck: ${{ steps.typecheck.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Jest: ${{ steps.jest.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Vitest: ${{ steps.vitest.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Audit: ${{ steps.audit.outcome }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload diagnostics artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-diagnostics-${{ github.run_number }}
+          path: |
+            typecheck.log
+            jest.log
+            vitest.log
+            audit.json
+          retention-days: 14

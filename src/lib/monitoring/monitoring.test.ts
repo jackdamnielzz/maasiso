@@ -1,171 +1,87 @@
 import { initPerformanceMonitoring } from './performance';
 import { errorMonitor } from './error';
 
-// Mock PerformanceObserver
-class MockPerformanceObserver implements PerformanceObserver {
-  private callback: PerformanceObserverCallback;
-  static readonly supportedEntryTypes = [
-    'paint',
-    'largest-contentful-paint',
-    'first-input',
-    'layout-shift',
-    'navigation',
-  ];
-
-  constructor(callback: PerformanceObserverCallback) {
-    this.callback = callback;
-  }
-
-  observe = jest.fn();
-  disconnect = jest.fn();
-  takeRecords = jest.fn().mockReturnValue([]);
-}
-
-// @ts-ignore - Override PerformanceObserver for testing
-global.PerformanceObserver = MockPerformanceObserver;
-
-// Spy on observer methods
-const observeSpy = jest.spyOn(MockPerformanceObserver.prototype, 'observe');
-const disconnectSpy = jest.spyOn(MockPerformanceObserver.prototype, 'disconnect');
-
-// Mock console methods
-const originalConsoleError = console.error;
-const mockConsoleError = jest.fn();
-
 describe('Monitoring System', () => {
-  beforeAll(() => {
-    console.error = mockConsoleError;
-  });
-
-  afterAll(() => {
-    console.error = originalConsoleError;
-  });
+  const originalPerformanceObserver = global.PerformanceObserver;
+  const originalNodeEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
-    observeSpy.mockClear();
-    disconnectSpy.mockClear();
-    mockConsoleError.mockClear();
     jest.clearAllMocks();
+    process.env.NODE_ENV = 'development';
   });
 
-  describe('Performance Monitoring', () => {
-    it('initializes performance observer with correct entry types', () => {
-      initPerformanceMonitoring();
+  afterEach(() => {
+    process.env.NODE_ENV = originalNodeEnv;
+    global.PerformanceObserver = originalPerformanceObserver;
+  });
 
-      expect(observeSpy).toHaveBeenCalledWith({
-        entryTypes: [
-          'paint',
-          'largest-contentful-paint',
-          'first-input',
-          'layout-shift',
-          'navigation',
-        ],
-      });
-    });
+  it('initializes performance observer with expected entry types', () => {
+    const observe = jest.fn();
+    const disconnect = jest.fn();
 
-    it('handles different performance entry types', () => {
-      let observerCallback: PerformanceObserverCallback;
-      let observer: MockPerformanceObserver;
+    class MockPO {
+      static supportedEntryTypes = [
+        'paint',
+        'largest-contentful-paint',
+        'first-input',
+        'layout-shift',
+        'navigation',
+      ];
 
-      // @ts-ignore - Override constructor to capture callback
-      MockPerformanceObserver.prototype.constructor = function(callback: PerformanceObserverCallback) {
-        observerCallback = callback;
-        observer = this;
-        return this;
-      };
+      constructor(_callback: PerformanceObserverCallback) {}
+      observe = observe;
+      disconnect = disconnect;
+      takeRecords = () => [];
+    }
 
-      initPerformanceMonitoring();
+    // @ts-expect-error test override
+    global.PerformanceObserver = MockPO;
 
-      const mockEntryList = {
-        getEntries: () => [{
-          entryType: 'paint',
-          name: 'first-contentful-paint',
-          startTime: 1000,
-        }] as PerformanceEntryList,
-      } as PerformanceObserverEntryList;
+    initPerformanceMonitoring();
 
-      // Test FCP entry
-      observerCallback!(mockEntryList, observer!);
-
-      const mockLCPEntryList = {
-        getEntries: () => [{
-          entryType: 'largest-contentful-paint',
-          startTime: 2000,
-        }] as PerformanceEntryList,
-      } as PerformanceObserverEntryList;
-
-      // Test LCP entry
-      observerCallback!(mockLCPEntryList, observer!);
-
-      // Verify metrics were logged
-      expect(mockConsoleError).toHaveBeenCalled();
+    expect(observe).toHaveBeenCalledWith({
+      entryTypes: [
+        'paint',
+        'largest-contentful-paint',
+        'first-input',
+        'layout-shift',
+        'navigation',
+      ],
     });
   });
 
-  describe('Error Monitoring', () => {
-    it('initializes error monitoring', () => {
-      errorMonitor.init();
-      expect(errorMonitor['isInitialized']).toBe(true);
-    });
+  it('initializes error monitor once', () => {
+    errorMonitor.init();
+    errorMonitor.init();
+    expect((errorMonitor as any).isInitialized).toBe(true);
+  });
 
-    it('logs JavaScript errors', () => {
-      errorMonitor.init();
+  it('logs component errors through logError', () => {
+    const spy = jest.spyOn(errorMonitor as any, 'logError').mockImplementation(() => {});
 
-      const errorEvent = new ErrorEvent('error', {
-        error: new Error('Test error'),
-        message: 'Test error',
-        filename: 'test.js',
-        lineno: 1,
-        colno: 1,
-      });
+    errorMonitor.logComponentError(new Error('Component error'), 'Component stack');
 
-      window.dispatchEvent(errorEvent);
-      expect(mockConsoleError).toHaveBeenCalled();
-    });
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Component error',
+        source: 'react',
+        type: 'error',
+      })
+    );
+  });
 
-    it('logs unhandled promise rejections', () => {
-      errorMonitor.init();
+  it('logs warnings through logError', () => {
+    const spy = jest.spyOn(errorMonitor as any, 'logError').mockImplementation(() => {});
 
-      const promiseRejectionEvent = new PromiseRejectionEvent('unhandledrejection', {
-        promise: Promise.reject(new Error('Promise rejection')),
-        reason: new Error('Promise rejection'),
-      });
+    errorMonitor.logWarning('Warning message', { source: 'test' });
 
-      window.dispatchEvent(promiseRejectionEvent);
-      expect(mockConsoleError).toHaveBeenCalled();
-    });
-
-    it('logs component errors', () => {
-      const error = new Error('Component error');
-      const componentStack = 'Component stack trace';
-
-      errorMonitor.logComponentError(error, componentStack);
-      expect(mockConsoleError).toHaveBeenCalled();
-    });
-
-    it('logs warnings', () => {
-      const warning = 'Warning message';
-      const metadata = { source: 'test' };
-
-      errorMonitor.logWarning(warning, metadata);
-      expect(mockConsoleError).toHaveBeenCalled();
-    });
-
-    it('handles network errors', async () => {
-      errorMonitor.init();
-
-      const originalFetch = window.fetch;
-      const mockFetchResponse = { ok: false, status: 500, statusText: 'Server Error' };
-      window.fetch = jest.fn().mockResolvedValue(mockFetchResponse);
-
-      try {
-        await fetch('https://example.com/api');
-      } catch (error) {
-        // Ignore error
-      }
-
-      expect(mockConsoleError).toHaveBeenCalled();
-      window.fetch = originalFetch;
-    });
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Warning message',
+        source: 'other',
+        type: 'warning',
+        metadata: { source: 'test' },
+      })
+    );
   });
 });
