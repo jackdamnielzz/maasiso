@@ -1,137 +1,115 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Route segment config
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Cache duration (1 year in seconds)
-const CACHE_MAX_AGE = 31536000;
+const CACHE_MAX_AGE = 31_536_000;
+const MAX_PATH_LENGTH = 512;
+const SAFE_PATH_PATTERN = /^[A-Za-z0-9/_\-.]+$/;
+const MEDIA_EXTENSION_PATTERN = /\.(avif|bmp|gif|ico|jpe?g|pdf|png|svg|webm|webp)$/i;
 
-// Common MIME types for images
-const IMAGE_MIME_TYPES = {
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  gif: 'image/gif',
-  webp: 'image/webp',
-  svg: 'image/svg+xml',
-  ico: 'image/x-icon'
-};
-
-// Enhanced error logging utility
-function logError(context: string, error: any, details?: any) {
-  console.error(`[Media Asset Proxy Error][${new Date().toISOString()}] ${context}:`, {
-    message: error.message || error,
-    stack: error.stack,
-    details,
-    timestamp: new Date().toISOString()
-  });
-}
-
-// Request logging utility
-function logRequest(method: string, url: string, path: string) {
-  console.log(`[Media Asset Proxy Request][${new Date().toISOString()}]`, {
-    url,
-    method,
-    path,
-    timestamp: new Date().toISOString()
-  });
-}
-
-// Get MIME type from file extension
-function getMimeType(path: string): string {
-  const extension = path.split('.').pop()?.toLowerCase();
-  return extension ? IMAGE_MIME_TYPES[extension as keyof typeof IMAGE_MIME_TYPES] || 'application/octet-stream' : 'application/octet-stream';
-}
-
-// Route segment type
 type RouteSegment = {
   path: string[];
 };
 
-// Custom error type
-interface MediaFetchError extends Error {
-  message: string;
+function sanitizeMediaPath(pathSegments: string[]): string | null {
+  if (pathSegments.length === 0) {
+    return null;
+  }
+
+  const rawPath = pathSegments.join('/');
+  const normalizedPath = rawPath
+    .replace(/^\/+/, '')
+    .replace(/\/{2,}/g, '/')
+    .replace(/^api\//, '');
+
+  if (!normalizedPath || normalizedPath.length > MAX_PATH_LENGTH) {
+    return null;
+  }
+
+  if (
+    normalizedPath.includes('..') ||
+    normalizedPath.includes('\\') ||
+    normalizedPath.includes('?') ||
+    normalizedPath.includes('#') ||
+    !SAFE_PATH_PATTERN.test(normalizedPath) ||
+    !MEDIA_EXTENSION_PATTERN.test(normalizedPath)
+  ) {
+    return null;
+  }
+
+  return normalizedPath;
 }
 
-// Route handler
+function buildUpstreamUrl(strapiUrl: string, mediaPath: string): string {
+  const baseUrl = strapiUrl.replace(/\/+$/, '');
+  if (mediaPath.startsWith('uploads/')) {
+    return `${baseUrl}/${mediaPath}`;
+  }
+
+  return `${baseUrl}/uploads/${mediaPath}`;
+}
+
+function copyHeaderIfPresent(target: Headers, source: Headers, headerName: string): void {
+  const value = source.get(headerName);
+  if (value) {
+    target.set(headerName, value);
+  }
+}
+
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   context: { params: Promise<RouteSegment> }
 ): Promise<Response> {
+  const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+  if (!strapiUrl) {
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
+  const params = await context.params;
+  const mediaPath = sanitizeMediaPath(params.path);
+  if (!mediaPath) {
+    return NextResponse.json({ error: 'Invalid media path' }, { status: 400 });
+  }
+
+  const upstreamUrl = buildUpstreamUrl(strapiUrl, mediaPath);
+
   try {
-    const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (!strapiUrl) {
-      logError('Configuration', 'Strapi URL not configured');
-      return new Response(null, { status: 500 });
-    }
+    const upstreamResponse = await fetch(upstreamUrl, {
+      method: 'GET',
+      headers: {
+        Accept: '*/*',
+      },
+      next: {
+        revalidate: CACHE_MAX_AGE,
+      },
+    });
 
-    console.log('[Media Asset Debug] context.params before await:', context.params);
-    const params = await context.params;
-    console.log('[Media Asset Debug] context.params after await:', params);
-    const path = params.path.join('/');
-    console.log('[Media Asset Debug] Extracted path:', path);
-    
-    // Clean up any api prefix but maintain the full path structure
-    const cleanPath = path.replace(/^api\//, '');
-    console.log('[Media Asset Debug] cleanPath:', cleanPath);
-    const url = `${strapiUrl}/${cleanPath}`;
-    logRequest(request.method, url, path);
-    console.log('[Media Asset Debug] Final URL:', url);
-
-    // Log the full URL for debugging
-    console.log(`[Media Asset Debug] Requesting URL: ${url}`);
-
-    try {
-      // Fetch the image with proper headers
-      const response = await fetch(url, {
-        method: request.method,
-        headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        },
-        next: {
-          revalidate: CACHE_MAX_AGE
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch media: ${response.status} ${response.statusText}`);
+    if (!upstreamResponse.ok) {
+      if (upstreamResponse.status === 404) {
+        return NextResponse.json({ error: 'Media not found' }, { status: 404 });
       }
 
-      // Get the content type, preferring the actual file extension if available
-      const contentType = getMimeType(path) || response.headers.get('content-type') || 'application/octet-stream';
-      const contentLength = response.headers.get('content-length');
-      const etag = response.headers.get('etag');
-      const lastModified = response.headers.get('last-modified');
-
-      // Create a new response with the streamed body and enhanced headers
-      return new NextResponse(response.body, {
-        status: 200,
-        headers: {
-          'Content-Type': contentType,
-          'Cache-Control': `public, max-age=${CACHE_MAX_AGE}, immutable`,
-          'Accept-Ranges': 'bytes',
-          'X-Content-Type-Options': 'nosniff',
-          'Access-Control-Allow-Origin': '*',
-          ...(contentLength && { 'Content-Length': contentLength }),
-          ...(etag && { 'ETag': etag }),
-          ...(lastModified && { 'Last-Modified': lastModified })
-        }
-      });
-    } catch (error) {
-      const mediaError = error as MediaFetchError;
-      logError('Media Fetch Error', mediaError);
-      return NextResponse.json(
-        { error: 'Failed to fetch media asset' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Upstream media request failed' }, { status: 502 });
     }
+
+    const responseHeaders = new Headers({
+      'Content-Type': upstreamResponse.headers.get('content-type') || 'application/octet-stream',
+      'Cache-Control': `public, max-age=${CACHE_MAX_AGE}, immutable`,
+      'X-Content-Type-Options': 'nosniff',
+    });
+
+    copyHeaderIfPresent(responseHeaders, upstreamResponse.headers, 'content-length');
+    copyHeaderIfPresent(responseHeaders, upstreamResponse.headers, 'etag');
+    copyHeaderIfPresent(responseHeaders, upstreamResponse.headers, 'last-modified');
+    copyHeaderIfPresent(responseHeaders, upstreamResponse.headers, 'accept-ranges');
+
+    return new NextResponse(upstreamResponse.body, {
+      status: 200,
+      headers: responseHeaders,
+    });
   } catch (error) {
-    const serverError = error as Error;
-    logError('Unhandled Error', serverError);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('[Media Asset Proxy] Unexpected error', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

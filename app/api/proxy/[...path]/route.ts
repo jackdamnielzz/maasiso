@@ -32,6 +32,11 @@ const ALLOWED_QUERY_PREFIXES = new Set([
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = Number(process.env.PROXY_RATE_LIMIT_MAX || 120);
+const RATE_LIMIT_MAX_TRACKED_KEYS = Number(process.env.PROXY_RATE_LIMIT_MAX_KEYS || 5000);
+const MAX_QUERY_LENGTH = Number(process.env.PROXY_MAX_QUERY_LENGTH || 2048);
+const MAX_PATH_DEPTH = Number(process.env.PROXY_MAX_PATH_DEPTH || 6);
+const MAX_PATH_SEGMENT_LENGTH = Number(process.env.PROXY_MAX_SEGMENT_LENGTH || 64);
+const SAFE_PATH_SEGMENT_PATTERN = /^[A-Za-z0-9_-]+$/;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 function getClientIp(request: NextRequest): string {
@@ -45,6 +50,7 @@ function getClientIp(request: NextRequest): string {
 
 function enforceRateLimit(key: string): boolean {
   const now = Date.now();
+  cleanupRateLimitStore(now);
   const current = rateLimitStore.get(key);
 
   if (!current || current.resetAt <= now) {
@@ -61,6 +67,32 @@ function enforceRateLimit(key: string): boolean {
   return true;
 }
 
+function cleanupRateLimitStore(now: number): void {
+  if (rateLimitStore.size < RATE_LIMIT_MAX_TRACKED_KEYS) {
+    return;
+  }
+
+  for (const [entryKey, entry] of rateLimitStore.entries()) {
+    if (entry.resetAt <= now) {
+      rateLimitStore.delete(entryKey);
+    }
+  }
+
+  if (rateLimitStore.size <= RATE_LIMIT_MAX_TRACKED_KEYS) {
+    return;
+  }
+
+  const overflow = rateLimitStore.size - RATE_LIMIT_MAX_TRACKED_KEYS;
+  let removed = 0;
+  for (const entryKey of rateLimitStore.keys()) {
+    rateLimitStore.delete(entryKey);
+    removed += 1;
+    if (removed >= overflow) {
+      break;
+    }
+  }
+}
+
 function isAllowedQuery(searchParams: URLSearchParams): boolean {
   for (const key of searchParams.keys()) {
     const prefix = key.split('[')[0];
@@ -73,9 +105,18 @@ function isAllowedQuery(searchParams: URLSearchParams): boolean {
 }
 
 function sanitizePath(pathSegments: string[]): string | null {
-  if (pathSegments.length === 0) return null;
+  if (pathSegments.length === 0 || pathSegments.length > MAX_PATH_DEPTH) return null;
 
-  if (pathSegments.some((segment) => segment.includes('..') || segment.includes('\\'))) {
+  if (
+    pathSegments.some(
+      (segment) =>
+        segment.length === 0 ||
+        segment.length > MAX_PATH_SEGMENT_LENGTH ||
+        segment.includes('..') ||
+        segment.includes('\\') ||
+        !SAFE_PATH_SEGMENT_PATTERN.test(segment)
+    )
+  ) {
     return null;
   }
 
@@ -139,6 +180,10 @@ export async function GET(
 
   if (!isAllowedQuery(request.nextUrl.searchParams)) {
     return NextResponse.json({ error: 'Unsupported query parameter' }, { status: 400 });
+  }
+
+  if (request.nextUrl.search.length > MAX_QUERY_LENGTH) {
+    return NextResponse.json({ error: 'Query string too long' }, { status: 400 });
   }
 
   const targetUrl = `${strapiUrl}/api/${sanitizedPath}${request.nextUrl.search ? request.nextUrl.search : ''}`;
