@@ -53,59 +53,59 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
           {/* Main Navigation */}
           <div className="hidden md:flex items-center gap-3">
-            <div className="flex items-center rounded-md border border-white/12 bg-white/[0.02] divide-x divide-white/15 overflow-hidden">
+            <div className="flex items-center">
               <Link
                 href="/iso-certificering"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 ISO-certificering
               </Link>
               <Link
                 href="/informatiebeveiliging"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 Informatiebeveiliging
               </Link>
               <Link
                 href="/avg-wetgeving"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 AVG & Wetgeving
               </Link>
               <Link
                 href="/kennis"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname?.startsWith('/kennis') ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 Kennis
               </Link>
               <Link
                 href="/waarom-maasiso"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname === '/waarom-maasiso' ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 Waarom MaasISO
               </Link>
               <Link
                 href="/over-ons"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname === '/over-ons' ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname === '/over-ons' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 Over ons
               </Link>
               <Link
                 href="/contact"
-                className={`text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] hover:bg-white/[0.06] ${
-                  pathname === '/contact' ? 'text-[#FF8B00] bg-white/[0.08]' : 'text-white'
+                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                  pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
               >
                 Contact
