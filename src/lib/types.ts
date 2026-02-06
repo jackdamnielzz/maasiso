@@ -653,13 +653,28 @@ export interface SEOMetadata {
   ogImage?: Image;
 }
 
+export type PageSchemaType = 'Article' | 'WebPage' | 'Service';
+
+export interface PageServiceFields {
+  serviceName?: string;
+  serviceDescription?: string;
+  serviceType?: string;
+  areaServed?: string;
+  providerOverride?: boolean;
+}
+
 export interface Page {
   id: string;
   title: string;
   slug: string;
   seoMetadata?: SEOMetadata;
   primaryKeyword?: string;
-  schemaType?: string;
+  schemaType?: PageSchemaType;
+  serviceName?: string;
+  serviceDescription?: string;
+  serviceType?: string;
+  areaServed?: string;
+  providerOverride?: boolean;
   layout?: (
     | HeroComponent
     | TextBlockComponent
@@ -684,7 +699,12 @@ export interface StrapiRawPageAttributes {
   seoDescription?: string;
   seoKeywords?: string;
   primaryKeyword?: string;
-  schemaType?: string;
+  schemaType?: PageSchemaType | string;
+  serviceName?: string;
+  serviceDescription?: string;
+  serviceType?: string;
+  areaServed?: string;
+  providerOverride?: boolean;
   layout?: any[];
   publicationDate?: string;
   publishedAt?: string;

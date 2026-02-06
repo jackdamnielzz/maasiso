@@ -5,6 +5,7 @@ import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
+import { buildPageServiceSchema } from '@/lib/utils/pageSchema';
 
 type CoreDetailPageTemplateProps = {
   title: string;
@@ -710,7 +711,6 @@ export default async function CoreDetailPageTemplate({
   const detailPath = isIso9001 ? `${baseDetailPath}/` : baseDetailPath;
   const detailUrl = detailPath.startsWith('http') ? detailPath : `${siteUrl}${detailPath}`;
 
-  const heroBlock = layout.find((block) => block.__component === 'page-blocks.hero') as LayoutBlock | undefined;
   const faqBlock = layout.find((block) => block.__component === 'page-blocks.faq-section') as LayoutBlock | undefined;
   const faqQuestions = Array.isArray(faqBlock?.items)
     ? faqBlock.items
@@ -720,28 +720,13 @@ export default async function CoreDetailPageTemplate({
       }))
       .filter((item: { question: string; answer: string }) => item.question && item.answer)
     : [];
-
-  const serviceName = String(heroBlock?.title || pageData.title || 'ISO 9001 certificering').trim();
-  const serviceDescription = String(
-    pageData.seoMetadata?.metaDescription ||
-      heroBlock?.subtitle ||
-      'ISO 9001 certificering voor kwaliteitsmanagement in het MKB.'
-  ).trim();
+  const serviceSchema = buildPageServiceSchema(pageData, detailUrl);
 
   return (
     <>
-      {isIso9001 ? (
+      {serviceSchema ? (
         <SchemaMarkup
-          service={{
-            name: serviceName,
-            description: serviceDescription,
-            provider: {
-              name: 'MaasISO',
-              url: siteUrl,
-            },
-            serviceType: 'ISO 9001 certificering',
-            url: detailUrl,
-          }}
+          service={serviceSchema}
           faq={faqQuestions.length > 0 ? { questions: faqQuestions } : undefined}
         />
       ) : null}

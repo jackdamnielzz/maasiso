@@ -35,7 +35,12 @@ export interface PageData {
   seoDescription?: string;
   seoKeywords?: string;
   primaryKeyword?: string;
-  schemaType?: string;
+  schemaType?: 'Article' | 'WebPage' | 'Service' | string;
+  serviceName?: string;
+  serviceDescription?: string;
+  serviceType?: string;
+  areaServed?: string;
+  providerOverride?: boolean;
   layout?: any[];
   publishedAt?: string;
   createdAt: string;

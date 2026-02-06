@@ -13,6 +13,7 @@ describe('SchemaMarkup', () => {
             url: 'https://www.maasiso.nl',
           },
           serviceType: 'ISO 9001 certificering',
+          areaServed: 'NL',
           url: 'https://www.maasiso.nl/iso-certificering/iso-9001',
         }}
         faq={{
@@ -34,6 +35,8 @@ describe('SchemaMarkup', () => {
     expect(serviceSchema).toBeDefined();
     expect(serviceSchema.name).toBe('ISO 9001 certificering');
     expect(serviceSchema.url).toBe('https://www.maasiso.nl/iso-certificering/iso-9001');
+    expect(serviceSchema.areaServed).toBe('NL');
+    expect(serviceSchema.provider['@type']).toBe('Organization');
 
     expect(faqSchema).toBeDefined();
     expect(Array.isArray(faqSchema.mainEntity)).toBe(true);

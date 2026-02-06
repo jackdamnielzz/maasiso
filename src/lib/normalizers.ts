@@ -3,6 +3,7 @@
  */
 import { ButtonComponent, StrapiRawButtonComponent } from './types/components';
 import { clientEnv } from './config/client-env';
+import { normalizePageSchemaType } from './utils/pageSchema';
 import {
   Category,
   Tag,
@@ -926,6 +927,7 @@ export function normalizePage(raw: StrapiRawPage): Page {
     layout: data.layout
       ?.map(normalizeLayoutComponent)
       .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
+    schemaType: normalizePageSchemaType(data.schemaType),
     publishedAt: data.publishedAt || '',
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || ''
@@ -935,8 +937,24 @@ export function normalizePage(raw: StrapiRawPage): Page {
     normalizedPage.primaryKeyword = data.primaryKeyword;
   }
 
-  if (typeof data.schemaType === 'string') {
-    normalizedPage.schemaType = data.schemaType;
+  if (typeof data.serviceName === 'string') {
+    normalizedPage.serviceName = data.serviceName;
+  }
+
+  if (typeof data.serviceDescription === 'string') {
+    normalizedPage.serviceDescription = data.serviceDescription;
+  }
+
+  if (typeof data.serviceType === 'string') {
+    normalizedPage.serviceType = data.serviceType;
+  }
+
+  if (typeof data.areaServed === 'string') {
+    normalizedPage.areaServed = data.areaServed;
+  }
+
+  if (typeof data.providerOverride === 'boolean') {
+    normalizedPage.providerOverride = data.providerOverride;
   }
 
   return normalizedPage;

@@ -3,11 +3,12 @@ import React from 'react';
 type ServiceSchema = {
   name: string;
   description: string;
-  provider: {
+  provider?: {
     name: string;
     url: string;
   };
-  serviceType: string;
+  serviceType?: string;
+  areaServed?: string;
   url: string;
 };
 
@@ -70,20 +71,31 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
 
   // Add Service schema if provided
   if (service) {
-    schemas.push({
+    const serviceSchema: Record<string, unknown> = {
       '@context': 'https://schema.org',
       '@type': 'Service',
       name: service.name,
       description: service.description,
-      provider: {
-        '@type': 'ProfessionalService',
-        '@id': 'https://www.maasiso.nl/#professionalservice',
+      url: service.url
+    };
+
+    if (service.provider?.name && service.provider?.url) {
+      serviceSchema.provider = {
+        '@type': 'Organization',
         name: service.provider.name,
         url: service.provider.url
-      },
-      serviceType: service.serviceType,
-      url: service.url
-    });
+      };
+    }
+
+    if (service.serviceType) {
+      serviceSchema.serviceType = service.serviceType;
+    }
+
+    if (service.areaServed) {
+      serviceSchema.areaServed = service.areaServed;
+    }
+
+    schemas.push(serviceSchema);
   }
 
   // Add FAQ schema if provided

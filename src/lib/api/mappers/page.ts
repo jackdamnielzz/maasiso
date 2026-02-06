@@ -1,5 +1,6 @@
 import { Page, PageData } from '../types';
 import { validatePageComponent, mapComponent } from './components';
+import { normalizePageSchemaType } from '@/lib/utils/pageSchema';
 
 export function mapPage(data: PageData): Page | null {
   if (!data) {
@@ -39,7 +40,12 @@ export function mapPage(data: PageData): Page | null {
     slug: data.slug,
     seoMetadata,
     primaryKeyword: data.primaryKeyword,
-    schemaType: data.schemaType,
+    schemaType: normalizePageSchemaType(data.schemaType),
+    serviceName: typeof data.serviceName === 'string' ? data.serviceName : undefined,
+    serviceDescription: typeof data.serviceDescription === 'string' ? data.serviceDescription : undefined,
+    serviceType: typeof data.serviceType === 'string' ? data.serviceType : undefined,
+    areaServed: typeof data.areaServed === 'string' ? data.areaServed : undefined,
+    providerOverride: typeof data.providerOverride === 'boolean' ? data.providerOverride : undefined,
     layout: data.layout?.map(mapComponent) || [],
     publishedAt: data.publishedAt,
     createdAt: data.createdAt,

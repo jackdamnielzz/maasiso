@@ -26,6 +26,7 @@ import type { Author } from './types';
 import { extractFeatures } from './featureExtractor';
 import { monitoredFetch } from './monitoredFetch';
 import { validateSlug } from './utils/slugUtils';
+import { normalizePageSchemaType } from './utils/pageSchema';
 
 class APIError extends Error {
   status: number;
@@ -558,7 +559,12 @@ export function mapPage(data: any | null): Page | null {
     slug: data.slug || '',
     seoMetadata,
     primaryKeyword: data.primaryKeyword,
-    schemaType: data.schemaType,
+    schemaType: normalizePageSchemaType(data.schemaType),
+    serviceName: typeof data.serviceName === 'string' ? data.serviceName : undefined,
+    serviceDescription: typeof data.serviceDescription === 'string' ? data.serviceDescription : undefined,
+    serviceType: typeof data.serviceType === 'string' ? data.serviceType : undefined,
+    areaServed: typeof data.areaServed === 'string' ? data.areaServed : undefined,
+    providerOverride: typeof data.providerOverride === 'boolean' ? data.providerOverride : undefined,
     layout: data.layout?.map((component: RawStrapiComponent) => {
       const baseComponent = {
         id: component.id,
