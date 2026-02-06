@@ -143,10 +143,12 @@ function extractLeakedStepsFromText(content: string): { cleanedContent: string; 
 }
 
 function parseNis2Row(line: string): { key: string; measure: string; control: string } | null {
-  const tableRowMatch = line.match(/^\s*\|\s*([a-j])[\)\.]?\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$/i);
+  // Strict: only match rows where first column explicitly starts with "a)" .. "j)"
+  // and the mapping control column starts with an Annex A reference.
+  const tableRowMatch = line.match(/^\s*\|\s*([a-j])[\)\.]\s+(.+?)\s*\|\s*(A\.[^|]+)\s*\|\s*$/i);
   if (tableRowMatch) {
     const key = tableRowMatch[1].toLowerCase();
-    const rawMeasure = tableRowMatch[2].trim().replace(/^[a-j][\)\.]\s*/i, '');
+    const rawMeasure = tableRowMatch[2].trim();
     const control = tableRowMatch[3].trim();
     return {
       key,
@@ -155,7 +157,7 @@ function parseNis2Row(line: string): { key: string; measure: string; control: st
     };
   }
 
-  const looseRowMatch = line.match(/^\s*[-*]?\s*([a-j])[\)\.]?\s*(.*?)\s+(A\.[0-9].*)\s*$/i);
+  const looseRowMatch = line.match(/^\s*[-*]?\s*([a-j])[\)\.]\s+(.+?)\s+(A\.[0-9].*)\s*$/i);
   if (!looseRowMatch) return null;
 
   const key = looseRowMatch[1].toLowerCase();
