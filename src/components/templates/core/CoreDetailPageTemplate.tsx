@@ -125,7 +125,10 @@ export default async function CoreDetailPageTemplate({
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#091E42] mb-4">Definitie</h2>
             <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-emerald-50/40 p-6 shadow-sm">
-              <p className="text-gray-700 leading-relaxed">{content.definition}</p>
+              <CoreMarkdown
+                markdown={content.definition}
+                className="prose max-w-none prose-p:my-0 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-[#091E42] prose-strong:font-semibold"
+              />
             </div>
           </div>
         </div>

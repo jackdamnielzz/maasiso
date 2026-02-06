@@ -14,11 +14,16 @@ interface FaqSectionProps {
  * @returns React nodes with bold text rendered as <strong>
  */
 function parseMarkdownBold(text: string): React.ReactNode {
-  if (!text || !text.includes('**')) {
+  if (!text) {
     return text;
   }
+
+  const normalized = text.replace(/__(.*?)__/g, '**$1**');
+  if (!normalized.includes('**')) {
+    return normalized;
+  }
   
-  const parts = text.split(/\*\*(.*?)\*\*/g);
+  const parts = normalized.split(/\*\*(.*?)\*\*/g);
   return parts.map((part, index) =>
     index % 2 === 1 ? <strong key={index}>{part}</strong> : part
   );
@@ -31,11 +36,16 @@ function parseMarkdownBold(text: string): React.ReactNode {
  * @returns Text with <strong> HTML tags instead of ** markers
  */
 function markdownBoldToHtml(text: string): string {
-  if (!text || !text.includes('**')) {
+  if (!text) {
     return text;
   }
+
+  const normalized = text.replace(/__(.*?)__/g, '**$1**');
+  if (!normalized.includes('**')) {
+    return normalized;
+  }
   
-  return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  return normalized.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 }
 
 /**
