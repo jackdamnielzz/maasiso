@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  skipTrailingSlashRedirect: true,
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toLocaleString('nl-NL', {
       timeZone: 'Europe/Amsterdam',

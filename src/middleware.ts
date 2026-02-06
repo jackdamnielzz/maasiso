@@ -2,10 +2,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { isRemovedUrl } from '@/config/removed-urls';
 
+const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
+const ISO9001_NON_CANONICAL_PATH = '/iso-certificering/iso-9001';
+
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const normalizedPathname = pathname === '/' ? '/' : pathname.replace(/\/+$/g, '');
+
   // Check for permanently removed URLs FIRST (410 Gone)
   // This ensures 410 is returned before any redirect logic
-  if (isRemovedUrl(request.nextUrl.pathname)) {
+  if (isRemovedUrl(normalizedPathname)) {
     return new NextResponse('Gone', {
       status: 410,
       headers: {
@@ -16,59 +22,63 @@ export function middleware(request: NextRequest) {
   }
 
   // Admin tooling lives under /_admin; /admin should not exist.
-  if (request.nextUrl.pathname === '/admin' || request.nextUrl.pathname.startsWith('/admin/')) {
+  if (normalizedPathname === '/admin' || normalizedPathname.startsWith('/admin/')) {
     return new NextResponse('Not Found', { status: 404 });
   }
 
-  if (request.nextUrl.pathname === '/_admin') {
+  if (normalizedPathname === '/_admin') {
     return NextResponse.redirect(new URL('/_admin/related-posts', request.url), 301);
   }
 
   // Redirect /home to / to prevent duplicate content
-  if (request.nextUrl.pathname === '/home') {
+  if (normalizedPathname === '/home') {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
 
-  if (request.nextUrl.pathname === '/diensten') {
+  if (normalizedPathname === '/diensten') {
     return NextResponse.redirect(new URL('/iso-certificering', request.url), 301);
   }
 
-  if (request.nextUrl.pathname === '/onze-voordelen') {
+  if (normalizedPathname === '/onze-voordelen') {
     return NextResponse.redirect(new URL('/waarom-maasiso', request.url), 301);
   }
 
-  if (request.nextUrl.pathname === '/news') {
+  if (normalizedPathname === '/news') {
     return NextResponse.redirect(new URL('/blog', request.url), 301);
   }
 
-  if (request.nextUrl.pathname.startsWith('/news/')) {
-    const slug = request.nextUrl.pathname.replace('/news/', '');
+  if (normalizedPathname.startsWith('/news/')) {
+    const slug = normalizedPathname.replace('/news/', '');
     return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
   }
 
-  if (request.nextUrl.pathname.startsWith('/blog-posts/')) {
-    const slug = request.nextUrl.pathname.replace('/blog-posts/', '');
+  if (normalizedPathname.startsWith('/blog-posts/')) {
+    const slug = normalizedPathname.replace('/blog-posts/', '');
     return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
   }
 
-  if (request.nextUrl.pathname === '/index.html') {
+  if (normalizedPathname === '/index.html') {
     return NextResponse.redirect(new URL('/', request.url), 301);
   }
 
-  if (request.nextUrl.pathname === '/$') {
+  if (normalizedPathname === '/$') {
     return new NextResponse('Not Found', { status: 404 });
   }
 
+  if (normalizedPathname === ISO9001_NON_CANONICAL_PATH && pathname !== ISO9001_CANONICAL_PATH) {
+    return NextResponse.redirect(new URL(ISO9001_CANONICAL_PATH, request.url), 301);
+  }
+
   const redirectMap: Record<string, string> = {
-    '/iso-9001': '/iso-certificering/iso-9001',
+    '/iso-9001': '/iso-certificering/iso-9001/',
     '/iso-14001': '/iso-certificering/iso-14001',
     '/iso-45001': '/iso-certificering/iso-45001',
     '/iso-16175': '/iso-certificering/iso-16175',
     '/iso-27001': '/informatiebeveiliging/iso-27001',
     '/avg': '/avg-wetgeving/avg',
     '/bio': '/informatiebeveiliging/bio',
-    '/diensten/iso-9001-consultancy': '/iso-certificering/iso-9001',
-    '/diensten/iso-9001': '/iso-certificering/iso-9001',
+    '/diensten/iso-9001-consultancy': '/iso-certificering/iso-9001/',
+    '/diensten/iso-9001': '/iso-certificering/iso-9001/',
     '/diensten/iso-14001': '/iso-certificering/iso-14001',
     '/diensten/iso-27001': '/informatiebeveiliging/iso-27001',
     '/diensten/iso-45001': '/iso-certificering/iso-45001',
@@ -79,13 +89,17 @@ export function middleware(request: NextRequest) {
     '/blog/iso-27001-checklist': '/blog/iso-27001-checklist-augustus-2025',
   };
 
-  const redirectTarget = redirectMap[request.nextUrl.pathname];
+  const redirectTarget = redirectMap[normalizedPathname];
   if (redirectTarget) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 301);
   }
 
+  if (pathname !== '/' && pathname.endsWith('/') && pathname !== ISO9001_CANONICAL_PATH) {
+    return NextResponse.redirect(new URL(normalizedPathname, request.url), 301);
+  }
+
   // Handle sitemap cache headers
-  if (request.nextUrl.pathname === '/sitemap.xml') {
+  if (normalizedPathname === '/sitemap.xml') {
     const response = NextResponse.next();
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');

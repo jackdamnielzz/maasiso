@@ -705,7 +705,8 @@ export default async function CoreDetailPageTemplate({
 
   const isIso9001 = strapiSlug === 'iso-9001';
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
-  const detailPath = `${hub.href}/${strapiSlug}`.replace(/\/{2,}/g, '/');
+  const baseDetailPath = `${hub.href}/${strapiSlug}`.replace(/\/{2,}/g, '/');
+  const detailPath = isIso9001 ? `${baseDetailPath}/` : baseDetailPath;
   const detailUrl = detailPath.startsWith('http') ? detailPath : `${siteUrl}${detailPath}`;
 
   const heroBlock = layout.find((block) => block.__component === 'page-blocks.hero') as LayoutBlock | undefined;

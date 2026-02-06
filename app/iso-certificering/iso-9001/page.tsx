@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import CoreDetailPageTemplate from '@/components/templates/core/CoreDetailPageTemplate';
 import { getPage } from '@/lib/api';
 
-const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001';
+const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
 const DEFAULT_DESCRIPTION =
   'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.';
