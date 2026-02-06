@@ -22,6 +22,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 logs/next-dev*.log
+logs/
+test-deploy/
+deploy.tar.gz
+*.backup
+*.bak
 
 # local env files
 .env*.local

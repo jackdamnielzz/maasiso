@@ -8,7 +8,18 @@ jest.mock('react-intersection-observer', () => ({
 }));
 
 const mockUseInView = useInView as jest.MockedFunction<typeof useInView>;
-const refMock = jest.fn();
+const refMock = (() => undefined) as unknown as ReturnType<typeof useInView>['ref'];
+
+function createInViewMock(
+  overrides: Partial<Pick<ReturnType<typeof useInView>, 'inView' | 'entry'>> = {}
+): ReturnType<typeof useInView> {
+  return {
+    ref: refMock,
+    inView: false,
+    entry: undefined,
+    ...overrides,
+  } as ReturnType<typeof useInView>;
+}
 
 describe('ProgressiveImage', () => {
   const defaultProps = {
@@ -20,11 +31,7 @@ describe('ProgressiveImage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: false,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock());
   });
 
   it('renders image container', () => {

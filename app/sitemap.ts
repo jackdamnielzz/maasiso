@@ -4,6 +4,8 @@ import { BlogPost, StrapiData, Whitepaper } from '@/lib/types';
 import { REMOVED_PATHS } from '@/config/removed-urls';
 
 export const revalidate = 0;
+const isDebugLoggingEnabled =
+  process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
 
 // Helper function for authenticated fetch to Strapi for collections not yet in api.ts
 async function fetchStrapiCollection<T>(path: string): Promise<T[]> {
@@ -192,7 +194,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]);
 
     // Log counts for debugging
-    console.log(`Sitemap: ${blogResult.posts.length} blogposts, ${whitepaperResult.whitepapers.data.length} whitepapers`);
+    if (isDebugLoggingEnabled) {
+      console.log(
+        `Sitemap: ${blogResult.posts.length} blogposts, ${whitepaperResult.whitepapers.data.length} whitepapers`
+      );
+    }
 
     // Map Blog Posts
     // Use updatedAt as priority for freshness signals (important for SEO)

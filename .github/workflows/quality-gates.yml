@@ -38,7 +38,7 @@ jobs:
         run: npm run build
 
   diagnostics:
-    name: Diagnostic Gates (Typecheck + Tests + Audit)
+    name: Quality Gates (Typecheck + Tests + Audit)
     runs-on: ubuntu-latest
     timeout-minutes: 35
     needs: mandatory-gates
@@ -57,30 +57,28 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
-      - name: Typecheck (diagnostic)
+      - name: Typecheck
         id: typecheck
         run: npm run typecheck 2>&1 | tee typecheck.log
-        continue-on-error: true
 
-      - name: Jest (diagnostic)
+      - name: Jest
         id: jest
         run: npm run test:jest -- --runInBand 2>&1 | tee jest.log
-        continue-on-error: true
 
-      - name: Vitest (diagnostic)
+      - name: Vitest
         id: vitest
         run: npm run test:vitest 2>&1 | tee vitest.log
-        continue-on-error: true
 
-      - name: Dependency audit (diagnostic)
+      - name: Dependency audit
         id: audit
-        run: npm audit --json > audit.json
-        continue-on-error: true
+        run: |
+          npm audit --json > audit.json || true
+          node -e "const fs=require('fs'); const report=JSON.parse(fs.readFileSync('audit.json','utf8')); const high=report?.metadata?.vulnerabilities?.high ?? 0; const critical=report?.metadata?.vulnerabilities?.critical ?? 0; console.log('Audit vulnerabilities:', { high, critical }); if (high > 0 || critical > 0) { process.exit(1); }"
 
       - name: CI summary
         if: always()
         run: |
-          echo "## Diagnostic Gate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Quality Gate Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- Typecheck: ${{ steps.typecheck.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "- Jest: ${{ steps.jest.outcome }}" >> $GITHUB_STEP_SUMMARY

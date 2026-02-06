@@ -21,30 +21,36 @@ jest.mock('react-intersection-observer', () => ({
 }));
 
 const mockUseInView = useInView as jest.MockedFunction<typeof useInView>;
-const refMock = jest.fn();
+const refMock = (() => undefined) as unknown as ReturnType<typeof useInView>['ref'];
+
+function createInViewMock(
+  overrides: Partial<Pick<ReturnType<typeof useInView>, 'inView' | 'entry'>> = {}
+): ReturnType<typeof useInView> {
+  return {
+    ref: refMock,
+    inView: false,
+    entry: undefined,
+    ...overrides,
+  } as ReturnType<typeof useInView>;
+}
 
 describe('ProgressiveContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(performance, 'now').mockImplementation(() => 1000);
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: false,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock());
   });
 
   it('renders loading state initially', async () => {
     jest.useFakeTimers();
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
     const loader = createDelayedMockLoader({ title: 'Test' } as const, 1000);
 
     render(
-      <ProgressiveContent loadContent={loader} renderContent={() => <div>content</div>} />
+      <ProgressiveContent<{ title: string }>
+        loadContent={loader}
+        renderContent={() => <div>content</div>}
+      />
     );
 
     await waitFor(() => {
@@ -55,14 +61,10 @@ describe('ProgressiveContent', () => {
 
   it('renders custom loading component when provided', async () => {
     jest.useFakeTimers();
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
     const loader = createDelayedMockLoader({ title: 'Test' } as const, 1000);
     render(
-      <ProgressiveContent
+      <ProgressiveContent<{ title: string }>
         loadContent={loader}
         renderContent={() => <div>content</div>}
         renderLoading={() => <div data-testid="custom-loading">Loading...</div>}
@@ -76,15 +78,11 @@ describe('ProgressiveContent', () => {
   });
 
   it('renders content when inView is true', async () => {
-    const mockData = { title: 'Test Title' } as const;
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    const mockData: { title: string } = { title: 'Test Title' };
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
 
     render(
-      <ProgressiveContent
+      <ProgressiveContent<{ title: string }>
         loadContent={createMockLoader(mockData)}
         renderContent={(data) => <div data-testid="content">{data.title}</div>}
       />
@@ -97,11 +95,7 @@ describe('ProgressiveContent', () => {
   });
 
   it('renders error state when loading fails', async () => {
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
 
     render(
       <ProgressiveContent<ProgressiveTestData>
@@ -117,10 +111,10 @@ describe('ProgressiveContent', () => {
   });
 
   it('loads immediately with priority=true', async () => {
-    const mockData = { title: 'Priority Content' } as const;
+    const mockData: { title: string } = { title: 'Priority Content' };
 
     render(
-      <ProgressiveContent
+      <ProgressiveContent<{ title: string }>
         loadContent={createMockLoader(mockData)}
         renderContent={(data) => <div data-testid="content">{data.title}</div>}
         priority
@@ -134,14 +128,10 @@ describe('ProgressiveContent', () => {
   });
 
   it('tracks performance metrics when monitoringKey is provided', async () => {
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
 
     render(
-      <ProgressiveContent
+      <ProgressiveContent<{ title: string }>
         loadContent={createMockLoader({ title: 'Test' } as const)}
         renderContent={(data) => <div data-testid="content">{data.title}</div>}
         monitoringKey="test-content"
@@ -163,14 +153,10 @@ describe('ProgressiveContent', () => {
 
   it('handles delayed content loading', async () => {
     jest.useFakeTimers();
-    mockUseInView.mockReturnValue({
-      ref: refMock,
-      inView: true,
-      entry: undefined,
-    });
+    mockUseInView.mockReturnValue(createInViewMock({ inView: true }));
 
     render(
-      <ProgressiveContent
+      <ProgressiveContent<{ title: string }>
         loadContent={createDelayedMockLoader({ title: 'Delayed Content' }, 1000)}
         renderContent={(data) => <div data-testid="content">{data.title}</div>}
       />

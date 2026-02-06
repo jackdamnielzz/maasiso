@@ -4,14 +4,22 @@ import { errorMonitor } from './error';
 describe('Monitoring System', () => {
   const originalPerformanceObserver = global.PerformanceObserver;
   const originalNodeEnv = process.env.NODE_ENV;
+  const setNodeEnv = (value: string | undefined) => {
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value,
+      configurable: true,
+      enumerable: true,
+      writable: true,
+    });
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.NODE_ENV = 'development';
+    setNodeEnv('development');
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalNodeEnv;
+    setNodeEnv(originalNodeEnv);
     global.PerformanceObserver = originalPerformanceObserver;
   });
 
@@ -34,8 +42,7 @@ describe('Monitoring System', () => {
       takeRecords = () => [];
     }
 
-    // @ts-expect-error test override
-    global.PerformanceObserver = MockPO;
+    global.PerformanceObserver = MockPO as unknown as typeof PerformanceObserver;
 
     initPerformanceMonitoring();
 

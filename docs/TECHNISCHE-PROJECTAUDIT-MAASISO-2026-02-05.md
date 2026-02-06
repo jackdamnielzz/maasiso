@@ -1,7 +1,7 @@
 # Technische Projectaudit MaasISO
-Versie: 1.0  
-Datum: 5 februari 2026  
-Status: Definitief (momentopname)  
+Versie: 1.1  
+Datum: 6 februari 2026  
+Status: Definitief (geactualiseerd)  
 Scope: volledige codebase in `d:\Programmeren\MaasISO\New without errors\maasiso - Copy`
 
 ## 1. Doel en context
@@ -18,43 +18,43 @@ Analyse uitgevoerd op:
 - dependency security (`npm audit`);
 - build-verifieerbaarheid (`next build`).
 
-Belangrijkste feitelijke checks:
-- `npm run build` -> geslaagd (laatst bekende run)
-- `npm run build:prod` -> geslaagd (zonder `SKIP_TYPESCRIPT` en zonder `--no-lint`, laatst bekende run)
-- `npm run lint` -> geslaagd (herbevestigd op 5 februari 2026)
-- `npm run test:jest -- --runInBand` -> 49 suites, 38 failed; 330 tests, 97 failed (herbevestigd op 5 februari 2026)
-- `npm run test:vitest` -> 14 files, 14 passed; 139 tests, 139 passed (herbevestigd op 5 februari 2026)
-- `npm run typecheck` -> geslaagd (herbevestigd op 5 februari 2026)
-- `npx tsc --noEmit -p tsconfig.prod.json` -> geslaagd (herbevestigd op 5 februari 2026)
-- `npm audit --json` -> 12 kwetsbaarheden (2 critical, 2 high)
+Belangrijkste feitelijke checks (herbevestigd op 6 februari 2026):
+- `npm run build` -> geslaagd (Next.js 16.1.6).
+- `npm run build:prod` -> geslaagd (zonder `SKIP_TYPESCRIPT` en zonder `--no-lint`).
+- `npm run lint` -> geslaagd.
+- `npm run test:jest -- --runInBand` -> **45 suites, 45 passed; 340 tests, 340 passed**.
+- `npm run test:vitest` -> **14 files, 14 passed; 139 tests, 139 passed**.
+- `npm run typecheck` -> geslaagd.
+- `npx tsc --noEmit -p tsconfig.prod.json` -> geslaagd.
+- `npm audit --json` -> **1 kwetsbaarheid (0 critical, 0 high, 1 moderate)**.
 
-## 2.1 Update voortgang (5 februari 2026 - herstelronde type/normalizers)
-Nieuwe verificatie uitgevoerd na herstelwerk op normalizers en type-tests:
-- `npx jest --runInBand --json --outputFile=jest-results-latest.json` -> **45 suites, 45 passed; 340 tests, 340 passed**
+## 2.1 Update voortgang (6 februari 2026 - afrondingsronde)
+Nieuwe verificatie en afronding uitgevoerd op quality-gates, routecompleetheid en repository hygiene.
 
 Afgeronde acties in deze ronde:
-- normalizers geharmoniseerd op typecontracten (ID's consequent naar `string` voor categorieen, tags, blogposts, componenten en navigatie-entiteiten);
-- `normalizeTag` robuust gemaakt voor flat en nested Strapi-structuren;
-- `normalizeNewsArticle` casing-prioriteit gecorrigeerd (`Content` voor `content`);
-- page-component normalisatie geharmoniseerd met component-normalizers (geen geforceerde ID-prefixen, consistente output);
-- image-normalisatie verbeterd voor URL's zonder extensie en met query-parameters;
-- kapotte testsuite `src/lib/types/image.test.ts` volledig hersteld en opgeschoond.
+- CI quality gates verhard: `continue-on-error` verwijderd voor typecheck/Jest/Vitest/audit, met expliciete fail op audit `high`/`critical`.
+- Ontbrekende SSOT-route toegevoegd: `app/kennis/e-learning/[slug]/page.tsx`.
+- `next.config.js` gecorrigeerd (één consistente `splitChunks.cacheGroups` definitie en correcte `removeConsole` configuratie).
+- Placeholder structured data in `app/layout.tsx` vervangen door geldige service-context.
+- Backup/artifact/log-bestanden uit repository verwijderd en `.gitignore` uitgebreid.
+- Type/test regressies opgelost in 4 testbestanden (`ProgressiveContent`, `ProgressiveImage`, `imageOptimization`, `monitoring`).
 
 Status na deze ronde:
-- Jest kwaliteitsblokkade uit eerdere momentopname is opgelost.
-- Openstaande prioriteiten uit dit auditdocument liggen nu primair op security/governance (secrets, tokengebruik, proxy-hardening), niet meer op teststabiliteit.
+- Test- en type-baseline is volledig groen.
+- CI-gates zijn hard afdwingbaar voor lint/build/type/tests/audit-threshold.
+- Openstaande prioriteiten liggen primair op externe security-governance (secret-rotatie en history-rewrite) plus bredere loggingstandaardisatie.
 
 ## 3. Meetresultaten (objectief)
 
 | Onderdeel | Resultaat |
 | --- | --- |
-| Build | Geslaagd (`next build`, `npm run build:prod`) |
+| Build | Geslaagd (`next build`, `npm run build:prod`, Next.js 16.1.6) |
 | Lint | Geslaagd (`eslint app src --ext .js,.jsx,.ts,.tsx`) |
-| Jest tests | 49 suites, 38 failed; 330 tests, 97 failed |
+| Jest tests | 45 suites, 45 passed; 340 tests, 340 passed |
 | Vitest tests | 14 files, 14 passed; 139 tests, 139 passed |
 | Typecheck (repo-breed) | Geslaagd (`npm run typecheck`) |
 | Typecheck (prod-profiel) | Geslaagd (`npx tsc --noEmit -p tsconfig.prod.json`) |
-| Dependency audit | 12 vulnerabilities (2 critical, 2 high, 5 moderate, 3 low) |
+| Dependency audit | 1 vulnerability (0 critical, 0 high, 1 moderate, 0 low) |
 
 ## 4. Kritieke bevindingen
 
@@ -184,71 +184,63 @@ Canonical- en indexatieproblemen, governanceconflict met SSOT.
 
 ---
 
-### H-02 Verplichte SSOT routes ontbreken
+### H-02 (opgelost) Verplichte SSOT routes ontbraken
 **Impact**  
-Onvolledige architectuurimplementatie.
+Architectuurimplementatie is nu volledig voor de verplichte routes.
 
 **Bewijs**  
-- SSOT eist `/iso-selector`: `001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:127`
-- SSOT eist `/kennis/whitepapers/:slug`: `001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:120`
-- In code ontbreekt `app/iso-selector/page.tsx`
-- In code ontbreekt `app/kennis/whitepapers/[slug]/page.tsx`
-- In code ontbreekt `app/kennis/e-learning/[slug]`
+- `app/iso-selector/page.tsx` aanwezig.
+- `app/kennis/whitepapers/[slug]/page.tsx` aanwezig.
+- `app/kennis/e-learning/[slug]/page.tsx` aanwezig.
+- Build-output bevat nu ook `/kennis/e-learning/[slug]` en `/kennis/whitepapers/[slug]`.
 
 **Aanpak**  
-Routeset expliciet gelijk trekken met SSOT-document.
+Behouden en monitoren via CONTROL-validatiebestand.
 
 ---
 
-### H-03 Waarschijnlijk dode endpoint voor whitepaper leads
+### H-03 (opgelost) Whitepaper lead-endpoint actief op app-router
 **Impact**  
-Leadformulier kan in productie falen.
+Leadflow is beschikbaar op actieve API-route.
 
 **Bewijs**  
-- Frontend call: `src/components/features/WhitepaperCard.tsx:37` (`/api/whitepaper-leads`)
-- Endpoint staat onder `src/app/api/whitepaper-leads/route.ts:4`
-- Actieve route-manifest bevat geen `/api/whitepaper-leads/route` in root app manifest
+- Frontend call blijft `src/components/features/WhitepaperCard.tsx:37` (`/api/whitepaper-leads`).
+- Actieve endpoint-route aanwezig: `app/api/whitepaper-leads/route.ts`.
+- Build-output bevat `/api/whitepaper-leads`.
 
 **Aanpak**  
-Endpoint verplaatsen naar `app/api/whitepaper-leads/route.ts` of frontend routepad aanpassen.
+Behouden; optioneel legacy duplicaat onder `src/app` later verwijderen in hygiene-rondes.
 
 ---
 
-### H-04 QA-pipeline is deels hersteld, maar nog niet volledig groen
+### H-04 (opgelost) QA-pipeline volledig groen
 **Impact**  
-Lint, build en typechecks zijn groen, maar omvangrijke Jest-schuld houdt de kwaliteitslijn rood.
+Kwaliteitslijn is nu groen voor lint/type/tests/build.
 
 **Bewijs**  
-- `package.json:16` gebruikt nu ESLint CLI.
-- `package.json:25`, `package.json:26`, `package.json:27` scheiden `test`, `test:jest` en `test:vitest`.
-- `jest.config.js:19` sluit Vitest-specifieke testpaden uit.
-- `vitest.config.ts:20` bevat een expliciete include-lijst voor Vitest suites.
-- `npm run test:jest -- --runInBand` -> 49 suites, 38 failed; 330 tests, 97 failed.
-- `npm run test:vitest` -> 14 files, 14 passed; 139 tests, 139 passed.
+- `npm run lint` -> geslaagd.
 - `npm run typecheck` -> geslaagd.
 - `npx tsc --noEmit -p tsconfig.prod.json` -> geslaagd.
-- `jest-results.json` toont grootste fail-clusters in `ErrorBoundary`, `RelatedPosts`, `imageOptimization`, `NewsCard`, `ProgressiveContent`.
+- `npm run test:jest -- --runInBand` -> 45 suites, 45 passed; 340 tests, 340 passed.
+- `npm run test:vitest` -> 14 files, 14 passed; 139 tests, 139 passed.
+- `npm run build` en `npm run build:prod` -> geslaagd.
 
 **Aanpak**  
-1. Jest-failures clusteren en herstellen op root-cause (provider wrappers, URL/fetch-mocks, rendering expectations).  
-2. Gestandaardiseerde `renderWithProviders` testhulp invoeren voor componenttests met context-afhankelijkheden.  
-3. Na Jest-baseline: CI-gates voor test/typecheck van diagnostisch naar hard afdwingen.
+Baselines periodiek blijven verifiëren in CI.
 
 ---
 
-### H-05 CI-gates zijn gestart, maar nog niet volledig afdwingbaar
+### H-05 (opgelost) CI-gates zijn hard afdwingbaar
 **Impact**  
-Basiskwaliteit is nu geautomatiseerd, maar test/typecheck/security draaien nog diagnostisch en blokkeren merges nog niet.
+PR-kwaliteit wordt nu consistent afgedwongen op tests/typecheck/security-threshold.
 
 **Bewijs**  
-- `.github/workflows/seo-verify.yml:1`
-- `.github/workflows/quality-gates.yml:1` toegevoegd met verplichte `lint + build`.
-- In dezelfde workflow draaien `typecheck`, `jest`, `vitest`, `audit` met `continue-on-error`.
+- `.github/workflows/quality-gates.yml` bevat geen `continue-on-error` meer voor typecheck/Jest/Vitest/audit.
+- Audit stap faalt expliciet bij `high > 0` of `critical > 0`.
+- Lint + build + typecheck + tests + audit draaien als gating checks.
 
 **Aanpak**  
-1. `continue-on-error` gefaseerd verwijderen zodra baseline stabiel is.  
-2. Tests/typecheck/audit promoveren naar harde gates op PR's.  
-3. Security threshold expliciet maken (bijv. fail op `high`/`critical`).
+Thresholds periodiek herijken (bijv. ook fail op `moderate` indien gewenst).
 
 ---
 
@@ -296,65 +288,60 @@ Detailpagina's kunnen "compliant lijken" zonder alle verplichte secties inhoudel
 
 ---
 
-### M-03 `next.config.js` bevat tegenstrijdige `splitChunks` definitie
+### M-03 (opgelost) `next.config.js` splitChunks conflict
 **Impact**  
-Onvoorspelbaar bundlegedrag; eerste `cacheGroups` wordt overschreven.
+Bundlegedrag is nu eenduidig geconfigureerd.
 
 **Bewijs**  
-- `next.config.js:63`
-- `next.config.js:80`
+- `next.config.js` bevat nu één consistente `splitChunks.cacheGroups` configuratie.
+- `next.config.js` gebruikt een geldige `compiler.removeConsole` configuratie voor productie.
 
 ---
 
-### M-04 Overmatige logging in app/runtime
+### M-04 Productielogging deels gereduceerd, standaardisatie nog open
 **Impact**  
 Ruis, mogelijke prestatie-impact en groter risico op gevoelige logdata.
 
 **Bewijs**  
-- Veel `console.*` statements in `app/src/pages` (honderden).
-- Voorbeelden:
-  - `src/lib/monitoredFetch.ts:8`
-  - `src/lib/monitoredFetch.ts:40`
-  - `src/components/layout/Header.tsx:17`
-  - `app/[slug]/page.tsx:42`
+- Logging is al gedempt op kritieke fetch/sitemap-sluitingen:
+  - `src/lib/api.ts` (debug-gated logging)
+  - `app/[slug]/page.tsx` (debug-gated logging)
+  - `app/sitemap.ts` (debug-gated logging)
+- Repo bevat nog veel `console.*` statements buiten tests (`rg console.` -> 561 matches in `app`/`src` exclusief testbestanden).
 
 ---
 
-### M-05 Repository hygiene: artifacts/logs in git
+### M-05 (opgelost) Repository hygiene: artifacts/logs opgeschoond
 **Impact**  
-Onnodige repo-omvang en ruis.
+Repo-ruis en onnodige binary artifacts zijn verwijderd.
 
 **Bewijs**  
-- `test-deploy/.next/cache/webpack/client-production/0.pack`
-- `logs/pm2-error.log`
-- `deploy.tar.gz`
+- Verwijderd uit git:
+  - `deploy.tar.gz`
+  - `logs/*`
+  - `test-deploy/**`
+  - `*.backup` en `*.bak` artifacts
+- `.gitignore` uitgebreid met `logs/`, `test-deploy/`, `deploy.tar.gz`, `*.backup`, `*.bak`.
 
 ---
 
-### M-06 Structured data bevat placeholders
+### M-06 (opgelost) Structured data placeholder verwijderd
 **Impact**  
-Onjuiste bedrijfsdata in schema markup.
+Structured data bevat geen placeholder-adres meer.
 
 **Bewijs**  
-- `app/layout.tsx:115`
-- `app/layout.tsx:116`
-- `app/layout.tsx:117`
+- `app/layout.tsx`: placeholder `PostalAddress`-blok verwijderd.
+- `app/layout.tsx`: `ProfessionalService` aangevuld met `areaServed: ["NL", "BE"]`.
 
 ---
 
-### M-07 Navigatie wijkt af van SSOT (desktop hoofdmenu)
+### M-07 (opgelost) Navigatie aligned met SSOT (desktop hoofdmenu)
 **Impact**  
-Functionele afwijking ten opzichte van definitieve navigatiestructuur.
+Hoofdnavigatie bevat nu de SSOT-verplichte kennisroute.
 
 **Bewijs**  
 - SSOT verwacht menu met `Kennis`: `001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:137`
-- Header bevat geen `Kennis` item:
-  - `src/components/layout/Header.tsx:57`
-  - `src/components/layout/Header.tsx:65`
-  - `src/components/layout/Header.tsx:73`
-  - `src/components/layout/Header.tsx:81`
-  - `src/components/layout/Header.tsx:89`
-  - `src/components/layout/Header.tsx:97`
+- `src/components/layout/Header.tsx` bevat `Kennis` en interne link naar `/iso-selector`.
 
 ## 7. Positieve observaties
 - Core detail template bevat vaste, SSOT-conforme hoofdsecties:
@@ -374,27 +361,18 @@ Functionele afwijking ten opzichte van definitieve navigatiestructuur.
 ### Fase 0 (0-24 uur)
 1. Alle gelekte secrets roteren en intrekken.  
 2. Secrets uit git history verwijderen.  
-3. Publieke Strapi tokenflow stopzetten (`NEXT_PUBLIC_STRAPI_TOKEN` uit productiepad).  
-4. `api/proxy` en `api/health` direct afschermen.
+3. Secret scanning in CI verplicht maken (indien nog niet actief via platformpolicy).
 
 ### Fase 1 (2-7 dagen)
-1. Routecanoniek herstellen naar SSOT (`/kennis/*` leidend).  
-2. Ontbrekende verplichte routes implementeren (`/iso-selector`, whitepaper detailroute).  
-3. Sitemap en canonical tags corrigeren.  
-4. Whitepaper lead endpoint op actieve routebasis zetten.
+1. Loggingstandaardisatie afronden (verdere reductie van `console.*` buiten debug-guards).  
+2. Governance-validatie aanscherpen naar SSOT-verplichte checks (warnings -> fail criteria waar passend).
 
 ### Fase 2 (1-2 weken)
-1. QA stack normaliseren (lint + test + typecheck).  
-2. CI uitbreiden met harde gates voor build/test/type/security.  
-3. Productiedeploys blokkeren bij kwaliteitsfouten.
-
-### Fase 3 (2-4 weken)
-1. Dode code, backupbestanden en artifacts opruimen.  
-2. Loggingbeleid aanscherpen.  
-3. Governance-validatie van warnings naar afdwingbare fouten waar SSOT dit vereist.
+1. Security-thresholdstrategie evalueren (optioneel fail ook op `moderate`).  
+2. Periodieke regressie-audit op routecanoniek, schema-markup en quality-gates.
 
 ## 9. Conclusie
-De codebase is operationeel buildbaar, maar heeft kritieke security- en governanceproblemen die eerst opgelost moeten worden voordat verdere inhoudelijke ontwikkeling veilig en duurzaam is. Prioriteit ligt bij secret-incidentresponse, token-architectuurherstel en routecanoniek conform het definitieve architectuurdocument.
+De codebase is nu operationeel stabiel met groene kwaliteitsbaseline (lint/type/tests/build), harde CI-gates en grotendeels herstelde SSOT-compliance voor routes en governance-structuur. Openstaand kritisch werk zit buiten de codebase zelf (secret-rotatie en history-rewrite) plus resterende loggingstandaardisatie.
 
 ## 10. Uitvoeringsregister (levend)
 Gebruik deze tabel als centrale bron voor voortgang.  
@@ -409,18 +387,18 @@ Toegestane statussen: `TODO`, `DOING`, `BLOCKED`, `DONE`, `CANCELLED`.
 | ACT-005 | DONE | Kritiek | `api/health` afschermen of minimaliseren | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `app/api/health/route.ts` (minimale publieke health, detail alleen met token-header) |
 | ACT-006 | DONE | Kritiek | Contact API debug/PII logging verwijderen en foutafhandeling hardenen | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `app/api/contact/route.ts` (PII logs verwijderd, minimale error responses, rate limiting, honeypot) |
 | ACT-007 | DONE | Hoog | Canonieke kennisroutes afdwingen onder `/kennis/*` + redirects | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `next.config.js`, `app/sitemap.ts` (301 redirects + canonical sitemap) |
-| ACT-008 | DONE | Hoog | Ontbrekende SSOT-routes toevoegen (`/iso-selector`, whitepaper detailroute) | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `app/iso-selector/page.tsx`, `app/kennis/whitepapers/[slug]/page.tsx`, `src/lib/api.ts` |
+| ACT-008 | DONE | Hoog | Ontbrekende SSOT-routes toevoegen (`/iso-selector`, whitepaper/e-learning detailroutes) | Codex | 2026-02-05 | 2026-02-06 | 2026-02-06 | `app/iso-selector/page.tsx`, `app/kennis/whitepapers/[slug]/page.tsx`, `app/kennis/e-learning/[slug]/page.tsx` |
 | ACT-009 | DONE | Hoog | Whitepaper-lead endpoint op actieve routebasis brengen | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `app/api/whitepaper-leads/route.ts` (actieve app-router route) |
 | ACT-010 | DONE | Hoog | Lintproces repareren voor Next 16 setup | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `package.json`, `.eslintrc.json` -> `npm run lint` geslaagd |
-| ACT-011 | DONE | Hoog | Teststack normaliseren (Jest/Vitest scheiden of unificeren) | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `package.json`, `jest.config.js`, `vitest.config.ts`; scheiding gereed, inhoudelijke testschuld blijft |
-| ACT-012 | DOING | Hoog | CI uitbreiden met build/test/type/security gates | Codex | 2026-02-05 | 2026-02-06 |  | `.github/workflows/quality-gates.yml` toegevoegd; lint/build hard, diagnostics nog non-blocking |
+| ACT-011 | DONE | Hoog | Teststack normaliseren (Jest/Vitest scheiden of unificeren) | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `package.json`, `jest.config.js`, `vitest.config.ts`; scheiding gereed en baseline groen |
+| ACT-012 | DONE | Hoog | CI uitbreiden met build/test/type/security gates | Codex | 2026-02-05 | 2026-02-06 | 2026-02-06 | `.github/workflows/quality-gates.yml`; `continue-on-error` verwijderd, audit failt op high/critical |
 | ACT-013 | DONE | Hoog | Productiebuild zonder `SKIP_TYPESCRIPT` en zonder `--no-lint` | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `package.json` aangepast; `npm run build:prod` geslaagd |
-| ACT-020 | DOING | Hoog | Functionele test/typecheck-schuld reduceren tot groene baseline | Codex | 2026-02-05 | 2026-02-06 |  | Typecheck + prod-typecheck groen; Jest teruggebracht naar 97 failing tests (38 suites) |
-| ACT-014 | TODO | Middel | Dode code, backupfiles, artifacts en logs uit repo opschonen | n.t.b. |  |  |  | Zie M-01, M-05 |
+| ACT-020 | DONE | Hoog | Functionele test/typecheck-schuld reduceren tot groene baseline | Codex | 2026-02-05 | 2026-02-06 | 2026-02-06 | `npm run typecheck`, `npx tsc --noEmit -p tsconfig.prod.json`, `npm run test:jest`, `npm run test:vitest` allemaal groen |
+| ACT-014 | DONE | Middel | Dode code, backupfiles, artifacts en logs uit repo opschonen | Codex | 2026-02-06 | 2026-02-06 | 2026-02-06 | Backup/log/artifact bestanden verwijderd; `.gitignore` uitgebreid |
 | ACT-015 | TODO | Middel | Governance-validatie aanscherpen naar SSOT-verplichte checks | n.t.b. |  |  |  | Zie M-02 |
-| ACT-016 | TODO | Middel | `next.config.js` splitChunks conflict herstellen | n.t.b. |  |  |  | Zie M-03 |
-| ACT-017 | TODO | Middel | Productielogging reduceren en standaardiseren | n.t.b. |  |  |  | Zie M-04 |
-| ACT-018 | TODO | Middel | Placeholder bedrijfsdata in structured data vervangen | n.t.b. |  |  |  | Zie M-06 |
+| ACT-016 | DONE | Middel | `next.config.js` splitChunks conflict herstellen | Codex | 2026-02-06 | 2026-02-06 | 2026-02-06 | Eén `cacheGroups` set en geldige `compiler.removeConsole` configuratie |
+| ACT-017 | DOING | Middel | Productielogging reduceren en standaardiseren | Codex | 2026-02-06 | 2026-02-10 |  | Kernpaden gedempt (`src/lib/api.ts`, `app/[slug]/page.tsx`, `app/sitemap.ts`), brede uitrol nog open |
+| ACT-018 | DONE | Middel | Placeholder bedrijfsdata in structured data vervangen | Codex | 2026-02-06 | 2026-02-06 | 2026-02-06 | `app/layout.tsx` placeholder-adres verwijderd; `areaServed` toegevoegd |
 | ACT-019 | DONE | Middel | Hoofdnavigatie aligneren met SSOT (`Kennis` in hoofdmenu) | Codex | 2026-02-05 | 2026-02-05 | 2026-02-05 | `src/components/layout/Header.tsx` (`Kennis` toegevoegd, `ISO-Selector` intern) |
 
 ## 11. Werklog (chronologisch)
@@ -449,6 +427,13 @@ Registreer elke concrete wijziging in tijdsvolgorde.
 | 2026-02-05 | ACT-020 | Type-inferentiecluster opgelost in 5 bestanden (`debug-features`, `DienstenContent`, `SchemaMarkup`, `sitemap`, `api`) | Deels gereed (typecheck + prod-typecheck groen) | Codex |
 | 2026-02-05 | ACT-020 | Jest-harness verbeterd (`AccessibilityProvider` context-mock + env-safe setup) | Deels gereed (Jest 117 -> 97 failing tests) | Codex |
 | 2026-02-05 | ACT-000 | Meetwaarden opnieuw geverifieerd (`typecheck`, `tsconfig.prod`, `vitest`, `jest`) | Gereed | Codex |
+| 2026-02-06 | ACT-008 | SSOT-route `/kennis/e-learning/[slug]` toegevoegd en metadata/breadcrumbs ingebouwd | Gereed | Codex |
+| 2026-02-06 | ACT-012 | CI quality gates verhard: `continue-on-error` verwijderd voor typecheck/Jest/Vitest/audit + audit-threshold high/critical | Gereed | Codex |
+| 2026-02-06 | ACT-014 | Backupfiles, deploy-artifacts en logmappen uit git verwijderd; `.gitignore` aangevuld | Gereed | Codex |
+| 2026-02-06 | ACT-016 | `next.config.js` opgeschoond: splitChunks conflict opgelost en `removeConsole` productieconfig gecorrigeerd | Gereed | Codex |
+| 2026-02-06 | ACT-018 | Structured data placeholders verwijderd en servicegebied (`NL`,`BE`) toegevoegd | Gereed | Codex |
+| 2026-02-06 | ACT-020 | Laatste regressies opgelost in type/tests; baseline bevestigd met 45/45 Jest, 14/14 Vitest en groene typecheck | Gereed | Codex |
+| 2026-02-06 | ACT-000 | Eindmeting geactualiseerd (`lint`, `typecheck`, `tsc-prod`, `jest`, `vitest`, `build`, `build:prod`, `audit`) | Gereed | Codex |
 
 ## 12. Beslislog
 Leg hier technische en governance-beslissingen vast.
@@ -460,6 +445,7 @@ Leg hier technische en governance-beslissingen vast.
 | DEC-003 | 2026-02-05 | CI opgesplitst in mandatory gates (lint/build) en diagnostische gates (typecheck/tests/audit) | Snel kwaliteitsvangnet zonder team direct te blokkeren op bestaande testschuld | Continue zichtbaarheid en gefaseerde verharding | Codex |
 | DEC-004 | 2026-02-05 | `build:prod` mag geen skip-flags meer gebruiken (`SKIP_TYPESCRIPT`, `--no-lint`) | Deploymentpad moet dezelfde kwaliteitsdrempel volgen als reguliere build | Lager risico op regressies in productie | Codex |
 | DEC-005 | 2026-02-05 | ACT-020 gefaseerd uitgevoerd: eerst type-baseline groen, daarna Jest-clusters | Sneller risicoreductiepad met meetbare tussenmijlpaal | Hogere voorspelbaarheid in CI-verharding | Codex |
+| DEC-006 | 2026-02-06 | CI-gates volledig verhard (`typecheck`, `jest`, `vitest`, `audit` nu blocking) | Baseline is groen en stabiel genoeg voor harde handhaving | Hogere mergekwaliteit en directe regressie-signalen | Codex |
 
 ## 13. Blokkades en afhankelijkheden
 Gebruik dit blok voor issues die voortgang blokkeren.
@@ -468,7 +454,7 @@ Gebruik dit blok voor issues die voortgang blokkeren.
 | --- | --- | --- | --- | --- | --- |
 | BLK-001 | 2026-02-05 | Externe secret-rotatie nodig (Strapi, Vercel OIDC, SMTP, admin credentials) | ACT-001 | n.t.b. | Open |
 | BLK-002 | 2026-02-05 | Git history rewrite vereist gecoördineerde force-push en teamafstemming | ACT-002 | n.t.b. | Open |
-| BLK-003 | 2026-02-05 | Grote functionele Jest-schuld (provider-context, URL/fetch-mocks, renderverwachtingen) verhindert volledige hard-gating in CI | ACT-012, ACT-020 | Codex | Open |
+| BLK-003 | 2026-02-05 | Grote functionele Jest-schuld (provider-context, URL/fetch-mocks, renderverwachtingen) verhinderde volledige hard-gating in CI | ACT-012, ACT-020 | Codex | Gesloten (2026-02-06) |
 
 ## 14. Werkwijze voor bijwerken
 1. Zet bij start van een actie de status op `DOING` en vul `Eigenaar` + `Startdatum`.

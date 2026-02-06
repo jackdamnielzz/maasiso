@@ -77,13 +77,14 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
       ? {
-          exclude: ['error', 'warn', 'info', 'debug', 'log']
+          exclude: ['error', 'warn']
         }
       : false
   },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
+        chunks: 'all',
         cacheGroups: {
           commons: {
             name: 'commons',
@@ -98,10 +99,7 @@ const nextConfig = {
             chunks: 'all',
             priority: 20,
             reuseExistingChunk: false // Force new chunks on build
-          }
-        },
-        // Ensure chunks are rebuilt on each deployment
-        cacheGroups: {
+          },
           default: false,
           defaultVendors: false
         }

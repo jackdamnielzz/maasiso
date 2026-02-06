@@ -49,6 +49,14 @@ const getBaseUrl = () => {
 };
 
 const API_TOKEN = process.env.STRAPI_TOKEN;
+const isDebugLoggingEnabled =
+  process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
+
+const debugLog = (...args: unknown[]) => {
+  if (isDebugLoggingEnabled) {
+    console.log(...args);
+  }
+};
 
 const toProxyPath = (path: string): string => {
   const normalized = path.startsWith('/') ? path : `/${path}`;
@@ -113,7 +121,7 @@ async function fetchWithBaseUrl<T>(
       }
     }
 
-    console.log('[API Request] Detailed Debug:', {
+    debugLog('[API Request] Detailed Debug:', {
       baseUrl,
       path,
       resolvedPath,
@@ -149,7 +157,7 @@ async function fetchWithBaseUrl<T>(
       };
     })();
 
-    console.log('[API Response] Detailed Debug:', {
+    debugLog('[API Response] Detailed Debug:', {
       url,
       status: response.status,
       summary
@@ -267,7 +275,7 @@ function mapNewsArticle(data: any | null): NewsArticle | null {
 
 function mapBlogPost(data: any | null): BlogPost | null {
   if (!data) {
-    console.log('Invalid blog post data:', data);
+    debugLog('Invalid blog post data:', data);
     return null;
   }
 
@@ -284,11 +292,11 @@ function mapBlogPost(data: any | null): BlogPost | null {
       // Strapi v4: nested { data: [...] } structure
       posts = relatedData.data;
     } else {
-      console.log('[mapRelatedPosts] No related posts found, data:', relatedData);
+      debugLog('[mapRelatedPosts] No related posts found, data:', relatedData);
       return [];
     }
 
-    console.log('[mapRelatedPosts] Processing', posts.length, 'related posts');
+    debugLog('[mapRelatedPosts] Processing', posts.length, 'related posts');
 
     return posts.map((post: any) => {
       // Handle both flat (v5) and nested (v4) post structure
@@ -385,7 +393,7 @@ function mapBlogPost(data: any | null): BlogPost | null {
 
 function mapWhitepaper(data: any | null): Whitepaper | null {
   if (!data) {
-    console.log('mapWhitepaper received null data');
+    debugLog('mapWhitepaper received null data');
     return null;
   }
   
@@ -453,7 +461,7 @@ function validatePageComponent(component: RawStrapiComponent, index: number): bo
       break;
       
     case 'feature-grid':
-      console.log('[API Validation] Feature grid component found, considering valid for frontend fallback rendering');
+      debugLog('[API Validation] Feature grid component found, considering valid for frontend fallback rendering');
       return true;
     case 'faq-section': {
       const items = (component as any).items;
@@ -510,11 +518,11 @@ function validatePageComponent(component: RawStrapiComponent, index: number): bo
 
 function mapPage(data: any | null): Page | null {
   if (!data) {
-    console.log('mapPage received null data');
+    debugLog('mapPage received null data');
     return null;
   }
   
-  console.log('Page data structure:', {
+  debugLog('Page data structure:', {
     id: data.id,
     availableFields: Object.keys(data),
     hasLayout: Array.isArray(data.layout),
@@ -575,7 +583,7 @@ function mapPage(data: any | null): Page | null {
             layout: component.layout || 'grid'
           };
         case 'page-blocks.feature-grid':
-          console.log('Feature grid component found:', {
+          debugLog('Feature grid component found:', {
             id: component.id || 'unknown',
             hasFeatures: 'features' in component,
             componentKeys: Object.keys(component)
@@ -647,7 +655,7 @@ export async function getPage(slug: string): Promise<Page | null> {
   try {
     // Validate and sanitize the slug
     const validatedSlug = validateSlug(slug);
-    console.log(`[getPage] Starting getPage for slug: ${validatedSlug} at ${new Date().toISOString()}`);
+    debugLog(`[getPage] Starting getPage for slug: ${validatedSlug} at ${new Date().toISOString()}`);
 
     // Use indexed populate parameters to avoid deep nesting issues
     const indexedPopulate = [
@@ -675,7 +683,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
   try {
     const debug = false;
 
-    if (debug) console.log('[getNewsArticles] Starting request:', {
+    if (debug) debugLog('[getNewsArticles] Starting request:', {
       page,
       pageSize,
       timestamp: new Date().toISOString(),
@@ -693,7 +701,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     );
 
     // Validate API response structure
-    if (debug) console.log('[getNewsArticles] Raw API response structure:', {
+    if (debug) debugLog('[getNewsArticles] Raw API response structure:', {
       hasData: !!data,
       dataType: typeof data,
       hasDataArray: !!data?.data,
@@ -714,7 +722,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     }
 
     const total = data.meta?.pagination?.total || 0;
-    if (debug) console.log('[getNewsArticles] Response meta:', {
+    if (debug) debugLog('[getNewsArticles] Response meta:', {
       total,
       page: data.meta?.pagination?.page,
       pageSize: data.meta?.pagination?.pageSize
@@ -752,7 +760,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
         const rawFeaturedImage = article.featuredImage?.data?.attributes || article.featuredImage;
         const featuredImage = rawFeaturedImage ? mapImage(rawFeaturedImage) : undefined;
 
-        if (debug) console.log('[getNewsArticles] Processing article:', {
+        if (debug) debugLog('[getNewsArticles] Processing article:', {
           id: articleId,
           hasAttributes: !!articleData.attributes,
           hasFeaturedImage: !!featuredImage,
@@ -763,7 +771,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
         });
 
         // Log the data structure for debugging
-        if (debug) console.log('[getNewsArticles] Article data structure:', {
+        if (debug) debugLog('[getNewsArticles] Article data structure:', {
           hasAttributes: !!articleData.attributes,
           isDirect: !articleData.attributes,
           availableFields: Object.keys(article)
@@ -868,13 +876,13 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     }).filter((article): article is NewsArticle => {
       const isValid = !!article;
       if (!isValid) {
-        console.log('[getNewsArticles] Filtered out invalid article');
+        debugLog('[getNewsArticles] Filtered out invalid article');
       }
       return isValid;
     });
 
     // Log final processing statistics
-    if (debug) console.log('[getNewsArticles] Processing complete:', {
+    if (debug) debugLog('[getNewsArticles] Processing complete:', {
       totalReceived: data.data.length,
       successfullyProcessed: processedCount,
       errorCount,
@@ -883,7 +891,7 @@ export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articl
     });
 
     // Log detailed article information
-    if (debug) console.log('[getNewsArticles] Processed articles:', {
+    if (debug) debugLog('[getNewsArticles] Processed articles:', {
       totalArticles: articles.length,
       firstArticle: articles[0] ? {
         id: articles[0].id,
@@ -910,7 +918,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
     // Validate and sanitize the slug
     const validatedSlug = validateSlug(slug);
 
-    console.log(`[getNewsArticleBySlug] Fetching article with slug: ${validatedSlug}`);
+    debugLog(`[getNewsArticleBySlug] Fetching article with slug: ${validatedSlug}`);
 
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
       `/api/news-articles?filters[slug][$eq]=${validatedSlug}&populate=*`,
@@ -924,7 +932,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
     }
 
     if (!Array.isArray(data.data) || data.data.length === 0) {
-      console.log('[getNewsArticleBySlug] No article found for slug:', validatedSlug);
+      debugLog('[getNewsArticleBySlug] No article found for slug:', validatedSlug);
       return null;
     }
 
@@ -935,7 +943,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
     const articleId = articleData.id;
 
     // Log the data structure for debugging
-    console.log('[getNewsArticleBySlug] Article data structure:', {
+    debugLog('[getNewsArticleBySlug] Article data structure:', {
       hasAttributes: !!articleData.attributes,
       isDirect: !articleData.attributes,
       availableFields: Object.keys(article)
@@ -997,7 +1005,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
       seoKeywords: article.seoKeywords || ''
     };
 
-    console.log('[getNewsArticleBySlug] Successfully mapped article:', {
+    debugLog('[getNewsArticleBySlug] Successfully mapped article:', {
       id: mappedArticle.id,
       title: mappedArticle.title,
       hasContent: !!mappedArticle.content,
@@ -1038,7 +1046,7 @@ export async function getRelatedNewsArticles(currentSlug: string): Promise<NewsA
       const article = articleData.attributes || articleData;
       const articleId = articleData.id;
 
-      console.log('[getRelatedNewsArticles] Article data structure:', {
+      debugLog('[getRelatedNewsArticles] Article data structure:', {
         hasAttributes: !!articleData.attributes,
         isDirect: !articleData.attributes,
         availableFields: Object.keys(article)
@@ -1100,7 +1108,7 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
   try {
     // Validate and sanitize the slug
     const validatedSlug = validateSlug(slug);
-    console.log('Fetching blog post with slug:', validatedSlug);
+    debugLog('Fetching blog post with slug:', validatedSlug);
 
     // Use indexed populate to explicitly include relatedPosts with their details
     const populateParams = [
@@ -1127,7 +1135,7 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
       }
     );
 
-    console.log('Blog by slug response:', {
+    debugLog('Blog by slug response:', {
       hasData: !!data?.data,
       dataLength: data?.data?.length,
       firstPost: data?.data?.[0],
@@ -1135,12 +1143,12 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
     });
     
     if (!data.data || data.data.length === 0) {
-      console.log('No blog post found for slug:', validatedSlug);
+      debugLog('No blog post found for slug:', validatedSlug);
       return { blogPost: null };
     }
 
     const mappedPost = mapBlogPost(data.data[0]);
-    console.log('Mapped blog post:', mappedPost);
+    debugLog('Mapped blog post:', mappedPost);
     return { blogPost: mappedPost };
   } catch (error) {
     console.error('Error fetching blog post:', error);
@@ -1151,7 +1159,7 @@ export async function getBlogPostBySlug(slug: string): Promise<{ blogPost: BlogP
 export async function getAuthorBySlug(slug: string): Promise<Author | null> {
   try {
     const validatedSlug = validateSlug(slug);
-    console.log('Fetching author with slug:', validatedSlug);
+    debugLog('Fetching author with slug:', validatedSlug);
 
     const populateParams = [
       'populate[0]=profileImage',
@@ -1171,7 +1179,7 @@ export async function getAuthorBySlug(slug: string): Promise<Author | null> {
     );
 
     if (!data?.data || data.data.length === 0) {
-      console.log('No author found for slug:', validatedSlug);
+      debugLog('No author found for slug:', validatedSlug);
       return null;
     }
 
@@ -1277,7 +1285,7 @@ export async function searchV2(params: SearchParamsV2): Promise<SearchResultsV2>
 export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: BlogPost[]; total: number }> {
   try {
     const debug = false;
-    if (debug) console.log('Fetching blog posts with params:', { page, pageSize });
+    if (debug) debugLog('Fetching blog posts with params:', { page, pageSize });
     
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
       `/api/blog-posts?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*&sort=publishedAt:desc`,
@@ -1290,7 +1298,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
       }
     );
 
-    if (debug) console.log('Raw Strapi response:', {
+    if (debug) debugLog('Raw Strapi response:', {
       dataExists: !!data,
       hasData: !!data?.data,
       dataLength: data?.data?.length,
@@ -1301,7 +1309,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
     const posts = data.data
       .map(post => {
         const mappedPost = mapBlogPost(post);
-        if (debug) console.log('Mapped post:', mappedPost);
+        if (debug) debugLog('Mapped post:', mappedPost);
         return mappedPost;
       })
       .filter((post): post is BlogPost => post !== null);
@@ -1311,7 +1319,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
       total: data.meta.pagination?.total || 0
     };
     
-    if (debug) console.log('Final posts result:', result);
+    if (debug) debugLog('Final posts result:', result);
     return result;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
@@ -1321,7 +1329,7 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
 
 export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepapers: StrapiCollectionResponse<Whitepaper>; total: number }> {
   try {
-    console.log('Fetching whitepapers with params:', { page, pageSize });
+    debugLog('Fetching whitepapers with params:', { page, pageSize });
     
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
       `/api/whitepapers?pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*`,
@@ -1334,7 +1342,7 @@ export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepa
       }
     );
 
-    console.log('Raw Strapi whitepaper response:', {
+    debugLog('Raw Strapi whitepaper response:', {
       dataExists: !!data,
       hasData: !!data?.data,
       dataLength: data?.data?.length,
@@ -1362,7 +1370,7 @@ export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepa
 export async function getWhitepaperBySlug(slug: string): Promise<{ whitepaper: Whitepaper | null }> {
   try {
     const validatedSlug = validateSlug(slug);
-    console.log('Fetching whitepaper with slug:', validatedSlug);
+    debugLog('Fetching whitepaper with slug:', validatedSlug);
 
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<any>>(
       `/api/whitepapers?filters[slug][$eq]=${encodeURIComponent(validatedSlug)}&populate=*`,
@@ -1376,7 +1384,7 @@ export async function getWhitepaperBySlug(slug: string): Promise<{ whitepaper: W
     );
 
     if (!data?.data || data.data.length === 0) {
-      console.log('No whitepaper found for slug:', validatedSlug);
+      debugLog('No whitepaper found for slug:', validatedSlug);
       return { whitepaper: null };
     }
 

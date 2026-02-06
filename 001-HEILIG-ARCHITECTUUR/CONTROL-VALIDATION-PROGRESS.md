@@ -42,10 +42,10 @@ Legenda status:
 | 20 | /privacy-policy              | Juridisch           | 🟢         | ✅     | ✅ GO      | 2026-02-05     |
 | 21 | /cookie-policy               | Juridisch           | 🟢         | ✅     | ✅ GO      | 2026-02-05     |
 | 22 | /terms-and-conditions        | Juridisch           | 🟢         | ✅     | ✅ GO      | 2026-02-05     |
-| 23 | /iso-selector                | Tool                | 🟢         | 🔲     | —          | —              |
-| 24 | /kennis/whitepapers/:slug    | Whitepaper          | 🟢         | 🔲     | —          | —              |
-| 25 | /kennis/e-learning           | Overzicht           | 🟢         | 🔲     | —          | —              |
-| 26 | /kennis/e-learning/:slug     | Cursus              | 🟢         | 🔲     | —          | —              |
+| 23 | /iso-selector                | Tool                | 🟢         | ✅     | ✅ GO      | 2026-02-06     |
+| 24 | /kennis/whitepapers/:slug    | Whitepaper          | 🟢         | ✅     | ✅ GO      | 2026-02-06     |
+| 25 | /kennis/e-learning           | Overzicht           | 🟢         | ✅     | ✅ GO      | 2026-02-06     |
+| 26 | /kennis/e-learning/:slug     | Cursus              | 🟢         | ✅     | ✅ GO      | 2026-02-06     |
 
 ---
 
@@ -815,16 +815,24 @@ Type (verwacht): Tool
 Wireframe: (niet gespecificeerd in document, enkel vermeld in site-architectuur) — [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:69)
 
 ### TYPE-CHECK
-- [ ] Tool
+- [x] Tool
 
 ### STRUCTUUR-CHECK
-- [ ] Breadcrumbs (verplicht voor niet-homepage)
-- [ ] Tool-interface aanwezig
+- [x] Breadcrumbs (verplicht voor niet-homepage)
+- [x] Tool-interface aanwezig
 
 ### TECHNIEK-CHECK
-- [ ] Breadcrumb schema
+- [x] Breadcrumb schema
 
-**Bevindingen / actiepunten / besluit:** 🔲
+**Bevindingen:**
+- ✅ Route bestaat en is bereikbaar via `app/iso-selector/page.tsx`.
+- ✅ Breadcrumbs aanwezig (Home > ISO-Selector) via `CoreBreadcrumbBar`.
+- ✅ Tool-CTA naar externe selector aanwezig.
+
+**Actiepunten:**
+- (geen)
+
+**Besluit:** ✅ GO (2026-02-06)
 
 ---
 
@@ -835,18 +843,26 @@ Type (verwacht): Whitepaper
 Wireframe: Whitepaper (individueel) — [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:688)
 
 ### TYPE-CHECK
-- [ ] Whitepaper
+- [x] Whitepaper
 
 ### STRUCTUUR-CHECK
-- [ ] Breadcrumbs (Home > Kennis > Whitepapers > Titel)
-- [ ] Header (titel, samenvatting)
-- [ ] Body content
-- [ ] CTA / download (indien van toepassing)
+- [x] Breadcrumbs (Home > Kennis > Whitepapers > Titel)
+- [x] Header (titel, samenvatting)
+- [x] Body content
+- [x] CTA / download (indien van toepassing)
 
 ### TECHNIEK-CHECK
-- [ ] Breadcrumb schema
+- [x] Breadcrumb schema
 
-**Bevindingen / actiepunten / besluit:** 🔲
+**Bevindingen:**
+- ✅ Dynamische route bestaat: `app/kennis/whitepapers/[slug]/page.tsx`.
+- ✅ Breadcrumbs + canonical + metadata aanwezig.
+- ✅ Download-CTA en teruglinks naar kennishub/whitepaper-overzicht aanwezig.
+
+**Actiepunten:**
+- (geen)
+
+**Besluit:** ✅ GO (2026-02-06)
 
 ---
 
@@ -857,17 +873,25 @@ Type (verwacht): Overzicht
 Wireframe: E-learning overzicht (toekomstig) — [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:720)
 
 ### TYPE-CHECK
-- [ ] Overzicht
+- [x] Overzicht
 
 ### STRUCTUUR-CHECK
-- [ ] Breadcrumbs (Home > Kennis > E-learning)
-- [ ] Hero + intro
-- [ ] Overzicht/kaarten
+- [x] Breadcrumbs (Home > Kennis > E-learning)
+- [x] Hero + intro
+- [x] Overzicht/kaarten
 
 ### TECHNIEK-CHECK
-- [ ] Breadcrumb schema
+- [x] Breadcrumb schema
 
-**Bevindingen / actiepunten / besluit:** 🔲
+**Bevindingen:**
+- ✅ Route bestaat: `app/kennis/e-learning/page.tsx`.
+- ✅ Breadcrumbs aanwezig volgens kennis-structuur.
+- ✅ Overzichtspagina staat als “binnenkort”, passend bij toekomstig statuslabel in architectuur.
+
+**Actiepunten:**
+- (geen)
+
+**Besluit:** ✅ GO (2026-02-06)
 
 ---
 
@@ -878,16 +902,24 @@ Type (verwacht): Cursus
 Wireframe: E-learning detail (toekomstig) — [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:720)
 
 ### TYPE-CHECK
-- [ ] Cursus
+- [x] Cursus
 
 ### STRUCTUUR-CHECK
-- [ ] Breadcrumbs (Home > Kennis > E-learning > Titel)
-- [ ] Header (titel + samenvatting)
-- [ ] Inhoudsopzet
-- [ ] CTA / inschrijven (indien van toepassing)
+- [x] Breadcrumbs (Home > Kennis > E-learning > Titel)
+- [x] Header (titel + samenvatting)
+- [x] Inhoudsopzet
+- [x] CTA / inschrijven (indien van toepassing)
 
 ### TECHNIEK-CHECK
-- [ ] Breadcrumb schema
+- [x] Breadcrumb schema
 
-**Bevindingen / actiepunten / besluit:** 🔲
+**Bevindingen:**
+- ✅ Dynamische route toegevoegd: `app/kennis/e-learning/[slug]/page.tsx`.
+- ✅ Breadcrumbs met slug-specifieke titel aanwezig.
+- ✅ Header, inhoudsopzet en CTA’s aanwezig als “in voorbereiding”-detailtemplate.
+
+**Actiepunten:**
+- (geen)
+
+**Besluit:** ✅ GO (2026-02-06)
 

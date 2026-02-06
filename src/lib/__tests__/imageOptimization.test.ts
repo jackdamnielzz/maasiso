@@ -20,9 +20,9 @@ function mockImageElement(success: boolean): HTMLImageElement {
     set: () => {
       setTimeout(() => {
         if (success) {
-          img.onload?.(new Event('load'));
+          img.onload?.call(img as HTMLImageElement, new Event('load'));
         } else {
-          img.onerror?.(new Event('error'));
+          img.onerror?.call(img as HTMLImageElement, new Event('error'));
         }
       }, 0);
     },
@@ -207,7 +207,7 @@ describe('imageOptimization', () => {
 
       Object.defineProperty(img, 'src', {
         set: () => {
-          setTimeout(() => img.onload?.(new Event('load')), 0);
+          setTimeout(() => img.onload?.call(img as HTMLImageElement, new Event('load')), 0);
         },
       });
 

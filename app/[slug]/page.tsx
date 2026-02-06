@@ -23,6 +23,14 @@ export const revalidate = 0;
  * and keep them strictly non-core.
  */
 const ALLOWED_CMS_PAGE_SLUGS: ReadonlySet<string> = new Set([]);
+const isDebugLoggingEnabled =
+  process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
+
+const debugLog = (...args: unknown[]) => {
+  if (isDebugLoggingEnabled) {
+    console.log(...args);
+  }
+};
 
 function isAllowedCmsSlug(slug: string): boolean {
   if (isReservedSingleSlug(slug)) return false;
@@ -39,7 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   try {
-    console.log(`[Metadata] Fetching page data for slug: ${resolvedParams.slug}`);
+    debugLog(`[Metadata] Fetching page data for slug: ${resolvedParams.slug}`);
     const page = await getPage(resolvedParams.slug);
     
     if (!page) {
@@ -74,7 +82,7 @@ export default async function DynamicPage({ params }: PageProps) {
     return notFound();
   }
   try {
-    console.log(`[DynamicPage] Fetching page data for slug: ${resolvedParams.slug} directly from Strapi`);
+    debugLog(`[DynamicPage] Fetching page data for slug: ${resolvedParams.slug} directly from Strapi`);
     const page = await getPage(resolvedParams.slug);
     
     if (!page) {
@@ -100,7 +108,7 @@ export default async function DynamicPage({ params }: PageProps) {
     );
   } catch (error) {
     if (error instanceof Error && error.message.includes('404')) {
-      console.log(`[DynamicPage] Page ${resolvedParams.slug} not found`);
+      debugLog(`[DynamicPage] Page ${resolvedParams.slug} not found`);
       return (
         <main className="min-h-screen flex items-center justify-center">
           <div className="text-center">

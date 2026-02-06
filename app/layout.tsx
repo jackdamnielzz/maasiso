@@ -110,13 +110,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               "url": "https://maasiso.nl",
               "logo": "https://maasiso.nl/apple-touch-icon.png",
               "image": "https://maasiso.nl/apple-touch-icon.png",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Your Street Address 123",
-                "addressLocality": "Your City",
-                "postalCode": "1234 AB",
-                "addressCountry": "NL"
-              },
+              "areaServed": ["NL", "BE"],
               "telephone": "+31623578344",
               "email": "info@maasiso.nl",
               "priceRange": "$$"
