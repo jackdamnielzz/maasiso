@@ -58,6 +58,21 @@ function normalizeBaseUrl(input: string): string {
   return trimmed.replace(/\/+$/g, '');
 }
 
+function canonicalizeSitemapBaseUrl(input: string): string {
+  try {
+    const parsed = new URL(normalizeBaseUrl(input));
+
+    if (parsed.hostname === 'maasiso.nl') {
+      parsed.hostname = 'www.maasiso.nl';
+    }
+
+    parsed.protocol = 'https:';
+    return normalizeBaseUrl(parsed.toString());
+  } catch {
+    return 'https://www.maasiso.nl';
+  }
+}
+
 function normalizePath(path: string): string {
   const trimmed = path.trim();
   if (trimmed === '' || trimmed === '/') return '';
@@ -138,7 +153,9 @@ async function fetchAllWhitepapers(): Promise<{ whitepapers: { data: StrapiData<
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl');
+  const baseUrl = canonicalizeSitemapBaseUrl(
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl'
+  );
   
   // Base static routes
   const staticPages: MetadataRoute.Sitemap = [
