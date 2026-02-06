@@ -49,6 +49,7 @@ const getBaseUrl = () => {
 };
 
 const API_TOKEN = process.env.STRAPI_TOKEN;
+const PLACEHOLDER_TOKENS = new Set(['__set_me__', 'changeme', 'your_token_here']);
 const isDebugLoggingEnabled =
   process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
 
@@ -78,7 +79,10 @@ const getAuthHeaders = () => {
     'Content-Type': 'application/json',
   };
 
-  if (API_TOKEN) {
+  const normalizedToken = API_TOKEN?.trim().toLowerCase();
+  const hasUsableToken = !!normalizedToken && !PLACEHOLDER_TOKENS.has(normalizedToken);
+
+  if (hasUsableToken && API_TOKEN) {
     headers.Authorization = `Bearer ${API_TOKEN}`;
   }
 

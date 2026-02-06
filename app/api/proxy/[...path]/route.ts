@@ -38,6 +38,7 @@ const MAX_PATH_DEPTH = Number(process.env.PROXY_MAX_PATH_DEPTH || 6);
 const MAX_PATH_SEGMENT_LENGTH = Number(process.env.PROXY_MAX_SEGMENT_LENGTH || 64);
 const SAFE_PATH_SEGMENT_PATTERN = /^[A-Za-z0-9_-]+$/;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const PLACEHOLDER_TOKENS = new Set(['__set_me__', 'changeme', 'your_token_here']);
 
 function getClientIp(request: NextRequest): string {
   const xForwardedFor = request.headers.get('x-forwarded-for');
@@ -136,6 +137,17 @@ function isAuthorized(request: NextRequest): boolean {
   return !!providedToken && providedToken === requiredToken;
 }
 
+function getUsableStrapiToken(): string | null {
+  const rawToken = process.env.STRAPI_TOKEN?.trim();
+  if (!rawToken) return null;
+
+  if (PLACEHOLDER_TOKENS.has(rawToken.toLowerCase())) {
+    return null;
+  }
+
+  return rawToken;
+}
+
 function flattenBlogPostData(data: unknown): unknown {
   if (!Array.isArray(data)) return data;
 
@@ -166,9 +178,9 @@ export async function GET(
   }
 
   const strapiUrl = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-  const token = process.env.STRAPI_TOKEN;
+  const token = getUsableStrapiToken();
 
-  if (!strapiUrl || !token) {
+  if (!strapiUrl) {
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
@@ -189,15 +201,30 @@ export async function GET(
   const targetUrl = `${strapiUrl}/api/${sanitizedPath}${request.nextUrl.search ? request.nextUrl.search : ''}`;
 
   try {
-    const response = await fetch(targetUrl, {
+    const baseHeaders: Record<string, string> = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    let response = await fetch(targetUrl, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: token
+        ? {
+            ...baseHeaders,
+            Authorization: `Bearer ${token}`,
+          }
+        : baseHeaders,
       cache: 'no-store',
     });
+
+    // Graceful recovery for public Strapi endpoints when a stale token is configured.
+    if (response.status === 401 && token) {
+      response = await fetch(targetUrl, {
+        method: 'GET',
+        headers: baseHeaders,
+        cache: 'no-store',
+      });
+    }
 
     const contentType = response.headers.get('content-type') || '';
     const isJson = contentType.includes('application/json');
