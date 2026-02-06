@@ -1,6 +1,7 @@
 import { getPage } from '@/lib/api';
 import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
+import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 
@@ -22,6 +23,16 @@ type StepCandidate = {
   title: string;
   description: string;
 };
+
+type Iso9001TextBucket =
+  | 'wat-is'
+  | 'normstructuur'
+  | 'voordelen'
+  | 'kosten'
+  | 'doorlooptijd'
+  | 'vergelijking'
+  | 'auditproces'
+  | 'other';
 
 const ISO27001_WHY_PARAGRAPH_REGEX =
   /ISO 27001 laat zien dat informatiebeveiliging[\s\S]*?verantwoordelijkheden\./i;
@@ -270,6 +281,160 @@ function appendStepToFeatureGrid(grid: LayoutBlock, step: StepCandidate): void {
   grid.features = sorted;
 }
 
+function sortFeatureGridSteps(grid: LayoutBlock): void {
+  const features = Array.isArray(grid.features) ? [...grid.features] : [];
+  if (!features.length) return;
+
+  const sorted = features
+    .map((feature: any, index: number) => ({ feature, index }))
+    .sort((left, right) => {
+      const leftStep = getStepNumber(String(left.feature?.title || ''));
+      const rightStep = getStepNumber(String(right.feature?.title || ''));
+
+      if (leftStep && rightStep) return leftStep - rightStep;
+      if (leftStep) return -1;
+      if (rightStep) return 1;
+      return left.index - right.index;
+    })
+    .map((entry) => entry.feature);
+
+  grid.features = sorted;
+}
+
+function getFirstMarkdownHeading(content: string): string {
+  const match = content.replace(/\r\n/g, '\n').match(/^\s{0,3}#{1,6}\s+(.+?)\s*$/m);
+  return String(match?.[1] || '').replace(/[*_`]/g, '').trim();
+}
+
+function classifyIso9001TextBlock(block: LayoutBlock): Iso9001TextBucket {
+  const rawContent = String(block?.content || '');
+  const heading = getFirstMarkdownHeading(rawContent);
+  const normalized = `${heading}\n${rawContent}`.toLowerCase();
+
+  if (normalized.includes('wat is iso 9001')) return 'wat-is';
+  if (
+    normalized.includes('normstructuur iso 9001') ||
+    normalized.includes('clausules 4-10') ||
+    normalized.includes('clausules 4–10') ||
+    (normalized.includes('clausules 4') && normalized.includes('clausules 10'))
+  ) {
+    return 'normstructuur';
+  }
+  if (normalized.includes('voordelen') && normalized.includes('iso 9001')) return 'voordelen';
+  if (
+    normalized.includes('wat kost iso 9001') ||
+    normalized.includes('kosten iso 9001') ||
+    normalized.includes('wat kost iso-9001')
+  ) {
+    return 'kosten';
+  }
+  if (
+    normalized.includes('hoelang duurt iso 9001') ||
+    normalized.includes('hoe lang duurt iso 9001') ||
+    normalized.includes('doorlooptijd iso 9001')
+  ) {
+    return 'doorlooptijd';
+  }
+  if (
+    normalized.includes('iso 9001 vs') ||
+    normalized.includes('vs andere iso') ||
+    normalized.includes('vs andere normen')
+  ) {
+    return 'vergelijking';
+  }
+  if (
+    normalized.includes('auditproces') ||
+    (normalized.includes('fase 1') && normalized.includes('fase 2') && normalized.includes('audit'))
+  ) {
+    return 'auditproces';
+  }
+
+  return 'other';
+}
+
+export function normalizeIso9001Layout(layout: Layout): Layout {
+  const blocks = cloneLayout(layout) as LayoutBlock[];
+  const primaryFeatureGrid = mergeFeatureGrids(blocks);
+
+  if (primaryFeatureGrid) {
+    sortFeatureGridSteps(primaryFeatureGrid);
+  }
+
+  const compact = blocks.filter(Boolean) as LayoutBlock[];
+  const ordered: LayoutBlock[] = [];
+  const consumed = new Set<LayoutBlock>();
+
+  const takeFirst = (predicate: (block: LayoutBlock) => boolean) => {
+    const block = compact.find((candidate) => !consumed.has(candidate) && predicate(candidate));
+    if (!block) return;
+    consumed.add(block);
+    ordered.push(block);
+  };
+
+  const takeAll = (predicate: (block: LayoutBlock) => boolean) => {
+    compact.forEach((block) => {
+      if (consumed.has(block)) return;
+      if (!predicate(block)) return;
+      consumed.add(block);
+      ordered.push(block);
+    });
+  };
+
+  takeFirst((block) => block.__component === 'page-blocks.hero');
+  takeFirst((block) => block.__component === 'page-blocks.key-takeaways');
+  takeAll((block) => block.__component === 'page-blocks.fact-block');
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'wat-is'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'normstructuur'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'voordelen'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'kosten'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'doorlooptijd'
+  );
+  takeFirst((block) => block.__component === 'page-blocks.feature-grid');
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'vergelijking'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'auditproces'
+  );
+
+  const unmatchedBeforeFaq = compact.filter(
+    (block) =>
+      !consumed.has(block) &&
+      block.__component !== 'page-blocks.faq-section' &&
+      block.__component !== 'page-blocks.button'
+  );
+
+  unmatchedBeforeFaq.forEach((block) => {
+    console.warn('[ISO9001 Layout] Unmatched block placed before FAQ.', {
+      component: block.__component,
+      blockId: block.id,
+      heading: block.__component === 'page-blocks.text-block' ? getFirstMarkdownHeading(String(block.content || '')) : '',
+    });
+    consumed.add(block);
+    ordered.push(block);
+  });
+
+  takeAll((block) => block.__component === 'page-blocks.faq-section');
+  takeAll((block) => block.__component === 'page-blocks.button');
+
+  compact.forEach((block) => {
+    if (consumed.has(block)) return;
+    consumed.add(block);
+    ordered.push(block);
+  });
+
+  return ordered as Layout;
+}
+
 function moveLooseNis2RowsToNis2Block(blocks: LayoutBlock[]): void {
   const targetIndex = blocks.findIndex(
     (block) =>
@@ -503,10 +668,13 @@ export default async function CoreDetailPageTemplate({
   dataTopic,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
-  const layout =
-    strapiSlug === 'iso-27001' && pageData?.layout
+  const layout = pageData?.layout
+    ? strapiSlug === 'iso-27001'
       ? normalizeIso27001Layout(pageData.layout)
-      : pageData?.layout;
+      : strapiSlug === 'iso-9001'
+        ? normalizeIso9001Layout(pageData.layout)
+        : pageData.layout
+    : pageData?.layout;
 
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', href: '/' },
@@ -535,12 +703,52 @@ export default async function CoreDetailPageTemplate({
     );
   }
 
+  const isIso9001 = strapiSlug === 'iso-9001';
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
+  const detailPath = `${hub.href}/${strapiSlug}`.replace(/\/{2,}/g, '/');
+  const detailUrl = detailPath.startsWith('http') ? detailPath : `${siteUrl}${detailPath}`;
+
+  const heroBlock = layout.find((block) => block.__component === 'page-blocks.hero') as LayoutBlock | undefined;
+  const faqBlock = layout.find((block) => block.__component === 'page-blocks.faq-section') as LayoutBlock | undefined;
+  const faqQuestions = Array.isArray(faqBlock?.items)
+    ? faqBlock.items
+      .map((item: any) => ({
+        question: String(item?.question || '').trim(),
+        answer: String(item?.answer || '').trim(),
+      }))
+      .filter((item: { question: string; answer: string }) => item.question && item.answer)
+    : [];
+
+  const serviceName = String(heroBlock?.title || pageData.title || 'ISO 9001 certificering').trim();
+  const serviceDescription = String(
+    pageData.seoMetadata?.metaDescription ||
+      heroBlock?.subtitle ||
+      'ISO 9001 certificering voor kwaliteitsmanagement in het MKB.'
+  ).trim();
+
   return (
-    <AuthorityPageContent
-      layout={layout}
-      breadcrumbs={breadcrumbs}
-      showBreadcrumbs
-      dataTopic={dataTopic}
-    />
+    <>
+      {isIso9001 ? (
+        <SchemaMarkup
+          service={{
+            name: serviceName,
+            description: serviceDescription,
+            provider: {
+              name: 'MaasISO',
+              url: siteUrl,
+            },
+            serviceType: 'ISO 9001 certificering',
+            url: detailUrl,
+          }}
+          faq={faqQuestions.length > 0 ? { questions: faqQuestions } : undefined}
+        />
+      ) : null}
+      <AuthorityPageContent
+        layout={layout}
+        breadcrumbs={breadcrumbs}
+        showBreadcrumbs
+        dataTopic={dataTopic}
+      />
+    </>
   );
 }

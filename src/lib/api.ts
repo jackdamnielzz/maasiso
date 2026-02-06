@@ -520,7 +520,7 @@ function validatePageComponent(component: RawStrapiComponent, index: number): bo
   return isValid;
 }
 
-function mapPage(data: any | null): Page | null {
+export function mapPage(data: any | null): Page | null {
   if (!data) {
     debugLog('mapPage received null data');
     return null;
@@ -649,6 +649,7 @@ function mapPage(data: any | null): Page | null {
           return baseComponent;
       }
     }) || [],
+    publicationDate: data.publicationDate,
     publishedAt: data.publishedAt,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt || data.publishedAt || data.createdAt

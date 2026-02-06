@@ -670,6 +670,7 @@ export interface Page {
     | KeyTakeawaysComponent
     | FactBlockComponent
   )[];
+  publicationDate?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -685,6 +686,7 @@ export interface StrapiRawPageAttributes {
   primaryKeyword?: string;
   schemaType?: string;
   layout?: any[];
+  publicationDate?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
