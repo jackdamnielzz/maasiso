@@ -8,6 +8,7 @@ import { FaqSection } from '@/components/features/FaqSection';
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import Breadcrumbs, { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
+import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 
 type AuthorityPageContentProps = {
   layout?: NonNullable<Page['layout']>;
@@ -62,7 +63,7 @@ export default function AuthorityPageContent({
   dataTopic
 }: AuthorityPageContentProps) {
   const layoutBlocks = groupFactBlocks(layout);
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
+  const siteUrl = getCanonicalSiteUrl();
   const breadcrumbSchemaItems = breadcrumbs?.length
     ? breadcrumbs.map((item) => ({
       name: item.label,

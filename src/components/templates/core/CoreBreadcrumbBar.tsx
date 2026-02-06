@@ -1,12 +1,13 @@
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import Breadcrumbs, { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
+import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 
 type CoreBreadcrumbBarProps = {
   items: BreadcrumbItem[];
 };
 
 export default function CoreBreadcrumbBar({ items }: CoreBreadcrumbBarProps) {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
+  const siteUrl = getCanonicalSiteUrl();
   const breadcrumbSchemaItems = items.map((item) => ({
     name: item.label,
     item: item.href.startsWith('http') ? item.href : `${siteUrl}${item.href}`,
@@ -23,4 +24,3 @@ export default function CoreBreadcrumbBar({ items }: CoreBreadcrumbBarProps) {
     </>
   );
 }
-

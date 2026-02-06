@@ -4,10 +4,24 @@ import { isRemovedUrl } from '@/config/removed-urls';
 
 const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_NON_CANONICAL_PATH = '/iso-certificering/iso-9001';
+const CANONICAL_HOST = 'www.maasiso.nl';
+const APEX_HOST = 'maasiso.nl';
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const normalizedPathname = pathname === '/' ? '/' : pathname.replace(/\/+$/g, '');
+  const requestHost =
+    (
+      request.headers.get('x-forwarded-host') ||
+      request.headers.get('host') ||
+      request.nextUrl.hostname ||
+      ''
+    )
+      .split(',')[0]
+      .trim()
+      .toLowerCase()
+      .replace(/\.$/, '')
+      .replace(/:\d+$/, '');
 
   // Check for permanently removed URLs FIRST (410 Gone)
   // This ensures 410 is returned before any redirect logic
@@ -63,6 +77,14 @@ export function middleware(request: NextRequest) {
 
   if (normalizedPathname === '/$') {
     return new NextResponse('Not Found', { status: 404 });
+  }
+
+  // If apex reaches the app, canonicalize host + slash in a single hop.
+  if (requestHost === APEX_HOST && normalizedPathname === ISO9001_NON_CANONICAL_PATH) {
+    return NextResponse.redirect(
+      `https://${CANONICAL_HOST}${ISO9001_CANONICAL_PATH}${request.nextUrl.search || ''}`,
+      301
+    );
   }
 
   if (normalizedPathname === ISO9001_NON_CANONICAL_PATH && pathname !== ISO9001_CANONICAL_PATH) {

@@ -4,6 +4,7 @@ import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
+import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 
 type CoreDetailPageTemplateProps = {
   title: string;
@@ -704,7 +705,7 @@ export default async function CoreDetailPageTemplate({
   }
 
   const isIso9001 = strapiSlug === 'iso-9001';
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
+  const siteUrl = getCanonicalSiteUrl();
   const baseDetailPath = `${hub.href}/${strapiSlug}`.replace(/\/{2,}/g, '/');
   const detailPath = isIso9001 ? `${baseDetailPath}/` : baseDetailPath;
   const detailUrl = detailPath.startsWith('http') ? detailPath : `${siteUrl}${detailPath}`;
