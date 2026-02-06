@@ -11,12 +11,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'maasiso.nl' }],
-        destination: 'https://www.maasiso.nl/:path*',
-        permanent: true,
-      },
-      {
         source: '/blog',
         destination: '/kennis/blog',
         permanent: true,

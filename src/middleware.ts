@@ -3,19 +3,6 @@ import type { NextRequest } from 'next/server';
 import { isRemovedUrl } from '@/config/removed-urls';
 
 export function middleware(request: NextRequest) {
-  const hostname = request.nextUrl.hostname.toLowerCase();
-  const forwardedProto = request.headers.get('x-forwarded-proto');
-  const protocol = (forwardedProto || request.nextUrl.protocol).replace(':', '').toLowerCase();
-
-  // Enforce a single canonical host/protocol for SEO/AEO consistency.
-  if ((hostname === 'maasiso.nl' || hostname === 'www.maasiso.nl') &&
-      (hostname !== 'www.maasiso.nl' || protocol !== 'https')) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.protocol = 'https';
-    redirectUrl.hostname = 'www.maasiso.nl';
-    return NextResponse.redirect(redirectUrl, 301);
-  }
-
   // Check for permanently removed URLs FIRST (410 Gone)
   // This ensures 410 is returned before any redirect logic
   if (isRemovedUrl(request.nextUrl.pathname)) {
