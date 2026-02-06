@@ -144,6 +144,9 @@ export default function AuthorityPageContent({
             return (
               <section key={blockKey} className="py-10 md:py-16 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
+                  <div className="max-w-4xl mx-auto text-center mb-6 md:mb-8">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-[#091E42]">Kernfeiten</h2>
+                  </div>
                   <div
                     className={`relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md ${wrapperClass}`}
                   >
