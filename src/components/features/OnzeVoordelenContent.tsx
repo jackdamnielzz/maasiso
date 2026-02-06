@@ -297,11 +297,17 @@ export default function OnzeVoordelenContent() {
           <div className="max-w-4xl mx-auto">
             <ScrollReveal className="reveal-up">
               <div className="relative">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#091E42] mb-8">
+                  Expertquote
+                </h2>
                 <div className="absolute -left-4 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#00875A] to-[#FF8B00] rounded-full"></div>
                 <blockquote className="pl-8 md:pl-12">
                   <p className="text-2xl md:text-3xl font-medium text-[#091E42] leading-relaxed italic">
                     "U investeert niet in rapporten die in de la verdwijnen, maar in een partner die zich inzet voor werkelijke vooruitgang."
                   </p>
+                  <cite className="mt-6 block not-italic text-base md:text-lg font-medium text-[#42526E]">
+                    Niels Maas, Senior consultant bij MaasISO
+                  </cite>
                 </blockquote>
               </div>
             </ScrollReveal>
