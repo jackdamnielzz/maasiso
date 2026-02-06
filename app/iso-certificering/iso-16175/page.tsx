@@ -1,13 +1,22 @@
 import { Metadata } from 'next';
 import CoreDetailPageTemplate from '@/components/templates/core/CoreDetailPageTemplate';
+import { getPage } from '@/lib/api';
+import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
-export const metadata: Metadata = {
-  title: 'ISO 16175 Certificering | MaasISO',
-  description: 'ISO 16175 certificering en documentbeheer met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 16175 certificering.',
-  alternates: {
-    canonical: "/iso-certificering/iso-16175",
-  },
-};
+const ISO16175_CANONICAL_PATH = '/iso-certificering/iso-16175';
+const DEFAULT_TITLE = 'ISO 16175 Certificering | MaasISO';
+const DEFAULT_DESCRIPTION =
+  'ISO 16175 certificering en documentbeheer met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 16175 certificering.';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getPage('iso-16175');
+  return buildDetailPageMetadata({
+    page: pageData,
+    canonicalPath: ISO16175_CANONICAL_PATH,
+    fallbackTitle: DEFAULT_TITLE,
+    fallbackDescription: DEFAULT_DESCRIPTION,
+  });
+}
 
 // Force dynamic rendering to ensure fresh content from Strapi
 export const dynamic = 'force-dynamic';

@@ -47,6 +47,7 @@ export function mapPage(data: PageData): Page | null {
     areaServed: typeof data.areaServed === 'string' ? data.areaServed : undefined,
     providerOverride: typeof data.providerOverride === 'boolean' ? data.providerOverride : undefined,
     layout: data.layout?.map(mapComponent) || [],
+    publicationDate: data.publicationDate,
     publishedAt: data.publishedAt,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt

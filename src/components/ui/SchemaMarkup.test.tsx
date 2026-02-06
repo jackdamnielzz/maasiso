@@ -2,6 +2,27 @@ import { render } from '@testing-library/react';
 import SchemaMarkup from './SchemaMarkup';
 
 describe('SchemaMarkup', () => {
+  it('renders a provided primary schema payload', () => {
+    const { container } = render(
+      <SchemaMarkup
+        primary={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Testpagina',
+          url: 'https://www.maasiso.nl/testpagina',
+        }}
+      />
+    );
+
+    const scripts = Array.from(container.querySelectorAll('script[type="application/ld+json"]')).map((node) =>
+      JSON.parse(node.textContent || '{}')
+    );
+
+    expect(scripts).toHaveLength(1);
+    expect(scripts[0]['@type']).toBe('WebPage');
+    expect(scripts[0].name).toBe('Testpagina');
+  });
+
   it('renders Service and FAQPage JSON-LD payloads', () => {
     const { container } = render(
       <SchemaMarkup

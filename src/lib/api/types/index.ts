@@ -53,6 +53,7 @@ export interface Page {
     value?: string;
     source?: string;
   }>;
+  publicationDate?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -74,6 +75,7 @@ export interface PageData {
   areaServed?: string;
   providerOverride?: boolean;
   layout?: any[];
+  publicationDate?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;

@@ -55,6 +55,7 @@ type BreadcrumbSchema = {
 };
 
 type SchemaMarkupProps = {
+  primary?: Record<string, unknown>;
   service?: ServiceSchema;
   faq?: FAQSchema;
   howTo?: HowToSchema;
@@ -66,11 +67,16 @@ type SchemaMarkupProps = {
  * SchemaMarkup component adds structured data for SEO
  * It supports Service, FAQ, HowTo, Article, and Breadcrumb schemas
  */
-const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, article, breadcrumbs }) => {
+const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howTo, article, breadcrumbs }) => {
   const schemas: Array<Record<string, unknown>> = [];
 
+  // Add primary page schema when provided (Article/WebPage/Service).
+  if (primary) {
+    schemas.push(primary);
+  }
+
   // Add Service schema if provided
-  if (service) {
+  if (!primary && service) {
     const serviceSchema: Record<string, unknown> = {
       '@context': 'https://schema.org',
       '@type': 'Service',

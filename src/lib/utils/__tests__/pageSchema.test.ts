@@ -1,4 +1,4 @@
-import { buildPageServiceSchema, normalizePageSchemaType } from '../pageSchema';
+import { buildPagePrimarySchema, buildPageServiceSchema, normalizePageSchemaType } from '../pageSchema';
 
 describe('pageSchema utils', () => {
   describe('normalizePageSchemaType', () => {
@@ -45,7 +45,7 @@ describe('pageSchema utils', () => {
           url: 'https://www.maasiso.nl',
         },
         serviceType: 'ISO-certificering',
-        areaServed: 'NL',
+        areaServed: 'Nederland',
         url: 'https://www.maasiso.nl/iso-certificering/iso-9001/',
       });
     });
@@ -76,6 +76,71 @@ describe('pageSchema utils', () => {
       );
 
       expect(schema).toBeUndefined();
+    });
+  });
+
+  describe('buildPagePrimarySchema', () => {
+    it('builds an Article schema for default page types', () => {
+      const schema = buildPagePrimarySchema(
+        {
+          schemaType: 'Article',
+          title: 'ISO 27001',
+          seoMetadata: { metaDescription: 'Informatiebeveiliging volgens ISO 27001.' },
+          publicationDate: '2026-02-01T10:00:00Z',
+          updatedAt: '2026-02-03T11:00:00Z',
+        } as any,
+        'https://www.maasiso.nl/informatiebeveiliging/iso-27001/'
+      );
+
+      expect(schema).toMatchObject({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: 'ISO 27001',
+        description: 'Informatiebeveiliging volgens ISO 27001.',
+        datePublished: '2026-02-01T10:00:00Z',
+        dateModified: '2026-02-03T11:00:00Z',
+        url: 'https://www.maasiso.nl/informatiebeveiliging/iso-27001/',
+      });
+    });
+
+    it('builds a WebPage schema when explicitly selected', () => {
+      const schema = buildPagePrimarySchema(
+        {
+          schemaType: 'WebPage',
+          title: 'Waarom MaasISO',
+          seoMetadata: { metaDescription: 'Positionering en aanpak.' },
+        } as any,
+        'https://www.maasiso.nl/waarom-maasiso/'
+      );
+
+      expect(schema).toEqual({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'Waarom MaasISO',
+        description: 'Positionering en aanpak.',
+        url: 'https://www.maasiso.nl/waarom-maasiso/',
+      });
+    });
+
+    it('builds a Service schema when Service is selected', () => {
+      const schema = buildPagePrimarySchema(
+        {
+          schemaType: 'Service',
+          title: 'ISO 9001',
+          seoMetadata: { metaDescription: 'Beschrijving' },
+          serviceType: 'ISO-certificering',
+        } as any,
+        'https://www.maasiso.nl/iso-certificering/iso-9001/'
+      );
+
+      expect(schema).toMatchObject({
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: 'ISO 9001',
+        description: 'Beschrijving',
+        areaServed: 'Nederland',
+        url: 'https://www.maasiso.nl/iso-certificering/iso-9001/',
+      });
     });
   });
 });

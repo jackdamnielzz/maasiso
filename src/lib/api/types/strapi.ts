@@ -42,6 +42,7 @@ export interface PageData {
   areaServed?: string;
   providerOverride?: boolean;
   layout?: any[];
+  publicationDate?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;

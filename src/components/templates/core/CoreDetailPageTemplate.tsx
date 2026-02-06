@@ -1,11 +1,10 @@
 import { getPage } from '@/lib/api';
 import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
-import SchemaMarkup from '@/components/ui/SchemaMarkup';
+import PageSchemaRenderer from '@/components/seo/PageSchemaRenderer';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
-import { buildPageServiceSchema } from '@/lib/utils/pageSchema';
 
 type CoreDetailPageTemplateProps = {
   title: string;
@@ -720,16 +719,10 @@ export default async function CoreDetailPageTemplate({
       }))
       .filter((item: { question: string; answer: string }) => item.question && item.answer)
     : [];
-  const serviceSchema = buildPageServiceSchema(pageData, detailUrl);
 
   return (
     <>
-      {serviceSchema ? (
-        <SchemaMarkup
-          service={serviceSchema}
-          faq={faqQuestions.length > 0 ? { questions: faqQuestions } : undefined}
-        />
-      ) : null}
+      <PageSchemaRenderer page={pageData} canonicalUrl={detailUrl} faqQuestions={faqQuestions} />
       <AuthorityPageContent
         layout={layout}
         breadcrumbs={breadcrumbs}

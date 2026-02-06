@@ -928,6 +928,7 @@ export function normalizePage(raw: StrapiRawPage): Page {
       ?.map(normalizeLayoutComponent)
       .filter((component: HeroComponent | TextBlockComponent | ImageGalleryComponent | FeatureGridComponent | ButtonComponent | FaqSectionComponent | KeyTakeawaysComponent | FactBlockComponent | undefined): component is NonNullable<typeof component> => component !== undefined) || [],
     schemaType: normalizePageSchemaType(data.schemaType),
+    publicationDate: data.publicationDate,
     publishedAt: data.publishedAt || '',
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || ''
