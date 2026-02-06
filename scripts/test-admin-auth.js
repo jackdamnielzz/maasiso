@@ -1,5 +1,5 @@
 // Test admin auth endpoint on production
-const BASE_URL = process.env.BASE_URL || 'https://maasiso.nl';
+const BASE_URL = process.env.BASE_URL || 'https://www.maasiso.nl';
 const PASSWORD = '[REDACTED_PASSWORD]';
 
 async function testAuth() {
@@ -29,3 +29,4 @@ async function testAuth() {
 }
 
 testAuth();
+

@@ -28,7 +28,7 @@ export default async function KennisBlogPostPage(props: PageProps) {
   const blogPost = await getBlogPostBySlug(decodeURIComponent(resolvedParams.slug));
 
   const title = blogPost?.blogPost?.title || 'Artikel';
-  const canonicalUrl = `https://maasiso.nl/kennis/blog/${resolvedParams.slug}`;
+  const canonicalUrl = `https://www.maasiso.nl/kennis/blog/${resolvedParams.slug}`;
 
   return (
     <main className="flex-1 bg-white">
@@ -44,3 +44,4 @@ export default async function KennisBlogPostPage(props: PageProps) {
     </main>
   );
 }
+

@@ -7,7 +7,7 @@ export async function GET() {
       allow: '/',
       disallow: ['/api/', '/admin/', '/_admin/'],
     },
-    sitemap: 'https://maasiso.nl/sitemap.xml',
+    sitemap: 'https://www.maasiso.nl/sitemap.xml',
   }
 
   return new Response(
@@ -17,7 +17,7 @@ Disallow: /api/
 Disallow: /admin/
 Disallow: /_admin/
 
-Sitemap: https://maasiso.nl/sitemap.xml`,
+Sitemap: https://www.maasiso.nl/sitemap.xml`,
     {
       headers: {
         'Content-Type': 'text/plain',

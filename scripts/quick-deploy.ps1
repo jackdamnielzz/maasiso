@@ -25,9 +25,9 @@ try {
     
     # Ensure production environment variables are set
     $envContent = @"
-NEXT_PUBLIC_API_URL=https://maasiso.nl
+NEXT_PUBLIC_API_URL=https://www.maasiso.nl
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
-NEXT_PUBLIC_SITE_URL=https://maasiso.nl
+NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=$env:STRAPI_TOKEN
 EMAIL_PASSWORD=$env:EMAIL_PASSWORD
 "@
@@ -77,7 +77,7 @@ fi
     
     Write-Host "`n✨ Deployment Complete!" -ForegroundColor Cyan
     Write-Host "================================================"
-    Write-Host "Frontend URL: https://maasiso.nl"
+    Write-Host "Frontend URL: https://www.maasiso.nl"
     Write-Host "Strapi URL: http://153.92.223.23:1337"
     Write-Host "`nTo monitor the application:"
     Write-Host "1. View logs: ssh root@147.93.62.188 'pm2 logs frontend'"
@@ -91,3 +91,4 @@ catch {
     Write-Host ".\scripts\rollback.ps1"
     exit 1
 }
+

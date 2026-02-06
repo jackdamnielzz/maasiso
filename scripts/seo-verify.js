@@ -7,7 +7,7 @@
 //   --output <file>    Save JSON report to file
 //   --max-retries <n>  Maximum retries for failed requests (default: 2)
 
-const SITE_URL = 'https://maasiso.nl';
+const SITE_URL = 'https://www.maasiso.nl';
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 
 const LEGACY_REDIRECTS = [
@@ -214,13 +214,13 @@ async function checkCanonical(url) {
     const canonicalNormalized = canonical ? normalizeUrl(new URL(canonical, finalUrl).toString()) : null;
 
     const issues = [];
-    if (!finalNormalized.startsWith(`${SITE_URL}/`) && !finalNormalized.startsWith('https://maasiso.nl/')) {
+    if (!finalNormalized.startsWith(`${SITE_URL}/`) && !finalNormalized.startsWith('https://www.maasiso.nl/')) {
       issues.push('Final URL not on canonical host');
     }
     if (!canonicalNormalized) {
       issues.push('Missing canonical tag');
     } else {
-      if (!canonicalNormalized.startsWith(`${SITE_URL}/`) && !canonicalNormalized.startsWith('https://maasiso.nl/')) {
+      if (!canonicalNormalized.startsWith(`${SITE_URL}/`) && !canonicalNormalized.startsWith('https://www.maasiso.nl/')) {
         issues.push('Canonical not on canonical host');
       }
       if (canonicalNormalized !== finalNormalized) {
@@ -607,3 +607,4 @@ run().catch(error => {
   }
   process.exit(1);
 });
+

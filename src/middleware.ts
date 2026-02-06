@@ -3,6 +3,19 @@ import type { NextRequest } from 'next/server';
 import { isRemovedUrl } from '@/config/removed-urls';
 
 export function middleware(request: NextRequest) {
+  const hostname = request.nextUrl.hostname.toLowerCase();
+  const forwardedProto = request.headers.get('x-forwarded-proto');
+  const protocol = (forwardedProto || request.nextUrl.protocol).replace(':', '').toLowerCase();
+
+  // Enforce a single canonical host/protocol for SEO/AEO consistency.
+  if ((hostname === 'maasiso.nl' || hostname === 'www.maasiso.nl') &&
+      (hostname !== 'www.maasiso.nl' || protocol !== 'https')) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.protocol = 'https';
+    redirectUrl.hostname = 'www.maasiso.nl';
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   // Check for permanently removed URLs FIRST (410 Gone)
   // This ensures 410 is returned before any redirect logic
   if (isRemovedUrl(request.nextUrl.pathname)) {
@@ -98,29 +111,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/sitemap.xml',
-    '/home',
-    '/diensten',
-    '/onze-voordelen',
-    '/news/:path*',
-    '/blog-posts/:path*',
-    '/admin',
-    '/admin/:path*',
-    '/_admin',
-    '/_admin/:path*',
-    '/iso-9001',
-    '/iso-14001',
-    '/iso-45001',
-    '/iso-16175',
-    '/iso-27001',
-    '/avg',
-    '/bio',
-    '/index.html',
-    '/contact.html',
-    '/algemene-voorwaarden',
-    '/$',
-    '/diensten/:path*',
-    '/blog/:path*',
-    '/test-deploy',
+    // Exclude Next.js internals and immutable static assets.
+    '/((?!_next/static|_next/image|favicon.ico|favicon-16x16.png|favicon-32x32.png|apple-touch-icon.png|safari-pinned-tab.svg|browserconfig.xml|site.webmanifest).*)',
   ],
 };

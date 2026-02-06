@@ -165,7 +165,7 @@ export async function generateMetadata(
         type: 'article',
         locale: 'nl_NL',
         siteName: 'Maas ISO',
-        url: `https://maasiso.nl/blog/${resolvedParams.slug}`,
+        url: `https://www.maasiso.nl/blog/${resolvedParams.slug}`,
         publishedTime: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
         modifiedTime: blogPost.updatedAt,
         authors: typeof blogPost.author === 'string'
@@ -214,7 +214,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const categoryIds = blogPost.categories?.map((cat: Category) => cat.id) || [];
     const readingTime = Math.ceil(blogPost.content.split(/\s+/).length / 200);
 
-    const canonicalUrl = `https://maasiso.nl/blog/${blogPost.slug}`;
+    const canonicalUrl = `https://www.maasiso.nl/blog/${blogPost.slug}`;
     const featuredImageUrl = constructImageUrl(blogPost.featuredImage?.url);
 
     // Extract author details for schema
@@ -223,8 +223,8 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
       : blogPost.author?.name || 'Niels Maas';
 
     const authorId = typeof blogPost.author === 'object' && blogPost.author?.slug
-      ? `https://maasiso.nl/auteurs/${blogPost.author.slug}#person`
-      : 'https://maasiso.nl/over-niels-maas#author';
+      ? `https://www.maasiso.nl/auteurs/${blogPost.author.slug}#person`
+      : 'https://www.maasiso.nl/over-niels-maas#author';
 
     const authorJobTitle = typeof blogPost.author === 'object'
       ? blogPost.author?.credentials
@@ -264,7 +264,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
               image: authorImage,
               sameAs: authorSameAs,
             },
-            publisherId: 'https://maasiso.nl/#professionalservice',
+            publisherId: 'https://www.maasiso.nl/#professionalservice',
             mainEntityOfPage: canonicalUrl,
             image: featuredImageUrl,
           }}
@@ -276,8 +276,8 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           } : undefined}
           breadcrumbs={{
             items: [
-              { name: 'Home', item: 'https://maasiso.nl' },
-              { name: 'Blog', item: 'https://maasiso.nl/blog' },
+              { name: 'Home', item: 'https://www.maasiso.nl' },
+              { name: 'Blog', item: 'https://www.maasiso.nl/blog' },
               { name: blogPost.title, item: canonicalUrl }
             ]
           }}
@@ -324,3 +324,4 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     throw error;
   }
 }
+

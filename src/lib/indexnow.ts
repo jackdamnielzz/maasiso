@@ -23,7 +23,7 @@ const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 /**
  * Submit a URL to IndexNow
  *
- * @param url - The full URL to notify (e.g., https://maasiso.nl/blog/my-post)
+ * @param url - The full URL to notify (e.g., https://www.maasiso.nl/blog/my-post)
  * @param key - IndexNow API key (optional if INDEXNOW_KEY env var is set)
  * @returns Promise<boolean> - true if successful, false otherwise
  */
@@ -147,7 +147,7 @@ export async function notifyIndexNowBatch(
  * @returns Promise<boolean> - true if successful, false otherwise
  */
 export async function notifyBlogPost(slug: string): Promise<boolean> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl';
   const url = `${siteUrl}/blog/${slug}`;
   return notifyIndexNow(url);
 }
@@ -160,7 +160,7 @@ export async function notifyBlogPost(slug: string): Promise<boolean> {
  * @returns Promise<boolean> - true if successful, false otherwise
  */
 export async function notifyPage(path: string): Promise<boolean> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl';
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${siteUrl}${cleanPath}`;
   return notifyIndexNow(url);

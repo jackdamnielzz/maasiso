@@ -17,7 +17,7 @@ const checks = [
       const p = path.join(baseDir, 'app/layout.tsx');
       if (!fs.existsSync(p)) return false;
       const content = fs.readFileSync(p, 'utf8');
-      return content.includes("ProfessionalService") && content.includes('"@id": "https://maasiso.nl/#professionalservice"');
+      return content.includes("ProfessionalService") && content.includes('"@id": "https://www.maasiso.nl/#professionalservice"');
     }
   },
   {
@@ -26,7 +26,7 @@ const checks = [
       const p = path.join(baseDir, 'app/blog/[slug]/page.tsx');
       if (!fs.existsSync(p)) return false;
       const content = fs.readFileSync(p, 'utf8');
-      return content.includes("https://maasiso.nl/over-niels-maas#author");
+      return content.includes("https://www.maasiso.nl/over-niels-maas#author");
     }
   },
   {
@@ -89,3 +89,4 @@ run().catch(err => {
   console.error(err);
   process.exit(1);
 });
+

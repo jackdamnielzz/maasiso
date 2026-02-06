@@ -7,9 +7,9 @@ module.exports = {
       PORT: 3000,
       NODE_ENV: 'production',
       NEXT_PUBLIC_API_URL: '/api/proxy',
-      STRAPI_URL: 'https://maasiso.nl',
-      NEXT_PUBLIC_BACKEND_URL: 'https://maasiso.nl',
-      NEXT_PUBLIC_SITE_URL: 'https://maasiso.nl',
+      STRAPI_URL: 'https://www.maasiso.nl',
+      NEXT_PUBLIC_BACKEND_URL: 'https://www.maasiso.nl',
+      NEXT_PUBLIC_SITE_URL: 'https://www.maasiso.nl',
       STRAPI_TOKEN: process.env.STRAPI_TOKEN || ''
     },
     instances: 1,
@@ -42,3 +42,4 @@ module.exports = {
     ]
   }]
 }
+

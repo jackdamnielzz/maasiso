@@ -138,7 +138,7 @@ async function fetchAllWhitepapers(): Promise<{ whitepapers: { data: StrapiData<
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl');
+  const baseUrl = normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl');
   
   // Base static routes
   const staticPages: MetadataRoute.Sitemap = [

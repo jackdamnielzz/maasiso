@@ -77,7 +77,7 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
       description: service.description,
       provider: {
         '@type': 'ProfessionalService',
-        '@id': 'https://maasiso.nl/#professionalservice',
+        '@id': 'https://www.maasiso.nl/#professionalservice',
         name: service.provider.name,
         url: service.provider.url
       },
@@ -154,7 +154,7 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ service, faq, howTo, articl
         name: 'Maas ISO',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://maasiso.nl/logo.png',
+          url: 'https://www.maasiso.nl/logo.png',
           width: 600,
           height: 60
         }

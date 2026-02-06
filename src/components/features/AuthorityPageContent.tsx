@@ -62,7 +62,7 @@ export default function AuthorityPageContent({
   dataTopic
 }: AuthorityPageContentProps) {
   const layoutBlocks = groupFactBlocks(layout);
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://maasiso.nl').replace(/\/+$/g, '');
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl').replace(/\/+$/g, '');
   const breadcrumbSchemaItems = breadcrumbs?.length
     ? breadcrumbs.map((item) => ({
       name: item.label,

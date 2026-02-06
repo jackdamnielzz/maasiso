@@ -94,7 +94,7 @@ npm install -g npm@latest
     $envContent = @"
 NEXT_PUBLIC_API_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
-NEXT_PUBLIC_SITE_URL=https://maasiso.nl
+NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=$env:STRAPI_TOKEN
 NEXT_PUBLIC_BUILD_NUMBER=$buildNumber
 "@
@@ -184,7 +184,7 @@ cat > .env << EOL
 NODE_ENV=production
 NEXT_PUBLIC_API_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
-NEXT_PUBLIC_SITE_URL=https://maasiso.nl
+NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=\${STRAPI_TOKEN:-__SET_ON_SERVER__}
 NEXT_PUBLIC_BUILD_NUMBER='$buildNumber'
 EOL
@@ -235,7 +235,7 @@ nginx -s reload
 # Force Next.js to revalidate all pages
 curl -X POST http://localhost:3000/api/revalidate?secret=$REVALIDATE_TOKEN || true
 # Clear CDN cache if present
-curl -X PURGE https://maasiso.nl/* || true
+curl -X PURGE https://www.maasiso.nl/* || true
 
 
 # Give the application time to start
@@ -276,7 +276,7 @@ exit 1
     
     Write-Step "Deployment Completed Successfully!"
     Write-Host "Duration: $($duration.Minutes)m $($duration.Seconds)s"
-    Write-Host "Frontend URL: https://maasiso.nl"
+    Write-Host "Frontend URL: https://www.maasiso.nl"
     Write-Host "Strapi URL: http://strapicms.maasiso.cloud:1337"
     Write-Host "`nMonitoring Commands:"
     Write-Host "1. View logs: ssh -i `"$SshKeyPath`" root@$VPS 'pm2 logs frontend'"
@@ -291,3 +291,4 @@ exit 1
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
     exit 1
 }
+

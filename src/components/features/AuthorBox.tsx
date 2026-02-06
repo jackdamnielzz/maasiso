@@ -209,7 +209,7 @@ export function AuthorBox({ author, className = '' }: AuthorBoxProps) {
       </div>
 
       {/* Hidden metadata for schema */}
-      <meta itemProp="url" content={`https://maasiso.nl${authorUrl}`} />
+      <meta itemProp="url" content={`https://www.maasiso.nl${authorUrl}`} />
     </aside>
   );
 }
