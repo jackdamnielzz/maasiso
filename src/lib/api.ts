@@ -676,11 +676,83 @@ export async function getPage(slug: string): Promise<Page | null> {
       { next: { revalidate: 60 } }
     );
 
-    return data.data && data.data.length > 0 ? mapPage(data.data[0]) : null;
+    if (!data.data || data.data.length === 0) {
+      return null;
+    }
+
+    const page = mapPage(data.data[0]);
+    if (!page) {
+      return null;
+    }
+    return reorderPageLayoutForKnownSlugs(page, validatedSlug);
   } catch (error) {
     console.error('[getPage] Error:', error);
     return null;
   }
+}
+
+function reorderPageLayoutForKnownSlugs(page: Page, slug: string): Page {
+  if (slug !== 'iso-27001' || !Array.isArray(page.layout) || page.layout.length === 0) {
+    return page;
+  }
+
+  const layout = [...page.layout];
+  const used = new Set<number>();
+
+  const takeFirst = (predicate: (block: any) => boolean): any | null => {
+    const index = layout.findIndex((block, i) => !used.has(i) && predicate(block));
+    if (index === -1) return null;
+    used.add(index);
+    return layout[index];
+  };
+
+  const takeAll = (predicate: (block: any) => boolean): any[] => {
+    const result: any[] = [];
+    layout.forEach((block, i) => {
+      if (!used.has(i) && predicate(block)) {
+        used.add(i);
+        result.push(block);
+      }
+    });
+    return result;
+  };
+
+  const isTextBlock = (block: any) => block?.__component === 'page-blocks.text-block';
+  const textContains = (block: any, needle: string) =>
+    isTextBlock(block) && String(block?.content || '').toLowerCase().includes(needle.toLowerCase());
+
+  const ordered: any[] = [];
+
+  const pushIf = (block: any | null) => {
+    if (block) ordered.push(block);
+  };
+
+  pushIf(takeFirst((b) => b?.__component === 'page-blocks.hero'));
+  pushIf(takeFirst((b) => b?.__component === 'page-blocks.key-takeaways'));
+  ordered.push(...takeAll((b) => b?.__component === 'page-blocks.fact-block'));
+  pushIf(takeFirst((b) => textContains(b, 'wat is iso 27001 certificering')));
+  pushIf(takeFirst((b) => textContains(b, 'annex a')));
+  pushIf(takeFirst((b) => textContains(b, 'waarom iso 27001 steeds vaker wordt gevraagd')));
+  pushIf(takeFirst((b) => textContains(b, 'wat kost iso 27001 certificering')));
+  pushIf(takeFirst((b) => textContains(b, 'hoelang duurt een iso 27001 traject')));
+  pushIf(takeFirst((b) => b?.__component === 'page-blocks.feature-grid'));
+  pushIf(takeFirst((b) => textContains(b, 'iso 27001 vs iso 27002 vs nis2')));
+  pushIf(takeFirst((b) => textContains(b, 'nis2 artikel 21')));
+  pushIf(takeFirst((b) => b?.__component === 'page-blocks.faq-section'));
+  pushIf(
+    takeFirst(
+      (b) =>
+        b?.__component === 'page-blocks.button' &&
+        String(b?.title || b?.text || '').toLowerCase().includes('klaar om te sparren')
+    )
+  );
+
+  ordered.push(...takeAll(() => true));
+
+  return {
+    ...page,
+    layout: ordered as any,
+  };
 }
 
 export async function getNewsArticles(page = 1, pageSize = 10): Promise<{ articles: NewsArticle[]; total: number }> {
