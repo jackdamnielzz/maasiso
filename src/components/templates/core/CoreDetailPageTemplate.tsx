@@ -14,218 +14,484 @@ type CoreDetailPageTemplateProps = {
   dataTopic?: string;
 };
 
-function cloneLayout(layout: NonNullable<Page['layout']>): NonNullable<Page['layout']> {
-  return layout.map((block: any) => {
+type Layout = NonNullable<Page['layout']>;
+type LayoutBlock = Layout[number] & Record<string, any>;
+
+type StepCandidate = {
+  step: number;
+  title: string;
+  description: string;
+};
+
+const ISO27001_WHY_PARAGRAPH_REGEX =
+  /ISO 27001 laat zien dat informatiebeveiliging[\s\S]*?verantwoordelijkheden\./i;
+const ISO27001_STEP3_PARAGRAPH_REGEX =
+  /Beleid,\s*procedures,\s*rollen en beheersmaatregelen worden ingericht en geïntegreerd in de dagelijkse bedrijfsvoering\./i;
+
+const NIS2_ROW_KEYS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] as const;
+const NIS2_FALLBACK_ROWS: Record<(typeof NIS2_ROW_KEYS)[number], { measure: string; control: string }> = {
+  a: {
+    measure: 'a) Beleid risicoanalyse en informatiebeveiliging',
+    control: 'A.5.1 Beleid, A.5.2 Rollen',
+  },
+  b: {
+    measure: 'b) Incidentenbehandeling',
+    control: 'A.5.24-A.5.28 Incident management',
+  },
+  c: {
+    measure: 'c) Bedrijfscontinuïteit en crisisbeheer',
+    control: 'A.5.29-A.5.30 BCM',
+  },
+  d: {
+    measure: 'd) Beveiliging toeleveringsketen',
+    control: 'A.5.19-A.5.23 Leveranciersbeheer',
+  },
+  e: {
+    measure: 'e) Beveiliging bij aankoop en ontwikkeling',
+    control: 'A.8.25-A.8.31 Secure development',
+  },
+  f: {
+    measure: 'f) Beoordelen effectiviteit maatregelen',
+    control: 'A.5.35-A.5.36 Naleving en audit',
+  },
+  g: {
+    measure: 'g) Cyberhygiëne en opleiding',
+    control: 'A.6.3 Bewustwording',
+  },
+  h: {
+    measure: 'h) Beleid cryptografie',
+    control: 'A.8.24 Cryptografie',
+  },
+  i: {
+    measure: 'i) Personeelsbeveiliging en toegangsbeleid',
+    control: 'A.6.1-A.6.2, A.8.1-A.8.5',
+  },
+  j: {
+    measure: 'j) Multifactorauthenticatie',
+    control: 'A.8.5 Authenticatie',
+  },
+};
+
+function cloneLayout(layout: Layout): Layout {
+  return layout.map((block) => {
     if (block?.__component === 'page-blocks.feature-grid') {
       return {
         ...block,
-        features: Array.isArray(block.features) ? block.features.map((f: any) => ({ ...f })) : [],
+        features: Array.isArray((block as any).features)
+          ? (block as any).features.map((feature: any) => ({ ...feature }))
+          : [],
       };
     }
     return { ...block };
-  }) as NonNullable<Page['layout']>;
+  }) as Layout;
 }
 
-function extractTrailingStepsFromText(content: string) {
-  const lines = content.split('\n');
-  const used = new Set<number>();
-  const extracted: Array<{ step: number; title: string; description: string }> = [];
+function getStepNumber(text: string | undefined): number | null {
+  const match = String(text ?? '').match(/stap\s*([1-5])/i);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return Number.isFinite(value) ? value : null;
+}
 
-  const stepHeader = /^\s*(?:[-*]\s*)?(?:\*\*)?\s*Stap\s*([45])\s*[:\-–]\s*(.+?)\s*(?:\*\*)?\s*$/i;
+function extractLeakedStepsFromText(content: string): { cleanedContent: string; steps: StepCandidate[] } {
+  const normalizedContent = content.replace(/\r\n/g, '\n');
+  const lines = normalizedContent.split('\n');
+  const consumedIndexes = new Set<number>();
+  const extractedSteps: StepCandidate[] = [];
+  const stepHeaderRegex =
+    /^\s*(?:[-*]\s*)?(?:#{1,6}\s*)?(?:\*\*)?\s*Stap\s*([45])\s*[:\-–]\s*(.+?)\s*(?:\*\*)?\s*$/i;
 
-  for (let i = 0; i < lines.length; i += 1) {
-    const match = lines[i].match(stepHeader);
-    if (!match) continue;
+  for (let index = 0; index < lines.length; index += 1) {
+    const headerMatch = lines[index].match(stepHeaderRegex);
+    if (!headerMatch) continue;
 
-    const step = Number(match[1]);
-    const title = match[2].trim();
-    used.add(i);
+    const step = Number(headerMatch[1]);
+    const titleRemainder = headerMatch[2].trim();
+    consumedIndexes.add(index);
 
     const descriptionLines: string[] = [];
-    let j = i + 1;
-    while (j < lines.length) {
-      if (lines[j].match(stepHeader)) break;
-      descriptionLines.push(lines[j]);
-      used.add(j);
-      j += 1;
+    let cursor = index + 1;
+    while (cursor < lines.length) {
+      const currentLine = lines[cursor];
+      if (stepHeaderRegex.test(currentLine)) break;
+      if (/^\s*#{1,6}\s+/.test(currentLine)) break;
+      consumedIndexes.add(cursor);
+      descriptionLines.push(currentLine);
+      cursor += 1;
     }
 
-    extracted.push({
+    extractedSteps.push({
       step,
-      title,
+      title: titleRemainder.startsWith(`Stap ${step}`) ? titleRemainder : `Stap ${step} - ${titleRemainder}`,
       description: descriptionLines.join('\n').trim(),
     });
 
-    i = j - 1;
+    index = cursor - 1;
   }
 
-  if (!extracted.length) {
-    return { content, steps: [] as Array<{ step: number; title: string; description: string }> };
+  if (extractedSteps.length === 0) {
+    return { cleanedContent: normalizedContent, steps: [] };
   }
 
-  const remaining = lines
-    .filter((_, idx) => !used.has(idx))
+  const cleanedContent = lines
+    .filter((_, lineIndex) => !consumedIndexes.has(lineIndex))
     .join('\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  return { content: remaining, steps: extracted };
+  return { cleanedContent, steps: extractedSteps };
+}
+
+function parseNis2Row(line: string): { key: string; measure: string; control: string } | null {
+  const tableRowMatch = line.match(/^\s*\|\s*([a-j])[\)\.]?\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$/i);
+  if (tableRowMatch) {
+    const key = tableRowMatch[1].toLowerCase();
+    const rawMeasure = tableRowMatch[2].trim().replace(/^[a-j][\)\.]\s*/i, '');
+    const control = tableRowMatch[3].trim();
+    return {
+      key,
+      measure: `${key}) ${rawMeasure}`.trim(),
+      control,
+    };
+  }
+
+  const looseRowMatch = line.match(/^\s*[-*]?\s*([a-j])[\)\.]?\s*(.*?)\s+(A\.[0-9].*)\s*$/i);
+  if (!looseRowMatch) return null;
+
+  const key = looseRowMatch[1].toLowerCase();
+  const rawMeasure = looseRowMatch[2].trim().replace(/^[a-j][\)\.]\s*/i, '');
+  const control = looseRowMatch[3].trim();
+  return {
+    key,
+    measure: `${key}) ${rawMeasure}`.trim(),
+    control,
+  };
+}
+
+function buildCanonicalNis2Table(rowsByKey: Map<string, { measure: string; control: string }>): string {
+  const header = '| NIS2 Artikel 21 - Maatregel | ISO 27001 Annex A controls |';
+  const separator = '|---|---|';
+  const rows = NIS2_ROW_KEYS.map((key) => {
+    const row = rowsByKey.get(key) ?? NIS2_FALLBACK_ROWS[key];
+    return `| ${row.measure} | ${row.control} |`;
+  });
+  return [header, separator, ...rows].join('\n');
 }
 
 function normalizeNis2Table(content: string): string {
-  const lower = content.toLowerCase();
-  if (!lower.includes('nis2 artikel 21')) return content;
+  const normalizedContent = content.replace(/\r\n/g, '\n');
+  if (!normalizedContent.toLowerCase().includes('nis2 artikel 21')) {
+    return normalizedContent;
+  }
 
-  const lines = content.split('\n');
-  const looseRows: Array<{ letter: string; text: string; index: number }> = [];
-
-  lines.forEach((line, index) => {
-    const m = line.match(/^\s*([hij])[\)\.\-:]\s*(.+)\s*$/i);
-    if (!m) return;
-    looseRows.push({ letter: m[1].toLowerCase(), text: m[2].trim(), index });
-  });
-
-  if (!looseRows.length) return content;
-
-  let separatorIndex = -1;
-  for (let i = 0; i < lines.length; i += 1) {
-    if (/^\s*\|?\s*:?-{2,}/.test(lines[i])) {
-      separatorIndex = i;
-      break;
+  const lines = normalizedContent.split('\n');
+  const rowsByKey = new Map<string, { measure: string; control: string }>();
+  lines.forEach((line) => {
+    const parsed = parseNis2Row(line);
+    if (parsed) {
+      rowsByKey.set(parsed.key, { measure: parsed.measure, control: parsed.control });
     }
-  }
-  if (separatorIndex === -1) return content;
-
-  let tableEnd = separatorIndex + 1;
-  while (tableEnd < lines.length && /^\s*\|/.test(lines[tableEnd])) {
-    tableEnd += 1;
-  }
-
-  const headerLine = lines[Math.max(0, separatorIndex - 1)] || '';
-  const headerColumns = headerLine.includes('|')
-    ? headerLine.split('|').filter((c) => c.trim().length > 0).length
-    : 2;
-  const columnCount = Math.max(2, headerColumns);
-
-  const generatedRows = looseRows.map(({ letter, text }) => {
-    const cells = [letter.toUpperCase(), text, ...Array(Math.max(0, columnCount - 2)).fill('')];
-    return `| ${cells.join(' | ')} |`;
   });
 
-  const removeIndexes = new Set(looseRows.map((row) => row.index));
-  const withoutLooseRows = lines.filter((_, index) => !removeIndexes.has(index));
+  const rowLikeIndexes: number[] = [];
+  lines.forEach((line, index) => {
+    const isPipeOnly = line.trim() === '|';
+    const isTableHeaderRow =
+      /^\s*\|.*NIS2 Artikel 21.*\|.*ISO 27001 Annex A controls.*\|?\s*$/i.test(line);
+    const isTableSeparatorRow = /^\s*\|?\s*:?-{3,}.*\|?\s*$/.test(line);
+    const isTableRow = /^\s*\|.*\|.*\|\s*$/.test(line);
+    const isLooseRow = parseNis2Row(line) !== null;
 
-  const adjustedTableEnd = tableEnd - looseRows.filter((r) => r.index < tableEnd).length;
-  withoutLooseRows.splice(adjustedTableEnd, 0, ...generatedRows);
+    if (isPipeOnly || isTableHeaderRow || isTableSeparatorRow || isTableRow || isLooseRow) {
+      rowLikeIndexes.push(index);
+    }
+  });
 
-  return withoutLooseRows.join('\n');
+  const firstRowIndex = rowLikeIndexes.length > 0 ? Math.min(...rowLikeIndexes) : -1;
+  const lastRowIndex = rowLikeIndexes.length > 0 ? Math.max(...rowLikeIndexes) : -1;
+
+  const prefix =
+    firstRowIndex === -1
+      ? lines.join('\n').trim()
+      : lines.slice(0, firstRowIndex).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  const suffix =
+    lastRowIndex === -1
+      ? ''
+      : lines.slice(lastRowIndex + 1).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+
+  const canonicalTable = buildCanonicalNis2Table(rowsByKey);
+  return [prefix, canonicalTable, suffix].filter(Boolean).join('\n\n').trim();
 }
 
-function moveButtonsToEnd(layout: NonNullable<Page['layout']>): NonNullable<Page['layout']> {
-  const normalBlocks = layout.filter((b: any) => b?.__component !== 'page-blocks.button');
-  const buttonBlocks = layout.filter((b: any) => b?.__component === 'page-blocks.button');
-  return [...normalBlocks, ...buttonBlocks] as NonNullable<Page['layout']>;
-}
-
-function normalizeIso27001Layout(layout: NonNullable<Page['layout']>): NonNullable<Page['layout']> {
-  const blocks = cloneLayout(layout) as any[];
-
-  // Fix 1: combine all feature-grid steps into one block (1..5 in the same component)
+function mergeFeatureGrids(blocks: LayoutBlock[]): LayoutBlock | null {
   const featureGridIndexes = blocks
     .map((block, index) => ({ block, index }))
     .filter(({ block }) => block?.__component === 'page-blocks.feature-grid')
     .map(({ index }) => index);
 
-  if (featureGridIndexes.length > 1) {
-    const primaryIndex = featureGridIndexes[0];
-    const primary = blocks[primaryIndex];
-    const mergedFeatures = Array.isArray(primary.features) ? [...primary.features] : [];
+  if (featureGridIndexes.length === 0) return null;
 
-    for (const idx of featureGridIndexes.slice(1)) {
-      const extra = Array.isArray(blocks[idx]?.features) ? blocks[idx].features : [];
-      mergedFeatures.push(...extra);
-      blocks[idx] = null;
+  const primary = blocks[featureGridIndexes[0]];
+  const mergedFeatures = Array.isArray(primary.features) ? [...primary.features] : [];
+
+  featureGridIndexes.slice(1).forEach((index) => {
+    const extras = Array.isArray(blocks[index]?.features) ? blocks[index].features : [];
+    mergedFeatures.push(...extras);
+    blocks[index] = null as unknown as LayoutBlock;
+  });
+
+  primary.features = mergedFeatures;
+  return primary;
+}
+
+function appendStepToFeatureGrid(grid: LayoutBlock, step: StepCandidate): void {
+  const features = Array.isArray(grid.features) ? grid.features : [];
+  const hasStepAlready = features.some((feature: any) => getStepNumber(feature?.title) === step.step);
+  if (hasStepAlready) return;
+
+  features.push({
+    id: `iso27001-step-${step.step}`,
+    title: step.title,
+    description: step.description,
+    link: '',
+  });
+
+  const sorted = [...features].sort((a: any, b: any) => {
+    const aStep = getStepNumber(a?.title);
+    const bStep = getStepNumber(b?.title);
+    if (aStep && bStep) return aStep - bStep;
+    if (aStep) return -1;
+    if (bStep) return 1;
+    return 0;
+  });
+
+  grid.features = sorted;
+}
+
+function moveLooseNis2RowsToNis2Block(blocks: LayoutBlock[]): void {
+  const targetIndex = blocks.findIndex(
+    (block) =>
+      block?.__component === 'page-blocks.text-block' &&
+      String(block.content || '').toLowerCase().includes('nis2 artikel 21')
+  );
+  if (targetIndex === -1) return;
+
+  const collectedRows: Array<{ measure: string; control: string }> = [];
+  blocks.forEach((block, index) => {
+    if (index === targetIndex || block?.__component !== 'page-blocks.text-block' || !block.content) return;
+
+    const lines = String(block.content).replace(/\r\n/g, '\n').split('\n');
+    let hasNis2Rows = false;
+    const keepLines: string[] = [];
+
+    lines.forEach((line) => {
+      const parsed = parseNis2Row(line);
+      if (parsed) {
+        hasNis2Rows = true;
+        collectedRows.push({ measure: parsed.measure, control: parsed.control });
+        return;
+      }
+      keepLines.push(line);
+    });
+
+    if (!hasNis2Rows) return;
+
+    const cleanedContent = keepLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+    blocks[index].content = cleanedContent;
+    if (!cleanedContent) {
+      blocks[index] = null as unknown as LayoutBlock;
+    }
+  });
+
+  if (collectedRows.length === 0) return;
+  const existing = String(blocks[targetIndex].content || '').trim();
+  const injectedRows = collectedRows.map((row) => `| ${row.measure} | ${row.control} |`).join('\n');
+  blocks[targetIndex].content = `${existing}\n${injectedRows}`.trim();
+}
+
+function moveWhyParagraphToWaaromBlock(blocks: LayoutBlock[]): void {
+  const whyIndex = blocks.findIndex(
+    (block) =>
+      block?.__component === 'page-blocks.text-block' &&
+      String(block.content || '').toLowerCase().includes('waarom iso 27001')
+  );
+  if (whyIndex === -1) return;
+
+  const whyContent = String(blocks[whyIndex].content || '');
+  if (ISO27001_WHY_PARAGRAPH_REGEX.test(whyContent)) return;
+
+  for (let index = 0; index < blocks.length; index += 1) {
+    if (index === whyIndex) continue;
+    const block = blocks[index];
+    if (!block || block.__component !== 'page-blocks.text-block' || !block.content) continue;
+
+    const sourceContent = String(block.content);
+    const match = sourceContent.match(ISO27001_WHY_PARAGRAPH_REGEX);
+    if (!match?.[0]) continue;
+
+    const paragraph = match[0].trim();
+    const cleanedSource = sourceContent.replace(match[0], '').replace(/\n{3,}/g, '\n\n').trim();
+    blocks[index].content = cleanedSource;
+    if (!cleanedSource) {
+      blocks[index] = null as unknown as LayoutBlock;
     }
 
-    primary.features = mergedFeatures;
+    blocks[whyIndex].content = `${String(blocks[whyIndex].content || '').trim()}\n\n${paragraph}`.trim();
+    return;
+  }
+}
+
+function moveStep3ParagraphIntoFeatureGrid(blocks: LayoutBlock[]): void {
+  const primaryFeatureGrid = blocks.find((block) => block?.__component === 'page-blocks.feature-grid');
+  if (!primaryFeatureGrid || !Array.isArray(primaryFeatureGrid.features)) return;
+
+  let paragraphToMove = '';
+  for (let index = 0; index < blocks.length; index += 1) {
+    const block = blocks[index];
+    if (!block || block.__component !== 'page-blocks.text-block' || !block.content) continue;
+
+    const sourceContent = String(block.content);
+    const match = sourceContent.match(ISO27001_STEP3_PARAGRAPH_REGEX);
+    if (!match?.[0]) continue;
+
+    paragraphToMove = match[0].trim();
+    const cleaned = sourceContent.replace(match[0], '').replace(/\n{3,}/g, '\n\n').trim();
+    blocks[index].content = cleaned;
+    if (!cleaned) {
+      blocks[index] = null as unknown as LayoutBlock;
+    }
+    break;
   }
 
-  // Also capture step 4/5 if they leaked into a text block
-  const primaryFeatureGrid = blocks.find((b) => b?.__component === 'page-blocks.feature-grid');
-  if (primaryFeatureGrid) {
-    const existingTitles = new Set(
-      (Array.isArray(primaryFeatureGrid.features) ? primaryFeatureGrid.features : [])
-        .map((f: any) => String(f?.title || '').toLowerCase().trim())
-    );
+  if (!paragraphToMove) return;
 
+  const features = primaryFeatureGrid.features as any[];
+  const step3Feature =
+    features.find((feature) => getStepNumber(String(feature?.title || '')) === 3) || features[2];
+  if (!step3Feature) return;
+
+  const description = String(step3Feature.description || '').trim();
+  if (description.includes(paragraphToMove)) return;
+  step3Feature.description = [description, paragraphToMove].filter(Boolean).join('\n\n').trim();
+}
+
+function enforceIso27001TextOrder(blocks: LayoutBlock[]): Layout {
+  const ordered: LayoutBlock[] = [];
+  const consumed = new Set<LayoutBlock>();
+
+  const takeFirst = (predicate: (block: LayoutBlock) => boolean) => {
+    const block = blocks.find((candidate) => !consumed.has(candidate) && predicate(candidate));
+    if (!block) return;
+    consumed.add(block);
+    ordered.push(block);
+  };
+
+  const takeAll = (predicate: (block: LayoutBlock) => boolean) => {
+    blocks.forEach((block) => {
+      if (consumed.has(block)) return;
+      if (!predicate(block)) return;
+      consumed.add(block);
+      ordered.push(block);
+    });
+  };
+
+  const classifyTextBlock = (content: string):
+    | 'definition'
+    | 'why'
+    | 'annex'
+    | 'cost'
+    | 'duration'
+    | 'comparison'
+    | 'nis2'
+    | 'other' => {
+    const normalized = content.toLowerCase();
+    if (normalized.includes('wat is iso 27001 certificering')) return 'definition';
+    if (normalized.includes('waarom iso 27001')) return 'why';
+    if (normalized.includes('annex a')) return 'annex';
+    if (normalized.includes('wat kost iso 27001 certificering')) return 'cost';
+    if (normalized.includes('hoelang duurt een iso 27001 traject') || normalized.includes('hoe lang duurt')) {
+      return 'duration';
+    }
+    if (normalized.includes('iso 27001 vs iso 27002 vs nis2')) return 'comparison';
+    if (normalized.includes('nis2 artikel 21')) return 'nis2';
+    return 'other';
+  };
+
+  takeFirst((block) => block.__component === 'page-blocks.hero');
+  takeFirst((block) => block.__component === 'page-blocks.key-takeaways');
+  takeAll((block) => block.__component === 'page-blocks.fact-block');
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'definition'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'why'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'annex'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'cost'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'duration'
+  );
+  takeFirst((block) => block.__component === 'page-blocks.feature-grid');
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'comparison'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'nis2'
+  );
+  takeAll(
+    (block) => block.__component === 'page-blocks.text-block' && classifyTextBlock(String(block.content || '')) === 'other'
+  );
+  takeAll((block) => block.__component === 'page-blocks.faq-section');
+
+  blocks.forEach((block) => {
+    if (consumed.has(block)) return;
+    if (block.__component === 'page-blocks.button') return;
+    consumed.add(block);
+    ordered.push(block);
+  });
+
+  takeAll((block) => block.__component === 'page-blocks.button');
+
+  return ordered as Layout;
+}
+
+export function normalizeIso27001Layout(layout: Layout): Layout {
+  const blocks = cloneLayout(layout) as LayoutBlock[];
+  const primaryFeatureGrid = mergeFeatureGrids(blocks);
+
+  if (primaryFeatureGrid) {
     blocks.forEach((block, index) => {
       if (!block || block.__component !== 'page-blocks.text-block' || !block.content) return;
-      const { content, steps } = extractTrailingStepsFromText(String(block.content));
+      if (!/stap\s*[45]\s*[:\-–]/i.test(String(block.content))) return;
+
+      const { cleanedContent, steps } = extractLeakedStepsFromText(String(block.content));
       if (!steps.length) return;
 
-      const mapped = steps
-        .sort((a, b) => a.step - b.step)
-        .map((s) => ({
-          id: `iso27001-step-${s.step}`,
-          title: s.title,
-          description: s.description,
-          link: '',
-        }))
-        .filter((s) => {
-          const key = s.title.toLowerCase().trim();
-          if (!key || existingTitles.has(key)) return false;
-          existingTitles.add(key);
-          return true;
-        });
-
-      if (mapped.length) {
-        primaryFeatureGrid.features = [...(primaryFeatureGrid.features || []), ...mapped];
-      }
-
-      blocks[index].content = content;
-      if (!String(content || '').trim()) {
-        blocks[index] = null;
+      steps.forEach((step) => appendStepToFeatureGrid(primaryFeatureGrid, step));
+      blocks[index].content = cleanedContent;
+      if (!cleanedContent) {
+        blocks[index] = null as unknown as LayoutBlock;
       }
     });
   }
 
-  // Fix 2: force loose h/i/j NIS2 mapping rows back into the markdown table
+  moveLooseNis2RowsToNis2Block(blocks);
+
   blocks.forEach((block, index) => {
     if (!block || block.__component !== 'page-blocks.text-block' || !block.content) return;
+    if (!String(block.content).toLowerCase().includes('nis2 artikel 21')) return;
     blocks[index].content = normalizeNis2Table(String(block.content));
   });
 
-  // Fix 3: make sure the "ISO 27001 laat zien..." paragraph sits in "Waarom ISO 27001" block
-  const phrase = 'ISO 27001 laat zien dat informatiebeveiliging';
-  const phraseRegex = /ISO 27001 laat zien dat informatiebeveiliging[\s\S]*?(?=\n\n|$)/i;
-  const sourceIndex = blocks.findIndex(
-    (b) => b?.__component === 'page-blocks.text-block' && phraseRegex.test(String(b?.content || ''))
-  );
-  const whyIndex = blocks.findIndex(
-    (b) =>
-      b?.__component === 'page-blocks.text-block' &&
-      String(b?.content || '').toLowerCase().includes('waarom iso 27001')
-  );
+  moveWhyParagraphToWaaromBlock(blocks);
+  moveStep3ParagraphIntoFeatureGrid(blocks);
 
-  if (sourceIndex !== -1 && whyIndex !== -1 && sourceIndex !== whyIndex) {
-    const sourceText = String(blocks[sourceIndex].content || '');
-    const match = sourceText.match(phraseRegex);
-    if (match?.[0]) {
-      const paragraph = match[0].trim();
-      blocks[sourceIndex].content = sourceText.replace(match[0], '').replace(/\n{3,}/g, '\n\n').trim();
-      if (!String(blocks[whyIndex].content || '').includes(paragraph)) {
-        blocks[whyIndex].content = `${String(blocks[whyIndex].content || '').trim()}\n\n${paragraph}`.trim();
-      }
-      if (!String(blocks[sourceIndex].content || '').trim()) {
-        blocks[sourceIndex] = null;
-      }
-    }
-  }
-
-  const compact = blocks.filter(Boolean) as NonNullable<Page['layout']>;
-
-  // Keep CTA as last block on this page so body content always appears before CTA.
-  return moveButtonsToEnd(compact);
+  const compact = blocks.filter(Boolean) as Layout;
+  return enforceIso27001TextOrder(compact as LayoutBlock[]);
 }
 
 export default async function CoreDetailPageTemplate({
