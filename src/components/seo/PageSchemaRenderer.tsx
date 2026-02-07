@@ -32,6 +32,7 @@ export default function PageSchemaRenderer({ page, canonicalUrl, faqQuestions = 
   const faq =
     faqQuestions.length > 0
       ? {
+          id: `${canonicalUrl}#faq`,
           questions: faqQuestions,
         }
       : undefined;
@@ -42,4 +43,3 @@ export default function PageSchemaRenderer({ page, canonicalUrl, faqQuestions = 
 
   return <SchemaMarkup primary={primarySchema} faq={faq} />;
 }
-

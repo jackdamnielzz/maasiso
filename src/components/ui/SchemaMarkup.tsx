@@ -13,6 +13,7 @@ type ServiceSchema = {
 };
 
 type FAQSchema = {
+  id?: string;
   questions: Array<{
     question: string;
     answer: string;
@@ -69,6 +70,14 @@ type SchemaMarkupProps = {
  */
 const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howTo, article, breadcrumbs }) => {
   const schemas: Array<Record<string, unknown>> = [];
+  const toPlainText = (value: string): string =>
+    value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+      .replace(/[*_~`>#-]+/g, ' ')
+      .replace(/\s+([?.!,:;])/g, '$1')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   // Add primary page schema when provided (Article/WebPage/Service).
   if (primary) {
@@ -109,12 +118,13 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howT
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
+      ...(faq.id ? { '@id': faq.id } : {}),
       mainEntity: faq.questions.map(item => ({
         '@type': 'Question',
-        name: item.question,
+        name: toPlainText(item.question),
         acceptedAnswer: {
           '@type': 'Answer',
-          text: item.answer
+          text: toPlainText(item.answer)
         }
       }))
     });
@@ -202,16 +212,26 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howT
     });
   }
 
+  if (schemas.length === 0) {
+    return null;
+  }
+
+  const payload =
+    schemas.length === 1
+      ? schemas[0]
+      : {
+          '@context': 'https://schema.org',
+          '@graph': schemas.map((schema) => {
+            const { ['@context']: _context, ...node } = schema;
+            return node;
+          }),
+        };
+
   return (
-    <>
-      {schemas.map((schema, index) => (
-        <script
-          key={`schema-${index}`}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
-    </>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+    />
   );
 };
 

@@ -78,8 +78,6 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
     <section
       className={`faq-section my-12 ${className}`}
       aria-labelledby="faq-heading"
-      itemScope
-      itemType="https://schema.org/FAQPage"
     >
       <h2
         id="faq-heading"
@@ -98,9 +96,6 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
             <div
               key={item.id || index}
               className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
-              itemScope
-              itemProp="mainEntity"
-              itemType="https://schema.org/Question"
             >
               {/* Question Button */}
               <button
@@ -110,7 +105,7 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                 aria-controls={answerId}
                 className="w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
               >
-                <span itemProp="name" className="pr-8">
+                <span className="pr-8">
                   {parseMarkdownBold(item.question)}
                 </span>
                 <svg
@@ -139,13 +134,9 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                 className={`overflow-hidden transition-all duration-200 ease-in-out ${
                   isOpen ? 'max-h-96' : 'max-h-0'
                 }`}
-                itemScope
-                itemProp="acceptedAnswer"
-                itemType="https://schema.org/Answer"
               >
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                   <div
-                    itemProp="text"
                     className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: markdownBoldToHtml(item.answer) }}
                   />
@@ -155,9 +146,6 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
           );
         })}
       </div>
-
-      {/* Hidden metadata for FAQ schema (also rendered via SchemaMarkup component) */}
-      <meta itemProp="mainContentOfPage" content="true" />
     </section>
   );
 }

@@ -2,6 +2,9 @@ import { render } from '@testing-library/react';
 import SchemaMarkup from './SchemaMarkup';
 
 describe('SchemaMarkup', () => {
+  const extractGraphNodes = (payload: any) =>
+    Array.isArray(payload?.['@graph']) ? payload['@graph'] : [payload];
+
   it('renders a provided primary schema payload', () => {
     const { container } = render(
       <SchemaMarkup
@@ -23,7 +26,7 @@ describe('SchemaMarkup', () => {
     expect(scripts[0].name).toBe('Testpagina');
   });
 
-  it('renders Service and FAQPage JSON-LD payloads', () => {
+  it('renders Service and FAQPage JSON-LD payloads in a single script', () => {
     const { container } = render(
       <SchemaMarkup
         service={{
@@ -39,7 +42,7 @@ describe('SchemaMarkup', () => {
         }}
         faq={{
           questions: [
-            { question: 'Wat kost ISO 9001?', answer: 'Tussen X en Y.' },
+            { question: 'Wat kost **ISO 9001**?', answer: 'Tussen **X** en <strong>Y</strong>.' },
             { question: 'Hoe lang duurt het?', answer: '3 tot 6 maanden.' },
           ],
         }}
@@ -50,8 +53,11 @@ describe('SchemaMarkup', () => {
       JSON.parse(node.textContent || '{}')
     );
 
-    const serviceSchema = scripts.find((script) => script['@type'] === 'Service');
-    const faqSchema = scripts.find((script) => script['@type'] === 'FAQPage');
+    expect(scripts).toHaveLength(1);
+
+    const nodes = extractGraphNodes(scripts[0]);
+    const serviceSchema = nodes.find((script: any) => script['@type'] === 'Service');
+    const faqSchema = nodes.find((script: any) => script['@type'] === 'FAQPage');
 
     expect(serviceSchema).toBeDefined();
     expect(serviceSchema.name).toBe('ISO 9001 certificering');
