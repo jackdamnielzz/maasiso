@@ -104,16 +104,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              "@id": "https://www.maasiso.nl/#professionalservice",
+              "@type": "Organization",
+              "@id": "https://www.maasiso.nl/#organization",
               "name": "MaasISO",
               "url": "https://www.maasiso.nl",
               "logo": "https://www.maasiso.nl/apple-touch-icon.png",
               "image": "https://www.maasiso.nl/apple-touch-icon.png",
-              "areaServed": ["NL", "BE"],
-              "telephone": "+31623578344",
-              "email": "info@maasiso.nl",
-              "priceRange": "$$"
+              "contactPoint": [
+                {
+                  "@type": "ContactPoint",
+                  "telephone": "+31623578344",
+                  "email": "info@maasiso.nl",
+                  "contactType": "customer support",
+                  "areaServed": ["NL", "BE"],
+                  "availableLanguage": ["nl", "en"]
+                }
+              ]
             }),
           }}
         />
