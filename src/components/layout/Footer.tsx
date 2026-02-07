@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { COMPANY_DETAILS } from '@/config/company';
 
 export default function Footer() {
   return (
@@ -61,12 +62,16 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="text-gray-400">
-                <span>Tel: +31 (0)6 2357 8344</span>
+                <span>Tel: {COMPANY_DETAILS.phoneDisplay}</span>
               </li>
               <li className="text-gray-400">
-                <span>Email: info@maasiso.nl</span>
+                <span>Email: {COMPANY_DETAILS.email}</span>
               </li>
-              {/* Address removed as requested */}
+              <li className="text-gray-400">
+                <span>
+                  Adres: {COMPANY_DETAILS.addressLine1}, {COMPANY_DETAILS.postalCode} {COMPANY_DETAILS.city}
+                </span>
+              </li>
             </ul>
           </div>
           

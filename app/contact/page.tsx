@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import ContactForm from '@/components/features/ContactForm';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
+import { COMPANY_DETAILS } from '@/config/company';
 
 export const metadata: Metadata = {
   title: 'Contact | MaasISO',
@@ -39,7 +40,7 @@ export default function ContactPage() {
                   </svg>
                   <div>
                     <h3 className="font-medium text-[#091E42]">E-mail</h3>
-                    <a href="mailto:info@maasiso.nl" className="text-[#FF8B00] hover:underline">info@maasiso.nl</a>
+                    <a href={`mailto:${COMPANY_DETAILS.email}`} className="text-[#FF8B00] hover:underline">{COMPANY_DETAILS.email}</a>
                   </div>
                 </div>
                 
@@ -49,7 +50,21 @@ export default function ContactPage() {
                   </svg>
                   <div>
                     <h3 className="font-medium text-[#091E42]">Telefoon</h3>
-                    <a href="tel:+31623578344" className="text-[#FF8B00] hover:underline">+31 (0)6 2357 8344</a>
+                    <a href={`tel:${COMPANY_DETAILS.phoneHref}`} className="text-[#FF8B00] hover:underline">{COMPANY_DETAILS.phoneDisplay}</a>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#FF8B00] mt-1 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <h3 className="font-medium text-[#091E42]">Adres</h3>
+                    <p className="text-[#091E42]/80">
+                      {COMPANY_DETAILS.addressLine1}<br />
+                      {COMPANY_DETAILS.postalCode} {COMPANY_DETAILS.city}
+                    </p>
                   </div>
                 </div>
               </div>

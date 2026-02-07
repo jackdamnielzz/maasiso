@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import { COMPANY_DETAILS } from '@/config/company';
 
 // Custom spectacular icons
 const icons = {
@@ -288,6 +289,17 @@ export default function OverOnsContent() {
                 </div>
               </ScrollReveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-[#F8FAFC] border-y border-slate-200">
+        <div className="container-custom px-4">
+          <div className="max-w-5xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+            <h3 className="text-2xl font-bold text-[#091E42] mb-4">Bezoekadres</h3>
+            <p className="text-gray-700 text-lg">
+              {COMPANY_DETAILS.addressLine1}, {COMPANY_DETAILS.postalCode} {COMPANY_DETAILS.city}
+            </p>
           </div>
         </div>
       </section>
