@@ -78,14 +78,26 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               >
                 AVG & Wetgeving
               </Link>
-              <Link
-                href="/kennis"
-                className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
-                  pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
-                }`}
-              >
-                Kennis
-              </Link>
+              <div className="group relative">
+                <Link
+                  href="/kennis"
+                  className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
+                    pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
+                  }`}
+                >
+                  Kennis
+                </Link>
+                <div className="pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 translate-y-1 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
+                  <div className="min-w-[160px] rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                    <Link
+                      href="/kennis/blog"
+                      className="block rounded-lg px-3 py-2 text-[13px] font-medium text-[#091E42] transition-colors duration-200 hover:bg-slate-50 hover:text-[#FF8B00]"
+                    >
+                      Blog
+                    </Link>
+                  </div>
+                </div>
+              </div>
               <Link
                 href="/waarom-maasiso"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
