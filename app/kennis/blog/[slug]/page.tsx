@@ -14,11 +14,18 @@ export async function generateMetadata(
   { params, searchParams }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const resolvedParams = await params;
+  const canonicalPath = `/kennis/blog/${resolvedParams.slug}`;
   const base = await baseGenerateMetadata({ params, searchParams } as any, parent);
   return {
     ...base,
     alternates: {
-      canonical: `/kennis/blog/${(await params).slug}`,
+      ...(base.alternates ?? {}),
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      ...(base.openGraph ?? {}),
+      url: canonicalPath,
     },
   };
 }

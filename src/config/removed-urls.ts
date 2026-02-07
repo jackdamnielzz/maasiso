@@ -7,17 +7,26 @@ export interface RemovedUrl {
   removedAt?: string; // Optional: When it was removed (ISO date)
 }
 
+const REMOVED_BLOG_SLUGS: Array<{ slug: string; reason: string }> = [
+  { slug: 'iso-9001-interne-audit-tips', reason: 'Content archived/deleted' },
+  { slug: 'minimal-test-blog-post', reason: 'Test content removed' },
+];
+
+const REMOVED_BLOG_URLS: RemovedUrl[] = REMOVED_BLOG_SLUGS.flatMap(({ slug, reason }) => [
+  {
+    path: `/blog/${slug}`,
+    reason,
+    removedAt: '2026-01-25',
+  },
+  {
+    path: `/kennis/blog/${slug}`,
+    reason,
+    removedAt: '2026-01-25',
+  },
+]);
+
 export const REMOVED_URLS: RemovedUrl[] = [
-  {
-    path: '/blog/iso-9001-interne-audit-tips',
-    reason: 'Content archived/deleted',
-    removedAt: '2026-01-25'
-  },
-  {
-    path: '/blog/minimal-test-blog-post',
-    reason: 'Test content removed',
-    removedAt: '2026-01-25'
-  },
+  ...REMOVED_BLOG_URLS,
   {
     path: '/test-deploy',
     reason: 'Test page removed',

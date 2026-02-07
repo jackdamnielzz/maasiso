@@ -23,6 +23,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/search",
   },
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: {
+      index: false,
+      follow: true,
+    },
+  },
 };
 
 export const dynamic = 'force-dynamic';

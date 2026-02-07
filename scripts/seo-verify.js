@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-// SEO Migration Verification Script
+// SEO/GEO Verification Script
 // Usage: node scripts/seo-verify.js [options]
 // Options:
 //   --json             Output results as JSON
@@ -9,15 +9,18 @@
 
 const SITE_URL = 'https://www.maasiso.nl';
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
+const ROBOTS_URL = `${SITE_URL}/robots.txt`;
+const SEARCH_URL = `${SITE_URL}/search?q=iso`;
+const ISO9001_TRAILING_SLASH_URL = `${SITE_URL}/iso-certificering/iso-9001/`;
 
 const LEGACY_REDIRECTS = [
-  ['/diensten/iso-9001-consultancy', '/iso-9001'],
-  ['/diensten/gdpr-avg', '/avg'],
-  ['/diensten/bio', '/bio'],
-  ['/diensten/iso-27001', '/iso-27001'],
-  ['/diensten/iso-45001', '/iso-45001'],
-  ['/diensten/iso-9001', '/iso-9001'],
-  ['/diensten/iso-14001', '/iso-14001'],
+  ['/diensten/iso-9001-consultancy', '/iso-certificering/iso-9001/'],
+  ['/diensten/gdpr-avg', '/avg-wetgeving/avg'],
+  ['/diensten/bio', '/informatiebeveiliging/bio'],
+  ['/diensten/iso-27001', '/informatiebeveiliging/iso-27001'],
+  ['/diensten/iso-45001', '/iso-certificering/iso-45001'],
+  ['/diensten/iso-9001', '/iso-certificering/iso-9001/'],
+  ['/diensten/iso-14001', '/iso-certificering/iso-14001'],
 ];
 
 const SOFT_404_EXPECTATIONS = [
@@ -27,10 +30,9 @@ const SOFT_404_EXPECTATIONS = [
 ];
 
 const REMOVED_URL_CHECKS = [
-  '/blog/iso-9001-interne-audit-tips',
-  '/blog/minimal-test-blog-post',
+  '/kennis/blog/iso-9001-interne-audit-tips',
+  '/kennis/blog/minimal-test-blog-post',
   '/test-deploy',
-  '/news/avg-iso-9001-integratie',
 ];
 
 const HOST_CHECKS = [
@@ -39,7 +41,27 @@ const HOST_CHECKS = [
   'https://www.maasiso.nl/',
 ];
 
-const USER_AGENT = 'MaasISO-SEO-Audit/1.0';
+const REQUIRED_ROBOTS_DIRECTIVES = [
+  'Allow: /',
+  'Disallow: /api/',
+  'Disallow: /admin/',
+  'Disallow: /_admin/',
+  `Sitemap: ${SITEMAP_URL}`,
+];
+
+const REQUIRED_ROBOTS_USER_AGENTS = [
+  '*',
+  'Googlebot',
+  'Bingbot',
+  'Applebot',
+  'DuckDuckBot',
+  'GPTBot',
+  'ChatGPT-User',
+  'ClaudeBot',
+  'PerplexityBot',
+];
+
+const USER_AGENT = 'MaasISO-SEO-Audit/2.0';
 const REQUEST_TIMEOUT = 20000;
 const CONCURRENCY = 6;
 const DEFAULT_MAX_RETRIES = 2;
@@ -90,6 +112,31 @@ function normalizeUrl(url) {
   return `${parsed.origin}${parsed.pathname}`;
 }
 
+function toAbsoluteNormalized(url, baseUrl) {
+  if (!url) return null;
+  try {
+    return normalizeUrl(new URL(url, baseUrl).toString());
+  } catch {
+    return null;
+  }
+}
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function isCanonicalUrl(url) {
+  return url === SITE_URL || url.startsWith(`${SITE_URL}/`);
+}
+
+function hasWhitespace(value) {
+  return value.trim() !== value || /\s/.test(value);
+}
+
+function isAllowedTrailingSlash(url) {
+  return url === `${SITE_URL}/` || url === ISO9001_TRAILING_SLASH_URL;
+}
+
 async function fetchWithRedirects(url, fetchOptions = {}) {
   const maxRetries = options.maxRetries;
   let lastError = null;
@@ -125,8 +172,7 @@ async function fetchWithRedirects(url, fetchOptions = {}) {
     } catch (error) {
       lastError = error;
       if (retry < maxRetries) {
-        // Exponential backoff
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, retry) * 1000));
+        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, retry) * 1000));
       }
     }
   }
@@ -152,12 +198,107 @@ function extractLocs(xml) {
   return locs;
 }
 
-function hasWhitespace(value) {
-  return value.trim() !== value || /\s/.test(value);
+function extractMetaValue(html, key, attributeName) {
+  const regex = new RegExp(
+    `<meta[^>]*${attributeName}=["']${escapeRegex(key)}["'][^>]*content=["']([^"']+)["'][^>]*>`,
+    'i'
+  );
+  const reverseRegex = new RegExp(
+    `<meta[^>]*content=["']([^"']+)["'][^>]*${attributeName}=["']${escapeRegex(key)}["'][^>]*>`,
+    'i'
+  );
+
+  const directMatch = html.match(regex);
+  if (directMatch && directMatch[1]) return directMatch[1];
+
+  const reverseMatch = html.match(reverseRegex);
+  if (reverseMatch && reverseMatch[1]) return reverseMatch[1];
+
+  return null;
 }
 
-function ensureNonWwwHttps(url) {
-  return url === SITE_URL || url.startsWith(`${SITE_URL}/`);
+function pushJsonLd(value, out) {
+  if (!value || typeof value !== 'object') return;
+
+  if (Array.isArray(value)) {
+    value.forEach((item) => pushJsonLd(item, out));
+    return;
+  }
+
+  out.push(value);
+
+  if (Array.isArray(value['@graph'])) {
+    value['@graph'].forEach((item) => pushJsonLd(item, out));
+  }
+}
+
+function extractJsonLdObjects(html) {
+  const results = [];
+  const regex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match;
+
+  while ((match = regex.exec(html)) !== null) {
+    const raw = match[1]?.trim();
+    if (!raw) continue;
+
+    try {
+      const parsed = JSON.parse(raw);
+      pushJsonLd(parsed, results);
+    } catch {
+      // Ignore invalid JSON-LD blocks
+    }
+  }
+
+  return results;
+}
+
+function getTypeNames(schema) {
+  const raw = schema?.['@type'];
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return raw.map((item) => String(item).toLowerCase());
+  }
+  return [String(raw).toLowerCase()];
+}
+
+function extractSchemaItemUrl(item) {
+  if (!item) return null;
+  if (typeof item === 'string') return item;
+  if (typeof item === 'object') {
+    return item['@id'] || item.url || null;
+  }
+  return null;
+}
+
+function extractBlogSchemaSignals(html) {
+  const schemas = extractJsonLdObjects(html);
+  const blogMainEntityUrls = [];
+  const breadcrumbLeafUrls = [];
+
+  for (const schema of schemas) {
+    const types = getTypeNames(schema);
+
+    if (types.includes('blogposting')) {
+      const mainEntityUrl = extractSchemaItemUrl(schema.mainEntityOfPage);
+      if (mainEntityUrl) {
+        blogMainEntityUrls.push(mainEntityUrl);
+      }
+    }
+
+    if (types.includes('breadcrumblist')) {
+      const items = Array.isArray(schema.itemListElement) ? schema.itemListElement : [];
+      const leaf = items[items.length - 1];
+      const leafUrl = extractSchemaItemUrl(leaf?.item);
+      if (leafUrl) {
+        breadcrumbLeafUrls.push(leafUrl);
+      }
+    }
+  }
+
+  return {
+    blogMainEntityUrls,
+    breadcrumbLeafUrls,
+  };
 }
 
 async function checkSitemap() {
@@ -165,13 +306,22 @@ async function checkSitemap() {
   if (!response.ok) {
     throw new Error(`Sitemap fetch failed: ${response.status} ${response.statusText}`);
   }
+
   const xml = await response.text();
   const locs = extractLocs(xml);
   const invalid = [];
+  const seen = new Set();
 
   for (const loc of locs) {
     const trimmed = loc.trim();
-    if (!ensureNonWwwHttps(trimmed)) {
+
+    if (seen.has(trimmed)) {
+      invalid.push({ loc, reason: 'Duplicate URL in sitemap' });
+      continue;
+    }
+    seen.add(trimmed);
+
+    if (!isCanonicalUrl(trimmed)) {
       invalid.push({ loc, reason: 'Non-canonical host or protocol' });
       continue;
     }
@@ -179,6 +329,7 @@ async function checkSitemap() {
       invalid.push({ loc, reason: 'Whitespace detected in <loc>' });
       continue;
     }
+
     const pathPart = trimmed.replace(SITE_URL, '');
     if (pathPart.includes('//')) {
       invalid.push({ loc, reason: 'Double slashes in path' });
@@ -189,7 +340,11 @@ async function checkSitemap() {
     }
   }
 
-  return { count: locs.length, locs: locs.map(loc => loc.trim()), invalid };
+  return {
+    count: locs.length,
+    locs: locs.map((loc) => loc.trim()),
+    invalid,
+  };
 }
 
 async function checkCanonical(url) {
@@ -211,16 +366,16 @@ async function checkCanonical(url) {
     const canonical = extractCanonical(html);
 
     const finalNormalized = normalizeUrl(finalUrl);
-    const canonicalNormalized = canonical ? normalizeUrl(new URL(canonical, finalUrl).toString()) : null;
+    const canonicalNormalized = toAbsoluteNormalized(canonical, finalUrl);
 
     const issues = [];
-    if (!finalNormalized.startsWith(`${SITE_URL}/`) && !finalNormalized.startsWith('https://www.maasiso.nl/')) {
+    if (!isCanonicalUrl(finalNormalized)) {
       issues.push('Final URL not on canonical host');
     }
     if (!canonicalNormalized) {
       issues.push('Missing canonical tag');
     } else {
-      if (!canonicalNormalized.startsWith(`${SITE_URL}/`) && !canonicalNormalized.startsWith('https://www.maasiso.nl/')) {
+      if (!isCanonicalUrl(canonicalNormalized)) {
         issues.push('Canonical not on canonical host');
       }
       if (canonicalNormalized !== finalNormalized) {
@@ -230,9 +385,9 @@ async function checkCanonical(url) {
           issues.push(`Canonical mismatch (expected ${finalNormalized}, got ${canonicalNormalized})`);
         }
       }
-      // Check trailing slash normalization
-      if (canonicalNormalized.endsWith('/') && canonicalNormalized !== `${SITE_URL}/`) {
-        issues.push('Canonical has trailing slash (should be normalized)');
+
+      if (canonicalNormalized.endsWith('/') && !isAllowedTrailingSlash(canonicalNormalized)) {
+        issues.push('Canonical has unexpected trailing slash');
       }
     }
 
@@ -240,7 +395,14 @@ async function checkCanonical(url) {
       throw new FailFastError(`Fail-fast triggered: ${url} - ${issues.join(', ')}`);
     }
 
-    return { url, finalUrl: finalNormalized, canonical: canonicalNormalized, issues, chain, retries };
+    return {
+      url,
+      finalUrl: finalNormalized,
+      canonical: canonicalNormalized,
+      issues,
+      chain,
+      retries,
+    };
   } catch (error) {
     if (error instanceof FailFastError) {
       throw error;
@@ -256,6 +418,217 @@ async function checkCanonical(url) {
   }
 }
 
+async function checkMetadataParity(url) {
+  try {
+    const { response, finalUrl, chain, retries } = await fetchWithRedirects(url);
+
+    if (!response.ok) {
+      return {
+        url,
+        finalUrl,
+        canonical: null,
+        ogUrl: null,
+        blogMainEntityUrls: [],
+        breadcrumbLeafUrls: [],
+        issues: [`HTTP ${response.status} ${response.statusText}`],
+        chain,
+        retries,
+      };
+    }
+
+    const html = await response.text();
+    const finalNormalized = normalizeUrl(finalUrl);
+    const canonicalNormalized = toAbsoluteNormalized(extractCanonical(html), finalUrl);
+    const ogUrlNormalized = toAbsoluteNormalized(extractMetaValue(html, 'og:url', 'property'), finalUrl);
+
+    const { blogMainEntityUrls, breadcrumbLeafUrls } = extractBlogSchemaSignals(html);
+    const normalizedBlogMainEntityUrls = blogMainEntityUrls
+      .map((item) => toAbsoluteNormalized(item, finalUrl))
+      .filter(Boolean);
+    const normalizedBreadcrumbLeafUrls = breadcrumbLeafUrls
+      .map((item) => toAbsoluteNormalized(item, finalUrl))
+      .filter(Boolean);
+
+    const issues = [];
+
+    if (!canonicalNormalized) {
+      issues.push('Missing canonical tag');
+    } else if (canonicalNormalized !== finalNormalized) {
+      issues.push(`Canonical mismatch (expected ${finalNormalized}, got ${canonicalNormalized})`);
+    }
+
+    if (!ogUrlNormalized) {
+      issues.push('Missing og:url');
+    } else if (canonicalNormalized && ogUrlNormalized !== canonicalNormalized) {
+      issues.push(`og:url mismatch (expected ${canonicalNormalized}, got ${ogUrlNormalized})`);
+    }
+
+    if (normalizedBlogMainEntityUrls.length === 0) {
+      issues.push('Missing BlogPosting mainEntityOfPage URL');
+    } else if (canonicalNormalized) {
+      normalizedBlogMainEntityUrls.forEach((schemaUrl) => {
+        if (schemaUrl !== canonicalNormalized) {
+          issues.push(`BlogPosting mainEntityOfPage mismatch (expected ${canonicalNormalized}, got ${schemaUrl})`);
+        }
+      });
+    }
+
+    if (normalizedBreadcrumbLeafUrls.length === 0) {
+      issues.push('Missing BreadcrumbList leaf URL');
+    } else if (canonicalNormalized) {
+      normalizedBreadcrumbLeafUrls.forEach((breadcrumbUrl) => {
+        if (breadcrumbUrl !== canonicalNormalized) {
+          issues.push(`Breadcrumb leaf mismatch (expected ${canonicalNormalized}, got ${breadcrumbUrl})`);
+        }
+      });
+    }
+
+    if (options.failFast && issues.length > 0) {
+      throw new FailFastError(`Fail-fast triggered: ${url} - ${issues.join(', ')}`);
+    }
+
+    return {
+      url,
+      finalUrl: finalNormalized,
+      canonical: canonicalNormalized,
+      ogUrl: ogUrlNormalized,
+      blogMainEntityUrls: normalizedBlogMainEntityUrls,
+      breadcrumbLeafUrls: normalizedBreadcrumbLeafUrls,
+      issues,
+      chain,
+      retries,
+    };
+  } catch (error) {
+    if (error instanceof FailFastError) {
+      throw error;
+    }
+    return {
+      url,
+      finalUrl: null,
+      canonical: null,
+      ogUrl: null,
+      blogMainEntityUrls: [],
+      breadcrumbLeafUrls: [],
+      issues: [`Error: ${error.message}`],
+      chain: [],
+      retries: options.maxRetries,
+    };
+  }
+}
+
+async function checkRobotsTxt() {
+  try {
+    const { response, finalUrl, chain, retries } = await fetchWithRedirects(ROBOTS_URL);
+    const issues = [];
+
+    if (!response.ok) {
+      issues.push(`HTTP ${response.status} ${response.statusText}`);
+      return { url: ROBOTS_URL, finalUrl, issues, chain, retries };
+    }
+
+    const body = await response.text();
+
+    REQUIRED_ROBOTS_DIRECTIVES.forEach((directive) => {
+      if (!body.includes(directive)) {
+        issues.push(`Missing robots directive: ${directive}`);
+      }
+    });
+
+    REQUIRED_ROBOTS_USER_AGENTS.forEach((agent) => {
+      const userAgentPattern = new RegExp(`^User-agent:\\s*${escapeRegex(agent)}\\s*$`, 'mi');
+      if (!userAgentPattern.test(body)) {
+        issues.push(`Missing User-agent section: ${agent}`);
+      }
+    });
+
+    if (options.failFast && issues.length > 0) {
+      throw new FailFastError(`Fail-fast triggered: ${ROBOTS_URL} - ${issues.join(', ')}`);
+    }
+
+    return {
+      url: ROBOTS_URL,
+      finalUrl,
+      issues,
+      chain,
+      retries,
+    };
+  } catch (error) {
+    if (error instanceof FailFastError) {
+      throw error;
+    }
+    return {
+      url: ROBOTS_URL,
+      finalUrl: null,
+      issues: [`Error: ${error.message}`],
+      chain: [],
+      retries: options.maxRetries,
+    };
+  }
+}
+
+async function checkSearchNoindex() {
+  try {
+    const { response, finalUrl, chain, retries } = await fetchWithRedirects(SEARCH_URL);
+    const issues = [];
+
+    if (!response.ok) {
+      issues.push(`HTTP ${response.status} ${response.statusText}`);
+      return { url: SEARCH_URL, finalUrl, issues, chain, retries };
+    }
+
+    const html = await response.text();
+    const robotsMeta = extractMetaValue(html, 'robots', 'name');
+    const canonicalNormalized = toAbsoluteNormalized(extractCanonical(html), finalUrl);
+
+    if (!robotsMeta) {
+      issues.push('Missing robots meta tag on /search');
+    } else {
+      const robotsTokens = robotsMeta
+        .split(',')
+        .map((token) => token.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (!robotsTokens.includes('noindex')) {
+        issues.push('Search page missing noindex directive');
+      }
+      if (!robotsTokens.includes('follow')) {
+        issues.push('Search page missing follow directive');
+      }
+    }
+
+    if (canonicalNormalized !== `${SITE_URL}/search`) {
+      issues.push(`Search canonical mismatch (expected ${SITE_URL}/search, got ${canonicalNormalized || 'missing'})`);
+    }
+
+    if (options.failFast && issues.length > 0) {
+      throw new FailFastError(`Fail-fast triggered: ${SEARCH_URL} - ${issues.join(', ')}`);
+    }
+
+    return {
+      url: SEARCH_URL,
+      finalUrl,
+      canonical: canonicalNormalized,
+      robotsMeta,
+      issues,
+      chain,
+      retries,
+    };
+  } catch (error) {
+    if (error instanceof FailFastError) {
+      throw error;
+    }
+    return {
+      url: SEARCH_URL,
+      finalUrl: null,
+      canonical: null,
+      robotsMeta: null,
+      issues: [`Error: ${error.message}`],
+      chain: [],
+      retries: options.maxRetries,
+    };
+  }
+}
+
 async function checkLegacyRedirects() {
   const results = [];
   for (const [from, to] of LEGACY_REDIRECTS) {
@@ -264,6 +637,7 @@ async function checkLegacyRedirects() {
       const { response, finalUrl, chain, retries } = await fetchWithRedirects(fromUrl, { method: 'HEAD' });
       const expectedFinal = `${SITE_URL}${to}`;
       const issues = [];
+
       if (![301, 308].includes(chain[0]?.status)) {
         issues.push(`Expected 301/308 on first hop, got ${chain[0]?.status ?? 'unknown'}`);
       }
@@ -301,6 +675,7 @@ async function checkHostConsolidation() {
     try {
       const { response, finalUrl, chain, retries } = await fetchWithRedirects(url, { method: 'HEAD' });
       const issues = [];
+
       if (normalizeUrl(finalUrl) !== `${SITE_URL}/`) {
         issues.push(`Final URL mismatch (expected ${SITE_URL}/, got ${finalUrl})`);
       }
@@ -336,6 +711,7 @@ async function checkSoft404s() {
       const targetUrl = `${SITE_URL}${normalizePath(check.path)}`;
       const { response, finalUrl, chain, retries } = await fetchWithRedirects(targetUrl, { method: 'HEAD' });
       const issues = [];
+
       if (check.expected === 'redirect') {
         const expectedFinal = `${SITE_URL}${normalizePath(check.target)}`;
         if (![301, 308].includes(chain[0]?.status)) {
@@ -345,6 +721,7 @@ async function checkSoft404s() {
           issues.push(`Final URL mismatch (expected ${expectedFinal}, got ${finalUrl})`);
         }
       }
+
       if (check.expected === 'status') {
         if (!check.status.includes(response.status)) {
           issues.push(`Expected status ${check.status.join(' or ')}, got ${response.status}`);
@@ -377,15 +754,13 @@ async function checkRemovedUrls() {
   for (const path of REMOVED_URL_CHECKS) {
     try {
       const targetUrl = `${SITE_URL}${normalizePath(path)}`;
-      const { response, finalUrl, chain, retries } = await fetchWithRedirects(targetUrl, { method: 'HEAD' });
+      const { response, chain, retries } = await fetchWithRedirects(targetUrl, { method: 'HEAD' });
       const issues = [];
 
-      // Expect 410 Gone status
       if (response.status !== 410) {
         issues.push(`Expected 410 Gone, got ${response.status}`);
       }
 
-      // Should not redirect
       if (chain.length > 1) {
         issues.push('URL should return 410 directly without redirects');
       }
@@ -441,12 +816,10 @@ function reportIssues(items, labelFn) {
       failed += 1;
       if (!options.json) {
         console.log(`❌ ${labelFn(item)}`);
-        item.issues.forEach(issue => console.log(`   - ${issue}`));
+        item.issues.forEach((issue) => console.log(`   - ${issue}`));
       }
-    } else {
-      if (!options.json) {
-        console.log(`✅ ${labelFn(item)}`);
-      }
+    } else if (!options.json) {
+      console.log(`✅ ${labelFn(item)}`);
     }
   }
   return failed;
@@ -457,7 +830,7 @@ async function writeJsonReport(report) {
     const fs = await import('fs/promises');
     await fs.writeFile(options.outputFile, JSON.stringify(report, null, 2), 'utf-8');
     if (!options.json) {
-      console.log(`\n📄 JSON report saved to: ${options.outputFile}`);
+      console.log(`\nJSON report saved to: ${options.outputFile}`);
     }
   }
 }
@@ -486,7 +859,6 @@ async function run() {
   };
 
   try {
-    // Sitemap
     reportSection('Sitemap');
     const sitemap = await checkSitemap();
     report.results.sitemap = sitemap;
@@ -495,44 +867,55 @@ async function run() {
       console.log(`Total URLs: ${sitemap.count}`);
       if (sitemap.invalid.length) {
         failures += sitemap.invalid.length;
-        console.log('❌ Invalid sitemap entries:');
-        sitemap.invalid.forEach(entry => console.log(`   - ${entry.loc} (${entry.reason})`));
+        console.log('Invalid sitemap entries:');
+        sitemap.invalid.forEach((entry) => console.log(`   - ${entry.loc} (${entry.reason})`));
       } else {
-        console.log('✅ Sitemap entries are valid');
+        console.log('Sitemap entries are valid');
       }
     } else {
       failures += sitemap.invalid.length;
     }
 
-    // Canonical Verification
     reportSection('Canonical Verification');
     const canonicalResults = await runWithConcurrency(sitemap.locs, checkCanonical);
     report.results.canonical = canonicalResults;
-    failures += reportIssues(canonicalResults, item => item.url);
+    failures += reportIssues(canonicalResults, (item) => item.url);
 
-    // Legacy Redirects
+    reportSection('Blog Metadata Parity');
+    const blogLocs = sitemap.locs.filter((loc) => loc.includes('/kennis/blog/'));
+    const parityResults = await runWithConcurrency(blogLocs, checkMetadataParity);
+    report.results.blogMetadataParity = parityResults;
+    failures += reportIssues(parityResults, (item) => item.url);
+
+    reportSection('Robots Policy');
+    const robotsResult = await checkRobotsTxt();
+    report.results.robotsPolicy = [robotsResult];
+    failures += reportIssues([robotsResult], (item) => item.url);
+
+    reportSection('Search Noindex');
+    const searchNoindexResult = await checkSearchNoindex();
+    report.results.searchNoindex = [searchNoindexResult];
+    failures += reportIssues([searchNoindexResult], (item) => item.url);
+
     reportSection('Legacy Redirects');
     const legacyResults = await checkLegacyRedirects();
     report.results.legacyRedirects = legacyResults;
-    failures += reportIssues(legacyResults, item => `${item.from} -> ${item.to}`);
+    failures += reportIssues(legacyResults, (item) => `${item.from} -> ${item.to}`);
 
-    // Host Consolidation
     reportSection('Host Consolidation');
     const hostResults = await checkHostConsolidation();
     report.results.hostConsolidation = hostResults;
-    failures += reportIssues(hostResults, item => item.url);
+    failures += reportIssues(hostResults, (item) => item.url);
 
-    // Soft 404 Checks
     reportSection('Soft 404 Checks');
     const softResults = await checkSoft404s();
     report.results.soft404 = softResults;
-    failures += reportIssues(softResults, item => item.url);
+    failures += reportIssues(softResults, (item) => item.url);
 
-    // Removed URLs Check (410 Gone)
     reportSection('Removed URLs (410 Gone)');
     const removedResults = await checkRemovedUrls();
     report.results.removedUrls = removedResults;
-    failures += reportIssues(removedResults, item => item.url);
+    failures += reportIssues(removedResults, (item) => item.url);
 
     const duration = Date.now() - startTime;
     report.summary = {
@@ -546,33 +929,44 @@ async function run() {
         },
         canonical: {
           total: canonicalResults.length,
-          failed: canonicalResults.filter(r => r.issues?.length).length,
+          failed: canonicalResults.filter((item) => item.issues?.length).length,
+        },
+        blogMetadataParity: {
+          total: parityResults.length,
+          failed: parityResults.filter((item) => item.issues?.length).length,
+        },
+        robotsPolicy: {
+          total: 1,
+          failed: robotsResult.issues?.length ? 1 : 0,
+        },
+        searchNoindex: {
+          total: 1,
+          failed: searchNoindexResult.issues?.length ? 1 : 0,
         },
         legacyRedirects: {
           total: legacyResults.length,
-          failed: legacyResults.filter(r => r.issues?.length).length,
+          failed: legacyResults.filter((item) => item.issues?.length).length,
         },
         hostConsolidation: {
           total: hostResults.length,
-          failed: hostResults.filter(r => r.issues?.length).length,
+          failed: hostResults.filter((item) => item.issues?.length).length,
         },
         soft404: {
           total: softResults.length,
-          failed: softResults.filter(r => r.issues?.length).length,
+          failed: softResults.filter((item) => item.issues?.length).length,
         },
         removedUrls: {
           total: removedResults.length,
-          failed: removedResults.filter(r => r.issues?.length).length,
+          failed: removedResults.filter((item) => item.issues?.length).length,
         },
       },
     };
 
-    // Output
     printJsonReport(report);
     await writeJsonReport(report);
 
     if (!options.json) {
-      console.log(`\nFinal Result: ${failures === 0 ? '✅ PASSED' : '❌ FAILED'} (${failures} issue(s) in ${report.summary.duration})`);
+      console.log(`\nFinal Result: ${failures === 0 ? 'PASSED' : 'FAILED'} (${failures} issue(s) in ${report.summary.duration})`);
     }
 
     process.exit(failures === 0 ? 0 : 1);
@@ -584,21 +978,24 @@ async function run() {
         error: error.message,
         failFast: true,
       };
+
       printJsonReport(report);
       await writeJsonReport(report);
 
       if (!options.json) {
-        console.error(`\n❌ ${error.message}`);
+        console.error(`\n${error.message}`);
       }
+
       process.exit(1);
     }
+
     throw error;
   }
 }
 
-run().catch(error => {
+run().catch((error) => {
   if (!options.json) {
-    console.error('❌ Fatal error:', error.message);
+    console.error('Fatal error:', error.message);
     if (error.stack && process.env.DEBUG) {
       console.error(error.stack);
     }
@@ -607,4 +1004,3 @@ run().catch(error => {
   }
   process.exit(1);
 });
-

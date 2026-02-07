@@ -6,6 +6,7 @@ const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_NON_CANONICAL_PATH = '/iso-certificering/iso-9001';
 const CANONICAL_HOST = 'www.maasiso.nl';
 const APEX_HOST = 'maasiso.nl';
+const CRAWL_CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -120,12 +121,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(normalizedPathname, request.url), 301);
   }
 
-  // Handle sitemap cache headers
-  if (normalizedPathname === '/sitemap.xml') {
+  // Handle crawl endpoint cache headers
+  if (
+    normalizedPathname === '/sitemap.xml' ||
+    normalizedPathname === '/robots.txt' ||
+    normalizedPathname === '/llms.txt'
+  ) {
     const response = NextResponse.next();
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
+    response.headers.set('Cache-Control', CRAWL_CACHE_CONTROL);
     return response;
   }
 

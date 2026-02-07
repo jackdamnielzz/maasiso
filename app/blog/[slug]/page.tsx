@@ -165,7 +165,7 @@ export async function generateMetadata(
         type: 'article',
         locale: 'nl_NL',
         siteName: 'Maas ISO',
-        url: `https://www.maasiso.nl/blog/${resolvedParams.slug}`,
+        url: `https://www.maasiso.nl/kennis/blog/${resolvedParams.slug}`,
         publishedTime: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
         modifiedTime: blogPost.updatedAt,
         authors: typeof blogPost.author === 'string'
@@ -179,7 +179,7 @@ export async function generateMetadata(
         images: [ogImageUrl],
       },
       alternates: {
-        canonical: `/blog/${resolvedParams.slug}`,
+        canonical: `/kennis/blog/${resolvedParams.slug}`,
       },
       robots: {
         index: blogPost.robotsIndex ?? true,
@@ -214,7 +214,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
     const categoryIds = blogPost.categories?.map((cat: Category) => cat.id) || [];
     const readingTime = Math.ceil(blogPost.content.split(/\s+/).length / 200);
 
-    const canonicalUrl = `https://www.maasiso.nl/blog/${blogPost.slug}`;
+    const canonicalUrl = `https://www.maasiso.nl/kennis/blog/${blogPost.slug}`;
     const featuredImageUrl = constructImageUrl(blogPost.featuredImage?.url);
 
     // Extract author details for schema
@@ -277,7 +277,7 @@ export default async function BlogPostPage({ params, searchParams }: PageProps) 
           breadcrumbs={{
             items: [
               { name: 'Home', item: 'https://www.maasiso.nl' },
-              { name: 'Blog', item: 'https://www.maasiso.nl/blog' },
+              { name: 'Blog', item: 'https://www.maasiso.nl/kennis/blog' },
               { name: blogPost.title, item: canonicalUrl }
             ]
           }}

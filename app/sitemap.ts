@@ -3,9 +3,33 @@ import { MetadataRoute } from 'next';
 import { BlogPost, StrapiData, Whitepaper } from '@/lib/types';
 import { REMOVED_PATHS } from '@/config/removed-urls';
 
-export const revalidate = 0;
+export const revalidate = 3600;
 const isDebugLoggingEnabled =
   process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
+const STATIC_LASTMOD_FALLBACK = '2026-02-03T00:00:00.000Z';
+
+function getStableLastModifiedDate(): Date {
+  const configured = process.env.SITEMAP_STATIC_LASTMOD || STATIC_LASTMOD_FALLBACK;
+  const parsed = new Date(configured);
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date(STATIC_LASTMOD_FALLBACK);
+  }
+  return parsed;
+}
+
+function resolveLastModifiedDate(
+  dateCandidates: Array<string | Date | undefined>,
+  fallback: Date
+): Date {
+  for (const candidate of dateCandidates) {
+    if (!candidate) continue;
+    const parsed = new Date(candidate);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+  return fallback;
+}
 
 // Helper function for authenticated fetch to Strapi for collections not yet in api.ts
 async function fetchStrapiCollection<T>(path: string): Promise<T[]> {
@@ -156,6 +180,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = canonicalizeSitemapBaseUrl(
     process.env.NEXT_PUBLIC_SITE_URL || 'https://www.maasiso.nl'
   );
+  const stableLastModified = getStableLastModifiedDate();
   
   // Base static routes
   const staticPages: MetadataRoute.Sitemap = [
@@ -186,7 +211,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(route => !REMOVED_PATHS.has(route))
     .map((route) => ({
       url: buildUrl(baseUrl, route),
-      lastModified: new Date(),
+      lastModified: stableLastModified,
       changeFrequency: 'daily',
       priority: route === '' ? 1 : 0.8,
     }));
@@ -230,7 +255,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
       .map(post => ({
         url: buildUrl(baseUrl, `/kennis/blog/${normalizeSlug(post.slug)}`),
-        lastModified: new Date(post.updatedAt || post.publishedAt || new Date()),
+        lastModified: resolveLastModifiedDate(
+          [post.updatedAt, post.publishedAt, post.createdAt],
+          stableLastModified
+        ),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
       }));
@@ -240,16 +268,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter(item => item.attributes?.slug)
       .map(item => ({
         url: buildUrl(baseUrl, `/kennis/whitepapers/${normalizeSlug(item.attributes.slug)}`),
-        lastModified: new Date(item.attributes.publishedAt || item.attributes.updatedAt || new Date()),
+        lastModified: resolveLastModifiedDate(
+          [item.attributes.updatedAt, item.attributes.publishedAt, item.attributes.createdAt],
+          stableLastModified
+        ),
         changeFrequency: 'monthly',
         priority: 0.5,
       }));
 
-    return [
+    const entries = [
       ...staticPages,
       ...blogEntries,
       ...whitepaperEntries
     ];
+    const dedupedByUrl = new Map<string, MetadataRoute.Sitemap[number]>();
+    for (const entry of entries) {
+      if (!dedupedByUrl.has(entry.url)) {
+        dedupedByUrl.set(entry.url, entry);
+      }
+    }
+    return Array.from(dedupedByUrl.values());
 
   } catch (error) {
     console.error('Critical error during sitemap generation:', error);
