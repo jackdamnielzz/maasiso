@@ -8,10 +8,81 @@ interface FactBlockProps {
   className?: string;
 }
 
+type SourceItem = {
+  href?: string;
+  label: string;
+  isLink: boolean;
+};
+
+function isLikelyUrl(value: string): boolean {
+  return /^https?:\/\/\S+$/i.test(value.trim());
+}
+
+function toReadableDomainLabel(hostname: string): string {
+  const normalized = hostname.replace(/^www\./i, '').toLowerCase();
+  const aliases: Record<string, string> = {
+    'iso.org': 'ISO',
+    'nen.nl': 'NEN',
+    'nationaalarchief.nl': 'Nationaal Archief',
+  };
+
+  if (aliases[normalized]) {
+    return aliases[normalized];
+  }
+
+  const firstSegment = normalized.split('.')[0] || normalized;
+  if (!firstSegment) {
+    return normalized;
+  }
+
+  return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1);
+}
+
+function toSourceItem(rawSource: string): SourceItem | null {
+  const trimmed = rawSource.trim();
+  if (!trimmed) return null;
+
+  if (!isLikelyUrl(trimmed)) {
+    return {
+      label: trimmed,
+      isLink: false,
+    };
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    return {
+      href: parsed.toString(),
+      label: toReadableDomainLabel(parsed.hostname),
+      isLink: true,
+    };
+  } catch {
+    return {
+      label: trimmed,
+      isLink: false,
+    };
+  }
+}
+
+function normalizeSources(source: FactBlockType['source']): SourceItem[] {
+  if (!source) return [];
+
+  const rawValues = Array.isArray(source)
+    ? source
+    : String(source)
+      .split(/[\n,;]/g)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  return rawValues.map(toSourceItem).filter((item): item is SourceItem => item !== null);
+}
+
 export function FactBlock({ data, className = '' }: FactBlockProps) {
   if (!data || (!data.label && !data.value)) {
     return null;
   }
+
+  const sources = normalizeSources(data.source);
 
   return (
     <aside
@@ -30,9 +101,24 @@ export function FactBlock({ data, className = '' }: FactBlockProps) {
           <div className="mt-2 text-sm md:text-base text-slate-700 leading-relaxed break-words hyphens-auto">
             {data.value}
           </div>
-          {data.source ? (
-            <div className="mt-3 inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium text-slate-600">
-              Bron: {data.source}
+          {sources.length > 0 ? (
+            <div className="mt-3 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium text-slate-600">
+              <span>Bron: </span>
+              {sources.map((source, index) => (
+                <React.Fragment key={`${source.label}-${index}`}>
+                  {index > 0 ? <span>, </span> : null}
+                  {source.isLink && source.href ? (
+                    <a
+                      href={source.href}
+                      className="text-[#00875A] underline underline-offset-2 hover:text-[#006B47]"
+                    >
+                      {source.label}
+                    </a>
+                  ) : (
+                    <span>{source.label}</span>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
           ) : null}
         </div>

@@ -171,7 +171,7 @@ export interface FactBlock {
   id?: number | string;
   label: string;
   value: string;
-  source?: string;
+  source?: string | string[];
 }
 
 /**
@@ -572,7 +572,7 @@ export interface StrapiRawKeyTakeawaysComponent extends RawStrapiComponent {
 export interface StrapiRawFactBlockComponent extends RawStrapiComponent {
   label?: string;
   value?: string;
-  source?: string;
+  source?: string | string[] | Array<{ url?: string; label?: string }>;
 }
 
 export interface PageComponent {
@@ -640,7 +640,7 @@ export interface FactBlockComponent extends PageComponent {
   __component: 'page-blocks.fact-block';
   label: string;
   value: string;
-  source?: string;
+  source?: string | string[];
 }
 
 /**

@@ -46,8 +46,16 @@ export function normalizePageSchemaType(value: unknown): PageSchemaType {
 
 function sanitizeAbsoluteUrl(url: string): string {
   const parsed = new URL(url);
+  parsed.protocol = 'https:';
+  parsed.hostname = parsed.hostname.replace(/\.$/, '').toLowerCase();
+  if (parsed.hostname === 'maasiso.nl') {
+    parsed.hostname = 'www.maasiso.nl';
+  }
   parsed.hash = '';
   parsed.search = '';
+  if (parsed.pathname && parsed.pathname !== '/' && !parsed.pathname.endsWith('/')) {
+    parsed.pathname = `${parsed.pathname}/`;
+  }
   return parsed.toString();
 }
 

@@ -704,10 +704,9 @@ export default async function CoreDetailPageTemplate({
     );
   }
 
-  const isIso9001 = strapiSlug === 'iso-9001';
   const siteUrl = getCanonicalSiteUrl();
   const baseDetailPath = `${hub.href}/${strapiSlug}`.replace(/\/{2,}/g, '/');
-  const detailPath = isIso9001 ? `${baseDetailPath}/` : baseDetailPath;
+  const detailPath = baseDetailPath.endsWith('/') ? baseDetailPath : `${baseDetailPath}/`;
   const detailUrl = detailPath.startsWith('http') ? detailPath : `${siteUrl}${detailPath}`;
 
   const faqBlock = layout.find((block) => block.__component === 'page-blocks.faq-section') as LayoutBlock | undefined;

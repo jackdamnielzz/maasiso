@@ -100,7 +100,8 @@ function canonicalizeSitemapBaseUrl(input: string): string {
 function normalizePath(path: string): string {
   const trimmed = path.trim();
   if (trimmed === '' || trimmed === '/') return '';
-  return `/${trimmed.replace(/^\/+/, '')}`;
+  const normalized = `/${trimmed.replace(/^\/+/, '').replace(/\/+$/g, '')}`;
+  return normalized.endsWith('/') ? normalized : `${normalized}/`;
 }
 
 function buildUrl(base: string, path: string): string {

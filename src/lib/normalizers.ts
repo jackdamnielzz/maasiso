@@ -889,12 +889,30 @@ function normalizeLayoutComponent(
           console.warn('Invalid fact-block component: missing id');
           return undefined;
         }
+        const rawSource = (rawComponent as StrapiRawFactBlockComponent).source;
+        const normalizedSource = Array.isArray(rawSource)
+          ? rawSource
+            .map((item) => {
+              if (typeof item === 'string') {
+                return item.trim();
+              }
+              if (item && typeof item === 'object') {
+                const maybeUrl = typeof (item as any).url === 'string' ? (item as any).url.trim() : '';
+                const maybeLabel = typeof (item as any).label === 'string' ? (item as any).label.trim() : '';
+                return maybeUrl || maybeLabel;
+              }
+              return '';
+            })
+            .filter(Boolean)
+          : typeof rawSource === 'string'
+            ? rawSource.trim() || undefined
+            : undefined;
         return {
           id: String(rawComponent.id),
           __component: 'page-blocks.fact-block' as const,
           label: String((rawComponent as StrapiRawFactBlockComponent).label || ''),
           value: String((rawComponent as StrapiRawFactBlockComponent).value || ''),
-          source: (rawComponent as StrapiRawFactBlockComponent).source
+          source: normalizedSource
         };
       }
       default:

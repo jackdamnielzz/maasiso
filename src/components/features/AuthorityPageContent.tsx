@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -19,6 +20,214 @@ type AuthorityPageContentProps = {
   showBreadcrumbs?: boolean;
   dataTopic?: string;
 };
+
+type LayoutBlock = NonNullable<Page['layout']>[number] & Record<string, any>;
+
+type CtaCandidate = {
+  id: string;
+  sourceComponent: 'hero' | 'button';
+  originalIndex: number;
+  title?: string;
+  description?: string;
+  text: string;
+  link: string;
+  style?: 'primary' | 'secondary';
+  explicitPrimary: boolean;
+};
+
+const isDebugLoggingEnabled =
+  process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
+const MARKDOWN_HEADING_REGEX = /^#{1,6}\s+/;
+const EXPERT_QUOTE_HEADING_REGEX = /^#{1,6}\s*expertquote\b/i;
+
+function toNonEmptyString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function hasHeroCta(block: LayoutBlock): boolean {
+  if (block.__component !== 'page-blocks.hero') return false;
+  const text = toNonEmptyString(block?.ctaButton?.text);
+  const link = toNonEmptyString(block?.ctaButton?.link);
+  return Boolean(text && link);
+}
+
+function isButtonCta(block: LayoutBlock): boolean {
+  if (block.__component !== 'page-blocks.button') return false;
+  const text = toNonEmptyString(block?.text || block?.ctaButton?.text);
+  const link = toNonEmptyString(block?.link || block?.ctaButton?.link);
+  return Boolean(text && link);
+}
+
+function isExplicitPrimaryCta(block: LayoutBlock): boolean {
+  return Boolean(
+    block?.isPrimary ||
+      block?.primary ||
+      block?.ctaButton?.isPrimary ||
+      block?.ctaButton?.primary
+  );
+}
+
+function collectCtaCandidates(
+  layout: NonNullable<Page['layout']>
+): { layoutWithoutCta: NonNullable<Page['layout']>; primaryCta?: CtaCandidate } {
+  const layoutWithoutCta: LayoutBlock[] = [];
+  const candidates: CtaCandidate[] = [];
+  const contentAfterFirstCta: Array<{ id: string; component: string; index: number }> = [];
+  let firstCtaIndex = -1;
+
+  layout.forEach((block, index) => {
+    const current = block as LayoutBlock;
+
+    if (hasHeroCta(current)) {
+      if (firstCtaIndex === -1) firstCtaIndex = index;
+      candidates.push({
+        id: String(current.id || `hero-cta-${index}`),
+        sourceComponent: 'hero',
+        originalIndex: index,
+        text: toNonEmptyString(current.ctaButton?.text),
+        link: toNonEmptyString(current.ctaButton?.link),
+        style: current.ctaButton?.style,
+        explicitPrimary: isExplicitPrimaryCta(current),
+      });
+
+      layoutWithoutCta.push({
+        ...current,
+        ctaButton: undefined,
+      });
+      return;
+    }
+
+    if (isButtonCta(current)) {
+      if (firstCtaIndex === -1) firstCtaIndex = index;
+      candidates.push({
+        id: String(current.id || `button-cta-${index}`),
+        sourceComponent: 'button',
+        originalIndex: index,
+        title: toNonEmptyString(current.title) || undefined,
+        description: toNonEmptyString(current.description) || undefined,
+        text: toNonEmptyString(current.text || current.ctaButton?.text),
+        link: toNonEmptyString(current.link || current.ctaButton?.link),
+        style: current.style || current.ctaButton?.style,
+        explicitPrimary: isExplicitPrimaryCta(current),
+      });
+      return;
+    }
+
+    if (firstCtaIndex !== -1) {
+      contentAfterFirstCta.push({
+        id: String(current.id || index),
+        component: String(current.__component || 'unknown'),
+        index,
+      });
+    }
+
+    layoutWithoutCta.push(current);
+  });
+
+  const explicitPrimary = candidates.filter((candidate) => candidate.explicitPrimary);
+  const primaryCta =
+    explicitPrimary.length > 0
+      ? explicitPrimary[explicitPrimary.length - 1]
+      : candidates[candidates.length - 1];
+
+  if (isDebugLoggingEnabled && contentAfterFirstCta.length > 0) {
+    console.warn('[CTA Order Violation] Content found after CTA in source layout. CTA rendered at page end.', {
+      firstCtaIndex,
+      violatingBlocks: contentAfterFirstCta,
+    });
+  }
+
+  if (isDebugLoggingEnabled && candidates.length > 1 && primaryCta) {
+    console.warn('[CTA Deduplication] Multiple CTAs detected. Rendering only one primary CTA.', {
+      candidateCount: candidates.length,
+      selectedCta: primaryCta,
+    });
+  }
+
+  return {
+    layoutWithoutCta: layoutWithoutCta as NonNullable<Page['layout']>,
+    primaryCta,
+  };
+}
+
+function normalizeExpertQuoteMarkdown(content: string): string {
+  const normalized = String(content || '').replace(/\r\n/g, '\n');
+  if (!normalized) return normalized;
+
+  const lines = normalized.split('\n');
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!EXPERT_QUOTE_HEADING_REGEX.test(lines[index].trim())) continue;
+
+    let cursor = index + 1;
+    while (cursor < lines.length && lines[cursor].trim() === '') {
+      cursor += 1;
+    }
+
+    if (cursor >= lines.length || MARKDOWN_HEADING_REGEX.test(lines[cursor].trim())) {
+      return normalized;
+    }
+
+    const quoteLines: string[] = [];
+    while (cursor < lines.length) {
+      const currentLine = lines[cursor].trim();
+      if (!currentLine) {
+        cursor += 1;
+        if (quoteLines.length > 0) break;
+        continue;
+      }
+      if (MARKDOWN_HEADING_REGEX.test(currentLine) || /^[-—]\s+/.test(currentLine)) {
+        break;
+      }
+      quoteLines.push(currentLine);
+      cursor += 1;
+    }
+
+    while (cursor < lines.length && lines[cursor].trim() === '') {
+      cursor += 1;
+    }
+
+    if (quoteLines.length === 0 || cursor >= lines.length) {
+      return normalized;
+    }
+
+    const attributionLine = lines[cursor].trim();
+    if (!/^[-—]\s+/.test(attributionLine)) {
+      return normalized;
+    }
+
+    const attribution = attributionLine.replace(/^[-—]\s+/, '').trim();
+    if (!attribution) {
+      return normalized;
+    }
+
+    const replacement = [
+      ...lines.slice(0, index + 1),
+      '',
+      `> ${quoteLines.join(' ')}`,
+      '>',
+      `> — ${attribution}`,
+      ...lines.slice(cursor + 1),
+    ];
+
+    return replacement.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  return normalized;
+}
+
+function toTextContent(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map(toTextContent).join('');
+  }
+  if (React.isValidElement(node)) {
+    const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+    return toTextContent(element.props?.children);
+  }
+  return '';
+}
 
 const groupFactBlocks = (layout: NonNullable<Page['layout']> = []) => {
   const grouped: Array<NonNullable<Page['layout']>[number] | { __component: 'page-blocks.fact-block-group'; id: string; items: any[] }> = [];
@@ -62,7 +271,8 @@ export default function AuthorityPageContent({
   showBreadcrumbs = true,
   dataTopic
 }: AuthorityPageContentProps) {
-  const layoutBlocks = groupFactBlocks(layout);
+  const { layoutWithoutCta, primaryCta } = collectCtaCandidates(layout);
+  const layoutBlocks = groupFactBlocks(layoutWithoutCta);
   const siteUrl = getCanonicalSiteUrl();
   const breadcrumbSchemaItems = breadcrumbs?.length
     ? breadcrumbs.map((item) => ({
@@ -105,14 +315,6 @@ export default function AuthorityPageContent({
                       <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto">
                         {block.subtitle}
                       </p>
-                    )}
-                    {block.ctaButton && (
-                      <a
-                        href={block.ctaButton.link}
-                        className="primary-button w-full sm:w-auto text-center hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                      >
-                        {block.ctaButton.text}
-                      </a>
                     )}
                   </div>
                 </div>
@@ -176,6 +378,7 @@ export default function AuthorityPageContent({
           }
 
           case 'page-blocks.text-block':
+            const normalizedTextBlockContent = normalizeExpertQuoteMarkdown(String(block.content || ''));
             return (
               <section key={blockKey} className="py-12 md:py-24">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
@@ -198,10 +401,53 @@ export default function AuthorityPageContent({
                               <div className="w-full overflow-x-auto">
                                 <table className="w-full min-w-[640px] text-sm" {...props} />
                               </div>
-                            )
+                            ),
+                            blockquote: ({ node, children, ...props }) => {
+                              const blockChildren = React.Children.toArray(children);
+                              let citeText = '';
+
+                              if (blockChildren.length > 0) {
+                                const lastChild = blockChildren[blockChildren.length - 1];
+                                const lastChildText = toTextContent(lastChild).trim();
+                                const citeMatch = lastChildText.match(/^[—-]\s*(.+)$/);
+
+                                if (citeMatch?.[1]) {
+                                  citeText = citeMatch[1].trim();
+                                  blockChildren.pop();
+                                }
+                              }
+
+                              if (!citeText) {
+                                const aggregatedText = blockChildren.map((child) => toTextContent(child)).join('\n');
+                                const attributionLine = aggregatedText
+                                  .split('\n')
+                                  .map((line) => line.trim())
+                                  .filter(Boolean)
+                                  .reverse()
+                                  .find((line) => /^[-—]\s+/.test(line));
+
+                                if (attributionLine) {
+                                  citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
+                                }
+                              }
+
+                              return (
+                                <blockquote
+                                  {...props}
+                                  className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
+                                >
+                                  {blockChildren}
+                                  {citeText ? (
+                                    <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
+                                      — {citeText}
+                                    </cite>
+                                  ) : null}
+                                </blockquote>
+                              );
+                            },
                           }}
                         >
-                          {block.content}
+                          {normalizedTextBlockContent}
                         </ReactMarkdown>
                       </div>
                     </div>
@@ -312,38 +558,43 @@ export default function AuthorityPageContent({
             );
 
           case 'page-blocks.button':
-            return (
-              <section key={blockKey} className="relative overflow-hidden bg-[#091E42] text-white py-14 md:py-24">
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
-                  <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
-                  <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
-                </div>
-                <div className="container-custom px-4 sm:px-6 lg:px-8 relative z-10">
-                  <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 leading-tight">
-                      {block.title || 'Klaar om de volgende stap te zetten?'}
-                    </h2>
-                    {block.description && (
-                      <p className="text-sm sm:text-base md:text-lg text-white/85 mb-6 md:mb-8 leading-relaxed">
-                        {block.description}
-                      </p>
-                    )}
-                    <a
-                      href={block.link || block.ctaButton?.link || '/contact'}
-                      className="primary-button w-full sm:w-auto text-center hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                    >
-                      {block.text || block.ctaButton?.text || 'Neem contact op'}
-                    </a>
-                  </div>
-                </div>
-              </section>
-            );
+            return null;
 
           default:
             return null;
         }
       })}
+      {primaryCta ? (
+        <section
+          className="relative overflow-hidden bg-[#091E42] text-white py-14 md:py-24"
+          data-cta-final="true"
+          data-cta-source={primaryCta.sourceComponent}
+        >
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
+            <div className="absolute top-1/2 left-1/4 w-40 h-40 bg-white rounded-full opacity-5 transform -translate-y-1/2"></div>
+          </div>
+          <div className="container-custom px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 leading-tight">
+                {primaryCta.title || 'Klaar om de volgende stap te zetten?'}
+              </h2>
+              {primaryCta.description ? (
+                <p className="text-sm sm:text-base md:text-lg text-white/85 mb-6 md:mb-8 leading-relaxed">
+                  {primaryCta.description}
+                </p>
+              ) : null}
+              <a
+                href={primaryCta.link || '/contact'}
+                className="primary-button w-full sm:w-auto text-center hover:bg-[#FF9B20] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+              >
+                {primaryCta.text || 'Neem contact op'}
+              </a>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

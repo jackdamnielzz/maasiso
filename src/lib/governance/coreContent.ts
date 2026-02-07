@@ -12,7 +12,7 @@ export type CoreDetailContent = {
   definition: string;
   explanationMarkdown: string;
   highlights: Array<{ id: string; title: string; value: string }>;
-  costFacts: Array<{ id: string; label: string; value: string; source?: string }>;
+  costFacts: Array<{ id: string; label: string; value: string; source?: string | string[] }>;
   steps: Array<{ id: string; title: string; description: string; icon?: any; link?: string }>;
   faqItems: Array<{ id: string; question: string; answer: string }>;
 };
@@ -90,7 +90,11 @@ export function extractCoreDetailContent(page: Page | null): { content: CoreDeta
       id: String(b.id ?? ''),
       label: String(b.label ?? ''),
       value: String(b.value ?? ''),
-      source: b.source ? String(b.source) : undefined,
+      source: Array.isArray(b.source)
+        ? b.source.map((item: unknown) => String(item)).filter(Boolean)
+        : b.source
+          ? String(b.source)
+          : undefined,
     }))
     .filter((b) => b.label || b.value);
   const costFacts = factBlocks;

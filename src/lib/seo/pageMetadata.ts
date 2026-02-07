@@ -15,7 +15,14 @@ function normalizeCanonicalPath(path: string): string {
     return '/';
   }
 
-  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  const withLeadingSlash = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  const normalized = withLeadingSlash.replace(/\/{2,}/g, '/');
+
+  if (normalized === '/') {
+    return normalized;
+  }
+
+  return normalized.endsWith('/') ? normalized : `${normalized}/`;
 }
 
 export function buildDetailPageMetadata({
@@ -64,4 +71,3 @@ export function buildDetailPageMetadata({
 
   return metadata;
 }
-

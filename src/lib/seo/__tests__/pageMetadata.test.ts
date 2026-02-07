@@ -28,6 +28,8 @@ describe('buildDetailPageMetadata', () => {
     expect((metadata.openGraph as any)?.type).toBe('article');
     expect((metadata.openGraph as any)?.publishedTime).toBe('2026-02-01T10:00:00Z');
     expect((metadata.openGraph as any)?.modifiedTime).toBe('2026-02-03T10:00:00Z');
+    expect((metadata.openGraph as any)?.url).toBe('/iso-certificering/iso-9001/');
+    expect(metadata.alternates?.canonical).toBe('/iso-certificering/iso-9001/');
     expect((metadata.other as any)?.datePublished).toBe('2026-02-01T10:00:00Z');
   });
 
@@ -55,5 +57,7 @@ describe('buildDetailPageMetadata', () => {
     expect((metadata.openGraph as any)?.type).toBe('website');
     expect((metadata.openGraph as any)?.publishedTime).toBeUndefined();
     expect((metadata.openGraph as any)?.modifiedTime).toBe('2026-02-03T10:00:00Z');
+    expect((metadata.openGraph as any)?.url).toBe('/avg-wetgeving/avg/');
+    expect(metadata.alternates?.canonical).toBe('/avg-wetgeving/avg/');
   });
 });

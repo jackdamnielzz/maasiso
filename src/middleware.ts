@@ -2,15 +2,33 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { isRemovedUrl } from '@/config/removed-urls';
 
-const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
-const ISO9001_NON_CANONICAL_PATH = '/iso-certificering/iso-9001';
 const CANONICAL_HOST = 'www.maasiso.nl';
 const APEX_HOST = 'maasiso.nl';
 const CRAWL_CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
 
+function hasFileExtension(pathname: string): boolean {
+  return /\.[a-z0-9]+$/i.test(pathname);
+}
+
+function shouldForceTrailingSlash(pathname: string): boolean {
+  if (pathname === '/') return false;
+  if (pathname.startsWith('/api/')) return false;
+  if (hasFileExtension(pathname)) return false;
+  return true;
+}
+
+function ensureTrailingSlash(pathname: string): string {
+  if (pathname === '/') return pathname;
+  const normalized = pathname.replace(/\/+$/g, '');
+  return `${normalized}/`;
+}
+
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const normalizedPathname = pathname === '/' ? '/' : pathname.replace(/\/+$/g, '');
+  const desiredPathname = shouldForceTrailingSlash(normalizedPathname)
+    ? ensureTrailingSlash(normalizedPathname)
+    : normalizedPathname;
   const requestHost =
     (
       request.headers.get('x-forwarded-host') ||
@@ -51,25 +69,25 @@ export function middleware(request: NextRequest) {
   }
 
   if (normalizedPathname === '/diensten') {
-    return NextResponse.redirect(new URL('/iso-certificering', request.url), 301);
+    return NextResponse.redirect(new URL('/iso-certificering/', request.url), 301);
   }
 
   if (normalizedPathname === '/onze-voordelen') {
-    return NextResponse.redirect(new URL('/waarom-maasiso', request.url), 301);
+    return NextResponse.redirect(new URL('/waarom-maasiso/', request.url), 301);
   }
 
   if (normalizedPathname === '/news') {
-    return NextResponse.redirect(new URL('/blog', request.url), 301);
+    return NextResponse.redirect(new URL('/kennis/blog/', request.url), 301);
   }
 
   if (normalizedPathname.startsWith('/news/')) {
     const slug = normalizedPathname.replace('/news/', '');
-    return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
+    return NextResponse.redirect(new URL(`/kennis/blog/${slug}/`, request.url), 301);
   }
 
   if (normalizedPathname.startsWith('/blog-posts/')) {
     const slug = normalizedPathname.replace('/blog-posts/', '');
-    return NextResponse.redirect(new URL(`/blog/${slug}`, request.url), 301);
+    return NextResponse.redirect(new URL(`/kennis/blog/${slug}/`, request.url), 301);
   }
 
   if (normalizedPathname === '/index.html') {
@@ -80,36 +98,24 @@ export function middleware(request: NextRequest) {
     return new NextResponse('Not Found', { status: 404 });
   }
 
-  // If apex reaches the app, canonicalize host + slash in a single hop.
-  if (requestHost === APEX_HOST && normalizedPathname === ISO9001_NON_CANONICAL_PATH) {
-    return NextResponse.redirect(
-      `https://${CANONICAL_HOST}${ISO9001_CANONICAL_PATH}${request.nextUrl.search || ''}`,
-      301
-    );
-  }
-
-  if (normalizedPathname === ISO9001_NON_CANONICAL_PATH && pathname !== ISO9001_CANONICAL_PATH) {
-    return NextResponse.redirect(new URL(ISO9001_CANONICAL_PATH, request.url), 301);
-  }
-
   const redirectMap: Record<string, string> = {
     '/iso-9001': '/iso-certificering/iso-9001/',
-    '/iso-14001': '/iso-certificering/iso-14001',
-    '/iso-45001': '/iso-certificering/iso-45001',
-    '/iso-16175': '/iso-certificering/iso-16175',
-    '/iso-27001': '/informatiebeveiliging/iso-27001',
-    '/avg': '/avg-wetgeving/avg',
-    '/bio': '/informatiebeveiliging/bio',
+    '/iso-14001': '/iso-certificering/iso-14001/',
+    '/iso-45001': '/iso-certificering/iso-45001/',
+    '/iso-16175': '/iso-certificering/iso-16175/',
+    '/iso-27001': '/informatiebeveiliging/iso-27001/',
+    '/avg': '/avg-wetgeving/avg/',
+    '/bio': '/informatiebeveiliging/bio/',
     '/diensten/iso-9001-consultancy': '/iso-certificering/iso-9001/',
     '/diensten/iso-9001': '/iso-certificering/iso-9001/',
-    '/diensten/iso-14001': '/iso-certificering/iso-14001',
-    '/diensten/iso-27001': '/informatiebeveiliging/iso-27001',
-    '/diensten/iso-45001': '/iso-certificering/iso-45001',
-    '/diensten/gdpr-avg': '/avg-wetgeving/avg',
-    '/diensten/bio': '/informatiebeveiliging/bio',
-    '/algemene-voorwaarden': '/terms-and-conditions',
-    '/contact.html': '/contact',
-    '/blog/iso-27001-checklist': '/blog/iso-27001-checklist-augustus-2025',
+    '/diensten/iso-14001': '/iso-certificering/iso-14001/',
+    '/diensten/iso-27001': '/informatiebeveiliging/iso-27001/',
+    '/diensten/iso-45001': '/iso-certificering/iso-45001/',
+    '/diensten/gdpr-avg': '/avg-wetgeving/avg/',
+    '/diensten/bio': '/informatiebeveiliging/bio/',
+    '/algemene-voorwaarden': '/terms-and-conditions/',
+    '/contact.html': '/contact/',
+    '/blog/iso-27001-checklist': '/kennis/blog/iso-27001-checklist-augustus-2025/',
   };
 
   const redirectTarget = redirectMap[normalizedPathname];
@@ -117,8 +123,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 301);
   }
 
-  if (pathname !== '/' && pathname.endsWith('/') && pathname !== ISO9001_CANONICAL_PATH) {
-    return NextResponse.redirect(new URL(normalizedPathname, request.url), 301);
+  const shouldCanonicalizeHost = requestHost === APEX_HOST;
+  const shouldCanonicalizePath = pathname !== desiredPathname;
+  if (shouldCanonicalizeHost || shouldCanonicalizePath) {
+    const redirectUrl = new URL(request.url);
+    redirectUrl.protocol = 'https:';
+    redirectUrl.hostname = CANONICAL_HOST;
+    redirectUrl.pathname = desiredPathname;
+    return NextResponse.redirect(redirectUrl, 301);
   }
 
   // Handle crawl endpoint cache headers

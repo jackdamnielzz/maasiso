@@ -521,6 +521,36 @@ function validatePageComponent(component: RawStrapiComponent, index: number): bo
   return isValid;
 }
 
+function normalizeFactBlockSource(
+  rawSource: unknown
+): string | string[] | undefined {
+  if (!rawSource) return undefined;
+
+  if (Array.isArray(rawSource)) {
+    const normalized = rawSource
+      .map((item) => {
+        if (typeof item === 'string') {
+          return item.trim();
+        }
+        if (item && typeof item === 'object') {
+          const maybeUrl = typeof (item as any).url === 'string' ? (item as any).url.trim() : '';
+          const maybeLabel = typeof (item as any).label === 'string' ? (item as any).label.trim() : '';
+          return maybeUrl || maybeLabel;
+        }
+        return '';
+      })
+      .filter(Boolean);
+    return normalized.length > 0 ? normalized : undefined;
+  }
+
+  if (typeof rawSource === 'string') {
+    const normalized = rawSource.trim();
+    return normalized || undefined;
+  }
+
+  return undefined;
+}
+
 export function mapPage(data: any | null): Page | null {
   if (!data) {
     debugLog('mapPage received null data');
@@ -649,7 +679,7 @@ export function mapPage(data: any | null): Page | null {
             ...baseComponent,
             label: (component as any).label || '',
             value: (component as any).value || '',
-            source: (component as any).source || undefined
+            source: normalizeFactBlockSource((component as any).source)
           };
         default:
           return baseComponent;

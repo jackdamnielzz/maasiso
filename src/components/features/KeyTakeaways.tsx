@@ -47,7 +47,7 @@ export function KeyTakeaways({ items, className = '' }: KeyTakeawaysProps) {
             className="rounded-lg border border-amber-100 bg-white/70 px-4 py-3"
           >
             <dt className="text-xs uppercase tracking-wide text-gray-500">
-              {item.title}
+              {item.title.endsWith(':') ? item.title : `${item.title}:`}
             </dt>
             <dd className="mt-1 text-lg font-semibold text-gray-900">
               {item.value}

@@ -51,7 +51,7 @@ export interface Page {
     }>;
     label?: string;
     value?: string;
-    source?: string;
+    source?: string | string[];
   }>;
   publicationDate?: string;
   publishedAt?: string;
