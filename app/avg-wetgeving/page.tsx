@@ -23,6 +23,7 @@ const cards = [
 export default function AvgWetgevingHubPage() {
   return (
     <CoreHubPageTemplate
+      visualVariant="iso-premium"
       title="AVG & Wetgeving"
       intro="Overzicht van onderwerpen binnen AVG & wetgeving. Klik door naar de detailpagina voor de volledige uitleg."
       definition="AVG & wetgeving gaat over het naleven van privacyregels en andere wettelijke eisen rond persoonsgegevens. Het omvat het vastleggen van beleid, rollen en processen, het borgen van rechten van betrokkenen en het aantoonbaar beheersen van risico’s. Organisaties moeten kunnen laten zien dat zij compliant handelen en passende maatregelen treffen. Dit domein richt zich op de juridische en organisatorische kant van privacy."
@@ -32,6 +33,7 @@ export default function AvgWetgevingHubPage() {
         { label: 'AVG & Wetgeving', href: '/avg-wetgeving' },
       ]}
       cards={cards}
+      ctas={[{ label: 'Plan een kennismaking', href: '/contact', variant: 'primary' }]}
       dataTopic="avg-wetgeving"
     />
   );

@@ -164,6 +164,21 @@ export default function CoreHubPageTemplate(props: CoreHubPageTemplateProps) {
       );
     }
 
+    if (lowTitle.includes('avg') || lowTitle.includes('gdpr') || lowTitle.includes('privacy') || lowTitle.includes('wetgeving')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M12 4v16m0-16-6 3v4.5c0 3 2.1 5.7 5 6.4m1-14 6 3v4.5c0 3-2.1 5.7-5 6.4"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M8.2 10.5h7.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
     if (lowTitle.includes('16175')) {
       return (
         <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
