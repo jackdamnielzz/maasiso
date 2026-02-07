@@ -46,6 +46,7 @@ const domainCards = [
 ] as const;
 
 export default function Home() {
+  // TODO: Homepage migreren naar Strapi – deze sectie moet content-gedreven worden
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white">
       <section className="hero-section relative overflow-hidden">
@@ -75,6 +76,26 @@ export default function Home() {
             >
               Doe de ISO-Selector
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            <figure className="lg:col-span-8">
+              <img
+                src="/images/pexels-qmicertification-design-243125480-12324202.jpg"
+                alt="ISO-consultant bespreekt implementatie met MKB-management tijdens adviesgesprek"
+                loading="lazy"
+                className="w-full h-auto rounded-xl"
+              />
+            </figure>
+            <div className="lg:col-span-4">
+              <p className="text-gray-700 leading-relaxed">
+                Praktisch advies, afgestemd op de dagelijkse realiteit van MKB-organisaties.
+              </p>
+            </div>
           </div>
         </div>
       </section>
