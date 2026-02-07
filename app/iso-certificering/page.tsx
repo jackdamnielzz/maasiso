@@ -44,6 +44,7 @@ const isoPages = [
 export default function IsoCertificeringHubPage() {
   return (
     <CoreHubPageTemplate
+      visualVariant="iso-premium"
       title="ISO-certificering"
       intro="Overzicht van onderwerpen binnen ISO-certificering. Klik door naar een normpagina voor de volledige uitleg."
       definition="ISO-certificering is een formele bevestiging door een onafhankelijke certificerende instelling dat het managementsysteem van een organisatie voldoet aan de eisen van een ISO-norm. Het gaat om aantoonbaar beheersen en verbeteren van processen, risico’s en afspraken. Certificering helpt vertrouwen richting klanten en ketenpartners te vergroten en kan eisen uit aanbestedingen ondersteunen. De certificerende instelling beoordeelt periodiek of de organisatie nog voldoet."
@@ -54,7 +55,7 @@ export default function IsoCertificeringHubPage() {
       ]}
       cards={isoPages}
       ctas={[
-        { label: 'Plan een kennismaking', href: '/contact', variant: 'secondary' },
+        { label: 'Plan een kennismaking', href: '/contact', variant: 'primary' },
         { label: 'Doe de ISO-Selector', href: '/iso-selector', variant: 'secondary' },
       ]}
       cardsHeading="Onderwerpen binnen ISO-certificering"
