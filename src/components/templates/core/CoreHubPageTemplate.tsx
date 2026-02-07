@@ -179,6 +179,44 @@ export default function CoreHubPageTemplate(props: CoreHubPageTemplateProps) {
       );
     }
 
+    if (lowTitle.includes('blog')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M5 5.5c0-.8.7-1.5 1.5-1.5h9A2.5 2.5 0 0 1 18 6.5V18a2 2 0 0 0-2-2H6.5A1.5 1.5 0 0 1 5 14.5v-9Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path d="M8 8.5h6M8 11.5h6M8 14.5h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
+    if (lowTitle.includes('whitepaper')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M7 4.5h7.5L19 9v10.5H7V4.5Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path d="M14.5 4.5V9H19" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+          <path d="M9 12h6M9 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
+    if (lowTitle.includes('nieuws') || lowTitle.includes('news')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="4.5" y="5" width="15" height="14.5" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M8 9.5h8M8 12.5h8M8 15.5h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
     if (lowTitle.includes('16175')) {
       return (
         <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
