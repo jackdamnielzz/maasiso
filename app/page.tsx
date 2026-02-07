@@ -85,7 +85,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             <figure className="lg:col-span-8">
               <img
-                src="/images/pexels-qmicertification-design-243125480-12324202.jpg"
+                src="/images/maasisohome.png"
                 alt="ISO-consultant bespreekt implementatie met MKB-management tijdens adviesgesprek"
                 loading="lazy"
                 className="w-full h-auto rounded-xl"
