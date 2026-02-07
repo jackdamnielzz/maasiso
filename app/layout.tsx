@@ -43,7 +43,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.maasiso.nl'),
+  metadataBase: new URL('https://www.maasiso.nl/'),
   title: "MaasISO | ISO Certificering en Informatiebeveiliging",
   description: "Professionele begeleiding bij ISO certificering en informatiebeveiliging. Specialisten in ISO 9001, ISO 27001 en AVG/GDPR compliance.",
   alternates: {

@@ -99,7 +99,7 @@ function canonicalizeSitemapBaseUrl(input: string): string {
 
 function normalizePath(path: string): string {
   const trimmed = path.trim();
-  if (trimmed === '' || trimmed === '/') return '';
+  if (trimmed === '' || trimmed === '/') return '/';
   const normalized = `/${trimmed.replace(/^\/+/, '').replace(/\/+$/g, '')}`;
   return normalized.endsWith('/') ? normalized : `${normalized}/`;
 }
