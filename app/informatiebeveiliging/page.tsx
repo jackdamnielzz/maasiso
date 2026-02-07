@@ -30,6 +30,7 @@ const cards = [
 export default function InformatiebeveiligingHubPage() {
   return (
     <CoreHubPageTemplate
+      visualVariant="iso-premium"
       title="Informatiebeveiliging"
       intro="Overzicht van onderwerpen binnen informatiebeveiliging. Klik door naar een normpagina voor de volledige uitleg."
       definition="Informatiebeveiliging gaat over het beschermen van vertrouwelijkheid, integriteit en beschikbaarheid van informatie binnen organisaties. Het omvat beleid, processen, rollen en technische maatregelen die samen zorgen dat informatie betrouwbaar blijft en risico’s beheersbaar zijn. Het doel is aantoonbaar grip op informatie en continu verbeteren van beveiligingsmaatregelen. Dit gebeurt vaak binnen een formeel managementsysteem."
@@ -39,6 +40,7 @@ export default function InformatiebeveiligingHubPage() {
         { label: 'Informatiebeveiliging', href: '/informatiebeveiliging' },
       ]}
       cards={cards}
+      ctas={[{ label: 'Plan een kennismaking', href: '/contact', variant: 'primary' }]}
       dataTopic="informatiebeveiliging"
     />
   );

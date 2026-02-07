@@ -130,6 +130,40 @@ export default function CoreHubPageTemplate(props: CoreHubPageTemplateProps) {
       );
     }
 
+    if (lowTitle.includes('27001')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M6.5 10V7.5A5.5 5.5 0 0 1 12 2a5.5 5.5 0 0 1 5.5 5.5V10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+          <rect x="4.5" y="10" width="15" height="11.5" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M12 14.5v3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    }
+
+    if (lowTitle.includes('bio')) {
+      return (
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M12 3.5 5.5 6v5.5c0 4.3 2.8 8.3 6.5 9.5 3.7-1.2 6.5-5.2 6.5-9.5V6L12 3.5Z"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M9.2 12h5.6M9.2 15h3.2"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    }
+
     if (lowTitle.includes('16175')) {
       return (
         <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
