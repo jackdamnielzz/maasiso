@@ -269,7 +269,7 @@ export default function AuthorityPageContent({
   layout = [],
   heroFallbackImage,
   testId,
-  featureGridTitleFallback = 'De 5 stappen',
+  featureGridTitleFallback = 'De stappen',
   featureGridTestId,
   breadcrumbs,
   showBreadcrumbs = true,
@@ -509,7 +509,7 @@ export default function AuthorityPageContent({
                     <>
                       <div className="text-center mb-10 md:mb-12">
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#091E42] mb-3 md:mb-4">
-                          {block.title || featureGridTitleFallback}
+                          {block.title || (features.length > 0 ? `De ${features.length} stappen` : featureGridTitleFallback)}
                         </h2>
                         <div className="w-16 md:w-20 h-1 bg-[#00875A] mx-auto rounded-full"></div>
                         {block.subtitle && (

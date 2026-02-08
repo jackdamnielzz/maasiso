@@ -454,6 +454,11 @@ function mapMediaField(media: any): Image | undefined {
     return mapMediaField(media.data[0]);
   }
 
+  // Strapi v5 single media relation often uses: { data: { id, url, ... } }
+  if (media?.data && typeof media.data === 'object') {
+    return mapMediaField(media.data);
+  }
+
   if (media?.data && media.data.attributes) {
     return mapImage({
       id: media.data.id,

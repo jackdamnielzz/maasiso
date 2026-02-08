@@ -61,4 +61,44 @@ describe('mapPage', () => {
     expect(mapped?.featuredImage?.url).toBe('/uploads/hero.jpg');
     expect(mapped?.featuredImage?.alternativeText).toBe('Hero');
   });
+
+  it('maps featuredImage when Strapi returns a v5 single relation with data object', () => {
+    const rawData = {
+      id: 101,
+      title: 'AVG',
+      slug: 'avg',
+      seoTitle: 'SEO title',
+      seoDescription: 'SEO description',
+      seoKeywords: 'avg,privacy',
+      featuredImage: {
+        data: {
+          id: 201,
+          name: 'avg-hero.jpg',
+          alternativeText: 'AVG Hero',
+          width: 1280,
+          height: 720,
+          formats: {},
+          hash: 'avg-hero',
+          ext: '.jpg',
+          mime: 'image/jpeg',
+          size: 14,
+          url: '/uploads/avg-hero.jpg',
+          provider: 'local',
+          createdAt: '2026-02-01T10:00:00Z',
+          updatedAt: '2026-02-01T10:00:00Z',
+          publishedAt: '2026-02-01T10:00:00Z',
+        },
+      },
+      createdAt: '2026-02-01T10:00:00Z',
+      updatedAt: '2026-02-03T10:00:00Z',
+      publishedAt: '2026-02-03T10:00:00Z',
+      layout: [],
+    };
+
+    const mapped = mapPage(rawData);
+
+    expect(mapped).not.toBeNull();
+    expect(mapped?.featuredImage?.url).toBe('/uploads/avg-hero.jpg');
+    expect(mapped?.featuredImage?.alternativeText).toBe('AVG Hero');
+  });
 });
