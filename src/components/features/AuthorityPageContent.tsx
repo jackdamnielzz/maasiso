@@ -1,8 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import { getIconForFeature } from '@/lib/utils/iconMapper';
+import { getImageUrl } from '@/lib/utils/imageUtils';
 import { KeyTakeaways } from '@/components/features/KeyTakeaways';
 import { FactBlock } from '@/components/features/FactBlock';
 import { FaqSection } from '@/components/features/FaqSection';
@@ -298,9 +300,31 @@ export default function AuthorityPageContent({
       {layoutBlocks.map((block: any, index: number) => {
         const blockKey = `${block?.__component ?? 'block'}-${block?.id ?? 'x'}-${index}`;
         switch (block.__component) {
-          case 'page-blocks.hero':
+          case 'page-blocks.hero': {
+            const heroImageSrc =
+              block?.backgroundImage?.url
+                ? getImageUrl(block.backgroundImage, 'large')
+                : null;
+            const heroImageAlt =
+              block?.backgroundImage?.alternativeText ||
+              block?.backgroundImage?.name ||
+              block?.title ||
+              'Hero afbeelding';
             return (
               <section key={blockKey} className="hero-section relative overflow-hidden bg-[#091E42]">
+                {heroImageSrc ? (
+                  <>
+                    <Image
+                      src={heroImageSrc}
+                      alt={heroImageAlt}
+                      fill
+                      sizes="100vw"
+                      priority={index === 0}
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-[#091E42]/70"></div>
+                  </>
+                ) : null}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                   <div className="absolute top-0 right-0 w-96 h-96 bg-[#00875A] rounded-full opacity-10 -mr-20 -mt-20 animate-pulse-slow"></div>
                   <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#FF8B00] rounded-full opacity-10 -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
@@ -320,6 +344,7 @@ export default function AuthorityPageContent({
                 </div>
               </section>
             );
+          }
 
           case 'page-blocks.key-takeaways':
             return (
@@ -402,6 +427,19 @@ export default function AuthorityPageContent({
                                 <table className="w-full min-w-[640px] text-sm" {...props} />
                               </div>
                             ),
+                            img: ({ node, src, alt, ...props }) => {
+                              const imageSource =
+                                typeof src === 'string' ? getImageUrl(src, 'large') : '/placeholder-blog.jpg';
+                              return (
+                                <img
+                                  src={imageSource}
+                                  alt={alt || ''}
+                                  className="h-auto w-full rounded-xl border border-slate-200/80 shadow-sm"
+                                  loading="lazy"
+                                  {...props}
+                                />
+                              );
+                            },
                             blockquote: ({ node, children, ...props }) => {
                               const blockChildren = React.Children.toArray(children);
                               let citeText = '';
@@ -479,7 +517,12 @@ export default function AuthorityPageContent({
                         data-testid={featureGridTestId}
                       >
                         {features.map((feature: any, index: number) => {
-                          const iconUrl = feature.icon?.url || getIconForFeature(feature.title || '');
+                          const candidateIconUrl = feature.icon?.url
+                            ? getImageUrl(feature.icon, 'small')
+                            : '';
+                          const iconUrl = candidateIconUrl && candidateIconUrl !== '/placeholder-blog.jpg'
+                            ? candidateIconUrl
+                            : getIconForFeature(feature.title || '');
                           const iconAlt = feature.icon?.alternativeText || feature.title || 'Stap icoon';
                           const content = feature.description?.trim() || `Wij bieden professionele begeleiding en advies voor ${feature.title}.`;
                           const isFiveSteps = features.length === 5;

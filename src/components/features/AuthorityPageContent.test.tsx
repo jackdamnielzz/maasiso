@@ -18,6 +18,15 @@ jest.mock('react-markdown', () => {
       );
     }
 
+    const imageMatch = content.match(/!\[(.*?)\]\((.*?)\)/);
+    if (imageMatch && typeof components.img === 'function') {
+      const ImgRenderer = components.img;
+      return React.createElement(ImgRenderer, {
+        src: imageMatch[2],
+        alt: imageMatch[1],
+      });
+    }
+
     return React.createElement('div', null, content);
   };
 });
@@ -100,5 +109,75 @@ describe('AuthorityPageContent', () => {
     const main = container.querySelector('main');
     expect(main?.lastElementChild).toHaveAttribute('data-cta-final', 'true');
     expect(container.querySelectorAll('section[data-cta-final=\"true\"]')).toHaveLength(1);
+  });
+
+  it('renders hero background images via the proxy route', () => {
+    const layout: any = [
+      {
+        id: 'hero-1',
+        __component: 'page-blocks.hero',
+        title: 'ISO 45001',
+        subtitle: 'Sub',
+        backgroundImage: {
+          id: 'img-1',
+          url: '/uploads/iso45001-hero.jpg',
+          alternativeText: 'ISO 45001 hero',
+        },
+      },
+    ];
+
+    render(<AuthorityPageContent layout={layout} />);
+
+    expect(screen.getByAltText('ISO 45001 hero')).toHaveAttribute(
+      'src',
+      '/api/proxy/assets/uploads/iso45001-hero.jpg'
+    );
+  });
+
+  it('renders markdown images via the proxy route', () => {
+    const layout: any = [
+      {
+        id: 'text-1',
+        __component: 'page-blocks.text-block',
+        alignment: 'left',
+        content: '![Afbeelding](/uploads/iso45001-content.png)',
+      },
+    ];
+
+    render(<AuthorityPageContent layout={layout} />);
+
+    expect(screen.getByAltText('Afbeelding')).toHaveAttribute(
+      'src',
+      '/api/proxy/assets/uploads/iso45001-content.png'
+    );
+  });
+
+  it('renders feature icons via the proxy route', () => {
+    const layout: any = [
+      {
+        id: 'feature-grid-1',
+        __component: 'page-blocks.feature-grid',
+        title: 'Stappen',
+        features: [
+          {
+            id: 'feature-1',
+            title: 'Stap 1',
+            description: 'Beschrijving',
+            icon: {
+              id: 'icon-1',
+              url: '/uploads/iso45001-icon.svg',
+              alternativeText: 'Stap icoon',
+            },
+          },
+        ],
+      },
+    ];
+
+    render(<AuthorityPageContent layout={layout} />);
+
+    expect(screen.getByAltText('Stap icoon')).toHaveAttribute(
+      'src',
+      '/api/proxy/assets/uploads/iso45001-icon.svg'
+    );
   });
 });
