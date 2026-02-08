@@ -15,6 +15,7 @@ import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 
 type AuthorityPageContentProps = {
   layout?: NonNullable<Page['layout']>;
+  heroFallbackImage?: Page['featuredImage'];
   testId?: string;
   featureGridTitleFallback?: string;
   featureGridTestId?: string;
@@ -266,6 +267,7 @@ const groupFactBlocks = (layout: NonNullable<Page['layout']> = []) => {
 
 export default function AuthorityPageContent({
   layout = [],
+  heroFallbackImage,
   testId,
   featureGridTitleFallback = 'De 5 stappen',
   featureGridTestId,
@@ -301,13 +303,17 @@ export default function AuthorityPageContent({
         const blockKey = `${block?.__component ?? 'block'}-${block?.id ?? 'x'}-${index}`;
         switch (block.__component) {
           case 'page-blocks.hero': {
-            const heroImageSrc =
+            const resolvedHeroImage =
               block?.backgroundImage?.url
-                ? getImageUrl(block.backgroundImage, 'large')
+                ? block.backgroundImage
+                : heroFallbackImage;
+            const heroImageSrc =
+              resolvedHeroImage?.url
+                ? getImageUrl(resolvedHeroImage, 'large')
                 : null;
             const heroImageAlt =
-              block?.backgroundImage?.alternativeText ||
-              block?.backgroundImage?.name ||
+              resolvedHeroImage?.alternativeText ||
+              resolvedHeroImage?.name ||
               block?.title ||
               'Hero afbeelding';
             return (

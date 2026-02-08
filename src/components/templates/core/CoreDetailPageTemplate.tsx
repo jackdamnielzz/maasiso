@@ -724,6 +724,7 @@ export default async function CoreDetailPageTemplate({
       <PageSchemaRenderer page={pageData} canonicalUrl={detailUrl} faqQuestions={faqQuestions} />
       <AuthorityPageContent
         layout={layout}
+        heroFallbackImage={pageData.featuredImage}
         breadcrumbs={breadcrumbs}
         showBreadcrumbs
         dataTopic={dataTopic}

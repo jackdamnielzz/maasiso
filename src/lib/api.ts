@@ -443,6 +443,49 @@ function mapImage(data: any): Image | undefined {
   };
 }
 
+function mapMediaField(media: any): Image | undefined {
+  if (!media) return undefined;
+
+  if (Array.isArray(media)) {
+    return mapMediaField(media[0]);
+  }
+
+  if (media?.data && Array.isArray(media.data)) {
+    return mapMediaField(media.data[0]);
+  }
+
+  if (media?.data && media.data.attributes) {
+    return mapImage({
+      id: media.data.id,
+      ...media.data.attributes,
+    });
+  }
+
+  if (media?.attributes) {
+    return mapImage({
+      id: media.id,
+      ...media.attributes,
+    });
+  }
+
+  return mapImage(media);
+}
+
+function mapMediaCollection(media: any): Image[] {
+  if (!media) return [];
+
+  if (Array.isArray(media)) {
+    return media.map((item) => mapMediaField(item)).filter(Boolean) as Image[];
+  }
+
+  if (media?.data && Array.isArray(media.data)) {
+    return media.data.map((item: any) => mapMediaField(item)).filter(Boolean) as Image[];
+  }
+
+  const single = mapMediaField(media);
+  return single ? [single] : [];
+}
+
 function validatePageComponent(component: RawStrapiComponent, index: number): boolean {
   if (!component || !component.__component) {
     console.warn(`[API Validation] Invalid component at index ${index}: Missing __component property`);
@@ -588,6 +631,7 @@ export function mapPage(data: any | null): Page | null {
     title: data.title || '',
     slug: data.slug || '',
     seoMetadata,
+    featuredImage: mapMediaField(data.featuredImage),
     primaryKeyword: data.primaryKeyword,
     schemaType: normalizePageSchemaType(data.schemaType),
     serviceName: typeof data.serviceName === 'string' ? data.serviceName : undefined,
@@ -607,7 +651,7 @@ export function mapPage(data: any | null): Page | null {
             ...baseComponent,
             title: component.title || '',
             subtitle: component.subtitle || '',
-            backgroundImage: component.backgroundImage ? mapImage(component.backgroundImage) : undefined,
+            backgroundImage: mapMediaField(component.backgroundImage),
             ctaButton: component.ctaButton
           };
         case 'page-blocks.text-block':
@@ -619,7 +663,7 @@ export function mapPage(data: any | null): Page | null {
         case 'page-blocks.gallery':
           return {
             ...baseComponent,
-            images: component.images?.map((img: any) => mapImage(img)).filter(Boolean) || [],
+            images: mapMediaCollection(component.images),
             layout: component.layout || 'grid'
           };
         case 'page-blocks.feature-grid':
@@ -705,7 +749,8 @@ export async function getPage(slug: string): Promise<Page | null> {
       'populate[2]=layout.features.icon',
       'populate[3]=layout.backgroundImage',
       'populate[4]=layout.ctaButton',
-      'populate[5]=layout.items'
+      'populate[5]=layout.items',
+      'populate[6]=featuredImage'
     ].join('&');
 
     const data = await fetchWithBaseUrl<StrapiCollectionResponse<StrapiRawPage>>(

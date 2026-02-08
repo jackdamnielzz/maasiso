@@ -134,6 +134,46 @@ describe('AuthorityPageContent', () => {
     );
   });
 
+  it('uses page featured image as hero fallback when hero background is missing', () => {
+    const layout: any = [
+      {
+        id: 'hero-1',
+        __component: 'page-blocks.hero',
+        title: 'ISO 45001',
+        subtitle: 'Sub',
+      },
+    ];
+
+    render(
+      <AuthorityPageContent
+        layout={layout}
+        heroFallbackImage={{
+          id: 'featured-1',
+          name: 'featured.jpg',
+          alternativeText: 'ISO 45001 featured',
+          caption: '',
+          width: 1200,
+          height: 630,
+          formats: {},
+          hash: 'featured',
+          ext: '.jpg',
+          mime: 'image/jpeg',
+          size: 10,
+          url: '/uploads/iso45001-featured.jpg',
+          provider: 'local',
+          createdAt: '2026-02-08T00:00:00.000Z',
+          updatedAt: '2026-02-08T00:00:00.000Z',
+          publishedAt: '2026-02-08T00:00:00.000Z',
+        }}
+      />
+    );
+
+    expect(screen.getByAltText('ISO 45001 featured')).toHaveAttribute(
+      'src',
+      '/api/proxy/assets/uploads/iso45001-featured.jpg'
+    );
+  });
+
   it('renders markdown images via the proxy route', () => {
     const layout: any = [
       {

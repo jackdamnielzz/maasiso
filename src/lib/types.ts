@@ -668,6 +668,7 @@ export interface Page {
   title: string;
   slug: string;
   seoMetadata?: SEOMetadata;
+  featuredImage?: Image;
   primaryKeyword?: string;
   schemaType?: PageSchemaType;
   serviceName?: string;
