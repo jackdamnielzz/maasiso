@@ -14,6 +14,7 @@ type CoreDetailPageTemplateProps = {
     href: string;
   };
   dataTopic?: string;
+  visualVariant?: 'default' | 'home-premium';
 };
 
 type Layout = NonNullable<Page['layout']>;
@@ -667,6 +668,7 @@ export default async function CoreDetailPageTemplate({
   strapiSlug,
   hub,
   dataTopic,
+  visualVariant = 'default',
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
   const layout = pageData?.layout
@@ -728,6 +730,7 @@ export default async function CoreDetailPageTemplate({
         breadcrumbs={breadcrumbs}
         showBreadcrumbs
         dataTopic={dataTopic}
+        visualVariant={visualVariant}
       />
     </>
   );
