@@ -333,9 +333,18 @@ const faqSchema = {
   ],
 };
 
+const sectieNavigatie = [
+  { href: "#key-takeaways", label: "Key Takeaways" },
+  { href: "#kernfeiten", label: "Kernfeiten" },
+  { href: "#diensten", label: "Diensten" },
+  { href: "#aanpak", label: "Aanpak" },
+  { href: "#kosten", label: "Kosten" },
+  { href: "#faq", label: "FAQ" },
+] as const;
+
 export default function Home() {
   return (
-    <div className="bg-[#f5f7fa] text-[#091E42]">
+    <div className="relative isolate overflow-hidden bg-[#f3f6fb] text-[#091E42]">
       <Script
         id="homepage-professionalservice-schema"
         type="application/ld+json"
@@ -347,19 +356,27 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <section className="bg-[#091E42] text-white">
-        <div className="container-custom px-4 py-16 md:py-20">
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight max-w-5xl">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-24 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[#0057B8]/20 blur-3xl" />
+        <div className="absolute right-[-8rem] top-[32rem] h-[24rem] w-[24rem] rounded-full bg-[#FF8B00]/20 blur-3xl" />
+      </div>
+
+      <section className="hero-section relative overflow-hidden bg-gradient-to-br from-[#071631] via-[#0d2b5c] to-[#0f4177] text-white">
+        <div className="container-custom px-4 py-20 md:py-24">
+          <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/85">
+            Onafhankelijke ISO-consultancy voor MKB
+          </span>
+          <h1 className="mt-6 max-w-5xl text-3xl font-bold leading-tight md:text-5xl">
             ISO-consultant voor MKB: certificering, informatiebeveiliging en compliance
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/90 max-w-5xl leading-relaxed">
+          <p className="mt-6 max-w-5xl text-lg leading-relaxed text-white/90 md:text-xl">
             MaasISO begeleidt MKB-bedrijven in Nederland en Belgie bij ISO-certificering,
             informatiebeveiliging en AVG compliance. Als onafhankelijk consultant helpen wij
             organisaties van nulmeting tot succesvolle audit: pragmatisch, transparant en afgestemd
             op de dagelijkse praktijk. MaasISO is geen certificerende instelling: wij begeleiden, de
             certificerende instelling toetst.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/contact" className="primary-button text-center sm:min-w-[240px]">
               Plan een kennismaking
             </Link>
@@ -370,58 +387,102 @@ export default function Home() {
               Doe de ISO Norm Selector
             </Link>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-white">
-        <div className="container-custom px-4 py-12 md:py-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">Key Takeaways</h2>
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
-            <table className="w-full text-left text-sm md:text-base">
-              <tbody>
-                {keyTakeaways.map((item) => (
-                  <tr key={item.onderwerp} className="border-b border-gray-200 last:border-b-0">
-                    <th scope="row" className="w-[35%] p-4 font-semibold bg-[#f8fafc]">
-                      {item.onderwerp}
-                    </th>
-                    <td className="p-4">{item.waarde}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-      <section>
-        <div className="container-custom px-4 py-12 md:py-16">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">Kernfeiten</h2>
-          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-            <table className="w-full text-left text-sm md:text-base">
-              <thead className="bg-[#f8fafc]">
-                <tr>
-                  <th className="p-4 font-semibold">Kernfeit</th>
-                  <th className="p-4 font-semibold">Waarde</th>
-                  <th className="p-4 font-semibold">Bron</th>
-                </tr>
-              </thead>
-              <tbody>
-                {kernfeiten.map((item) => (
-                  <tr key={item.kernfeit} className="border-t border-gray-200 align-top">
-                    <td className="p-4 font-medium">{item.kernfeit}</td>
-                    <td className="p-4">{item.waarde}</td>
-                    <td className="p-4 text-gray-700">{item.bron}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {keyTakeaways.slice(0, 3).map((item) => (
+              <div
+                key={`hero-${item.onderwerp}`}
+                className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/75">
+                  {item.onderwerp}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-white">{item.waarde}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-white">
-        <div className="container-custom px-4 py-12 md:py-16 space-y-12">
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Wat doet MaasISO?</h2>
+      <nav
+        aria-label="Sectienavigatie"
+        className="sticky top-[80px] z-30 border-y border-[#d6deea] bg-white/90 backdrop-blur"
+      >
+        <div className="container-custom px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5a6e8f]">Snel naar</p>
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+            {sectieNavigatie.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="inline-flex whitespace-nowrap rounded-full border border-[#cfdae8] bg-white px-3 py-1.5 text-sm font-medium text-[#1a3763] transition hover:border-[#0057B8] hover:text-[#0057B8]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <section id="key-takeaways" className="!py-0">
+        <div className="container-custom px-4 py-12 md:py-16">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Key Takeaways</h2>
+            <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
+              <table className="w-full text-left text-sm md:text-base">
+                <tbody>
+                  {keyTakeaways.map((item) => (
+                    <tr
+                      key={item.onderwerp}
+                      className="border-b border-[#e3eaf4] transition-colors last:border-b-0 hover:bg-[#f7faff]"
+                    >
+                      <th scope="row" className="w-[36%] bg-[#f8fbff] p-4 font-semibold text-[#163663]">
+                        {item.onderwerp}
+                      </th>
+                      <td className="p-4 text-[#243f66]">{item.waarde}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="kernfeiten" className="!py-0">
+        <div className="container-custom px-4 py-12 md:py-16">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Kernfeiten</h2>
+            <div className="overflow-x-auto rounded-xl border border-[#dce5f1] bg-white">
+              <table className="w-full text-left text-sm md:text-base">
+                <thead className="bg-[#f8fbff]">
+                  <tr>
+                    <th className="p-4 font-semibold">Kernfeit</th>
+                    <th className="p-4 font-semibold">Waarde</th>
+                    <th className="p-4 font-semibold">Bron</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {kernfeiten.map((item) => (
+                    <tr
+                      key={item.kernfeit}
+                      className="border-t border-[#e3eaf4] align-top transition-colors hover:bg-[#f8fbff]"
+                    >
+                      <td className="p-4 font-medium text-[#163663]">{item.kernfeit}</td>
+                      <td className="p-4 text-[#243f66]">{item.waarde}</td>
+                      <td className="p-4 text-[#3e5374]">{item.bron}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="!py-0 bg-white/70">
+        <div className="container-custom space-y-8 px-4 py-12 md:py-16">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Wat doet MaasISO?</h2>
             <p className="leading-relaxed text-lg text-gray-800">
               MaasISO is een onafhankelijk ISO-consultancybureau gevestigd in Lelystad,
               gespecialiseerd in het begeleiden van MKB-bedrijven bij certificeringstrajecten,
@@ -442,18 +503,21 @@ export default function Home() {
             </p>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Onze diensten</h2>
+          <article
+            id="diensten"
+            className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8"
+          >
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Onze diensten</h2>
 
-            <h3 className="text-xl md:text-2xl font-semibold mb-3">ISO-certificering</h3>
-            <p className="text-gray-800 leading-relaxed mb-4">
+            <h3 className="mb-3 text-xl font-semibold md:text-2xl">ISO-certificering</h3>
+            <p className="mb-4 leading-relaxed text-gray-800">
               Begeleiding bij het implementeren en certificeren van managementsystemen volgens
               internationale ISO-normen. Van gap-analyse en documentatie tot interne audit en
               auditvoorbereiding.
             </p>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm md:text-base bg-white">
-                <thead className="bg-[#f8fafc]">
+            <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
+              <table className="w-full bg-white text-left text-sm md:text-base">
+                <thead className="bg-[#f8fbff]">
                   <tr>
                     <th className="p-4 font-semibold">Norm</th>
                     <th className="p-4 font-semibold">Focus</th>
@@ -463,85 +527,105 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {dienstentabel.map((item) => (
-                    <tr key={item.norm} className="border-t border-gray-200">
-                      <td className="p-4 font-medium">{item.norm}</td>
-                      <td className="p-4">{item.focus}</td>
-                      <td className="p-4">{item.duur}</td>
-                      <td className="p-4">{item.kosten}</td>
+                    <tr
+                      key={item.norm}
+                      className="border-t border-[#e3eaf4] transition-colors hover:bg-[#f8fbff]"
+                    >
+                      <td className="p-4 font-medium text-[#163663]">{item.norm}</td>
+                      <td className="p-4 text-[#243f66]">{item.focus}</td>
+                      <td className="p-4 text-[#243f66]">{item.duur}</td>
+                      <td className="p-4 text-[#243f66]">{item.kosten}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <p className="mt-4">
-              <Link href="/iso-certificering" className="text-[#0057B8] font-semibold hover:underline">
+              <Link
+                href="/iso-certificering"
+                className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
+              >
                 Bekijk alle ISO-certificeringen
               </Link>
             </p>
 
-            <h3 className="text-xl md:text-2xl font-semibold mt-10 mb-3">Informatiebeveiliging</h3>
-            <p className="text-gray-800 leading-relaxed">
-              Implementatie van informatiebeveiligingsmaatregelen op basis van ISO 27001 en de
-              Baseline Informatiebeveiliging Overheid (BIO). Inclusief risicoanalyse, Statement of
-              Applicability (SoA) en ISMS-inrichting.
-            </p>
-            <p className="text-gray-800 leading-relaxed mt-3">
-              Het aantal ISO 27001 certificaten wereldwijd is in 2024 verdubbeld naar 96.709 actieve
-              certificaten (bron: ISO Survey 2024). In Nederland zijn inmiddels 1.568 organisaties
-              gecertificeerd. Met de invoering van de NIS2-richtlijn (Cyberbeveiligingswet) in 2025
-              stijgt de vraag naar aantoonbare informatiebeveiliging verder.
-            </p>
-            <p className="mt-4">
-              <Link
-                href="/informatiebeveiliging"
-                className="text-[#0057B8] font-semibold hover:underline"
-              >
-                Bekijk informatiebeveiliging
-              </Link>
-            </p>
+            <div className="mt-8 space-y-4">
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <h3 className="mb-3 text-xl font-semibold md:text-2xl">Informatiebeveiliging</h3>
+                <p className="leading-relaxed text-gray-800">
+                  Implementatie van informatiebeveiligingsmaatregelen op basis van ISO 27001 en de
+                  Baseline Informatiebeveiliging Overheid (BIO). Inclusief risicoanalyse, Statement
+                  of Applicability (SoA) en ISMS-inrichting.
+                </p>
+                <p className="mt-3 leading-relaxed text-gray-800">
+                  Het aantal ISO 27001 certificaten wereldwijd is in 2024 verdubbeld naar 96.709
+                  actieve certificaten (bron: ISO Survey 2024). In Nederland zijn inmiddels 1.568
+                  organisaties gecertificeerd. Met de invoering van de NIS2-richtlijn
+                  (Cyberbeveiligingswet) in 2025 stijgt de vraag naar aantoonbare
+                  informatiebeveiliging verder.
+                </p>
+                <p className="mt-4">
+                  <Link
+                    href="/informatiebeveiliging"
+                    className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
+                  >
+                    Bekijk informatiebeveiliging
+                  </Link>
+                </p>
+              </div>
 
-            <h3 className="text-xl md:text-2xl font-semibold mt-10 mb-3">AVG &amp; privacy compliance</h3>
-            <p className="text-gray-800 leading-relaxed">
-              Praktische begeleiding bij het naleven van de Algemene Verordening Gegevensbescherming
-              (AVG/GDPR). Van verwerkingsregister en privacybeleid tot DPIA&apos;s,
-              verwerkersovereenkomsten en de rol van externe Functionaris Gegevensbescherming (FG).
-            </p>
-            <p className="text-gray-800 leading-relaxed mt-3">
-              De AVG kent boetes tot EUR 20 miljoen of 4% van de wereldwijde jaaromzet (art. 83
-              GDPR). In de praktijk zien wij dat MKB-bedrijven niet struikelen over kennis van de
-              wet, maar over de uitvoering: ontbrekende registers, onduidelijke rollen en geen vast
-              proces voor datalekken.
-            </p>
-            <p className="mt-4">
-              <Link href="/avg-wetgeving" className="text-[#0057B8] font-semibold hover:underline">
-                Bekijk AVG &amp; wetgeving
-              </Link>
-            </p>
-            <h3 className="text-xl md:text-2xl font-semibold mt-10 mb-3">
-              NIS2 compliance (Cyberbeveiligingswet)
-            </h3>
-            <p className="text-gray-800 leading-relaxed">
-              De NIS2-richtlijn stelt in Artikel 21 tien verplichte risicobeheersmaatregelen voor
-              essentiele en belangrijke entiteiten. Organisaties die al ISO 27001 gecertificeerd
-              zijn, hebben circa 70-80% van deze maatregelen al aantoonbaar geimplementeerd. MaasISO
-              helpt bij het in kaart brengen van de resterende gaps en het aantoonbaar voldoen aan de
-              Cyberbeveiligingswet.
-            </p>
-            <p className="mt-4">
-              <Link
-                href="/informatiebeveiliging/iso-27001"
-                className="text-[#0057B8] font-semibold hover:underline"
-              >
-                Lees meer over NIS2 en ISO 27001
-              </Link>
-            </p>
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <h3 className="mb-3 text-xl font-semibold md:text-2xl">AVG &amp; privacy compliance</h3>
+                <p className="leading-relaxed text-gray-800">
+                  Praktische begeleiding bij het naleven van de Algemene Verordening
+                  Gegevensbescherming (AVG/GDPR). Van verwerkingsregister en privacybeleid tot
+                  DPIA&apos;s, verwerkersovereenkomsten en de rol van externe Functionaris
+                  Gegevensbescherming (FG).
+                </p>
+                <p className="mt-3 leading-relaxed text-gray-800">
+                  De AVG kent boetes tot EUR 20 miljoen of 4% van de wereldwijde jaaromzet (art. 83
+                  GDPR). In de praktijk zien wij dat MKB-bedrijven niet struikelen over kennis van de
+                  wet, maar over de uitvoering: ontbrekende registers, onduidelijke rollen en geen
+                  vast proces voor datalekken.
+                </p>
+                <p className="mt-4">
+                  <Link
+                    href="/avg-wetgeving"
+                    className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
+                  >
+                    Bekijk AVG &amp; wetgeving
+                  </Link>
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <h3 className="mb-3 text-xl font-semibold md:text-2xl">
+                  NIS2 compliance (Cyberbeveiligingswet)
+                </h3>
+                <p className="leading-relaxed text-gray-800">
+                  De NIS2-richtlijn stelt in Artikel 21 tien verplichte risicobeheersmaatregelen
+                  voor essentiele en belangrijke entiteiten. Organisaties die al ISO 27001
+                  gecertificeerd zijn, hebben circa 70-80% van deze maatregelen al aantoonbaar
+                  geimplementeerd. MaasISO helpt bij het in kaart brengen van de resterende gaps en
+                  het aantoonbaar voldoen aan de Cyberbeveiligingswet.
+                </p>
+                <p className="mt-4">
+                  <Link
+                    href="/informatiebeveiliging/iso-27001"
+                    className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
+                  >
+                    Lees meer over NIS2 en ISO 27001
+                  </Link>
+                </p>
+              </div>
+            </div>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Waarom MaasISO?</h2>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm md:text-base bg-white">
-                <thead className="bg-[#f8fafc]">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Waarom MaasISO?</h2>
+            <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
+              <table className="w-full bg-white text-left text-sm md:text-base">
+                <thead className="bg-[#f8fbff]">
                   <tr>
                     <th className="p-4 font-semibold">Kenmerk</th>
                     <th className="p-4 font-semibold">Wat dit voor u betekent</th>
@@ -549,9 +633,12 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {waaromMaasIso.map((item) => (
-                    <tr key={item.kenmerk} className="border-t border-gray-200 align-top">
-                      <td className="p-4 font-medium">{item.kenmerk}</td>
-                      <td className="p-4">{item.betekenis}</td>
+                    <tr
+                      key={item.kenmerk}
+                      className="border-t border-[#e3eaf4] align-top transition-colors hover:bg-[#f8fbff]"
+                    >
+                      <td className="p-4 font-medium text-[#163663]">{item.kenmerk}</td>
+                      <td className="p-4 text-[#243f66]">{item.betekenis}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -559,41 +646,56 @@ export default function Home() {
             </div>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Onze aanpak in 5 stappen</h2>
-            <ol className="space-y-5">
-              <li className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-lg">Stap 1 - Kennismaking en nulmeting</h3>
+          <article id="aanpak" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Onze aanpak in 5 stappen</h2>
+            <ol className="grid gap-4 md:grid-cols-2">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
+                  1
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">Stap 1 - Kennismaking en nulmeting</h3>
                 <p className="mt-2 text-gray-800">
                   Wij starten met een vrijblijvend gesprek en een gap-analyse: waar staat de
                   organisatie nu ten opzichte van de norm? In deze fase brengen wij de huidige
                   processen, documentatie en risico&apos;s in kaart.
                 </p>
               </li>
-              <li className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-lg">Stap 2 - Plan van aanpak</h3>
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
+                  2
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">Stap 2 - Plan van aanpak</h3>
                 <p className="mt-2 text-gray-800">
                   Op basis van de nulmeting stellen wij een concreet plan op met scope, planning,
                   deliverables en kostenindicatie. Geen verrassingen achteraf.
                 </p>
               </li>
-              <li className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-lg">Stap 3 - Implementatie</h3>
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
+                  3
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">Stap 3 - Implementatie</h3>
                 <p className="mt-2 text-gray-800">
                   Wij begeleiden de organisatie bij het inrichten van het managementsysteem: beleid,
                   procedures, rollen, risicoanalyse en beheersmaatregelen. Altijd afgestemd op wat al
                   aanwezig is.
                 </p>
               </li>
-              <li className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-lg">Stap 4 - Interne audit en management review</h3>
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
+                  4
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">Stap 4 - Interne audit en management review</h3>
                 <p className="mt-2 text-gray-800">
                   Voordat de certificerende instelling langskomt, toetsen wij intern of het systeem
                   werkt zoals bedoeld. Bevindingen worden opgelost voor de externe audit.
                 </p>
               </li>
-              <li className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-lg">Stap 5 - Externe audit en certificering</h3>
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40 md:col-span-2">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
+                  5
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">Stap 5 - Externe audit en certificering</h3>
                 <p className="mt-2 text-gray-800">
                   De certificerende instelling voert de audit uit. MaasISO ondersteunt bij de
                   voorbereiding en is beschikbaar tijdens de auditdagen.
@@ -602,9 +704,9 @@ export default function Home() {
             </ol>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Expertquote</h2>
-            <blockquote className="rounded-xl border-l-4 border-[#FF8B00] bg-white p-6 text-lg leading-relaxed text-gray-800">
+          <article className="rounded-2xl border border-[#ffdcb9] bg-gradient-to-br from-white via-[#fffaf4] to-[#fff2e2] p-6 shadow-sm md:p-8">
+            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Expertquote</h2>
+            <blockquote className="rounded-xl border-l-4 border-[#FF8B00] bg-white/80 p-6 text-lg leading-relaxed text-gray-800">
               "De meeste MKB-bedrijven onderschatten hoeveel ze al op orde hebben. Een goede
               nulmeting laat vaak zien dat 40-60% van de eisen al informeel is ingeregeld. Het
               traject gaat dan over structureren en aantoonbaar maken, niet over alles opnieuw
@@ -614,13 +716,13 @@ export default function Home() {
               </footer>
             </blockquote>
           </article>
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+          <article id="kosten" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">
               Wat kost ISO-certificering? (indicatie voor MKB)
             </h2>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-left text-sm md:text-base bg-white">
-                <thead className="bg-[#f8fafc]">
+            <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
+              <table className="w-full bg-white text-left text-sm md:text-base">
+                <thead className="bg-[#f8fbff]">
                   <tr>
                     <th className="p-4 font-semibold">Traject</th>
                     <th className="p-4 font-semibold">Bedrijfsgrootte</th>
@@ -630,11 +732,14 @@ export default function Home() {
                 </thead>
                 <tbody>
                   {kostenTabel.map((item, idx) => (
-                    <tr key={`${item.traject}-${idx}`} className="border-t border-gray-200">
-                      <td className="p-4 font-medium">{item.traject}</td>
-                      <td className="p-4">{item.grootte}</td>
-                      <td className="p-4">{item.investering}</td>
-                      <td className="p-4">{item.duur}</td>
+                    <tr
+                      key={`${item.traject}-${idx}`}
+                      className="border-t border-[#e3eaf4] transition-colors hover:bg-[#f8fbff]"
+                    >
+                      <td className="p-4 font-medium text-[#163663]">{item.traject}</td>
+                      <td className="p-4 text-[#243f66]">{item.grootte}</td>
+                      <td className="p-4 text-[#243f66]">{item.investering}</td>
+                      <td className="p-4 text-[#243f66]">{item.duur}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -645,62 +750,99 @@ export default function Home() {
               eventuele tooling zijn apart vermeld op de betreffende normpagina&apos;s.
             </p>
             <p className="mt-3">
-              <Link href="/iso-certificering" className="text-[#0057B8] font-semibold hover:underline">
+              <Link
+                href="/iso-certificering"
+                className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
+              >
                 Bekijk gedetailleerde kostenoverzichten per norm
               </Link>
             </p>
           </article>
 
-          <article className="rounded-xl bg-[#091E42] text-white p-6 md:p-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">ISO Norm Selector</h2>
-            <p className="text-white/90 leading-relaxed mb-4">
+          <article className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#091E42] via-[#0d2f65] to-[#134078] p-6 text-white shadow-sm md:p-8">
+            <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute -bottom-16 left-10 h-40 w-40 rounded-full bg-[#FF8B00]/20 blur-3xl" />
+            <h2 className="relative mb-3 text-2xl font-bold md:text-3xl">ISO Norm Selector</h2>
+            <p className="relative mb-4 leading-relaxed text-white/90">
               Weet u nog niet welke norm bij uw organisatie past? Gebruik onze gratis ISO Norm
               Selector. In enkele vragen krijgt u een onderbouwd advies over de normen die relevant
               zijn voor uw situatie, sector en doelstellingen.
             </p>
-            <Link href="/iso-selector" className="font-semibold underline underline-offset-4">
+            <Link
+              href="/iso-selector"
+              className="relative inline-flex items-center font-semibold underline underline-offset-4"
+            >
               Start de ISO Norm Selector
             </Link>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Kennis &amp; resources</h2>
-            <p className="text-gray-800 leading-relaxed mb-4">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Kennis &amp; resources</h2>
+            <p className="mb-4 leading-relaxed text-gray-800">
               MaasISO publiceert regelmatig artikelen, praktische gidsen en whitepapers over
               ISO-certificering, informatiebeveiliging en AVG compliance. Onze kennis is vrij
               beschikbaar en bedoeld om MKB-organisaties te helpen onderbouwde keuzes te maken.
             </p>
             <ul className="space-y-3 text-lg">
               <li>
-                <Link href="/blog" className="text-[#0057B8] font-semibold hover:underline">
-                  ISO 9001 certificering: kosten, proces &amp; voordelen [2026]
+                <Link
+                  href="/blog"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                >
+                  <span>ISO 9001 certificering: kosten, proces &amp; voordelen [2026]</span>
+                  <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-[#0057B8] font-semibold hover:underline">
-                  ISO 27001 certificering: complete gids, kosten &amp; stappen (2026)
+                <Link
+                  href="/blog"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                >
+                  <span>ISO 27001 certificering: complete gids, kosten &amp; stappen (2026)</span>
+                  <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-[#0057B8] font-semibold hover:underline">
-                  AVG wetgeving: praktisch advies &amp; implementatie voor MKB
+                <Link
+                  href="/blog"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                >
+                  <span>AVG wetgeving: praktisch advies &amp; implementatie voor MKB</span>
+                  <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </li>
             </ul>
             <p className="mt-4">
-              <Link href="/blog" className="text-[#0057B8] font-semibold hover:underline">
+              <Link
+                href="/blog"
+                className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
+              >
                 Bekijk alle artikelen op ons blog
               </Link>
             </p>
           </article>
 
-          <article>
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Veelgestelde vragen</h2>
+          <article id="faq" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Veelgestelde vragen</h2>
             <div className="space-y-3">
               {faqItems.map((item) => (
-                <details key={item.vraag} className="rounded-xl border border-gray-200 bg-white p-5">
-                  <summary className="cursor-pointer font-semibold text-lg">{item.vraag}</summary>
-                  <p className="mt-3 text-gray-800 leading-relaxed">{item.antwoord}</p>
+                <details
+                  key={item.vraag}
+                  className="group rounded-xl border border-[#dce5f1] bg-white p-5 transition duration-300 hover:border-[#0057B8]/40 open:border-[#0057B8]/50 open:bg-[#f8fbff]"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-lg">
+                    <span>{item.vraag}</span>
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#b9c8dd] text-base text-[#24416a] transition group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 leading-relaxed text-gray-800">{item.antwoord}</p>
                 </details>
               ))}
             </div>
@@ -708,14 +850,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#0d2b5c] text-white">
-        <div className="container-custom px-4 py-14 md:py-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold">Klaar om te beginnen?</h2>
-          <p className="mt-4 text-lg text-white/90 max-w-3xl mx-auto">
+      <section className="!py-0 bg-gradient-to-r from-[#0d2b5c] via-[#13407a] to-[#0d2b5c] text-white">
+        <div className="container-custom px-4 py-14 text-center md:py-16">
+          <h2 className="text-3xl font-bold md:text-4xl">Klaar om te beginnen?</h2>
+          <p className="mx-auto mt-4 max-w-3xl text-lg text-white/90">
             Neem vrijblijvend contact op voor een kennismakingsgesprek. Wij vertellen u graag wat
             MaasISO voor uw organisatie kan betekenen.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/contact" className="primary-button text-center sm:min-w-[240px]">
               Plan een kennismaking
             </Link>
