@@ -6,7 +6,6 @@ import { FaqItem } from '@/lib/types';
 interface FaqSectionProps {
   items?: FaqItem[];
   className?: string;
-  variant?: 'default' | 'home-premium';
 }
 
 /**
@@ -57,13 +56,8 @@ function markdownBoldToHtml(text: string): string {
  * - Voice assistant queries
  * - AI-powered search engines
  */
-export function FaqSection({
-  items,
-  className = '',
-  variant = 'default',
-}: FaqSectionProps) {
+export function FaqSection({ items, className = '' }: FaqSectionProps) {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
-  const isHomePremium = variant === 'home-premium';
 
   // Don't render if no items provided
   if (!items || items.length === 0) {
@@ -82,16 +76,12 @@ export function FaqSection({
 
   return (
     <section
-      className={isHomePremium ? `faq-section ${className}` : `faq-section my-12 ${className}`}
+      className={`faq-section my-12 ${className}`}
       aria-labelledby="faq-heading"
     >
       <h2
         id="faq-heading"
-        className={
-          isHomePremium
-            ? 'mb-6 text-2xl font-bold text-[#091E42] md:text-3xl'
-            : 'text-3xl font-bold text-gray-900 mb-6'
-        }
+        className="text-3xl font-bold text-gray-900 mb-6"
       >
         Veelgestelde Vragen
       </h2>
@@ -105,11 +95,7 @@ export function FaqSection({
           return (
             <div
               key={item.id || index}
-              className={
-                isHomePremium
-                  ? 'overflow-hidden rounded-xl border border-[#dce5f1] bg-white transition-all duration-200 hover:border-[#0057B8]/40 hover:shadow-sm'
-                  : 'border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md'
-              }
+              className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
             >
               {/* Question Button */}
               <button
@@ -117,19 +103,13 @@ export function FaqSection({
                 onClick={() => toggleItem(index)}
                 aria-expanded={isOpen}
                 aria-controls={answerId}
-                className={
-                  isHomePremium
-                    ? 'flex w-full items-center justify-between px-6 py-4 text-left font-medium text-[#163663] transition-colors duration-150 hover:bg-[#f8fbff] focus:outline-none focus:ring-2 focus:ring-[#0057B8] focus:ring-inset'
-                    : 'w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset'
-                }
+                className="w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
               >
                 <span className="pr-8">
                   {parseMarkdownBold(item.question)}
                 </span>
                 <svg
-                  className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 ${
-                    isHomePremium ? 'text-[#5a6e8f]' : 'text-gray-500'
-                  } ${
+                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
                     isOpen ? 'transform rotate-180' : ''
                   }`}
                   fill="none"
@@ -155,19 +135,9 @@ export function FaqSection({
                   isOpen ? 'max-h-96' : 'max-h-0'
                 }`}
               >
-                <div
-                  className={
-                    isHomePremium
-                      ? 'border-t border-[#dce5f1] bg-[#f8fbff] px-6 py-4'
-                      : 'px-6 py-4 bg-gray-50 border-t border-gray-200'
-                  }
-                >
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                   <div
-                    className={
-                      isHomePremium
-                        ? 'prose prose-sm max-w-none leading-relaxed text-[#3e5374]'
-                        : 'text-gray-700 leading-relaxed prose prose-sm max-w-none'
-                    }
+                    className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: markdownBoldToHtml(item.answer) }}
                   />
                 </div>

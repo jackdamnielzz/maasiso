@@ -29,7 +29,6 @@ export default async function Iso9001Page() {
       strapiSlug="iso-9001"
       hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
       dataTopic="iso-certificering"
-      visualVariant="home-premium"
     />
   );
 }
