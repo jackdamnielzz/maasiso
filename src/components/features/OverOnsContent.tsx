@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import { COMPANY_DETAILS } from '@/config/company';
 
@@ -176,14 +177,19 @@ export default function OverOnsContent() {
               <ScrollReveal className="reveal-left">
                 <div className="relative group">
                   <div className="absolute -inset-4 bg-gradient-to-r from-[#00875A] to-[#FF8B00] rounded-[2rem] opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
-                  <div className="relative aspect-[4/5] bg-[#091E42] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-8 text-center">
-                    <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-6">
-                      <svg className="w-12 h-12 text-white/40" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                      </svg>
+                  <div className="relative aspect-[4/5] bg-[#091E42] rounded-[2rem] overflow-hidden shadow-2xl">
+                    <Image
+                      src="/images/niels.png"
+                      alt="Niels Maas - Senior consultant en oprichter van MaasISO"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#091E42]/90 via-[#091E42]/30 to-transparent"></div>
+                    <div className="absolute left-0 right-0 bottom-0 p-6 md:p-8 text-white">
+                      <h4 className="text-2xl font-bold mb-2">Niels Maas</h4>
+                      <p className="text-white/75 text-lg">Senior consultant & Oprichter</p>
                     </div>
-                    <h4 className="text-white text-2xl font-bold mb-2">Niels Maas</h4>
-                    <p className="text-white/60 text-lg">Senior consultant & Oprichter</p>
                   </div>
                 </div>
               </ScrollReveal>
