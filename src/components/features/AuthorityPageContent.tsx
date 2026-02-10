@@ -461,6 +461,7 @@ export default function AuthorityPageContent({
                             blockquote: ({ node, children, ...props }) => {
                               const blockChildren = React.Children.toArray(children);
                               let citeText = '';
+                              let shouldRenderCite = false;
 
                               if (blockChildren.length > 0) {
                                 const lastChild = blockChildren[blockChildren.length - 1];
@@ -470,6 +471,7 @@ export default function AuthorityPageContent({
                                 if (citeMatch?.[1]) {
                                   citeText = citeMatch[1].trim();
                                   blockChildren.pop();
+                                  shouldRenderCite = true;
                                 }
                               }
 
@@ -484,6 +486,9 @@ export default function AuthorityPageContent({
 
                                 if (attributionLine) {
                                   citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
+                                  // The attribution line is already visible in markdown content.
+                                  // Avoid rendering a second, duplicate citation.
+                                  shouldRenderCite = false;
                                 }
                               }
 
@@ -493,7 +498,7 @@ export default function AuthorityPageContent({
                                   className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
                                 >
                                   {blockChildren}
-                                  {citeText ? (
+                                  {shouldRenderCite && citeText ? (
                                     <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
                                       — {citeText}
                                     </cite>

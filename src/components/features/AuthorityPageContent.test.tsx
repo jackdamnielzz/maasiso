@@ -27,6 +27,17 @@ jest.mock('react-markdown', () => {
       });
     }
 
+    const blockquoteLines = content
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('>'))
+      .map((line) => line.replace(/^>\s*/, '').replace(/^\*\*(.*)\*\*$/, '$1'));
+
+    if (blockquoteLines.length > 0 && typeof components.blockquote === 'function') {
+      const BlockquoteRenderer = components.blockquote;
+      return React.createElement(BlockquoteRenderer, null, blockquoteLines.join('\n'));
+    }
+
     return React.createElement('div', null, content);
   };
 });
@@ -249,7 +260,7 @@ describe('AuthorityPageContent', () => {
     expect(screen.getByText('consultant, geen certificeerder', { selector: 'strong' })).toBeInTheDocument();
   });
 
-  it('keeps expert quote attribution lines from Strapi content', () => {
+  it('keeps expert quote attribution lines from Strapi content without duplicates', () => {
     const layout: any = [
       {
         id: 'text-quote-1',
@@ -267,7 +278,7 @@ describe('AuthorityPageContent', () => {
 
     render(<AuthorityPageContent layout={layout} />);
 
-    expect(screen.getByText(/Niels Maas/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Niels Maas, Senior consultant, MaasISO/i)).toHaveLength(1);
     expect(screen.getByText(/praktisch systeem werkt beter/i)).toBeInTheDocument();
   });
 });
