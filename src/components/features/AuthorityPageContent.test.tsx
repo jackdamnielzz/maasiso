@@ -249,7 +249,7 @@ describe('AuthorityPageContent', () => {
     expect(screen.getByText('consultant, geen certificeerder', { selector: 'strong' })).toBeInTheDocument();
   });
 
-  it('removes self-attribution lines from expert quotes', () => {
+  it('keeps expert quote attribution lines from Strapi content', () => {
     const layout: any = [
       {
         id: 'text-quote-1',
@@ -267,7 +267,7 @@ describe('AuthorityPageContent', () => {
 
     render(<AuthorityPageContent layout={layout} />);
 
-    expect(screen.queryByText(/Niels Maas/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Niels Maas/i)).toBeInTheDocument();
     expect(screen.getByText(/praktisch systeem werkt beter/i)).toBeInTheDocument();
   });
 });

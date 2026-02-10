@@ -42,7 +42,6 @@ const isDebugLoggingEnabled =
   process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
 const MARKDOWN_HEADING_REGEX = /^#{1,6}\s+/;
 const EXPERT_QUOTE_HEADING_REGEX = /^#{1,6}\s*expertquote\b/i;
-const SELF_QUOTE_ATTRIBUTION_REGEX = /^\s*>?\s*[*_]{0,3}[—-]\s*Niels Maas\b.*$/gim;
 
 function toNonEmptyString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -217,16 +216,6 @@ function normalizeExpertQuoteMarkdown(content: string): string {
   }
 
   return normalized;
-}
-
-function stripSelfQuoteAttribution(content: string): string {
-  const normalized = String(content || '').replace(/\r\n/g, '\n');
-  if (!normalized) return normalized;
-
-  return normalized
-    .replace(SELF_QUOTE_ATTRIBUTION_REGEX, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
 }
 
 function toTextContent(node: React.ReactNode): string {
@@ -430,8 +419,8 @@ export default function AuthorityPageContent({
           }
 
           case 'page-blocks.text-block':
-            const normalizedTextBlockContent = stripSelfQuoteAttribution(
-              normalizeExpertQuoteMarkdown(String(block.content || ''))
+            const normalizedTextBlockContent = normalizeExpertQuoteMarkdown(
+              String(block.content || '')
             );
             return (
               <section key={blockKey} className="py-12 md:py-24">
