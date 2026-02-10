@@ -232,6 +232,16 @@ function toTextContent(node: React.ReactNode): string {
   return '';
 }
 
+function parseMarkdownBold(text: string): React.ReactNode {
+  if (!text) return text;
+
+  const normalized = text.replace(/__(.*?)__/g, '**$1**');
+  if (!normalized.includes('**')) return normalized;
+
+  const parts = normalized.split(/\*\*(.*?)\*\*/g);
+  return parts.map((part, index) => (index % 2 === 1 ? <strong key={index}>{part}</strong> : part));
+}
+
 const groupFactBlocks = (layout: NonNullable<Page['layout']> = []) => {
   const grouped: Array<NonNullable<Page['layout']>[number] | { __component: 'page-blocks.fact-block-group'; id: string; items: any[] }> = [];
   let factGroup: any[] = [];
@@ -343,7 +353,7 @@ export default function AuthorityPageContent({
                     </h1>
                     {block.subtitle && (
                       <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto">
-                        {block.subtitle}
+                        {parseMarkdownBold(String(block.subtitle))}
                       </p>
                     )}
                   </div>
@@ -631,7 +641,7 @@ export default function AuthorityPageContent({
               </h2>
               {primaryCta.description ? (
                 <p className="text-sm sm:text-base md:text-lg text-white/85 mb-6 md:mb-8 leading-relaxed">
-                  {primaryCta.description}
+                  {parseMarkdownBold(primaryCta.description)}
                 </p>
               ) : null}
               <a

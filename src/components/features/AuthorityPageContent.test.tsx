@@ -220,4 +220,32 @@ describe('AuthorityPageContent', () => {
       '/api/proxy/assets/uploads/iso45001-icon.svg'
     );
   });
+
+  it('renders markdown bold markers in hero subtitle and CTA description', () => {
+    const layout: any = [
+      {
+        id: 'hero-1',
+        __component: 'page-blocks.hero',
+        title: 'ISO 14001',
+        subtitle: 'ISO 14001 is een **milieumanagementsysteem**.',
+      },
+      {
+        id: 'faq-1',
+        __component: 'page-blocks.faq-section',
+        items: [{ id: 'q1', question: 'Vraag?', answer: 'Antwoord.' }],
+      },
+      {
+        id: 'button-1',
+        __component: 'page-blocks.button',
+        text: 'Neem contact op',
+        link: '/contact',
+        description: 'Wij zijn **consultant, geen certificeerder**.',
+      },
+    ];
+
+    render(<AuthorityPageContent layout={layout} />);
+
+    expect(screen.getByText('milieumanagementsysteem', { selector: 'strong' })).toBeInTheDocument();
+    expect(screen.getByText('consultant, geen certificeerder', { selector: 'strong' })).toBeInTheDocument();
+  });
 });
