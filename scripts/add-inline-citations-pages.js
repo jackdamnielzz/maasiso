@@ -130,10 +130,11 @@ function updateLayoutForSlug(slug, layout) {
 
 async function updatePageLayout(documentId, layout) {
   const url = `${STRAPI_URL}/api/pages/${documentId}`;
+  const sanitizedLayout = removeIds(layout);
   const response = await fetch(url, {
     method: 'PUT',
     headers: withAuthHeaders(),
-    body: JSON.stringify({ data: { layout } }),
+    body: JSON.stringify({ data: { layout: sanitizedLayout } }),
   });
 
   if (!response.ok) {
@@ -141,6 +142,21 @@ async function updatePageLayout(documentId, layout) {
     throw new Error(`Failed to update ${documentId}: ${response.status} ${response.statusText} - ${text}`);
   }
   return response.json();
+}
+
+function removeIds(value) {
+  if (Array.isArray(value)) {
+    return value.map(removeIds);
+  }
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (key === 'id') continue;
+      out[key] = removeIds(val);
+    }
+    return out;
+  }
+  return value;
 }
 
 async function main() {
