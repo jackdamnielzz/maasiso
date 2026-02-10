@@ -17,6 +17,8 @@ export const metadata: Metadata = {
 
 export default async function OverNielsMaasPage() {
   const author = await getAuthorBySlug('niels-maas');
+  const profileImagePath = '/images/niels.png';
+  const profileImageAbsoluteUrl = `https://www.maasiso.nl${profileImagePath}`;
 
   const displayCredentials = 'Senior consultant';
 
@@ -30,7 +32,7 @@ export default async function OverNielsMaasPage() {
     worksFor: { '@id': 'https://www.maasiso.nl/#professionalservice' },
     description: author?.bio,
     sameAs: author?.linkedIn ? [author.linkedIn] : undefined,
-    image: author?.profileImage?.url,
+    image: profileImageAbsoluteUrl,
   };
 
   const expertise = author?.expertise?.map((item) => {
@@ -54,14 +56,7 @@ export default async function OverNielsMaasPage() {
     { title: 'BIO', description: 'Baseline Informatiebeveiliging Overheid' },
   ];
 
-  const getImageUrl = (url: string) => {
-    if (!url) return undefined;
-    if (url.startsWith('http')) return url;
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://peaceful-insight-production.up.railway.app';
-    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-  };
-
-  const imageUrl = author?.profileImage?.url ? getImageUrl(author.profileImage.url) : undefined;
+  const imageUrl = profileImagePath;
 
   return (
     <main className="bg-white min-h-screen">
