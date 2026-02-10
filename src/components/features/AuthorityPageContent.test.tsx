@@ -248,4 +248,26 @@ describe('AuthorityPageContent', () => {
     expect(screen.getByText('milieumanagementsysteem', { selector: 'strong' })).toBeInTheDocument();
     expect(screen.getByText('consultant, geen certificeerder', { selector: 'strong' })).toBeInTheDocument();
   });
+
+  it('removes self-attribution lines from expert quotes', () => {
+    const layout: any = [
+      {
+        id: 'text-quote-1',
+        __component: 'page-blocks.text-block',
+        alignment: 'left',
+        content: [
+          '## Expertquote',
+          '',
+          '> "Een praktisch systeem werkt beter dan dikke handboeken."',
+          '>',
+          '> **— Niels Maas, Senior consultant, MaasISO**',
+        ].join('\n'),
+      },
+    ];
+
+    render(<AuthorityPageContent layout={layout} />);
+
+    expect(screen.queryByText(/Niels Maas/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/praktisch systeem werkt beter/i)).toBeInTheDocument();
+  });
 });
