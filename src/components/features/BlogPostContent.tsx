@@ -92,6 +92,45 @@ const pushDownloadEvent = (link: string, linkText?: string) => {
   });
 };
 
+const DOWNLOAD_CTA_TARGET_SLUG = 'taak-risico-analyse-voorbeeld-excel';
+const DOWNLOAD_ANCHOR_ID = 'blog-download-link';
+
+type DownloadLinkCandidate = {
+  href: string;
+  label?: string;
+};
+
+const findFirstDownloadLink = (content: string): DownloadLinkCandidate | null => {
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)\s]+(?:\.[^)]+)?(?:\?[^)]*)?)\)/g;
+  const htmlLinkRegex = /<a\s+[^>]*href=(?:"([^"]+)"|'([^']+)')[^>]*>(.*?)<\/a>/gi;
+
+  let markdownMatch: RegExpExecArray | null = markdownLinkRegex.exec(content);
+  while (markdownMatch) {
+    const label = markdownMatch[1]?.trim();
+    const href = markdownMatch[2]?.trim()?.replace(/^<|>$/g, '');
+
+    if (href && isDownloadLink(href)) {
+      return { href, label };
+    }
+
+    markdownMatch = markdownLinkRegex.exec(content);
+  }
+
+  let htmlMatch: RegExpExecArray | null = htmlLinkRegex.exec(content);
+  while (htmlMatch) {
+    const href = (htmlMatch[1] || htmlMatch[2] || '').trim();
+    const label = htmlMatch[3]?.replace(/<[^>]*>/g, '').trim();
+
+    if (href && isDownloadLink(href)) {
+      return { href, label };
+    }
+
+    htmlMatch = htmlLinkRegex.exec(content);
+  }
+
+  return null;
+};
+
 const ReactMarkdown = dynamic(() => import('react-markdown'), {
   ssr: false
 });
@@ -113,6 +152,14 @@ interface BlogPostContentProps {
 export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItems }) => {
   // Use the relatedPosts from the post data directly (from database links)
   const sidebarPosts: RelatedPost[] = post.relatedPosts || [];
+  const processedContent = preprocessContent(post.content);
+  const enableDownloadCta = post.slug === DOWNLOAD_CTA_TARGET_SLUG;
+  const downloadLinkCandidate = React.useMemo(
+    () => (enableDownloadCta ? findFirstDownloadLink(processedContent) : null),
+    [enableDownloadCta, processedContent]
+  );
+
+  let hasAssignedDownloadAnchor = false;
 
   return (
     <ErrorBoundary>
@@ -208,6 +255,24 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
             <TldrBlock items={tldrItems} className="mb-8" />
           )}
 
+          {downloadLinkCandidate && (
+            <div className="mb-10">
+              <a
+                href={`#${DOWNLOAD_ANCHOR_ID}`}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#0052CC] px-6 py-3 text-[1rem] font-semibold text-white no-underline shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0747A6] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0065FF]"
+              >
+                Direct naar de download
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path
+                    fillRule="evenodd"
+                    d="M10 14a1 1 0 01-1-1V6.414L6.707 8.707a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 11-1.414 1.414L11 6.414V13a1 1 0 01-1 1zM4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+            </div>
+          )}
+
           <div className="prose prose-lg max-w-none text-[#42526E] relative z-0
  overflow-hidden
             prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-[#172B4D]
@@ -241,25 +306,52 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
                 pre: ({ node, ...props }) => <pre {...props} className="bg-[#F4F5F7] p-6 my-6 overflow-x-auto rounded-lg" />,
                 code: ({ node, ...props }) => <code {...props} className="font-mono text-[1rem] text-[#42526E]" />,
                 blockquote: ({ node, ...props }) => <blockquote {...props} className="border-l-4 border-[#DFE1E6] pl-6 my-10 text-[1.125rem] text-[#42526E] leading-[1.8] italic" />,
-                a: ({ node, ...props }) => (
-                  <a
-                    {...props}
-                    className="text-[#0052CC] hover:text-[#0065FF] hover:underline transition-colors duration-200"
-                    onClick={(event) => {
-                      props.onClick?.(event);
+                a: ({ node, ...props }) => {
+                  const href = typeof props.href === 'string' ? props.href : undefined;
+                  const isDownload = isDownloadLink(href);
+                  const isStyledDownload = enableDownloadCta && isDownload;
+                  const assignDownloadAnchor = isStyledDownload && !hasAssignedDownloadAnchor;
 
-                      if (event.defaultPrevented) return;
-                      if (isDownloadLink(props.href)) {
-                        const linkText = typeof props.children === 'string' ? props.children : undefined;
-                        pushDownloadEvent(String(props.href), linkText);
+                  if (assignDownloadAnchor) {
+                    hasAssignedDownloadAnchor = true;
+                  }
+
+                  return (
+                    <a
+                      {...props}
+                      id={assignDownloadAnchor ? DOWNLOAD_ANCHOR_ID : props.id}
+                      className={
+                        isStyledDownload
+                          ? 'my-4 inline-flex items-center gap-2 rounded-lg border border-[#0052CC]/20 bg-[#E9F2FF] px-5 py-3 font-semibold text-[#0052CC] no-underline shadow-sm transition-all duration-200 hover:bg-[#D6E8FF] hover:text-[#0747A6] hover:no-underline hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0065FF] scroll-mt-32'
+                          : 'text-[#0052CC] hover:text-[#0065FF] hover:underline transition-colors duration-200'
                       }
-                    }}
-                  />
-                ),
+                      onClick={(event) => {
+                        props.onClick?.(event);
+
+                        if (event.defaultPrevented) return;
+                        if (isDownload) {
+                          const linkText = typeof props.children === 'string' ? props.children : undefined;
+                          pushDownloadEvent(String(props.href), linkText);
+                        }
+                      }}
+                    >
+                      {props.children}
+                      {isStyledDownload && (
+                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path
+                            fillRule="evenodd"
+                            d="M10 14a1 1 0 01-1-1V6.414L6.707 8.707a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 11-1.414 1.414L11 6.414V13a1 1 0 01-1 1zM4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </a>
+                  );
+                },
                 hr: ({ node, ...props }) => <hr {...props} className="my-12 border-t border-[#DFE1E6]" />
               }}
             >
-              {preprocessContent(post.content)}
+              {processedContent}
             </ReactMarkdown>
           </div>
         </article>
