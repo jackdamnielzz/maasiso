@@ -4,9 +4,10 @@ import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 
 type CoreBreadcrumbBarProps = {
   items: BreadcrumbItem[];
+  showVisual?: boolean;
 };
 
-export default function CoreBreadcrumbBar({ items }: CoreBreadcrumbBarProps) {
+export default function CoreBreadcrumbBar({ items, showVisual = true }: CoreBreadcrumbBarProps) {
   const siteUrl = getCanonicalSiteUrl();
   const breadcrumbSchemaItems = items.map((item) => ({
     name: item.label,
@@ -16,11 +17,13 @@ export default function CoreBreadcrumbBar({ items }: CoreBreadcrumbBarProps) {
   return (
     <>
       <SchemaMarkup breadcrumbs={{ items: breadcrumbSchemaItems }} />
-      <div className="bg-white/80 border-b border-slate-200">
-        <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
-          <Breadcrumbs items={items} />
+      {showVisual ? (
+        <div className="bg-white/80 border-b border-slate-200">
+          <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
+            <Breadcrumbs items={items} />
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }

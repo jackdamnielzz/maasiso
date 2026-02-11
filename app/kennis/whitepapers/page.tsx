@@ -15,6 +15,7 @@ export default function WhitepapersOverviewPage() {
   return (
     <main className="flex-1 bg-gradient-to-b from-blue-50 to-white">
       <CoreBreadcrumbBar
+        showVisual={false}
         items={[
           { label: 'Home', href: '/' },
           { label: 'Kennis', href: '/kennis' },

@@ -65,6 +65,7 @@ export default async function OverNielsMaasPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <CoreBreadcrumbBar
+        showVisual={false}
         items={[
           { label: 'Home', href: '/' },
           { label: 'Over ons', href: '/over-ons' },
@@ -73,7 +74,7 @@ export default async function OverNielsMaasPage() {
       />
 
       {/* Spectacular Hero Section */}
-      <section className="relative overflow-hidden bg-[#091E42] pt-32 pb-24 md:pt-48 md:pb-36 text-white border-b border-white/10">
+      <section className="hero-section relative overflow-hidden bg-[#091E42] pt-32 pb-24 md:pt-48 md:pb-36 text-white border-b border-white/10">
         <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
           <div className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-[#00875A] rounded-full blur-[120px] animate-pulse-slow"></div>
           <div className="absolute -bottom-24 -right-24 w-[500px] h-[500px] bg-[#FF8B00] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>

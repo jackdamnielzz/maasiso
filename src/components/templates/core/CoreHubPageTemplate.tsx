@@ -45,7 +45,7 @@ export default function CoreHubPageTemplate(props: CoreHubPageTemplateProps) {
   if (props.variant === 'custom') {
     return (
       <>
-        <CoreBreadcrumbBar items={props.breadcrumbs} />
+        <CoreBreadcrumbBar items={props.breadcrumbs} showVisual={false} />
         <div data-topic={props.dataTopic}>{props.children}</div>
       </>
     );
@@ -248,7 +248,7 @@ export default function CoreHubPageTemplate(props: CoreHubPageTemplateProps) {
       className={isIsoPremium ? 'flex-1 bg-white' : 'flex-1 bg-gradient-to-b from-blue-50 to-white'}
       data-topic={dataTopic}
     >
-      <CoreBreadcrumbBar items={breadcrumbs} />
+      <CoreBreadcrumbBar items={breadcrumbs} showVisual={false} />
 
       <section
         className={

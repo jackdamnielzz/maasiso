@@ -726,7 +726,7 @@ export default async function CoreDetailPageTemplate({
         layout={layout}
         heroFallbackImage={pageData.featuredImage}
         breadcrumbs={breadcrumbs}
-        showBreadcrumbs
+        showBreadcrumbs={false}
         dataTopic={dataTopic}
       />
     </>
