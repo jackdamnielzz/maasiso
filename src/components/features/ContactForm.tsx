@@ -92,19 +92,22 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {submitStatus === 'success' && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-700 mb-4">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
           Bedankt voor uw bericht! We nemen zo snel mogelijk contact met u op.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700 mb-4">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
           {errorMessage}
         </div>
       )}
 
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-[#091E42] mb-1">
+        <label
+          htmlFor="name"
+          className="block text-sm font-semibold text-[#091E42] tracking-wide"
+        >
           Naam *
         </label>
         <input
@@ -112,7 +115,7 @@ export default function ContactForm() {
           id="name"
           name="name"
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8B00]"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.name}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -120,7 +123,10 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-[#091E42] mb-1">
+        <label
+          htmlFor="email"
+          className="block text-sm font-semibold text-[#091E42] tracking-wide"
+        >
           E-mailadres *
         </label>
         <input
@@ -128,7 +134,7 @@ export default function ContactForm() {
           id="email"
           name="email"
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8B00]"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.email}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -136,14 +142,17 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="subject" className="block text-sm font-medium text-[#091E42] mb-1">
+        <label
+          htmlFor="subject"
+          className="block text-sm font-semibold text-[#091E42] tracking-wide"
+        >
           Onderwerp *
         </label>
         <select
           id="subject"
           name="subject"
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8B00] bg-white"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.subject}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -157,7 +166,10 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-[#091E42] mb-1">
+        <label
+          htmlFor="message"
+          className="block text-sm font-semibold text-[#091E42] tracking-wide"
+        >
           Bericht *
         </label>
         <textarea
@@ -165,7 +177,7 @@ export default function ContactForm() {
           name="message"
           rows={5}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF8B00]"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.message}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -183,9 +195,9 @@ export default function ContactForm() {
           onChange={handleChange}
           disabled={isSubmitting}
         />
-        <label htmlFor="acceptTerms" className="text-sm text-[#091E42]">
+        <label htmlFor="acceptTerms" className="text-sm text-[#243d60]">
           Ik ga akkoord met de{' '}
-          <Link href="/terms-and-conditions" className="text-[#FF8B00] hover:underline">
+          <Link href="/terms-and-conditions" className="font-semibold text-[#FF8B00] hover:underline">
             algemene voorwaarden
           </Link> *
         </label>
@@ -196,7 +208,7 @@ export default function ContactForm() {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "w-full py-2 px-4 rounded-md text-white font-medium transition-colors",
+            "w-full rounded-lg px-4 py-2 text-white shadow-sm transition-colors",
             isSubmitting
               ? "bg-[#FF8B00]/70 cursor-not-allowed"
               : "bg-[#FF8B00] hover:bg-[#FF8B00]/90"
