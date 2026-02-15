@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogPosts, getNewsArticles } from '@/lib/api';
+import { getBlogPosts } from '@/lib/api';
 import { calculateRelevanceScore } from '@/lib/utils/searchScoring';
 import type {
   SearchParamsV2,
   SearchResultsV2,
   ScoredSearchResult,
   SearchScope,
-  BlogPost,
-  NewsArticle
+  BlogPost
 } from '@/lib/types';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -19,7 +18,7 @@ function isSearchScope(value: string): value is SearchScope {
 }
 
 function isContentType(value: string): value is NonNullable<SearchParamsV2['contentType']> {
-  return value === 'all' || value === 'blog' || value === 'news';
+  return value === 'all' || value === 'blog';
 }
 
 function parseDateMs(value: string | null): number | null {
@@ -28,23 +27,16 @@ function parseDateMs(value: string | null): number | null {
   return Number.isFinite(ms) ? ms : null;
 }
 
-function getItemDateMs(item: BlogPost | NewsArticle): number {
+function getItemDateMs(item: BlogPost): number {
   const candidate = item.publishedAt || item.publicationDate || item.createdAt;
   const ms = new Date(candidate).getTime();
   return Number.isFinite(ms) ? ms : 0;
 }
 
-function buildSearchableText(item: BlogPost | NewsArticle, scope: SearchScope): string {
+function buildSearchableText(item: BlogPost, scope: SearchScope): string {
   const title = item.title || '';
 
-  const isNews = 'articledescription' in item;
-  const summaryParts = [
-    (item as BlogPost).summary,
-    (item as NewsArticle).summary,
-    isNews ? (item as NewsArticle).articledescription : undefined
-  ].filter(Boolean) as string[];
-
-  const summary = summaryParts.join(' ');
+  const summary = item.summary || '';
   const content = item.content || '';
 
   switch (scope) {
@@ -60,7 +52,7 @@ function buildSearchableText(item: BlogPost | NewsArticle, scope: SearchScope): 
   }
 }
 
-function matchesQueryTokens(item: BlogPost | NewsArticle, tokens: string[], scope: SearchScope): boolean {
+function matchesQueryTokens(item: BlogPost, tokens: string[], scope: SearchScope): boolean {
   const searchableText = buildSearchableText(item, scope).toLowerCase();
   return tokens.some(token => searchableText.includes(token));
 }
@@ -76,6 +68,7 @@ export async function GET(request: NextRequest) {
 
     const scope: SearchScope = isSearchScope(scopeRaw) ? scopeRaw : 'all';
     const contentType: NonNullable<SearchParamsV2['contentType']> =
+      // Backward compatibility: treat legacy `type=news` as `all` (blog only now).
       isContentType(typeRaw) ? typeRaw : 'all';
 
     const dateFromMs = parseDateMs(searchParams.get('dateFrom'));
@@ -93,13 +86,8 @@ export async function GET(request: NextRequest) {
     }
 
     // 3) Fetch candidates from Strapi (using existing API functions)
-    const [blogResult, newsResult] = await Promise.all([
-      contentType === 'news' ? Promise.resolve({ posts: [] as BlogPost[], total: 0 }) : getBlogPosts(1, MAX_CANDIDATES_PER_TYPE),
-      contentType === 'blog' ? Promise.resolve({ articles: [] as NewsArticle[], total: 0 }) : getNewsArticles(1, MAX_CANDIDATES_PER_TYPE)
-    ]);
-
-    const blogPosts = blogResult.posts;
-    const newsArticles = newsResult.articles;
+    const blogResult = await getBlogPosts(1, MAX_CANDIDATES_PER_TYPE);
+    const blogPosts = contentType === 'all' || contentType === 'blog' ? blogResult.posts : [];
 
     // 4) Filter on basic token presence (case-insensitive) within scoped fields
     const tokens = query
@@ -109,7 +97,6 @@ export async function GET(request: NextRequest) {
       .filter(Boolean);
 
     const matchingBlog = blogPosts.filter(post => matchesQueryTokens(post, tokens, scope));
-    const matchingNews = newsArticles.filter(article => matchesQueryTokens(article, tokens, scope));
 
     // 5) Score each result
     const scoredBlog: ScoredSearchResult[] = matchingBlog.map(post => {
@@ -117,16 +104,6 @@ export async function GET(request: NextRequest) {
       return {
         type: 'blog' as const,
         item: post,
-        relevanceScore: score,
-        scoreBreakdown: breakdown
-      };
-    });
-
-    const scoredNews: ScoredSearchResult[] = matchingNews.map(article => {
-      const { score, breakdown } = calculateRelevanceScore(query, article, scope);
-      return {
-        type: 'news' as const,
-        item: article,
         relevanceScore: score,
         scoreBreakdown: breakdown
       };
@@ -141,10 +118,9 @@ export async function GET(request: NextRequest) {
     };
 
     scoredBlog.sort(sortByRelevance);
-    scoredNews.sort(sortByRelevance);
 
     // 7) Apply date filtering if provided
-    const withinDateRange = (item: BlogPost | NewsArticle): boolean => {
+    const withinDateRange = (item: BlogPost): boolean => {
       if (dateFromMs === null && dateToMs === null) return true;
       const ms = getItemDateMs(item);
       if (dateFromMs !== null && ms < dateFromMs) return false;
@@ -153,19 +129,16 @@ export async function GET(request: NextRequest) {
     };
 
     const datedBlog = scoredBlog.filter(r => withinDateRange(r.item));
-    const datedNews = scoredNews.filter(r => withinDateRange(r.item));
 
     // 8) Paginate (per section to maintain split UI)
     const startIdx = (page - 1) * pageSize;
     const paginatedBlog = datedBlog.slice(startIdx, startIdx + pageSize);
-    const paginatedNews = datedNews.slice(startIdx, datedNews.length > 0 ? startIdx + pageSize : startIdx + pageSize);
 
     // 9) Return response
     const response: SearchResultsV2 = {
       blog: paginatedBlog,
-      news: paginatedNews,
       meta: {
-        totalResults: datedBlog.length + datedNews.length,
+        totalResults: datedBlog.length,
         query,
         scope
       }

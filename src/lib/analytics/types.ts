@@ -9,7 +9,7 @@ export type EventCategory =
   | 'User'
   | 'Experiment';
 
-export type ContentType = 'blog' | 'news';
+export type ContentType = 'blog';
 
 export type SortOption = 'date' | 'relevance' | 'title';
 

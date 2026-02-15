@@ -47,10 +47,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     // Validate content type
     if (searchParams.type) {
       const typeValidation = validateUrlParam(searchParams.type);
-      if (!typeValidation.isValid || !['blog', 'news'].includes(typeValidation.sanitized)) {
+      if (!typeValidation.isValid) {
         throw new Error('Invalid content type parameter');
       }
-      searchParams.type = typeValidation.sanitized as 'blog' | 'news';
+
+      // Backward compatibility: treat legacy `type=news` as `all` (blog only now).
+      const sanitized = typeValidation.sanitized;
+      if (sanitized === 'news') {
+        searchParams.type = 'all';
+      } else if (!['blog', 'all'].includes(sanitized)) {
+        throw new Error('Invalid content type parameter');
+      } else {
+        searchParams.type = sanitized as 'blog' | 'all';
+      }
     }
 
     // Validate dates
@@ -98,7 +107,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       : 'all';
 
     // Convert validated search params to API params with proper type checking
-    const contentType = searchParams.type as 'blog' | 'news' | undefined;
+    const contentType = searchParams.type as 'blog' | 'all' | undefined;
     const sortField = searchParams.sort as 'date' | 'relevance' | 'title' | undefined;
 
     const apiParams: SearchParamsV2 = {
@@ -117,8 +126,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     const results = await searchV2(apiParams);
     const hasBlogResults = results.blog.length > 0;
-    const hasNewsResults = results.news.length > 0;
-    const hasResults = hasBlogResults || hasNewsResults;
+    const hasResults = hasBlogResults;
     const totalResults = results.meta.totalResults;
 
     return (
@@ -127,7 +135,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           query={query}
           totalResults={totalResults}
           filters={{
-            contentType: searchParams.type as 'blog' | 'news' | undefined,
+            contentType: searchParams.type === 'blog' ? 'blog' : undefined,
             dateFrom: searchParams.dateFrom,
             dateTo: searchParams.dateTo,
             sort: searchParams.sort as 'date' | 'relevance' | 'title' | undefined
@@ -150,7 +158,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <SearchResults
             query={query}
             blog={results.blog}
-            news={results.news}
           />
         )}
       </main>

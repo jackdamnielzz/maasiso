@@ -1,7 +1,7 @@
 # Search Implementation Guide
 
 ## Overview
-The MaasISO search system provides relevance-based search with field-scope filtering for blog posts and news articles.
+The MaasISO search system provides relevance-based search with field-scope filtering for blog posts.
 
 ## Architecture
 
@@ -20,7 +20,6 @@ The MaasISO search system provides relevance-based search with field-scope filte
 
 3. **Client API**: `src/lib/api.ts`
    - `searchV2()` function for new search
-   - `search()` preserved for backwards compatibility
 
 4. **UI Components**:
    - `SearchFilters.tsx`: Scope filter buttons
@@ -38,7 +37,7 @@ GET /api/search?q=<query>&scope=<scope>&type=<type>&page=<page>
 **Parameters:**
 - `q` (required): Search query (min 2 chars)
 - `scope` (optional): `all` | `title` | `title-summary` | `content` (default: `all`)
-- `type` (optional): `blog` | `news` | `all` (default: `all`)
+- `type` (optional): `blog` | `all` (default: `all`)
 - `dateFrom` (optional): ISO date string
 - `dateTo` (optional): ISO date string
 - `page` (optional): Page number (default: 1)
@@ -48,7 +47,6 @@ GET /api/search?q=<query>&scope=<scope>&type=<type>&page=<page>
 ```typescript
 {
   blog: ScoredSearchResult[],
-  news: ScoredSearchResult[],
   meta: {
     totalResults: number,
     query: string,

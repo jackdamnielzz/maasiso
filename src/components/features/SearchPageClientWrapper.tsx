@@ -50,8 +50,15 @@ export default function SearchPageClientWrapper() {
         }
 
         // Additional type validations
-        if (validatedParams.type && !['blog', 'news', 'all'].includes(validatedParams.type)) {
-          throw new Error('Invalid content type parameter');
+        if (validatedParams.type) {
+          // Backward compatibility: treat legacy `type=news` as `all` (blog only now).
+          if (validatedParams.type === 'news') {
+            validatedParams.type = 'all';
+          }
+
+          if (!['blog', 'all'].includes(validatedParams.type)) {
+            throw new Error('Invalid content type parameter');
+          }
         }
 
         if (validatedParams.sort && !['date', 'relevance', 'title'].includes(validatedParams.sort)) {
@@ -71,7 +78,7 @@ export default function SearchPageClientWrapper() {
         const apiParams: SearchParamsV2 = {
           query,
           scope: (validatedParams.scope as SearchScope) || 'all',
-          contentType: (validatedParams.type as 'blog' | 'news' | 'all') || 'all',
+          contentType: (validatedParams.type as 'blog' | 'all') || 'all',
           dateFrom: validatedParams.dateFrom,
           dateTo: validatedParams.dateTo,
           sort: validatedParams.sort ? {
@@ -128,7 +135,7 @@ export default function SearchPageClientWrapper() {
 
   const query = searchParams?.get('q') || '';
   const totalResults = data.meta.totalResults;
-  const hasResults = data.blog.length > 0 || data.news.length > 0;
+  const hasResults = data.blog.length > 0;
 
   return (
     <main className="container mx-auto px-4 py-8 mt-[72px]">
@@ -136,7 +143,7 @@ export default function SearchPageClientWrapper() {
         query={query}
         totalResults={totalResults}
         filters={{
-          contentType: (searchParams?.get('type') as 'blog' | 'news' | undefined) || undefined,
+          contentType: searchParams?.get('type') === 'blog' ? 'blog' : undefined,
           dateFrom: searchParams?.get('dateFrom') || undefined,
           dateTo: searchParams?.get('dateTo') || undefined,
           sort: (searchParams?.get('sort') as 'date' | 'relevance' | 'title' | undefined) || undefined
@@ -156,7 +163,6 @@ export default function SearchPageClientWrapper() {
         <SearchResults
           query={query}
           blog={data.blog}
-          news={data.news}
         />
       )}
     </main>

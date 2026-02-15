@@ -82,9 +82,17 @@ const pushDownloadEvent = (link: string, linkText: string) => {
   if (!analyticsEnabled) return;
 
   const { fileName, fileExt, fileUrl } = getDownloadMetadata(link);
-  const pagePath = window.location.pathname;
-  const contentGroup = pagePath.startsWith('/blog/') ? 'blog' : 'page';
-  const postSlug = pagePath.startsWith('/blog/') ? pagePath.replace('/blog/', '') : undefined;
+  const pagePath = window.location.pathname.replace(/\/+$/g, '');
+  const canonicalBlogPrefix = '/kennis/blog/';
+  const legacyBlogPrefix = '/blog/';
+  const isBlogPage =
+    pagePath.startsWith(canonicalBlogPrefix) || pagePath.startsWith(legacyBlogPrefix);
+  const contentGroup = isBlogPage ? 'blog' : 'page';
+  const postSlug = pagePath.startsWith(canonicalBlogPrefix)
+    ? pagePath.slice(canonicalBlogPrefix.length)
+    : pagePath.startsWith(legacyBlogPrefix)
+      ? pagePath.slice(legacyBlogPrefix.length)
+      : undefined;
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({

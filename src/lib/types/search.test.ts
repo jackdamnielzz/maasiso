@@ -1,5 +1,5 @@
 import { transformStrapiPaginatedResponse, isStrapiPaginatedResponse } from '../normalizers';
-import { SearchResults, PaginatedBlogPosts, PaginatedNewsArticles } from '../types';
+import { SearchResults, PaginatedBlogPosts } from '../types';
 
 describe('Search and Pagination', () => {
   describe('isStrapiPaginatedResponse', () => {
@@ -163,31 +163,5 @@ describe('Search and Pagination', () => {
       expect(paginatedPosts.total).toBe(1);
     });
 
-    it('should validate paginated news articles structure', () => {
-      const paginatedNews: PaginatedNewsArticles = {
-        articles: [
-          {
-            id: 'news1',
-            title: 'News Article 1',
-            content: 'Content 1',
-            slug: 'news-article-1',
-            categories: [],
-            tags: [],
-            seoTitle: '',
-            seoDescription: '',
-            seoKeywords: '',
-            createdAt: '2024-01-26T20:30:00.000Z',
-            updatedAt: '2024-01-26T20:30:00.000Z'
-          }
-        ],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        pageCount: 1
-      };
-
-      expect(paginatedNews.articles[0].title).toBe('News Article 1');
-      expect(paginatedNews.total).toBe(1);
-    });
   });
 });

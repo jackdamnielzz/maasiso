@@ -11,20 +11,17 @@ import { TopSearchFilters } from './TopSearchFilters';
 interface SearchResultsProps {
   query: string;
   blog: ScoredSearchResult[];
-  news: ScoredSearchResult[];
 }
 
 export function SearchResults({
   query,
-  blog,
-  news
+  blog
 }: SearchResultsProps) {
   // Get experiment variants
   const layoutVariant = useExperimentVariant(SEARCH_LAYOUT_EXPERIMENT, { trackExposure: true });
   const filtersVariant = useExperimentVariant(SEARCH_FILTERS_EXPERIMENT, { trackExposure: true });
 
   const hasBlogResults = blog.length > 0;
-  const hasNewsResults = news.length > 0;
 
   // Render filters based on experiment variant
   const renderFilters = () => {
@@ -35,14 +32,16 @@ export function SearchResults({
   };
 
   // Render results based on experiment variant
-  const renderResults = (items: ScoredSearchResult[], type: 'blog' | 'news') => {
+  const renderResults = (items: ScoredSearchResult[]) => {
     if (layoutVariant === 'grid') {
       return (
         <SearchResultsGrid
           results={items.map(result => ({
-            ...result.item,
-            type,
+            id: result.item.id,
+            title: result.item.title || '',
             content: result.item.content || '', // Ensure content is never undefined
+            slug: result.item.slug,
+            publishedAt: result.item.publishedAt,
             query,
             relevanceScore: result.relevanceScore
           }))}
@@ -59,7 +58,6 @@ export function SearchResults({
             content={result.item.content || ''}
             slug={result.item.slug}
             publishedAt={result.item.publishedAt}
-            type={type}
             query={query}
             relevanceScore={result.relevanceScore}
           />
@@ -78,18 +76,7 @@ export function SearchResults({
             Blog ({blog.length})
           </h2>
           <div className="bg-white rounded-lg shadow-lg p-6">
-            {renderResults(blog, 'blog')}
-          </div>
-        </section>
-      )}
-
-      {hasNewsResults && (
-        <section>
-          <h2 className="text-xl font-semibold text-[#091E42] mb-4">
-            Nieuws ({news.length})
-          </h2>
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            {renderResults(news, 'news')}
+            {renderResults(blog)}
           </div>
         </section>
       )}

@@ -7,7 +7,6 @@ import Analytics from "@/components/common/Analytics";
 import { ExperimentProvider } from "@/components/providers/ExperimentProvider";
 import { CookieConsentProvider } from "@/components/cookies/CookieConsentProvider";
 import { NavigationProvider } from "@/components/providers/NavigationProvider";
-import { QueryProvider } from "@/providers/QueryProvider";
 import { MonitoringProvider } from "@/providers/MonitoringProvider";
 import fs from 'fs';
 import path from 'path';
@@ -135,16 +134,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
         <NavigationProvider>
           <MonitoringProvider>
-            <QueryProvider>
-              <CookieConsentProvider>
-                <ExperimentProvider>
-                  <Layout>{children}</Layout>
-                  <Suspense fallback={null}>
-                    <Analytics />
-                  </Suspense>
-                </ExperimentProvider>
-              </CookieConsentProvider>
-            </QueryProvider>
+            <CookieConsentProvider>
+              <ExperimentProvider>
+                <Layout>{children}</Layout>
+                <Suspense fallback={null}>
+                  <Analytics />
+                </Suspense>
+              </ExperimentProvider>
+            </CookieConsentProvider>
           </MonitoringProvider>
         </NavigationProvider>
       </body>

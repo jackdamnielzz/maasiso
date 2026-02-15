@@ -96,7 +96,7 @@ export default function BlogCard({ post }: BlogCardProps) {
       <div className="p-6 flex flex-col flex-grow">
         {dateSection}
         
-        <Link href={`/blog/${validatedSlug}`}>
+        <Link href={`/kennis/blog/${validatedSlug}`}>
           <h3 className="text-xl font-semibold text-[#091E42] mb-3 hover:text-[#FF8B00] transition-colors">
             {post.title || 'Geen titel'}
           </h3>
@@ -108,7 +108,7 @@ export default function BlogCard({ post }: BlogCardProps) {
         
         <div className="mt-auto">
           <Link 
-            href={`/blog/${validatedSlug}`}
+            href={`/kennis/blog/${validatedSlug}`}
             className="text-[#FF8B00] hover:text-[#E67E00] font-medium transition-colors"
           >
             Lees meer

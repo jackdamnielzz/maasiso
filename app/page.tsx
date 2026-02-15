@@ -786,7 +786,7 @@ export default function Home() {
             <ul className="space-y-3 text-lg">
               <li>
                 <Link
-                  href="/blog"
+                  href="/kennis/blog"
                   className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>ISO 9001 certificering: kosten, proces &amp; voordelen [2026]</span>
@@ -797,7 +797,7 @@ export default function Home() {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/kennis/blog"
                   className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>ISO 27001 certificering: complete gids, kosten &amp; stappen (2026)</span>
@@ -808,7 +808,7 @@ export default function Home() {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/kennis/blog"
                   className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>AVG wetgeving: praktisch advies &amp; implementatie voor MKB</span>
@@ -820,7 +820,7 @@ export default function Home() {
             </ul>
             <p className="mt-4">
               <Link
-                href="/blog"
+                href="/kennis/blog"
                 className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
               >
                 Bekijk alle artikelen op ons blog

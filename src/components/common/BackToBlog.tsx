@@ -7,7 +7,7 @@ export default function BackToBlog() {
   const router = useRouter();
 
   const navigateToBlog = () => {
-    router.push('/blog');
+    router.push('/kennis/blog');
   };
 
   return (

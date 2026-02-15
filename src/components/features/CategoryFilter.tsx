@@ -23,7 +23,7 @@ export default function CategoryFilter({ categories, selectedCategory }: Categor
       params.delete('category');
     }
     params.delete('page'); // Reset to first page on category change
-    router.replace(`/blog?${params.toString()}`);
+    router.replace(`/kennis/blog?${params.toString()}`);
   };
 
   return (

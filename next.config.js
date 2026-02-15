@@ -9,30 +9,6 @@ const nextConfig = {
       timeStyle: 'long'
     })
   },
-  async redirects() {
-    return [
-      {
-        source: '/blog',
-        destination: '/kennis/blog',
-        permanent: true,
-      },
-      {
-        source: '/blog/:slug',
-        destination: '/kennis/blog/:slug',
-        permanent: true,
-      },
-      {
-        source: '/whitepaper',
-        destination: '/kennis/whitepapers',
-        permanent: true,
-      },
-      {
-        source: '/whitepaper/:slug',
-        destination: '/kennis/whitepapers/:slug',
-        permanent: true,
-      },
-    ];
-  },
   // Enable Turbopack for Next.js 16+
   turbopack: {},
   experimental: {
@@ -81,42 +57,7 @@ const nextConfig = {
           exclude: ['error', 'warn']
         }
       : false
-  },
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          commons: {
-            name: 'commons',
-            chunks: 'all',
-            minChunks: 2,
-            priority: 10,
-            reuseExistingChunk: false // Force new chunks on build
-          },
-          vendors: {
-            name: 'vendors',
-            test: /[\\/]node_modules[\\/]/,
-            chunks: 'all',
-            priority: 20,
-            reuseExistingChunk: false // Force new chunks on build
-          },
-          default: false,
-          defaultVendors: false
-        }
-      };
-    }
-
-    if (isServer) {
-      config.optimization = {
-        ...config.optimization,
-        moduleIds: 'deterministic',
-        chunkIds: 'deterministic'
-      };
-    }
-
-    return config;
-  },
+  }
 };
 
 module.exports = nextConfig;

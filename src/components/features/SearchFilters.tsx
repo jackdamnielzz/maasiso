@@ -122,17 +122,6 @@ export default function SearchFilters() {
             >
               Blog
             </button>
-            <button
-              onClick={() => updateSearchParams({ type: "news" })}
-              className={`px-3 py-1 text-sm rounded-md ${
-                currentType === "news"
-                  ? "bg-[#091E42] text-white"
-                  : "bg-gray-100 text-[#091E42] hover:bg-gray-200"
-              }`}
-              disabled={isPending}
-            >
-              Nieuws
-            </button>
           </div>
         </div>
 

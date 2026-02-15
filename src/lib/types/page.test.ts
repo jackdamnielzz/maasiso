@@ -249,6 +249,8 @@ describe('Page Component Normalizers', () => {
             alignment: 'left'
           }
         ],
+        schemaType: 'Article',
+        publicationDate: undefined,
         publishedAt: '2024-01-26T20:30:00.000Z',
         createdAt: '2024-01-26T20:30:00.000Z',
         updatedAt: '2024-01-26T20:30:00.000Z'

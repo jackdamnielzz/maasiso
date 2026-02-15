@@ -97,7 +97,7 @@ export default function RelatedPosts({ currentSlug, categoryIds, posts }: Relate
         {relatedPosts.map((post) => (
           <Link 
             key={post.id}
-            href={`/blog/${post.slug}`}
+            href={`/kennis/blog/${post.slug}`}
             className="group block"
           >
             <article className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 group-hover:transform group-hover:scale-105">

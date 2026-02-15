@@ -7,7 +7,6 @@ export interface SearchResultItemProps {
   content: string;
   slug: string;
   publishedAt?: string;
-  type: 'blog' | 'news';
   query?: string;
   relevanceScore?: number;
 }
@@ -27,11 +26,11 @@ export default function SearchResultItem({
   content,
   slug,
   publishedAt,
-  type,
   query = '',
   relevanceScore
 }: SearchResultItemProps) {
-  const baseUrl = type === 'blog' ? '/blog' : '/nieuws';
+  // Canonical: all content lives under /kennis/.
+  const baseUrl = '/kennis/blog';
   
   return (
     <article className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">

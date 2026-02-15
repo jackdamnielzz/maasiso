@@ -10,9 +10,7 @@ import {
   Image,
   ImageFormat,
   BlogPost,
-  NewsArticle,
   StrapiRawBlogPost,
-  StrapiRawNewsArticle,
   CTAButton,
   HeroComponent,
   TextBlockComponent,
@@ -235,114 +233,6 @@ export function normalizeBlogPost(raw: StrapiRawBlogPost): BlogPost {
     publishedAt: raw.publishedAt || raw.publicationDate || '',
     createdAt: raw.createdAt || '',
     updatedAt: raw.updatedAt || ''
-  };
-}
-
-/**
- * Normalize a news article from Strapi response
- */
-export function normalizeNewsArticle(raw: StrapiRawNewsArticle): NewsArticle {
-  if (!isObject(raw)) {
-    throw new Error('Invalid news article: raw data is not an object');
-  }
-
-  // Handle both flat and nested structures
-  const data = 'attributes' in raw && isObject(raw.attributes) ? raw.attributes : raw;
-  const id = String(raw.id);
-
-  // Type guard for the data object
-  if (!isObject(data)) {
-    throw new Error('Invalid news article: data is not an object');
-  }
-
-  // Extract content from the correct location in the response with type checking
-  const content = (
-    typeof data.Content === 'string' ? data.Content :
-    typeof data.content === 'string' ? data.content :
-    ''
-  );
-
-  // Ensure categories and tags are arrays with type checking
-  const categories = (
-    Array.isArray(data.categories) ? data.categories :
-    isObject(data.categories) && Array.isArray(data.categories?.data) ? data.categories.data :
-    []
-  );
-  
-  const tags = (
-    Array.isArray(data.tags) ? data.tags :
-    isObject(data.tags) && Array.isArray(data.tags?.data) ? data.tags.data :
-    []
-  );
-
-  // Helper function to safely access nested properties
-  const safeString = (value: unknown): string => typeof value === 'string' ? value : '';
-  const safeObject = (value: unknown): Record<string, unknown> => isObject(value) ? value : {};
-
-  // Process featured image if it exists
-  const featuredImage = data.featuredImage ? safeObject(data.featuredImage) : null;
-  const featuredImageData = featuredImage && 'data' in featuredImage ? safeObject(featuredImage.data) : featuredImage;
-
-  return {
-    id,
-    title: safeString(data.title),
-    content,
-    slug: safeString(data.slug),
-    summary: typeof data.summary === 'string' ? data.summary : undefined,
-    articledescription: typeof data.articledescription === 'string' ? data.articledescription : undefined,
-    author: typeof data.Author === 'string' ? data.Author : typeof data.author === 'string' ? data.author : undefined,
-    categories: categories.map(cat => {
-      const catData = 'attributes' in cat ? { id: cat.id, ...safeObject(cat.attributes) } : cat;
-      return {
-        id: String(catData.id),
-        name: safeString(catData.name),
-        description: safeString(catData.description),
-        slug: safeString(catData.slug),
-        createdAt: safeString(catData.createdAt),
-        updatedAt: safeString(catData.updatedAt)
-      };
-    }),
-    tags: tags.map(tag => {
-      const tagData = 'attributes' in tag ? { id: tag.id, ...safeObject(tag.attributes) } : tag;
-      return {
-        id: String(tagData.id),
-        name: safeString(tagData.name)
-      };
-    }),
-    featuredImage: featuredImageData ? {
-      id: String(featuredImageData.id),
-      name: safeString(featuredImageData.name),
-      alternativeText: safeString(featuredImageData.alternativeText),
-      caption: safeString(featuredImageData.caption),
-      width: typeof featuredImageData.width === 'number' ? featuredImageData.width : 0,
-      height: typeof featuredImageData.height === 'number' ? featuredImageData.height : 0,
-      formats: isObject(featuredImageData.formats)
-        ? Object.entries(featuredImageData.formats).reduce((acc, [key, format]) => ({
-            ...acc,
-            [key]: {
-              ...(isObject(format) ? format : {}),
-              url: `${clientEnv.apiUrl}${safeString((format as any)?.url)}`
-            }
-          }), {})
-        : {},
-      hash: safeString(featuredImageData.hash),
-      ext: safeString(featuredImageData.ext),
-      mime: safeString(featuredImageData.mime),
-      size: typeof featuredImageData.size === 'number' ? featuredImageData.size : 0,
-      url: `${clientEnv.apiUrl}${safeString(featuredImageData.url)}`,
-      previewUrl: safeString(featuredImageData.previewUrl),
-      provider: safeString(featuredImageData.provider),
-      provider_metadata: isObject(featuredImageData.provider_metadata) ? featuredImageData.provider_metadata : undefined,
-      createdAt: safeString(featuredImageData.createdAt),
-      updatedAt: safeString(featuredImageData.updatedAt),
-      publishedAt: safeString(featuredImageData.publishedAt)
-    } : undefined,
-    seoTitle: safeString(data.seoTitle),
-    seoDescription: safeString(data.seoDescription),
-    seoKeywords: safeString(data.seoKeywords),
-    publishedAt: safeString(data.publishedAt),
-    createdAt: safeString(data.createdAt),
-    updatedAt: safeString(data.updatedAt)
   };
 }
 
@@ -607,74 +497,6 @@ export function isStrapiRawBlogPost(data: unknown): data is StrapiRawBlogPost {
   for (const field of dateFields) {
     if (field in post && post[field] !== null && typeof post[field] !== 'string') {
       console.debug(`Blog post validation failed: invalid ${field} type`);
-      return false;
-    }
-  }
-
-  return true;
-}
-
-export function isStrapiRawNewsArticle(data: unknown): data is StrapiRawNewsArticle {
-  if (!isObject(data)) {
-    console.debug('News article validation failed: not an object');
-    return false;
-  }
-
-  // Handle nested Strapi structure
-  const article = 'attributes' in data && isObject(data.attributes)
-    ? { id: data.id, ...data.attributes as Record<string, unknown> }
-    : data;
-
-  // Check required fields
-  if (!('id' in article)) {
-    console.debug('News article validation failed: missing id field');
-    return false;
-  }
-
-  // Convert numeric id to string if needed
-  article.id = String(article.id);
-
-  // Check required fields
-  const requiredFields = ['title', 'slug'];
-  for (const field of requiredFields) {
-    if (!(field in article) || typeof article[field] !== 'string') {
-      console.debug(`News article validation failed: missing or invalid ${field} field`);
-      return false;
-    }
-  }
-
-  // Check content (either Content or content should be present)
-  const hasContent =
-    ('Content' in article && (typeof article.Content === 'string' || article.Content === null)) ||
-    ('content' in article && (typeof article.content === 'string' || article.content === null));
-
-  if (!hasContent) {
-    console.debug('News article validation failed: missing content field');
-    return false;
-  }
-
-  // Check categories if present
-  if ('categories' in article && article.categories !== null) {
-    // Handle both flat and nested structures
-    const categories = Array.isArray(article.categories)
-      ? article.categories
-      : (article.categories as { data?: Array<any> })?.data || [];
-    
-    if (!Array.isArray(categories)) {
-      console.debug('News article validation failed: categories is not an array');
-      return false;
-    }
-  }
-
-  // Check tags if present
-  if ('tags' in article && article.tags !== null) {
-    // Handle both flat and nested structures
-    const tags = Array.isArray(article.tags)
-      ? article.tags
-      : (article.tags as { data?: Array<any> })?.data || [];
-    
-    if (!Array.isArray(tags)) {
-      console.debug('News article validation failed: tags is not an array');
       return false;
     }
   }

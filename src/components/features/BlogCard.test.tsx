@@ -88,7 +88,7 @@ describe('BlogCard', () => {
     // Check "Read more" link
     const link = screen.getByText('Lees meer');
     expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/blog/test-blog-post');
+    expect(link.closest('a')).toHaveAttribute('href', '/kennis/blog/test-blog-post');
   });
 
   describe('BlogCard Performance', () => {
@@ -199,7 +199,7 @@ describe('BlogCard', () => {
 
     // Verify link still works
     const link = screen.getByText('Lees meer');
-    expect(link.closest('a')).toHaveAttribute('href', '/blog/minimal-post');
+    expect(link.closest('a')).toHaveAttribute('href', '/kennis/blog/minimal-post');
   });
 
   it('handles numeric IDs correctly', () => {

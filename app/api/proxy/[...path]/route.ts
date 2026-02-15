@@ -10,7 +10,6 @@ type RouteSegment = {
 const ALLOWED_ENDPOINTS = new Set([
   'pages',
   'blog-posts',
-  'news-articles',
   'authors',
   'tags',
   'categories',

@@ -85,6 +85,23 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/kennis/blog/${slug}/`, request.url), 301);
   }
 
+  if (normalizedPathname === '/blog') {
+    return NextResponse.redirect(new URL('/kennis/blog/', request.url), 301);
+  }
+
+  if (normalizedPathname === '/whitepaper') {
+    return NextResponse.redirect(new URL('/kennis/whitepapers/', request.url), 301);
+  }
+
+  if (normalizedPathname.startsWith('/whitepaper/')) {
+    const slug = normalizedPathname.replace('/whitepaper/', '');
+    return NextResponse.redirect(new URL(`/kennis/whitepapers/${slug}/`, request.url), 301);
+  }
+
+  if (normalizedPathname === '/blog-posts') {
+    return NextResponse.redirect(new URL('/kennis/blog/', request.url), 301);
+  }
+
   if (normalizedPathname.startsWith('/blog-posts/')) {
     const slug = normalizedPathname.replace('/blog-posts/', '');
     return NextResponse.redirect(new URL(`/kennis/blog/${slug}/`, request.url), 301);
@@ -123,12 +140,35 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 301);
   }
 
+  // Generic legacy blog slug redirect; keep after redirectMap so specific mappings win.
+  if (normalizedPathname.startsWith('/blog/')) {
+    const slug = normalizedPathname.replace('/blog/', '');
+    return NextResponse.redirect(new URL(`/kennis/blog/${slug}/`, request.url), 301);
+  }
+
   const shouldCanonicalizeHost = requestHost === APEX_HOST;
   const shouldCanonicalizePath = pathname !== desiredPathname;
   if (shouldCanonicalizeHost || shouldCanonicalizePath) {
     const redirectUrl = new URL(request.url);
-    redirectUrl.protocol = 'https:';
-    redirectUrl.hostname = CANONICAL_HOST;
+
+    const forwardedProto = (request.headers.get('x-forwarded-proto') || '')
+      .split(',')[0]
+      .trim()
+      .toLowerCase();
+    const currentProtocol =
+      forwardedProto === 'http' || forwardedProto === 'https'
+        ? `${forwardedProto}:`
+        : redirectUrl.protocol;
+
+    // Only force https for the production hosts; keep localhost/staging behavior intact.
+    const isProdHost = requestHost === CANONICAL_HOST || requestHost === APEX_HOST;
+    redirectUrl.protocol = isProdHost ? 'https:' : currentProtocol;
+
+    if (shouldCanonicalizeHost) {
+      redirectUrl.hostname = CANONICAL_HOST;
+      redirectUrl.port = '';
+    }
+
     redirectUrl.pathname = desiredPathname;
     return NextResponse.redirect(redirectUrl, 301);
   }

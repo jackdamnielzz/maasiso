@@ -36,7 +36,7 @@ export default function BlogSidebar({
       params.set('page', '1');
 
       const queryString = params.toString();
-      router.push(queryString ? `/blog?${queryString}` : '/blog');
+      router.push(queryString ? `/kennis/blog?${queryString}` : '/kennis/blog');
     });
   }, [router, searchParams]);
 
@@ -51,7 +51,7 @@ export default function BlogSidebar({
 
   const clearFilters = () => {
     setLocalSearch('');
-    router.push('/blog');
+    router.push('/kennis/blog');
   };
 
   const hasActiveFilters = selectedCategory || searchQuery;

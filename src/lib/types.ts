@@ -239,23 +239,6 @@ export interface BlogPost extends BaseContent {
   videoDuration?: string;
 }
 
-/**
- * News Article type
- */
-export interface NewsArticle extends BaseContent {
-  content: string;
-  summary?: string;
-  articledescription?: string;
-  author?: string;
-  tags?: Tag[];
-  categories?: Category[];
-  featuredImage?: Image;
-  readingTime?: number;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-}
-
 // Raw Strapi types
 export interface StrapiRawBlogPost {
   id: string;
@@ -317,70 +300,13 @@ export interface StrapiRawTagRelationItem {
   };
 }
 
-export interface StrapiRawNewsImage {
-  id?: number | string;
-  documentId?: string;
-  name?: string;
-  alternativeText?: string;
-  caption?: string;
-  width?: number;
-  height?: number;
-  formats?: {
-    thumbnail?: ImageFormat;
-    [key: string]: ImageFormat | undefined;
-  };
-  hash?: string;
-  ext?: string;
-  mime?: string;
-  size?: number;
-  url?: string;
-  previewUrl?: string;
-  provider?: string;
-  provider_metadata?: any;
-  createdAt?: string;
-  updatedAt?: string;
-  publishedAt?: string;
-  data?: {
-    id?: number | string;
-    attributes?: Omit<StrapiRawNewsImage, 'data'>;
-  } | null;
-}
-
-export interface StrapiRawNewsArticleCore {
-  documentId?: string;
-  title?: string;
-  Content?: string;
-  content?: string;
-  slug?: string;
-  summary?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-  publicationDate?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  publishedAt?: string;
-  readingTime?: number;
-  articledescription?: string;
-  Author?: string;
-  author?: string;
-  categories?: StrapiRelation<StrapiRawCategoryRelationItem>;
-  tags?: StrapiRelation<StrapiRawTagRelationItem>;
-  featuredImage?: StrapiRawNewsImage | null;
-}
-
-export interface StrapiRawNewsArticle extends StrapiRawNewsArticleCore {
-  id: string | number;
-  attributes?: StrapiRawNewsArticleCore;
-}
-
 /**
  * Search types
  */
 export interface SearchParams {
   query: string;
   filters?: {
-    contentType?: ('blog' | 'news')[];
+    contentType?: 'blog'[];
     dateFrom?: string;
     dateTo?: string;
   };
@@ -406,7 +332,7 @@ export interface SearchParamsV2 extends Omit<SearchParams, 'filters'> {
    * Content type filter.
    * Defaults to 'all'.
    */
-  contentType?: 'blog' | 'news' | 'all';
+  contentType?: 'blog' | 'all';
 
   /**
    * Optional date filters (ISO strings)
@@ -416,8 +342,8 @@ export interface SearchParamsV2 extends Omit<SearchParams, 'filters'> {
 }
 
 export interface ScoredSearchResult {
-  type: 'blog' | 'news';
-  item: BlogPost | NewsArticle;
+  type: 'blog';
+  item: BlogPost;
   relevanceScore: number;
   scoreBreakdown?: {
     titleScore: number;
@@ -428,7 +354,6 @@ export interface ScoredSearchResult {
 
 export interface SearchResultsV2 {
   blog: ScoredSearchResult[];
-  news: ScoredSearchResult[];
   meta: {
     totalResults: number;
     query: string;
@@ -437,7 +362,7 @@ export interface SearchResultsV2 {
 }
 
 export interface SearchResults {
-  items: (BlogPost | NewsArticle)[];
+  items: BlogPost[];
   total: number;
   page: number;
   pageSize: number;
@@ -446,14 +371,6 @@ export interface SearchResults {
 
 export interface PaginatedBlogPosts {
   posts: BlogPost[];
-  total: number;
-  page: number;
-  pageSize: number;
-  pageCount: number;
-}
-
-export interface PaginatedNewsArticles {
-  articles: NewsArticle[];
   total: number;
   page: number;
   pageSize: number;

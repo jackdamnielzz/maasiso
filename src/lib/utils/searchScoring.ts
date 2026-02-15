@@ -1,4 +1,4 @@
-import type { BlogPost, NewsArticle, SearchScope } from '@/lib/types';
+import type { BlogPost, SearchScope } from '@/lib/types';
 
 export interface ScoreBreakdown {
   titleScore: number;
@@ -12,7 +12,7 @@ export interface ScoreBreakdown {
  */
 export function calculateRelevanceScore(
   query: string,
-  item: BlogPost | NewsArticle,
+  item: BlogPost,
   scope: SearchScope
 ): { score: number; breakdown: ScoreBreakdown } {
   const tokens = tokenizeQuery(query);
@@ -24,14 +24,7 @@ export function calculateRelevanceScore(
 
   const titleText = item.title;
 
-  // Blog: summary; News: summary + articledescription (treated as summary-weight)
-  const summaryText = [
-    (item as BlogPost).summary,
-    (item as NewsArticle).summary,
-    (item as NewsArticle).articledescription
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const summaryText = item.summary || '';
 
   const contentText = item.content;
 

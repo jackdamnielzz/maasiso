@@ -37,20 +37,20 @@ export const navigationConfig: NavigationConfig = {
       href: '/iso-certificering',
     },
     {
-      label: 'Kennisbank',
-      href: '#',
+      label: 'Kennis',
+      href: '/kennis',
       children: [
         {
           label: 'Blog',
-          href: '/blog',
-        },
-        {
-          label: 'Nieuws',
-          href: '/blog',
+          href: '/kennis/blog',
         },
         {
           label: 'Whitepapers',
-          href: '/whitepaper',
+          href: '/kennis/whitepapers',
+        },
+        {
+          label: 'E-learning',
+          href: '/kennis/e-learning',
         },
       ],
     },

@@ -41,3 +41,6 @@ deploy.tar.gz
 *.tsbuildinfo
 next-env.d.ts
 secrets/
+
+# credentials (never commit real access details)
+server-access-credentials.md

@@ -233,7 +233,7 @@ export default async function OverNielsMaasPage() {
             
             <div className="mt-16 text-center">
               <Link
-                href="/blog"
+                href="/kennis/blog"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-[#091E42] text-[#091E42] font-bold hover:bg-[#091E42] hover:text-white transition-all transform hover:-translate-y-1"
               >
                 Bekijk alle blogs

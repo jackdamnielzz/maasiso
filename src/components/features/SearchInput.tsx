@@ -26,12 +26,12 @@ const SearchInput: React.FC = () => {
             params.set('search', value);
           } else {
             params.delete('search');
-          }
-          params.delete('page'); // Reset to first page on new search
-          router.replace(`/blog?${params.toString()}`);
-        } catch (e) {
-          console.error('Error updating search params:', e);
-        }
+           }
+           params.delete('page'); // Reset to first page on new search
+           router.replace(`/kennis/blog?${params.toString()}`);
+         } catch (e) {
+           console.error('Error updating search params:', e);
+         }
       });
     }, 300),
     [searchParams, router]
@@ -54,7 +54,7 @@ const SearchInput: React.FC = () => {
           isPending ? 'opacity-70' : ''
         }`}
         disabled={isPending}
-        aria-label="Search news"
+        aria-label="Search blog"
       />
     </div>
   );

@@ -11,7 +11,7 @@ interface ContentMetadata {
 }
 
 interface ContentAnalyticsProps {
-  contentType: 'blog' | 'news';
+  contentType: 'blog';
   contentId: string;
   title: string;
   metadata: ContentMetadata;

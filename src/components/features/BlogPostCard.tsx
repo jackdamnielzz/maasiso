@@ -32,7 +32,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps): React.ReactNo
 
   // Calculate reading time based on content word count
   return (
-    <Link href={`/blog/${post.slug}`}>
+    <Link href={`/kennis/blog/${post.slug}`}>
       <article className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
         <div className="h-56 w-full bg-gray-100 overflow-hidden">
           {post.featuredImage && !imageError ? (

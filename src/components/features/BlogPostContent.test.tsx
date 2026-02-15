@@ -121,7 +121,7 @@ describe('BlogPostContent', () => {
     expect(screen.queryByText('Geen gerelateerde artikelen beschikbaar.')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Gerelateerd artikel/ })).toHaveAttribute(
       'href',
-      '/blog/gerelateerd-artikel'
+      '/kennis/blog/gerelateerd-artikel'
     );
     expect(screen.getByText('10 januari 2024')).toBeInTheDocument();
   });
