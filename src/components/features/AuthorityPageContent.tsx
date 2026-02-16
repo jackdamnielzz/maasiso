@@ -527,12 +527,10 @@ export default function AuthorityPageContent({
             const benefitsHeadingRegex = /(^|\n)\s*#{1,6}\s*voordelen\s*van\s*iso\s*9001/i;
             const tableLineRegex = /^\s*\|.*\|\s*$/;
             const transitionTimelineTableMarkerRegex = /\btransitie\s*[-–]?\s*timeline\b/i;
-            const hasBenefitsHeading = benefitsHeadingRegex.test(normalizedTextBlockContent);
             const isTransitionTimelineBlock =
               Boolean(transitionTimelineImage?.src) &&
               (transitionTimelineHeadingRegex.test(normalizedTextBlockContent) ||
-                transitionTimelineTableMarkerRegex.test(normalizedTextBlockContent) ||
-                hasBenefitsHeading);
+                transitionTimelineTableMarkerRegex.test(normalizedTextBlockContent));
 
             let shouldInjectTransitionTimelineImage = false;
             let contentBeforeTransitionTimelineImage = normalizedTextBlockContent;
@@ -565,11 +563,8 @@ export default function AuthorityPageContent({
                 }
               }
 
-              if (foundTableLine || (hasBenefitsHeading && benefitsHeadingIndex !== -1)) {
+              if (foundTableLine) {
                 shouldInjectTransitionTimelineImage = true;
-                if (!foundTableLine) {
-                  insertionLine = benefitsHeadingIndex;
-                }
                 contentBeforeTransitionTimelineImage = lines.slice(0, insertionLine).join('\n').trimEnd();
                 contentFromTransitionTimelineImage = lines.slice(insertionLine).join('\n').trimStart();
               }
@@ -620,31 +615,37 @@ export default function AuthorityPageContent({
             }
 
             const shouldInjectImage =
-              shouldInjectSectionImage ||
-              shouldInjectTransitionTimelineImage ||
-              shouldInjectBenefitsSectionImage;
+              shouldInjectSectionImage || shouldInjectBenefitsSectionImage || shouldInjectTransitionTimelineImage;
             const imageBlockBefore = shouldInjectSectionImage
               ? contentBeforeStructureImage
+              : shouldInjectBenefitsSectionImage
+              ? contentBeforeBenefitsImage
               : shouldInjectTransitionTimelineImage
               ? contentBeforeTransitionTimelineImage
-              : contentBeforeBenefitsImage;
+              : normalizedTextBlockContent;
             const imageBlockAfter = shouldInjectSectionImage
               ? contentFromStructureImage
+              : shouldInjectBenefitsSectionImage
+              ? contentFromBenefitsImage
               : shouldInjectTransitionTimelineImage
               ? contentFromTransitionTimelineImage
-              : contentFromBenefitsImage;
+              : normalizedTextBlockContent;
             const sectionImageSrc =
               shouldInjectSectionImage && sectionImage?.src
                 ? sectionImage.src
+                : shouldInjectBenefitsSectionImage
+                ? benefitsSectionImage?.src || ''
                 : shouldInjectTransitionTimelineImage
                 ? transitionTimelineImage?.src || ''
-                : benefitsSectionImage?.src || '';
+                : '';
             const sectionImageAlt =
               shouldInjectSectionImage
                 ? sectionImage?.alt || 'ISO 9001 structuur afbeelding'
+                : shouldInjectBenefitsSectionImage
+                ? benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting'
                 : shouldInjectTransitionTimelineImage
                 ? transitionTimelineImage?.alt || 'ISO 9001 transitie timeline'
-                : benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting';
+                : 'ISO 9001 afbeelding';
 
             const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
             return (
