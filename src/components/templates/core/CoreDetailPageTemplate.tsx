@@ -26,6 +26,10 @@ type CoreDetailPageTemplateProps = {
     src: string;
     alt?: string;
   };
+  transitionTimelineImage?: {
+    src: string;
+    alt?: string;
+  };
 };
 
 type Layout = NonNullable<Page['layout']>;
@@ -704,6 +708,7 @@ export default async function CoreDetailPageTemplate({
   heroImage,
   sectionImage,
   benefitsSectionImage,
+  transitionTimelineImage,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
   const normalizedLayout = pageData?.layout
@@ -771,6 +776,7 @@ export default async function CoreDetailPageTemplate({
         heroImage={heroImage}
         sectionImage={sectionImage}
         benefitsSectionImage={benefitsSectionImage}
+        transitionTimelineImage={transitionTimelineImage}
         breadcrumbs={breadcrumbs}
         showBreadcrumbs={false}
         dataTopic={dataTopic}

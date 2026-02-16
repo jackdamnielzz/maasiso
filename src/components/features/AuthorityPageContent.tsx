@@ -28,6 +28,10 @@ type AuthorityPageContentProps = {
     src: string;
     alt?: string;
   };
+  transitionTimelineImage?: {
+    src: string;
+    alt?: string;
+  };
   testId?: string;
   featureGridTitleFallback?: string;
   featureGridTestId?: string;
@@ -294,6 +298,7 @@ export default function AuthorityPageContent({
   heroImage,
   sectionImage,
   benefitsSectionImage,
+  transitionTimelineImage,
   testId,
   featureGridTitleFallback = 'De stappen',
   featureGridTestId,
@@ -517,6 +522,54 @@ export default function AuthorityPageContent({
               }
             }
 
+            const transitionTimelineHeadingRegex =
+              /(^|\n)\s*#{0,6}\s*.*\btransitie\s*[-–]?\s*timeline\b.*$/i;
+            const benefitsHeadingRegex = /(^|\n)\s*#{1,6}\s*voordelen\s*van\s*iso\s*9001/i;
+            const tableLineRegex = /^\s*\|.*\|\s*$/;
+            const transitionTimelineTableMarkerRegex = /\btransitie\s*[-–]?\s*timeline\b/i;
+            const isTransitionTimelineBlock =
+              Boolean(transitionTimelineImage?.src) &&
+              (transitionTimelineHeadingRegex.test(normalizedTextBlockContent) ||
+                transitionTimelineTableMarkerRegex.test(normalizedTextBlockContent));
+
+            let shouldInjectTransitionTimelineImage = false;
+            let contentBeforeTransitionTimelineImage = normalizedTextBlockContent;
+            let contentFromTransitionTimelineImage = normalizedTextBlockContent;
+            if (isTransitionTimelineBlock && transitionTimelineImage?.src) {
+              const lines = normalizedTextBlockContent.split('\n');
+              const benefitsHeadingIndex = lines.findIndex((line) => benefitsHeadingRegex.test(line));
+              const scanStart = Math.max(
+                0,
+                lines.findIndex((line) => transitionTimelineHeadingRegex.test(line))
+              );
+              const scanEnd = benefitsHeadingIndex === -1 ? lines.length : benefitsHeadingIndex;
+              let insertionLine = scanEnd;
+              let foundTableLine = false;
+
+              for (let lineIndex = scanStart; lineIndex < scanEnd; lineIndex += 1) {
+                const line = lines[lineIndex];
+                const isTableLine =
+                  tableLineRegex.test(line) || /^\s*\|?\s*:?-{3,}.*\|?$/i.test(line);
+
+                if (isTableLine) {
+                  foundTableLine = true;
+                  insertionLine = lineIndex + 1;
+                  continue;
+                }
+
+                if (foundTableLine && line.trim() === '') {
+                  insertionLine = lineIndex + 1;
+                  break;
+                }
+              }
+
+              if (foundTableLine) {
+                shouldInjectTransitionTimelineImage = true;
+                contentBeforeTransitionTimelineImage = lines.slice(0, insertionLine).join('\n').trimEnd();
+                contentFromTransitionTimelineImage = lines.slice(insertionLine).join('\n').trimStart();
+              }
+            }
+
             const benefitsSectionImageAnchorRegex = /hoger klantvertrouwen/i;
             const isBenefitsSectionBlock =
               benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent) ||
@@ -565,20 +618,31 @@ export default function AuthorityPageContent({
               }
             }
 
-            const shouldInjectImage = shouldInjectSectionImage || shouldInjectBenefitsSectionImage;
+            const shouldInjectImage =
+              shouldInjectSectionImage ||
+              shouldInjectTransitionTimelineImage ||
+              shouldInjectBenefitsSectionImage;
             const imageBlockBefore = shouldInjectSectionImage
               ? contentBeforeStructureImage
+              : shouldInjectTransitionTimelineImage
+              ? contentBeforeTransitionTimelineImage
               : contentBeforeBenefitsImage;
             const imageBlockAfter = shouldInjectSectionImage
               ? contentFromStructureImage
+              : shouldInjectTransitionTimelineImage
+              ? contentFromTransitionTimelineImage
               : contentFromBenefitsImage;
             const sectionImageSrc =
               shouldInjectSectionImage && sectionImage?.src
                 ? sectionImage.src
+                : shouldInjectTransitionTimelineImage
+                ? transitionTimelineImage?.src || ''
                 : benefitsSectionImage?.src || '';
             const sectionImageAlt =
               shouldInjectSectionImage
                 ? sectionImage?.alt || 'ISO 9001 structuur afbeelding'
+                : shouldInjectTransitionTimelineImage
+                ? transitionTimelineImage?.alt || 'ISO 9001 transitie timeline'
                 : benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting';
 
             const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
