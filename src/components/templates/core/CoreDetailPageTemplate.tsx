@@ -327,6 +327,7 @@ function classifyIso9001TextBlock(block: LayoutBlock): Iso9001TextBucket {
   if (normalized.includes('wat is iso 9001')) return 'wat-is';
   if (
     normalized.includes('normstructuur iso 9001') ||
+    normalized.includes('structuur iso 9001') ||
     normalized.includes('clausules 4-10') ||
     normalized.includes('clausules 4–10') ||
     (normalized.includes('clausules 4') && normalized.includes('clausules 10'))
@@ -434,6 +435,10 @@ export function normalizeIso9001Layout(layout: Layout): Layout {
   );
   takeAll(
     (block) => block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'auditproces'
+  );
+  takeAll(
+    (block) =>
+      block.__component === 'page-blocks.text-block' && classifyIso9001TextBlock(block) === 'other'
   );
 
   const unmatchedBeforeFaq = compact.filter(

@@ -524,15 +524,10 @@ export default function AuthorityPageContent({
                 }
               }
 
-              const hasEnoughBenefitBullets = bulletCount >= 4 || (bulletCount >= 3 && insertionLine < lines.length);
-              if (inList && hasEnoughBenefitBullets) {
+              if (inList && bulletCount >= 3) {
                 shouldInjectBenefitsSectionImage = true;
                 contentBeforeBenefitsImage = lines.slice(0, insertionLine).join('\n').trimEnd();
                 contentFromBenefitsImage = lines.slice(insertionLine).join('\n').trimStart();
-              } else if (isBenefitsSectionBlock && lines.length > 0) {
-                shouldInjectBenefitsSectionImage = true;
-                contentBeforeBenefitsImage = normalizedTextBlockContent.trimEnd();
-                contentFromBenefitsImage = '';
               }
             }
 
