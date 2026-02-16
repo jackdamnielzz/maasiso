@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import CoreDetailPageTemplate from '@/components/templates/core/CoreDetailPageTemplate';
 import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
+import StickyLeadCapture from '@/components/marketing/StickyLeadCapture';
 
 const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
@@ -24,11 +25,14 @@ export const revalidate = 0;
 
 export default async function Iso9001Page() {
   return (
-    <CoreDetailPageTemplate
-      title="ISO 9001"
-      strapiSlug="iso-9001"
-      hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
-      dataTopic="iso-certificering"
-    />
+    <>
+      <CoreDetailPageTemplate
+        title="ISO 9001"
+        strapiSlug="iso-9001"
+        hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
+        dataTopic="iso-certificering"
+      />
+      <StickyLeadCapture />
+    </>
   );
 }

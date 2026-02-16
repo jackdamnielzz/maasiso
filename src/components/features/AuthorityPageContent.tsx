@@ -422,8 +422,9 @@ export default function AuthorityPageContent({
             const normalizedTextBlockContent = normalizeExpertQuoteMarkdown(
               String(block.content || '')
             );
+            const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
             return (
-              <section key={blockKey} className="py-12 md:py-24">
+              <section key={blockKey} id={textBlockId} className="py-12 md:py-24">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-4xl mx-auto relative hover:shadow-xl transition-all duration-300">
                     <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00]"></div>

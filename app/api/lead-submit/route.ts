@@ -1,0 +1,196 @@
+import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
+
+type LeadSource = 'exit_intent' | 'sticky_panel' | 'sticky_bottom';
+type CompanySize = '1-10' | '10-50' | '50+';
+
+interface LeadSubmitPayload {
+  name: string;
+  email: string;
+  phone: string;
+  company_size?: CompanySize | string;
+  source: LeadSource;
+  page: string;
+  timestamp: string;
+}
+
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+const validSources = new Set<LeadSource>(['exit_intent', 'sticky_panel', 'sticky_bottom']);
+const validCompanySizes = new Set<CompanySize>(['1-10', '10-50', '50+']);
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (!entry || entry.resetAt <= now) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  entry.count += 1;
+  rateLimitStore.set(ip, entry);
+  return false;
+}
+
+function validatePayload(body: LeadSubmitPayload): string | null {
+  if (!body?.name || !body?.email || !body?.phone || !body?.source || !body?.page || !body?.timestamp) {
+    return 'Alle verplichte velden zijn verplicht.';
+  }
+
+  const trimmedName = String(body.name).trim();
+  const trimmedEmail = String(body.email).trim();
+  const trimmedPhone = String(body.phone).trim();
+
+  if (!trimmedName || trimmedName.length > 120) {
+    return 'Ongeldige naam.';
+  }
+
+  if (!trimmedPhone || trimmedPhone.length > 40) {
+    return 'Ongeldig telefoonnummer.';
+  }
+
+  if (!validSources.has(body.source as LeadSource)) {
+    return 'Ongeldige bron voor dit leadformulier.';
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmedEmail)) {
+    return 'Ongeldig e-mailadres.';
+  }
+
+  if (body.company_size && !validCompanySizes.has(body.company_size as CompanySize)) {
+    return 'Ongeldige waarde voor aantal FTE.';
+  }
+
+  if (Number.isNaN(Date.parse(body.timestamp))) {
+    return 'Ongeldige timestamp.';
+  }
+
+  if (body.page.length > 500 || body.page.indexOf('..') !== -1) {
+    return 'Ongeldige paginareferentie.';
+  }
+
+  return null;
+}
+
+export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { success: false, error: 'Te veel aanvragen. Probeer het later opnieuw.' },
+      { status: 429 }
+    );
+  }
+
+  let body: LeadSubmitPayload;
+
+  try {
+    body = (await request.json()) as LeadSubmitPayload;
+  } catch {
+    return NextResponse.json(
+      { success: false, error: 'Ongeldige aanvraag.' },
+      { status: 400 }
+    );
+  }
+
+  const validationError = validatePayload(body);
+  if (validationError) {
+    return NextResponse.json({ success: false, error: validationError }, { status: 400 });
+  }
+
+  if (!process.env.EMAIL_PASSWORD) {
+    console.error('[Lead Submit] EMAIL_PASSWORD ontbreekt');
+    return NextResponse.json(
+      { success: false, error: 'Lead kon niet worden verwerkt. Probeer het later opnieuw.' },
+      { status: 500 }
+    );
+  }
+
+  const sanitizedName = String(body.name).trim();
+  const sanitizedEmail = String(body.email).trim();
+  const sanitizedPhone = String(body.phone).trim();
+  const sanitizedCompanySize = body.company_size ? String(body.company_size).trim() : '';
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'info@maasiso.nl',
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    debug: false,
+    logger: false,
+  });
+
+  const mailOptions = {
+    from: '"MaasISO Website" <info@maasiso.nl>',
+    to: 'info@maasiso.nl',
+    replyTo: sanitizedEmail,
+    subject: 'Nieuwe lead van website (ISO 9001 exit intent)',
+    text: `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nTelefoon: ${sanitizedPhone}\nAantal FTE: ${sanitizedCompanySize || 'Niet opgegeven'}\nBron: ${body.source}\nPagina: ${body.page}\nTijd: ${body.timestamp}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #091E42;">
+        <h2 style="color: #091E42;">Nieuwe lead via website formulier</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee; width: 130px;"><strong>Naam</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>E-mail</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Telefoon</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedPhone}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Aantal FTE</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedCompanySize || 'Niet opgegeven'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Bron</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.source}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Pagina</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.page}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Tijdstip</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.timestamp}</td>
+          </tr>
+        </table>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+
+    return NextResponse.json({ success: true, message: 'Lead ontvangen' }, { status: 200 });
+  } catch (error) {
+    console.error('[Lead Submit] Versturen mislukt', error);
+    return NextResponse.json(
+      { success: false, error: 'Lead kon niet worden verzonden. Probeer het later opnieuw.' },
+      { status: 500 }
+    );
+  }
+}

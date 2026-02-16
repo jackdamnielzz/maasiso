@@ -353,6 +353,23 @@ function classifyIso9001TextBlock(block: LayoutBlock): Iso9001TextBucket {
   return 'other';
 }
 
+function addKostenSectionAnchor(layout: Layout): Layout {
+  let hasKostenSection = false;
+
+  return layout.map((block) => {
+    if (hasKostenSection) return block;
+    if (
+      block?.__component === 'page-blocks.text-block' &&
+      classifyIso9001TextBlock(block) === 'kosten'
+    ) {
+      hasKostenSection = true;
+      if (block.id === 'kosten-sectie') return block;
+      return { ...block, id: 'kosten-sectie' };
+    }
+    return block;
+  });
+}
+
 export function normalizeIso9001Layout(layout: Layout): Layout {
   const blocks = cloneLayout(layout) as LayoutBlock[];
   const primaryFeatureGrid = mergeFeatureGrids(blocks);
@@ -669,13 +686,19 @@ export default async function CoreDetailPageTemplate({
   dataTopic,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
-  const layout = pageData?.layout
+  const normalizedLayout = pageData?.layout
     ? strapiSlug === 'iso-27001'
       ? normalizeIso27001Layout(pageData.layout)
       : strapiSlug === 'iso-9001'
         ? normalizeIso9001Layout(pageData.layout)
         : pageData.layout
     : pageData?.layout;
+
+  const layout = normalizedLayout
+    ? strapiSlug === 'iso-9001'
+      ? addKostenSectionAnchor(normalizedLayout)
+      : normalizedLayout
+    : normalizedLayout;
 
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', href: '/' },
