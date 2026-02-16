@@ -28,6 +28,10 @@ type AuthorityPageContentProps = {
     src: string;
     alt?: string;
   };
+  implementationDurationImage?: {
+    src: string;
+    alt?: string;
+  };
   transitionTimelineImage?: {
     src: string;
     alt?: string;
@@ -298,6 +302,7 @@ export default function AuthorityPageContent({
   heroImage,
   sectionImage,
   benefitsSectionImage,
+  implementationDurationImage,
   transitionTimelineImage,
   testId,
   featureGridTitleFallback = 'De stappen',
@@ -522,6 +527,22 @@ export default function AuthorityPageContent({
               }
             }
 
+            const implementationDurationHeadingRegex =
+              /(^|\n)\s*#{0,6}\s*.*\bhoelang\s+duurt\s+iso\s*9001\s+implementatie\b.*$/i;
+            let shouldInjectImplementationDurationImage = false;
+            let contentBeforeImplementationDurationImage = normalizedTextBlockContent;
+            let contentFromImplementationDurationImage = normalizedTextBlockContent;
+            if (Boolean(implementationDurationImage?.src)) {
+              const lines = normalizedTextBlockContent.split('\n');
+              const headingLineIndex = lines.findIndex((line) => implementationDurationHeadingRegex.test(line));
+              if (headingLineIndex !== -1) {
+                shouldInjectImplementationDurationImage = true;
+                const insertionLine = headingLineIndex + 1;
+                contentBeforeImplementationDurationImage = lines.slice(0, insertionLine).join('\n').trimEnd();
+                contentFromImplementationDurationImage = lines.slice(insertionLine).join('\n').trimStart();
+              }
+            }
+
             const transitionTimelineHeadingRegex =
               /(^|\n)\s*#{0,6}\s*.*\btransitie\s*[-–]?\s*timeline\b.*$/i;
             const benefitsHeadingRegex = /(^|\n)\s*#{1,6}\s*voordelen\s*van\s*iso\s*9001/i;
@@ -615,9 +636,14 @@ export default function AuthorityPageContent({
             }
 
             const shouldInjectImage =
-              shouldInjectSectionImage || shouldInjectBenefitsSectionImage || shouldInjectTransitionTimelineImage;
+              shouldInjectSectionImage ||
+              shouldInjectImplementationDurationImage ||
+              shouldInjectBenefitsSectionImage ||
+              shouldInjectTransitionTimelineImage;
             const imageBlockBefore = shouldInjectSectionImage
               ? contentBeforeStructureImage
+              : shouldInjectImplementationDurationImage
+              ? contentBeforeImplementationDurationImage
               : shouldInjectBenefitsSectionImage
               ? contentBeforeBenefitsImage
               : shouldInjectTransitionTimelineImage
@@ -625,6 +651,8 @@ export default function AuthorityPageContent({
               : normalizedTextBlockContent;
             const imageBlockAfter = shouldInjectSectionImage
               ? contentFromStructureImage
+              : shouldInjectImplementationDurationImage
+              ? contentFromImplementationDurationImage
               : shouldInjectBenefitsSectionImage
               ? contentFromBenefitsImage
               : shouldInjectTransitionTimelineImage
@@ -633,14 +661,18 @@ export default function AuthorityPageContent({
             const sectionImageSrc =
               shouldInjectSectionImage && sectionImage?.src
                 ? sectionImage.src
-                : shouldInjectBenefitsSectionImage
-                ? benefitsSectionImage?.src || ''
-                : shouldInjectTransitionTimelineImage
-                ? transitionTimelineImage?.src || ''
-                : '';
+              : shouldInjectImplementationDurationImage
+              ? implementationDurationImage?.src || ''
+              : shouldInjectBenefitsSectionImage
+              ? benefitsSectionImage?.src || ''
+              : shouldInjectTransitionTimelineImage
+              ? transitionTimelineImage?.src || ''
+              : '';
             const sectionImageAlt =
               shouldInjectSectionImage
                 ? sectionImage?.alt || 'ISO 9001 structuur afbeelding'
+                : shouldInjectImplementationDurationImage
+                ? implementationDurationImage?.alt || 'ISO 9001 doorlooptijd afbeelding'
                 : shouldInjectBenefitsSectionImage
                 ? benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting'
                 : shouldInjectTransitionTimelineImage

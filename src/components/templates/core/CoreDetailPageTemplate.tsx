@@ -26,6 +26,10 @@ type CoreDetailPageTemplateProps = {
     src: string;
     alt?: string;
   };
+  implementationDurationImage?: {
+    src: string;
+    alt?: string;
+  };
   transitionTimelineImage?: {
     src: string;
     alt?: string;
@@ -708,6 +712,7 @@ export default async function CoreDetailPageTemplate({
   heroImage,
   sectionImage,
   benefitsSectionImage,
+  implementationDurationImage,
   transitionTimelineImage,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
@@ -776,6 +781,7 @@ export default async function CoreDetailPageTemplate({
         heroImage={heroImage}
         sectionImage={sectionImage}
         benefitsSectionImage={benefitsSectionImage}
+        implementationDurationImage={implementationDurationImage}
         transitionTimelineImage={transitionTimelineImage}
         breadcrumbs={breadcrumbs}
         showBreadcrumbs={false}

@@ -7,7 +7,7 @@ import StickyLeadCapture from '@/components/marketing/StickyLeadCapture';
 const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_HERO_IMAGE = '/hero-iso9001-pagina.jpg';
 const ISO9001_SECTION_IMAGE = '/iso9001-clausules-4-10.png';
-const ISO9001_BENEFITS_IMAGE = '/3ad93985-5196-42e0-be1d-d92ec4ca2e7e.jpg';
+const ISO9001_IMPLEMENTATION_DURATION_IMAGE = '/dea107c7-1d12-41a0-9349-2e1c8936acc2.jpg';
 const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
 const DEFAULT_DESCRIPTION =
   'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.';
@@ -39,9 +39,9 @@ export default async function Iso9001Page() {
           src: ISO9001_SECTION_IMAGE,
           alt: 'Clausules 4-10 uit ISO 9001'
         }}
-        benefitsSectionImage={{
-          src: ISO9001_BENEFITS_IMAGE,
-          alt: 'ISO 9001 voordelen visuele samenvatting'
+        implementationDurationImage={{
+          src: ISO9001_IMPLEMENTATION_DURATION_IMAGE,
+          alt: 'Hoe lang duurt ISO 9001 implementatie'
         }}
       />
       <StickyLeadCapture />
