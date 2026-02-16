@@ -472,13 +472,14 @@ export default function StickyLeadCapture() {
       {shouldRenderSidePanel ? (
         <aside
           id="sticky-lead-side-panel"
-          className="fixed right-8 top-1/2 z-[100] w-60 -translate-y-1/2 transform rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+          className="fixed right-8 top-1/2 z-[100] w-64 -translate-y-1/2 transform overflow-hidden rounded-2xl border border-[#d7e4f2] bg-[linear-gradient(160deg,#ffffff_0%,#f7fbff_58%,#eef8f3_100%)] p-6 shadow-[0_18px_40px_rgba(9,30,66,0.16)] backdrop-blur-sm"
           aria-label="Snelle kennismaking"
         >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#13a170] to-[#FF8B00]"></div>
           <button
             type="button"
             onClick={closeSidePanel}
-            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-[#666] transition hover:bg-slate-100 hover:text-[#444]"
+            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-[#666] transition hover:bg-white/80 hover:text-[#444]"
             aria-label="Sluit"
           >
             ×
@@ -487,12 +488,12 @@ export default function StickyLeadCapture() {
           <h2 className="mb-2 mt-2 text-xl font-semibold leading-tight text-[#091E42]">
             Vrijblijvend kennismaken?
           </h2>
-          <p className="mb-5 text-sm text-slate-700">Plan een gesprek of bel:</p>
+          <p className="mb-5 text-sm leading-relaxed text-slate-700">Plan een gesprek of bel:</p>
 
           <a
             href={PHONE_LINK}
             onClick={handleSidePanelPhoneClick}
-            className="mb-4 inline-block text-base font-semibold text-[#0066cc] underline-offset-2 hover:underline"
+            className="mb-4 inline-block text-base font-semibold text-[#0066cc] underline decoration-[#0066cc]/50 underline-offset-4 hover:text-[#0051a3]"
           >
             {PHONE_NUMBER}
           </a>
@@ -500,7 +501,7 @@ export default function StickyLeadCapture() {
           <a
             href={SIDE_PANEL_CTA}
             onClick={handleSidePanelCtaClick}
-            className="primary-button block w-full text-center"
+            className="primary-button block w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_26px_rgba(255,139,0,0.38)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
           >
             Plan gesprek
           </a>
@@ -509,7 +510,7 @@ export default function StickyLeadCapture() {
 
       {shouldRenderBottomBar ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-[100] bg-white p-4 shadow-[0_-2px_8px_rgba(0,0,0,0.15)]"
+          className="fixed inset-x-0 bottom-0 z-[100] border-t border-slate-200/80 bg-white/95 p-4 shadow-[0_-6px_22px_rgba(9,30,66,0.16)] backdrop-blur-sm"
           style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
           aria-label="Snelle call-to-action"
         >
@@ -522,14 +523,14 @@ export default function StickyLeadCapture() {
               <a
                 href={BOTTOM_BAR_CTA}
                 onClick={handleBottomPlanClick}
-                className="primary-button w-full text-center"
+                className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_8px_22px_rgba(255,139,0,0.33)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
               >
                 Plan gesprek
               </a>
               <a
                 href={PHONE_LINK}
                 onClick={handleBottomCallClick}
-                className="inline-flex h-11 items-center justify-center rounded-lg border border-[#091E42] bg-white px-4 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50"
+                className="inline-flex h-11 items-center justify-center rounded-lg border border-[#091E42]/80 bg-white px-4 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50"
               >
                 Bel direct
               </a>
@@ -540,7 +541,7 @@ export default function StickyLeadCapture() {
 
       {isExitModalOpen ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-[2px]"
           role="presentation"
           onClick={() => closeExitIntentModal('overlay_click')}
         >
@@ -550,9 +551,10 @@ export default function StickyLeadCapture() {
             aria-modal="true"
             aria-labelledby="sticky-exit-intent-title"
             aria-describedby="sticky-exit-intent-description"
-            className="w-[90%] max-w-[500px] rounded-2xl bg-white p-6 shadow-[0_8px_24px_rgba(0,0,0,0.2)]"
+            className="relative w-[90%] max-w-[500px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
             onClick={(event) => event.stopPropagation()}
           >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#13a170] to-[#FF8B00]"></div>
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <h2 id="sticky-exit-intent-title" className="text-2xl font-bold text-[#091E42]">
@@ -598,7 +600,7 @@ export default function StickyLeadCapture() {
                     required
                     value={exitFormData.name}
                     onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42]"
+                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
                     disabled={isSubmittingExitForm}
                     autoComplete="name"
                   />
@@ -615,7 +617,7 @@ export default function StickyLeadCapture() {
                     required
                     value={exitFormData.email}
                     onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42]"
+                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
                     disabled={isSubmittingExitForm}
                     autoComplete="email"
                   />
@@ -632,7 +634,7 @@ export default function StickyLeadCapture() {
                     required
                     value={exitFormData.phone}
                     onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42]"
+                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
                     disabled={isSubmittingExitForm}
                     autoComplete="tel"
                   />
@@ -647,7 +649,7 @@ export default function StickyLeadCapture() {
                     name="companySize"
                     value={exitFormData.companySize}
                     onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42]"
+                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
                     disabled={isSubmittingExitForm}
                   >
                     {companySizeOptions.map((option) => (
@@ -661,7 +663,7 @@ export default function StickyLeadCapture() {
                 <button
                   type="submit"
                   disabled={isSubmittingExitForm}
-                  className="w-full rounded-lg bg-[#FF8B00] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#FF9B20] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_10px_24px_rgba(255,139,0,0.32)] transition hover:from-[#FF9B20] hover:to-[#FF7A00] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isSubmittingExitForm ? 'Bezig met verzenden...' : 'Ja, plan gesprek'}
                 </button>

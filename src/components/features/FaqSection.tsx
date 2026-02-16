@@ -6,6 +6,7 @@ import { FaqItem } from '@/lib/types';
 interface FaqSectionProps {
   items?: FaqItem[];
   className?: string;
+  variant?: 'default' | 'iso9001';
 }
 
 /**
@@ -56,8 +57,9 @@ function markdownBoldToHtml(text: string): string {
  * - Voice assistant queries
  * - AI-powered search engines
  */
-export function FaqSection({ items, className = '' }: FaqSectionProps) {
+export function FaqSection({ items, className = '', variant = 'default' }: FaqSectionProps) {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const isIso9001 = variant === 'iso9001';
 
   // Don't render if no items provided
   if (!items || items.length === 0) {
@@ -81,7 +83,11 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
     >
       <h2
         id="faq-heading"
-        className="text-3xl font-bold text-gray-900 mb-6"
+        className={
+          isIso9001
+            ? 'mb-7 text-3xl font-bold text-[#091E42] md:mb-8'
+            : 'text-3xl font-bold text-gray-900 mb-6'
+        }
       >
         Veelgestelde Vragen
       </h2>
@@ -91,11 +97,43 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
           const isOpen = openItems.has(index);
           const itemId = `faq-item-${index}`;
           const answerId = `faq-answer-${index}`;
+          const cardClass = isIso9001
+            ? `overflow-hidden rounded-xl border transition-all duration-300 ${
+                isOpen
+                  ? 'border-[#00875A]/30 bg-[#f6fffb] shadow-[0_14px_30px_rgba(9,30,66,0.08)]'
+                  : 'border-slate-200 bg-white hover:shadow-[0_10px_24px_rgba(9,30,66,0.06)]'
+              }`
+            : 'border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md';
+          const questionButtonClass = isIso9001
+            ? `flex w-full items-center justify-between px-5 py-4 text-left font-medium transition-colors duration-200 md:px-6 ${
+                isOpen ? 'bg-[#f2fff8] text-[#091E42]' : 'text-gray-900 hover:bg-gray-50'
+              } focus:outline-none focus:ring-2 focus:ring-[#00875A] focus:ring-inset`
+            : 'w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset';
+          const answerWrapperClass = isIso9001
+            ? `overflow-hidden transition-all duration-300 ease-in-out ${
+                isOpen ? 'max-h-[1000px]' : 'max-h-0'
+              }`
+            : `overflow-hidden transition-all duration-200 ease-in-out ${
+                isOpen ? 'max-h-96' : 'max-h-0'
+              }`;
+          const answerInnerClass = isIso9001
+            ? 'border-t border-[#d9ece4] bg-white px-5 py-4 md:px-6'
+            : 'px-6 py-4 bg-gray-50 border-t border-gray-200';
+          const answerTextClass = isIso9001
+            ? 'prose prose-sm max-w-none leading-relaxed text-gray-700'
+            : 'text-gray-700 leading-relaxed prose prose-sm max-w-none';
+          const iconClass = isIso9001
+            ? `h-5 w-5 flex-shrink-0 text-[#00875A] transition-transform duration-300 ${
+                isOpen ? 'rotate-180' : ''
+              }`
+            : `w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+                isOpen ? 'transform rotate-180' : ''
+              }`;
 
           return (
             <div
               key={item.id || index}
-              className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
+              className={cardClass}
             >
               {/* Question Button */}
               <button
@@ -103,15 +141,13 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                 onClick={() => toggleItem(index)}
                 aria-expanded={isOpen}
                 aria-controls={answerId}
-                className="w-full px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50 flex justify-between items-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                className={questionButtonClass}
               >
                 <span className="pr-8">
                   {parseMarkdownBold(item.question)}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
-                    isOpen ? 'transform rotate-180' : ''
-                  }`}
+                  className={iconClass}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -131,13 +167,11 @@ export function FaqSection({ items, className = '' }: FaqSectionProps) {
                 id={answerId}
                 role="region"
                 aria-labelledby={itemId}
-                className={`overflow-hidden transition-all duration-200 ease-in-out ${
-                  isOpen ? 'max-h-96' : 'max-h-0'
-                }`}
+                className={answerWrapperClass}
               >
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <div className={answerInnerClass}>
                   <div
-                    className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                    className={answerTextClass}
                     dangerouslySetInnerHTML={{ __html: markdownBoldToHtml(item.answer) }}
                   />
                 </div>
