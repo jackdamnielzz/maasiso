@@ -14,6 +14,18 @@ type CoreDetailPageTemplateProps = {
     href: string;
   };
   dataTopic?: string;
+  heroImage?: {
+    src: string;
+    alt?: string;
+  };
+  sectionImage?: {
+    src: string;
+    alt?: string;
+  };
+  benefitsSectionImage?: {
+    src: string;
+    alt?: string;
+  };
 };
 
 type Layout = NonNullable<Page['layout']>;
@@ -684,6 +696,9 @@ export default async function CoreDetailPageTemplate({
   strapiSlug,
   hub,
   dataTopic,
+  heroImage,
+  sectionImage,
+  benefitsSectionImage,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
   const normalizedLayout = pageData?.layout
@@ -748,6 +763,9 @@ export default async function CoreDetailPageTemplate({
       <AuthorityPageContent
         layout={layout}
         heroFallbackImage={pageData.featuredImage}
+        heroImage={heroImage}
+        sectionImage={sectionImage}
+        benefitsSectionImage={benefitsSectionImage}
         breadcrumbs={breadcrumbs}
         showBreadcrumbs={false}
         dataTopic={dataTopic}

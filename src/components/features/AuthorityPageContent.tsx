@@ -16,6 +16,18 @@ import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 type AuthorityPageContentProps = {
   layout?: NonNullable<Page['layout']>;
   heroFallbackImage?: Page['featuredImage'];
+  heroImage?: {
+    src: string;
+    alt?: string;
+  };
+  sectionImage?: {
+    src: string;
+    alt?: string;
+  };
+  benefitsSectionImage?: {
+    src: string;
+    alt?: string;
+  };
   testId?: string;
   featureGridTitleFallback?: string;
   featureGridTestId?: string;
@@ -279,6 +291,9 @@ const groupFactBlocks = (layout: NonNullable<Page['layout']> = []) => {
 export default function AuthorityPageContent({
   layout = [],
   heroFallbackImage,
+  heroImage,
+  sectionImage,
+  benefitsSectionImage,
   testId,
   featureGridTitleFallback = 'De stappen',
   featureGridTestId,
@@ -319,11 +334,13 @@ export default function AuthorityPageContent({
               block?.backgroundImage?.url
                 ? block.backgroundImage
                 : heroFallbackImage;
-            const heroImageSrc =
-              resolvedHeroImage?.url
+            const heroImageSrc = heroImage?.src
+              ? heroImage.src
+              : resolvedHeroImage?.url
                 ? getImageUrl(resolvedHeroImage, 'large')
                 : null;
             const heroImageAlt =
+              heroImage?.alt ||
               resolvedHeroImage?.alternativeText ||
               resolvedHeroImage?.name ||
               block?.title ||
@@ -439,6 +456,102 @@ export default function AuthorityPageContent({
             const normalizedTextBlockContent = normalizeExpertQuoteMarkdown(
               String(block.content || '')
             );
+            const sectionImageAnchorRegex =
+              /De norm is gebaseerd op\s+7\s+kwaliteitsmanagement\s*principes/i;
+            const sectionHeadingRegex =
+              /(^|\n)\s*#{1,6}\s*.*\b(?:structuur|normstructuur)\b.*\bISO\s*9001\b/i;
+            const sectionAnchorMatch = Boolean(sectionImage?.src) && sectionImageAnchorRegex.test(normalizedTextBlockContent)
+              ? normalizedTextBlockContent.match(sectionImageAnchorRegex)
+              : null;
+            let shouldInjectSectionImage = false;
+            let contentBeforeStructureImage = normalizedTextBlockContent;
+            let contentFromStructureImage = normalizedTextBlockContent;
+            if (sectionAnchorMatch?.index !== undefined && sectionImage?.src) {
+              const searchStart = sectionAnchorMatch.index + sectionAnchorMatch[0].length;
+              const headingMatch = normalizedTextBlockContent.slice(searchStart).match(sectionHeadingRegex);
+              const sentenceEnd = normalizedTextBlockContent.indexOf('.', searchStart);
+              const insertionCandidate =
+                headingMatch?.index !== undefined
+                  ? searchStart + headingMatch.index + (headingMatch[1] ? headingMatch[1].length : 0)
+                  : sentenceEnd > -1
+                    ? sentenceEnd + 1
+                    : searchStart;
+              if (insertionCandidate >= 0 && insertionCandidate <= normalizedTextBlockContent.length) {
+                shouldInjectSectionImage = true;
+                contentBeforeStructureImage = normalizedTextBlockContent.slice(0, insertionCandidate).trimEnd();
+                contentFromStructureImage = normalizedTextBlockContent.slice(insertionCandidate).trimStart();
+              }
+            }
+
+            const benefitsSectionImageAnchorRegex = /hoger klantvertrouwen/i;
+            const isBenefitsSectionBlock =
+              benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent) ||
+              /##\s*voordelen/i.test(normalizedTextBlockContent) ||
+              /voordelen.*iso\s*9001/i.test(normalizedTextBlockContent);
+
+            let shouldInjectBenefitsSectionImage = false;
+            let contentBeforeBenefitsImage = normalizedTextBlockContent;
+            let contentFromBenefitsImage = normalizedTextBlockContent;
+            if (isBenefitsSectionBlock && Boolean(benefitsSectionImage?.src)) {
+              const lines = normalizedTextBlockContent.split('\n');
+              const markerIndex = lines.findIndex((line) => benefitsSectionImageAnchorRegex.test(line));
+              const startIndex = markerIndex === -1 ? 0 : markerIndex + 1;
+              let bulletCount = 0;
+              let inList = false;
+              let insertionLine = lines.length;
+
+              for (let lineIndex = startIndex; lineIndex < lines.length; lineIndex += 1) {
+                const line = lines[lineIndex];
+                const isListItem = /^\s*[-*]\s+/.test(line);
+
+                if (isListItem) {
+                  inList = true;
+                  bulletCount += 1;
+                  if (bulletCount >= 4) {
+                    insertionLine = lineIndex + 1;
+                    break;
+                  }
+                  continue;
+                }
+
+                if (inList && line.trim() === '') {
+                  continue;
+                }
+
+                if (inList && bulletCount >= 3) {
+                  insertionLine = lineIndex;
+                  break;
+                }
+              }
+
+              const hasEnoughBenefitBullets = bulletCount >= 4 || (bulletCount >= 3 && insertionLine < lines.length);
+              if (inList && hasEnoughBenefitBullets) {
+                shouldInjectBenefitsSectionImage = true;
+                contentBeforeBenefitsImage = lines.slice(0, insertionLine).join('\n').trimEnd();
+                contentFromBenefitsImage = lines.slice(insertionLine).join('\n').trimStart();
+              } else if (isBenefitsSectionBlock && lines.length > 0) {
+                shouldInjectBenefitsSectionImage = true;
+                contentBeforeBenefitsImage = normalizedTextBlockContent.trimEnd();
+                contentFromBenefitsImage = '';
+              }
+            }
+
+            const shouldInjectImage = shouldInjectSectionImage || shouldInjectBenefitsSectionImage;
+            const imageBlockBefore = shouldInjectSectionImage
+              ? contentBeforeStructureImage
+              : contentBeforeBenefitsImage;
+            const imageBlockAfter = shouldInjectSectionImage
+              ? contentFromStructureImage
+              : contentFromBenefitsImage;
+            const sectionImageSrc =
+              shouldInjectSectionImage && sectionImage?.src
+                ? sectionImage.src
+                : benefitsSectionImage?.src || '';
+            const sectionImageAlt =
+              shouldInjectSectionImage
+                ? sectionImage?.alt || 'ISO 9001 structuur afbeelding'
+                : benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting';
+
             const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
             return (
               <section key={blockKey} id={textBlockId} className="py-16 md:py-28">
@@ -451,83 +564,247 @@ export default function AuthorityPageContent({
                           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M2 17L12 22L22 17" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           <path d="M2 12L12 17L22 12" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                          </svg>
+                        </div>
                       <div className={`space-y-10 relative z-10 text-${block.alignment || 'left'}`}>
-                        <ReactMarkdown
-                          className="prose prose-headings:text-[#091E42] prose-headings:font-bold prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4 prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-xl prose-h3:mt-4 prose-h3:mb-2 prose-a:text-[#00875A] prose-a:no-underline hover:prose-a:underline prose-strong:text-[#091E42] prose-strong:font-semibold prose-em:text-gray-700 prose-p:leading-relaxed prose-p:text-base prose-p:my-6 max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-blockquote:border-l-4 prose-blockquote:border-[#00875A] prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md"
-                          remarkPlugins={[remarkGfm, remarkBreaks]}
-                          components={{
-                            table: ({ node, ...props }) => (
-                              <div className="w-full overflow-x-auto">
-                                <table className="w-full min-w-[640px] text-sm" {...props} />
-                              </div>
-                            ),
-                            img: ({ node, src, alt, ...props }) => {
-                              const imageSource =
-                                typeof src === 'string' ? getImageUrl(src, 'large') : '/placeholder-blog.jpg';
-                              return (
-                                <img
-                                  src={imageSource}
-                                  alt={alt || ''}
-                                  className="h-auto w-full rounded-xl border border-slate-200/80 shadow-sm"
-                                  loading="lazy"
-                                  {...props}
+                        {shouldInjectImage ? (
+                          <>
+                            <ReactMarkdown
+                              className="prose prose-headings:text-[#091E42] prose-headings:font-bold prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4 prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-xl prose-h3:mt-4 prose-h3:mb-2 prose-a:text-[#00875A] prose-a:no-underline hover:prose-a:underline prose-strong:text-[#091E42] prose-strong:font-semibold prose-em:text-gray-700 prose-p:leading-relaxed prose-p:text-base prose-p:my-6 max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-blockquote:border-l-4 prose-blockquote:border-[#00875A] prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md"
+                              remarkPlugins={[remarkGfm, remarkBreaks]}
+                              components={{
+                                table: ({ node, ...props }) => (
+                                  <div className="w-full overflow-x-auto">
+                                    <table className="w-full min-w-[640px] text-sm" {...props} />
+                                  </div>
+                                ),
+                                img: ({ node, src, alt, ...props }) => {
+                                  const imageSource =
+                                    typeof src === 'string' ? getImageUrl(src, 'large') : '/placeholder-blog.jpg';
+                                  return (
+                                    <img
+                                      src={imageSource}
+                                      alt={alt || ''}
+                                      className="h-auto w-full rounded-xl border border-slate-200/80 shadow-sm"
+                                      loading="lazy"
+                                      {...props}
+                                    />
+                                  );
+                                },
+                                blockquote: ({ node, children, ...props }) => {
+                                  const blockChildren = React.Children.toArray(children);
+                                  let citeText = '';
+                                  let shouldRenderCite = false;
+
+                                  if (blockChildren.length > 0) {
+                                    const lastChild = blockChildren[blockChildren.length - 1];
+                                    const lastChildText = toTextContent(lastChild).trim();
+                                    const citeMatch = lastChildText.match(/^[—-]\s*(.+)$/);
+
+                                    if (citeMatch?.[1]) {
+                                      citeText = citeMatch[1].trim();
+                                      blockChildren.pop();
+                                      shouldRenderCite = true;
+                                    }
+                                  }
+
+                                  if (!citeText) {
+                                    const aggregatedText = blockChildren.map((child) => toTextContent(child)).join('\n');
+                                    const attributionLine = aggregatedText
+                                      .split('\n')
+                                      .map((line) => line.trim())
+                                      .filter(Boolean)
+                                      .reverse()
+                                      .find((line) => /^[-—]\s+/.test(line));
+
+                                    if (attributionLine) {
+                                      citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
+                                      // The attribution line is already visible in markdown content.
+                                      // Avoid rendering a second, duplicate citation.
+                                      shouldRenderCite = false;
+                                    }
+                                  }
+
+                                  return (
+                                    <blockquote
+                                      {...props}
+                                      className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
+                                    >
+                                      {blockChildren}
+                                      {shouldRenderCite && citeText ? (
+                                        <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
+                                          — {citeText}
+                                        </cite>
+                                      ) : null}
+                                    </blockquote>
+                                  );
+                                },
+                              }}
+                            >
+                              {imageBlockBefore}
+                            </ReactMarkdown>
+                            <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-sm">
+                              <div className="relative aspect-[16/9] w-full">
+                                <Image
+                                  src={sectionImageSrc || ''}
+                                  alt={sectionImageAlt}
+                                  fill
+                                  sizes="(max-width: 1024px) 100vw, 1100px"
+                                  className="object-cover rounded-xl"
                                 />
-                              );
-                            },
-                            blockquote: ({ node, children, ...props }) => {
-                              const blockChildren = React.Children.toArray(children);
-                              let citeText = '';
-                              let shouldRenderCite = false;
+                              </div>
+                            </div>
+                            <ReactMarkdown
+                              className="prose prose-headings:text-[#091E42] prose-headings:font-bold prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4 prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-xl prose-h3:mt-4 prose-h3:mb-2 prose-a:text-[#00875A] prose-a:no-underline hover:prose-a:underline prose-strong:text-[#091E42] prose-strong:font-semibold prose-em:text-gray-700 prose-p:leading-relaxed prose-p:text-base prose-p:my-6 max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-blockquote:border-l-4 prose-blockquote:border-[#00875A] prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md"
+                              remarkPlugins={[remarkGfm, remarkBreaks]}
+                              components={{
+                                table: ({ node, ...props }) => (
+                                  <div className="w-full overflow-x-auto">
+                                    <table className="w-full min-w-[640px] text-sm" {...props} />
+                                  </div>
+                                ),
+                                img: ({ node, src, alt, ...props }) => {
+                                  const imageSource =
+                                    typeof src === 'string' ? getImageUrl(src, 'large') : '/placeholder-blog.jpg';
+                                  return (
+                                    <img
+                                      src={imageSource}
+                                      alt={alt || ''}
+                                      className="h-auto w-full rounded-xl border border-slate-200/80 shadow-sm"
+                                      loading="lazy"
+                                      {...props}
+                                    />
+                                  );
+                                },
+                                blockquote: ({ node, children, ...props }) => {
+                                  const blockChildren = React.Children.toArray(children);
+                                  let citeText = '';
+                                  let shouldRenderCite = false;
 
-                              if (blockChildren.length > 0) {
-                                const lastChild = blockChildren[blockChildren.length - 1];
-                                const lastChildText = toTextContent(lastChild).trim();
-                                const citeMatch = lastChildText.match(/^[—-]\s*(.+)$/);
+                                  if (blockChildren.length > 0) {
+                                    const lastChild = blockChildren[blockChildren.length - 1];
+                                    const lastChildText = toTextContent(lastChild).trim();
+                                    const citeMatch = lastChildText.match(/^[—-]\s*(.+)$/);
 
-                                if (citeMatch?.[1]) {
-                                  citeText = citeMatch[1].trim();
-                                  blockChildren.pop();
-                                  shouldRenderCite = true;
+                                    if (citeMatch?.[1]) {
+                                      citeText = citeMatch[1].trim();
+                                      blockChildren.pop();
+                                      shouldRenderCite = true;
+                                    }
+                                  }
+
+                                  if (!citeText) {
+                                    const aggregatedText = blockChildren.map((child) => toTextContent(child)).join('\n');
+                                    const attributionLine = aggregatedText
+                                      .split('\n')
+                                      .map((line) => line.trim())
+                                      .filter(Boolean)
+                                      .reverse()
+                                      .find((line) => /^[-—]\s+/.test(line));
+
+                                    if (attributionLine) {
+                                      citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
+                                      // The attribution line is already visible in markdown content.
+                                      // Avoid rendering a second, duplicate citation.
+                                      shouldRenderCite = false;
+                                    }
+                                  }
+
+                                  return (
+                                    <blockquote
+                                      {...props}
+                                      className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
+                                    >
+                                      {blockChildren}
+                                      {shouldRenderCite && citeText ? (
+                                        <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
+                                          — {citeText}
+                                        </cite>
+                                      ) : null}
+                                    </blockquote>
+                                  );
+                                  },
+                              }}
+                            >
+                              {imageBlockAfter}
+                            </ReactMarkdown>
+                          </>
+                        ) : (
+                          <ReactMarkdown
+                            className="prose prose-headings:text-[#091E42] prose-headings:font-bold prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4 prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-xl prose-h3:mt-4 prose-h3:mb-2 prose-a:text-[#00875A] prose-a:no-underline hover:prose-a:underline prose-strong:text-[#091E42] prose-strong:font-semibold prose-em:text-gray-700 prose-p:leading-relaxed prose-p:text-base prose-p:my-6 max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-blockquote:border-l-4 prose-blockquote:border-[#00875A] prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md"
+                            remarkPlugins={[remarkGfm, remarkBreaks]}
+                            components={{
+                              table: ({ node, ...props }) => (
+                                <div className="w-full overflow-x-auto">
+                                  <table className="w-full min-w-[640px] text-sm" {...props} />
+                                </div>
+                              ),
+                              img: ({ node, src, alt, ...props }) => {
+                                const imageSource =
+                                  typeof src === 'string' ? getImageUrl(src, 'large') : '/placeholder-blog.jpg';
+                                return (
+                                  <img
+                                    src={imageSource}
+                                    alt={alt || ''}
+                                    className="h-auto w-full rounded-xl border border-slate-200/80 shadow-sm"
+                                    loading="lazy"
+                                    {...props}
+                                  />
+                                );
+                              },
+                              blockquote: ({ node, children, ...props }) => {
+                                const blockChildren = React.Children.toArray(children);
+                                let citeText = '';
+                                let shouldRenderCite = false;
+
+                                if (blockChildren.length > 0) {
+                                  const lastChild = blockChildren[blockChildren.length - 1];
+                                  const lastChildText = toTextContent(lastChild).trim();
+                                  const citeMatch = lastChildText.match(/^[—-]\s*(.+)$/);
+
+                                  if (citeMatch?.[1]) {
+                                    citeText = citeMatch[1].trim();
+                                    blockChildren.pop();
+                                    shouldRenderCite = true;
+                                  }
                                 }
-                              }
 
-                              if (!citeText) {
-                                const aggregatedText = blockChildren.map((child) => toTextContent(child)).join('\n');
-                                const attributionLine = aggregatedText
-                                  .split('\n')
-                                  .map((line) => line.trim())
-                                  .filter(Boolean)
-                                  .reverse()
-                                  .find((line) => /^[-—]\s+/.test(line));
+                                if (!citeText) {
+                                  const aggregatedText = blockChildren.map((child) => toTextContent(child)).join('\n');
+                                  const attributionLine = aggregatedText
+                                    .split('\n')
+                                    .map((line) => line.trim())
+                                    .filter(Boolean)
+                                    .reverse()
+                                    .find((line) => /^[-—]\s+/.test(line));
 
-                                if (attributionLine) {
-                                  citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
-                                  // The attribution line is already visible in markdown content.
-                                  // Avoid rendering a second, duplicate citation.
-                                  shouldRenderCite = false;
+                                  if (attributionLine) {
+                                    citeText = attributionLine.replace(/^[-—]\s+/, '').trim();
+                                    // The attribution line is already visible in markdown content.
+                                    // Avoid rendering a second, duplicate citation.
+                                    shouldRenderCite = false;
+                                  }
                                 }
-                              }
 
-                              return (
-                                <blockquote
-                                  {...props}
-                                  className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
-                                >
-                                  {blockChildren}
-                                  {shouldRenderCite && citeText ? (
-                                    <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
-                                      — {citeText}
-                                    </cite>
-                                  ) : null}
-                                </blockquote>
-                              );
-                            },
-                          }}
-                        >
-                          {normalizedTextBlockContent}
-                        </ReactMarkdown>
+                                return (
+                                  <blockquote
+                                    {...props}
+                                    className="my-8 border-l-4 border-[#00875A] pl-5 italic text-slate-700"
+                                  >
+                                    {blockChildren}
+                                    {shouldRenderCite && citeText ? (
+                                      <cite className="mt-3 block text-sm not-italic font-medium text-slate-600">
+                                        — {citeText}
+                                      </cite>
+                                    ) : null}
+                                  </blockquote>
+                                );
+                              },
+                            }}
+                          >
+                            {normalizedTextBlockContent}
+                          </ReactMarkdown>
+                        )}
                       </div>
                     </div>
                   </div>
