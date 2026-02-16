@@ -458,15 +458,49 @@ export default function AuthorityPageContent({
             );
             const sectionImageAnchorRegex =
               /De norm is gebaseerd op\s+7\s+kwaliteitsmanagement\s*principes/i;
+            const sectionClausesHeadingRegex =
+              /(^|\n)\s*#{0,6}\s*.*\bclausules\s*4\s*[–-]\s*10\b/i;
+            const sectionClausesMarkerRegex = /\bclausules\s*4\s*[–-]\s*10\b/i;
             const sectionHeadingRegex =
               /(^|\n)\s*#{1,6}\s*.*\b(?:structuur|normstructuur)\b.*\bISO\s*9001\b/i;
             const sectionAnchorMatch = Boolean(sectionImage?.src) && sectionImageAnchorRegex.test(normalizedTextBlockContent)
               ? normalizedTextBlockContent.match(sectionImageAnchorRegex)
               : null;
+            const clausesAnchorMatch = Boolean(sectionImage?.src) && sectionClausesHeadingRegex.test(normalizedTextBlockContent)
+              ? normalizedTextBlockContent.match(sectionClausesHeadingRegex)
+              : null;
             let shouldInjectSectionImage = false;
             let contentBeforeStructureImage = normalizedTextBlockContent;
             let contentFromStructureImage = normalizedTextBlockContent;
-            if (sectionAnchorMatch?.index !== undefined && sectionImage?.src) {
+
+            if (clausesAnchorMatch?.index !== undefined && sectionImage?.src) {
+              const contentLines = normalizedTextBlockContent.split('\n');
+              const clausesMarkerIndex = contentLines.findIndex((line) => sectionClausesMarkerRegex.test(line));
+              const startIndex = clausesMarkerIndex === -1 ? 0 : clausesMarkerIndex + 1;
+              let insertionLine = contentLines.length;
+              let inList = false;
+              for (let lineIndex = startIndex; lineIndex < contentLines.length; lineIndex += 1) {
+                const line = contentLines[lineIndex];
+                const isListItem = /^\s*[-*]\s+/.test(line);
+                if (isListItem) {
+                  inList = true;
+                  continue;
+                }
+                if (inList && line.trim() === '') {
+                  continue;
+                }
+                if (inList) {
+                  insertionLine = lineIndex;
+                  break;
+                }
+              }
+              if (inList) {
+                shouldInjectSectionImage = true;
+                contentBeforeStructureImage = contentLines.slice(0, insertionLine).join('\n').trimEnd();
+                contentFromStructureImage = contentLines.slice(insertionLine).join('\n').trimStart();
+              }
+            }
+            if (!shouldInjectSectionImage && sectionAnchorMatch?.index !== undefined && sectionImage?.src) {
               const searchStart = sectionAnchorMatch.index + sectionAnchorMatch[0].length;
               const headingMatch = normalizedTextBlockContent.slice(searchStart).match(sectionHeadingRegex);
               const sentenceEnd = normalizedTextBlockContent.indexOf('.', searchStart);

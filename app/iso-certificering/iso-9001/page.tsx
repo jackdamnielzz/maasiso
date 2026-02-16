@@ -6,7 +6,7 @@ import StickyLeadCapture from '@/components/marketing/StickyLeadCapture';
 
 const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_HERO_IMAGE = '/hero-iso9001-pagina.jpg';
-const ISO9001_SECTION_IMAGE = '/iso9001-structuur-plaatsen.png';
+const ISO9001_SECTION_IMAGE = '/iso9001-clausules-4-10.png';
 const ISO9001_BENEFITS_IMAGE = '/iso9001-voordelen-samenvatting.jpg';
 const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
 const DEFAULT_DESCRIPTION =
@@ -37,7 +37,7 @@ export default async function Iso9001Page() {
         heroImage={{ src: ISO9001_HERO_IMAGE, alt: 'ISO 9001 certificering en kwaliteitsmanagement' }}
         sectionImage={{
           src: ISO9001_SECTION_IMAGE,
-          alt: 'Structuur van ISO 9001'
+          alt: 'Clausules 4-10 uit ISO 9001'
         }}
         benefitsSectionImage={{
           src: ISO9001_BENEFITS_IMAGE,
