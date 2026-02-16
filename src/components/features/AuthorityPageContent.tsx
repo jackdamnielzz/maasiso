@@ -580,6 +580,7 @@ export default function AuthorityPageContent({
               benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent) ||
               /##\s*voordelen/i.test(normalizedTextBlockContent) ||
               /voordelen.*iso\s*9001/i.test(normalizedTextBlockContent);
+            const benefitsListItemRegex = /^\s*(?:[-*•]|\d+\.)\s+/;
 
             let shouldInjectBenefitsSectionImage = false;
             let contentBeforeBenefitsImage = normalizedTextBlockContent;
@@ -594,7 +595,7 @@ export default function AuthorityPageContent({
 
               for (let lineIndex = startIndex; lineIndex < lines.length; lineIndex += 1) {
                 const line = lines[lineIndex];
-                const isListItem = /^\s*[-*]\s+/.test(line);
+                const isListItem = benefitsListItemRegex.test(line);
 
                 if (isListItem) {
                   inList = true;
@@ -609,14 +610,9 @@ export default function AuthorityPageContent({
                 if (inList && line.trim() === '') {
                   continue;
                 }
-
-                if (inList && bulletCount >= 3) {
-                  insertionLine = lineIndex;
-                  break;
-                }
               }
 
-              if (inList && bulletCount >= 3) {
+              if (inList && bulletCount >= 4) {
                 shouldInjectBenefitsSectionImage = true;
                 contentBeforeBenefitsImage = lines.slice(0, insertionLine).join('\n').trimEnd();
                 contentFromBenefitsImage = lines.slice(insertionLine).join('\n').trimStart();
