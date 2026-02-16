@@ -751,6 +751,7 @@ export default async function CoreDetailPageTemplate({
         breadcrumbs={breadcrumbs}
         showBreadcrumbs={false}
         dataTopic={dataTopic}
+        showIso9001LeadSnippet={strapiSlug === 'iso-9001'}
       />
     </>
   );

@@ -22,6 +22,7 @@ type AuthorityPageContentProps = {
   breadcrumbs?: BreadcrumbItem[];
   showBreadcrumbs?: boolean;
   dataTopic?: string;
+  showIso9001LeadSnippet?: boolean;
 };
 
 type LayoutBlock = NonNullable<Page['layout']>[number] & Record<string, any>;
@@ -283,7 +284,8 @@ export default function AuthorityPageContent({
   featureGridTestId,
   breadcrumbs,
   showBreadcrumbs = true,
-  dataTopic
+  dataTopic,
+  showIso9001LeadSnippet = false,
 }: AuthorityPageContentProps) {
   const { layoutWithoutCta, primaryCta } = collectCtaCandidates(layout);
   const layoutBlocks = groupFactBlocks(layoutWithoutCta);
@@ -367,6 +369,31 @@ export default function AuthorityPageContent({
               <section key={blockKey} className="pt-8 pb-4 md:pt-12 md:pb-8 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <KeyTakeaways items={block.items} className="max-w-5xl mx-auto" />
+                  {showIso9001LeadSnippet && (
+                    <div className="mt-8 max-w-5xl mx-auto rounded-lg border border-emerald-100 bg-emerald-50 p-6 text-center">
+                      <h3 className="text-lg font-bold text-[#091E42]">
+                        Wil je weten wat ISO 9001 voor jouw organisatie betekent?
+                      </h3>
+                      <p className="mt-3 text-gray-700">
+                        Plan een vrijblijvend kennismakingsgesprek. We bellen binnen 1 werkdag terug.
+                      </p>
+                      <p className="mt-4 text-[#091E42]">
+                        <a
+                          href="/contact?source=key_takeaways"
+                          className="font-semibold text-[#00875A] underline hover:text-[#006B47]"
+                        >
+                          Plan gesprek
+                        </a>
+                        {' '}→ Of bel direct:{' '}
+                        <a
+                          href="tel:+31623578344"
+                          className="font-semibold text-[#00875A] underline hover:text-[#006B47]"
+                        >
+                          +31 6 23 57 83 44
+                        </a>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </section>
             );
