@@ -484,7 +484,6 @@ export default function StickyLeadCapture() {
             ×
           </button>
 
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0066cc]">Lead capture</p>
           <h2 className="mb-2 mt-2 text-xl font-semibold leading-tight text-[#091E42]">
             Vrijblijvend kennismaken?
           </h2>
@@ -503,7 +502,7 @@ export default function StickyLeadCapture() {
             onClick={handleSidePanelCtaClick}
             className="primary-button block w-full text-center"
           >
-            Plan gesprek →
+            Plan gesprek
           </a>
         </aside>
       ) : null}
