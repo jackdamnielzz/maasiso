@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
+import { FactBlock } from '@/components/features/FactBlock';
+import { KeyTakeaways } from '@/components/features/KeyTakeaways';
 
 export const metadata: Metadata = {
   title: "ISO-certificering & informatiebeveiliging voor MKB | MaasISO",
@@ -342,6 +344,19 @@ const sectieNavigatie = [
   { href: "#faq", label: "FAQ" },
 ] as const;
 
+const keyTakeawayItems = keyTakeaways.map((item, index) => ({
+  id: index,
+  title: item.onderwerp,
+  value: item.waarde,
+}));
+
+const kernfeitItems = kernfeiten.map((item) => ({
+  id: item.kernfeit,
+  label: item.kernfeit,
+  value: item.waarde,
+  source: item.bron,
+}));
+
 export default function Home() {
   return (
     <div className="relative isolate overflow-hidden bg-[#f3f6fb] text-[#091E42]">
@@ -362,7 +377,7 @@ export default function Home() {
       </div>
 
       <section className="hero-section relative overflow-hidden bg-gradient-to-br from-[#071631] via-[#0d2b5c] to-[#0f4177] text-white">
-        <div className="container-custom px-4 py-20 md:py-24">
+        <div className="container-custom px-4 py-24 md:py-32">
           <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/85">
             Onafhankelijke ISO-consultancy voor MKB
           </span>
@@ -376,7 +391,7 @@ export default function Home() {
             op de dagelijkse praktijk. MaasISO is geen certificerende instelling: wij begeleiden, de
             certificerende instelling toetst.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Link href="/contact" className="primary-button text-center sm:min-w-[240px]">
               Plan een kennismaking
             </Link>
@@ -387,11 +402,11 @@ export default function Home() {
               Doe de ISO Norm Selector
             </Link>
           </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {keyTakeaways.slice(0, 3).map((item) => (
               <div
                 key={`hero-${item.onderwerp}`}
-                className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+                className="rounded-xl border border-white/20 bg-white/10 p-5 md:p-6 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/15"
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/75">
                   {item.onderwerp}
@@ -407,14 +422,14 @@ export default function Home() {
         aria-label="Sectienavigatie"
         className="sticky top-[80px] z-30 border-y border-[#d6deea] bg-white/90 backdrop-blur"
       >
-        <div className="container-custom px-4 py-3">
+        <div className="container-custom px-4 py-4">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5a6e8f]">Snel naar</p>
-          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
             {sectieNavigatie.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="inline-flex whitespace-nowrap rounded-full border border-[#cfdae8] bg-white px-3 py-1.5 text-sm font-medium text-[#1a3763] transition hover:border-[#0057B8] hover:text-[#0057B8]"
+                className="inline-flex whitespace-nowrap rounded-full border border-[#cfdae8] bg-white px-4 py-2 text-sm font-medium text-[#1a3763] transition hover:border-[#0057B8] hover:text-[#0057B8]"
               >
                 {item.label}
               </a>
@@ -423,66 +438,35 @@ export default function Home() {
         </div>
       </nav>
 
-      <section id="key-takeaways" className="!py-0">
-        <div className="container-custom px-4 py-12 md:py-16">
-          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Key Takeaways</h2>
-            <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
-              <table className="w-full text-left text-sm md:text-base">
-                <tbody>
-                  {keyTakeaways.map((item) => (
-                    <tr
-                      key={item.onderwerp}
-                      className="border-b border-[#e3eaf4] transition-colors last:border-b-0 hover:bg-[#f7faff]"
-                    >
-                      <th scope="row" className="w-[36%] bg-[#f8fbff] p-4 font-semibold text-[#163663]">
-                        {item.onderwerp}
-                      </th>
-                      <td className="p-4 text-[#243f66]">{item.waarde}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </article>
+      <section id="key-takeaways" className="py-12 pb-10 md:py-16 md:pb-14 bg-white">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          <KeyTakeaways items={keyTakeawayItems} className="max-w-5xl mx-auto" />
         </div>
       </section>
 
-      <section id="kernfeiten" className="!py-0">
-        <div className="container-custom px-4 py-12 md:py-16">
-          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Kernfeiten</h2>
-            <div className="overflow-x-auto rounded-xl border border-[#dce5f1] bg-white">
-              <table className="w-full text-left text-sm md:text-base">
-                <thead className="bg-[#f8fbff]">
-                  <tr>
-                    <th className="p-4 font-semibold">Kernfeit</th>
-                    <th className="p-4 font-semibold">Waarde</th>
-                    <th className="p-4 font-semibold">Bron</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {kernfeiten.map((item) => (
-                    <tr
-                      key={item.kernfeit}
-                      className="border-t border-[#e3eaf4] align-top transition-colors hover:bg-[#f8fbff]"
-                    >
-                      <td className="p-4 font-medium text-[#163663]">{item.kernfeit}</td>
-                      <td className="p-4 text-[#243f66]">{item.waarde}</td>
-                      <td className="p-4 text-[#3e5374]">{item.bron}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      <section id="kernfeiten" className="py-14 md:py-24 bg-white">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#091E42]">Kernfeiten</h2>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-6 py-8 md:px-12 md:py-12 shadow-md">
+            <div className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-[#00875A]/10 blur-3xl"></div>
+            <div className="absolute -bottom-16 left-0 h-40 w-40 rounded-full bg-[#FF8B00]/10 blur-3xl"></div>
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 min-w-0">
+              {kernfeitItems.map((item, index) => (
+                <div key={item.id} className="w-full min-w-0">
+                  <FactBlock data={item} className="h-full" index={index} />
+                </div>
+              ))}
             </div>
-          </article>
+          </div>
         </div>
       </section>
 
       <section className="!py-0 bg-white/70">
-        <div className="container-custom space-y-8 px-4 py-12 md:py-16">
-          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Wat doet MaasISO?</h2>
+        <div className="container-custom space-y-12 md:space-y-16 px-4 py-16 md:py-24">
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Wat doet MaasISO?</h2>
             <p className="leading-relaxed text-lg text-gray-800">
               MaasISO is een onafhankelijk ISO-consultancybureau gevestigd in Lelystad,
               gespecialiseerd in het begeleiden van MKB-bedrijven bij certificeringstrajecten,
@@ -505,9 +489,9 @@ export default function Home() {
 
           <article
             id="diensten"
-            className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8"
+            className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12"
           >
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Onze diensten</h2>
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">Onze diensten</h2>
 
             <h3 className="mb-3 text-xl font-semibold md:text-2xl">ISO-certificering</h3>
             <p className="mb-4 leading-relaxed text-gray-800">
@@ -549,15 +533,15 @@ export default function Home() {
               </Link>
             </p>
 
-            <div className="mt-8 space-y-4">
-              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+            <div className="mt-10 space-y-6">
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <h3 className="mb-3 text-xl font-semibold md:text-2xl">Informatiebeveiliging</h3>
                 <p className="leading-relaxed text-gray-800">
                   Implementatie van informatiebeveiligingsmaatregelen op basis van ISO 27001 en de
                   Baseline Informatiebeveiliging Overheid (BIO). Inclusief risicoanalyse, Statement
                   of Applicability (SoA) en ISMS-inrichting.
                 </p>
-                <p className="mt-3 leading-relaxed text-gray-800">
+                <p className="mt-4 leading-relaxed text-gray-800">
                   Het aantal ISO 27001 certificaten wereldwijd is in 2024 verdubbeld naar 96.709
                   actieve certificaten (bron: ISO Survey 2024). In Nederland zijn inmiddels 1.568
                   organisaties gecertificeerd. Met de invoering van de NIS2-richtlijn
@@ -574,7 +558,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <h3 className="mb-3 text-xl font-semibold md:text-2xl">AVG &amp; privacy compliance</h3>
                 <p className="leading-relaxed text-gray-800">
                   Praktische begeleiding bij het naleven van de Algemene Verordening
@@ -582,7 +566,7 @@ export default function Home() {
                   DPIA&apos;s, verwerkersovereenkomsten en de rol van externe Functionaris
                   Gegevensbescherming (FG).
                 </p>
-                <p className="mt-3 leading-relaxed text-gray-800">
+                <p className="mt-4 leading-relaxed text-gray-800">
                   De AVG kent boetes tot EUR 20 miljoen of 4% van de wereldwijde jaaromzet (art. 83
                   GDPR). In de praktijk zien wij dat MKB-bedrijven niet struikelen over kennis van de
                   wet, maar over de uitvoering: ontbrekende registers, onduidelijke rollen en geen
@@ -598,7 +582,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+              <div className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <h3 className="mb-3 text-xl font-semibold md:text-2xl">
                   NIS2 compliance (Cyberbeveiligingswet)
                 </h3>
@@ -621,8 +605,8 @@ export default function Home() {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Waarom MaasISO?</h2>
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">Waarom MaasISO?</h2>
             <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
               <table className="w-full bg-white text-left text-sm md:text-base">
                 <thead className="bg-[#f8fbff]">
@@ -646,10 +630,10 @@ export default function Home() {
             </div>
           </article>
 
-          <article id="aanpak" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Onze aanpak in 5 stappen</h2>
-            <ol className="grid gap-4 md:grid-cols-2">
-              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+          <article id="aanpak" className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">Onze aanpak in 5 stappen</h2>
+            <ol className="grid gap-6 md:grid-cols-2">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
                   1
                 </span>
@@ -660,7 +644,7 @@ export default function Home() {
                   processen, documentatie en risico&apos;s in kaart.
                 </p>
               </li>
-              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
                   2
                 </span>
@@ -670,7 +654,7 @@ export default function Home() {
                   deliverables en kostenindicatie. Geen verrassingen achteraf.
                 </p>
               </li>
-              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
                   3
                 </span>
@@ -681,7 +665,7 @@ export default function Home() {
                   aanwezig is.
                 </p>
               </li>
-              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
                   4
                 </span>
@@ -691,7 +675,7 @@ export default function Home() {
                   werkt zoals bedoeld. Bevindingen worden opgelost voor de externe audit.
                 </p>
               </li>
-              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40 md:col-span-2">
+              <li className="rounded-xl border border-[#dce5f1] bg-[#f8fbff] p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[#0057B8]/40 md:col-span-2">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#091E42] text-sm font-semibold text-white">
                   5
                 </span>
@@ -705,8 +689,8 @@ export default function Home() {
           </article>
 
           <article className="rounded-2xl border border-[#ffdcb9] bg-gradient-to-br from-white via-[#fffaf4] to-[#fff2e2] p-6 shadow-sm md:p-8">
-            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Expertquote</h2>
-            <blockquote className="rounded-xl border-l-4 border-[#FF8B00] bg-white/80 p-6 text-lg leading-relaxed text-gray-800">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Expertquote</h2>
+            <blockquote className="rounded-xl border-l-4 border-[#FF8B00] bg-white/80 p-8 text-lg leading-relaxed text-gray-800">
               "De meeste MKB-bedrijven onderschatten hoeveel ze al op orde hebben. Een goede
               nulmeting laat vaak zien dat 40-60% van de eisen al informeel is ingeregeld. Het
               traject gaat dan over structureren en aantoonbaar maken, niet over alles opnieuw
@@ -716,8 +700,8 @@ export default function Home() {
               </footer>
             </blockquote>
           </article>
-          <article id="kosten" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">
+          <article id="kosten" className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">
               Wat kost ISO-certificering? (indicatie voor MKB)
             </h2>
             <div className="overflow-x-auto rounded-xl border border-[#dce5f1]">
@@ -759,11 +743,11 @@ export default function Home() {
             </p>
           </article>
 
-          <article className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#091E42] via-[#0d2f65] to-[#134078] p-6 text-white shadow-sm md:p-8">
+          <article className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#091E42] via-[#0d2f65] to-[#134078] p-8 text-white shadow-sm md:p-12">
             <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
             <div className="absolute -bottom-16 left-10 h-40 w-40 rounded-full bg-[#FF8B00]/20 blur-3xl" />
-            <h2 className="relative mb-3 text-2xl font-bold md:text-3xl">ISO Norm Selector</h2>
-            <p className="relative mb-4 leading-relaxed text-white/90">
+            <h2 className="relative mb-4 text-2xl font-bold md:text-3xl">ISO Norm Selector</h2>
+            <p className="relative mb-6 leading-relaxed text-white/90">
               Weet u nog niet welke norm bij uw organisatie past? Gebruik onze gratis ISO Norm
               Selector. In enkele vragen krijgt u een onderbouwd advies over de normen die relevant
               zijn voor uw situatie, sector en doelstellingen.
@@ -776,18 +760,18 @@ export default function Home() {
             </Link>
           </article>
 
-          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-4 text-2xl font-bold md:text-3xl">Kennis &amp; resources</h2>
+          <article className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Kennis &amp; resources</h2>
             <p className="mb-4 leading-relaxed text-gray-800">
               MaasISO publiceert regelmatig artikelen, praktische gidsen en whitepapers over
               ISO-certificering, informatiebeveiliging en AVG compliance. Onze kennis is vrij
               beschikbaar en bedoeld om MKB-organisaties te helpen onderbouwde keuzes te maken.
             </p>
-            <ul className="space-y-3 text-lg">
+            <ul className="space-y-4 text-lg">
               <li>
                 <Link
                   href="/kennis/blog"
-                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-5 py-4 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>ISO 9001 certificering: kosten, proces &amp; voordelen [2026]</span>
                   <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
@@ -798,7 +782,7 @@ export default function Home() {
               <li>
                 <Link
                   href="/kennis/blog"
-                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-5 py-4 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>ISO 27001 certificering: complete gids, kosten &amp; stappen (2026)</span>
                   <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
@@ -809,7 +793,7 @@ export default function Home() {
               <li>
                 <Link
                   href="/kennis/blog"
-                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-4 py-3 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
+                  className="group flex items-center justify-between rounded-lg border border-[#dce5f1] bg-[#f8fbff] px-5 py-4 font-semibold text-[#0057B8] transition hover:border-[#0057B8]/40"
                 >
                   <span>AVG wetgeving: praktisch advies &amp; implementatie voor MKB</span>
                   <span aria-hidden className="ml-3 transition-transform group-hover:translate-x-1">
@@ -828,13 +812,13 @@ export default function Home() {
             </p>
           </article>
 
-          <article id="faq" className="rounded-2xl border border-[#d7e1ee] bg-white p-6 shadow-sm md:p-8">
-            <h2 className="mb-6 text-2xl font-bold md:text-3xl">Veelgestelde vragen</h2>
-            <div className="space-y-3">
+          <article id="faq" className="rounded-2xl border border-[#d7e1ee] bg-white p-8 shadow-sm md:p-12">
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">Veelgestelde vragen</h2>
+            <div className="space-y-4">
               {faqItems.map((item) => (
                 <details
                   key={item.vraag}
-                  className="group rounded-xl border border-[#dce5f1] bg-white p-5 transition duration-300 hover:border-[#0057B8]/40 open:border-[#0057B8]/50 open:bg-[#f8fbff]"
+                  className="group rounded-xl border border-[#dce5f1] bg-white p-6 transition duration-300 hover:border-[#0057B8]/40 open:border-[#0057B8]/50 open:bg-[#f8fbff]"
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-lg">
                     <span>{item.vraag}</span>
@@ -842,7 +826,7 @@ export default function Home() {
                       +
                     </span>
                   </summary>
-                  <p className="mt-3 leading-relaxed text-gray-800">{item.antwoord}</p>
+                  <p className="mt-4 leading-relaxed text-gray-800">{item.antwoord}</p>
                 </details>
               ))}
             </div>
@@ -851,7 +835,7 @@ export default function Home() {
       </section>
 
       <section className="!py-0 bg-gradient-to-r from-[#0d2b5c] via-[#13407a] to-[#0d2b5c] text-white">
-        <div className="container-custom px-4 py-14 text-center md:py-16">
+        <div className="container-custom px-4 py-16 text-center md:py-24">
           <h2 className="text-3xl font-bold md:text-4xl">Klaar om te beginnen?</h2>
           <p className="mx-auto mt-4 max-w-3xl text-lg text-white/90">
             Neem vrijblijvend contact op voor een kennismakingsgesprek. Wij vertellen u graag wat
@@ -873,3 +857,4 @@ export default function Home() {
     </div>
   );
 }
+

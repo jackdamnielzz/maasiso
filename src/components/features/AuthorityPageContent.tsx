@@ -366,11 +366,11 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.key-takeaways':
             return (
-              <section key={blockKey} className="pt-8 pb-4 md:pt-12 md:pb-8 bg-white">
+              <section key={blockKey} className="pt-12 pb-10 md:pt-16 md:pb-14 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <KeyTakeaways items={block.items} className="max-w-5xl mx-auto" />
                   {showIso9001LeadSnippet && (
-                    <div className="mt-8 max-w-5xl mx-auto rounded-lg border border-emerald-100 bg-emerald-50 p-6 text-center">
+                    <div className="mt-10 max-w-5xl mx-auto rounded-xl border border-emerald-100 bg-emerald-50 p-7 text-center">
                       <h3 className="text-lg font-bold text-[#091E42]">
                         Wil je weten wat ISO 9001 voor jouw organisatie betekent?
                       </h3>
@@ -404,37 +404,27 @@ export default function AuthorityPageContent({
             }
             const factCount = block.items.length;
             const isSingle = factCount === 1;
-            const remainder = factCount % 4;
-            const shouldCenterLast = remainder === 1 && factCount > 4;
-            const shouldCenterLastTwo = remainder === 2 && factCount > 4;
             const wrapperClass = isSingle ? 'max-w-3xl mx-auto' : '';
             const gridClass = isSingle
-              ? 'relative grid grid-cols-1 place-items-center gap-4 sm:gap-6 md:gap-8'
-              : 'relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8';
+              ? 'relative grid grid-cols-1 place-items-center gap-6 sm:gap-8 md:gap-10'
+              : 'relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10';
             const itemBaseClass = isSingle ? 'w-full max-w-sm' : 'w-full';
             return (
-              <section key={blockKey} className="py-10 md:py-16 bg-white">
+              <section key={blockKey} className="py-14 md:py-24 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="max-w-4xl mx-auto text-center mb-6 md:mb-8">
+                  <div className="max-w-4xl mx-auto text-center mb-10 md:mb-12">
                     <h2 className="text-2xl sm:text-3xl font-bold text-[#091E42]">Kernfeiten</h2>
                   </div>
                   <div
-                    className={`relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-5 py-6 md:px-10 md:py-10 shadow-md ${wrapperClass}`}
+                    className={`relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-emerald-50/60 px-6 py-8 md:px-12 md:py-12 shadow-md ${wrapperClass}`}
                   >
                     <div className="absolute -top-16 right-0 h-40 w-40 rounded-full bg-[#00875A]/10 blur-3xl"></div>
                     <div className="absolute -bottom-16 left-0 h-40 w-40 rounded-full bg-[#FF8B00]/10 blur-3xl"></div>
                     <div className={`${gridClass} min-w-0`}>
                       {block.items.map((fact: any, index: number) => {
-                        const isLast = index === factCount - 1;
-                        const isSecondLast = index === factCount - 2;
-                        const balanceClass = shouldCenterLast && isLast
-                          ? 'xl:col-span-2 xl:col-start-2 xl:justify-self-center xl:max-w-[320px]'
-                          : shouldCenterLastTwo && isSecondLast
-                            ? 'xl:col-start-2'
-                            : '';
                         return (
-                          <div key={fact.id || index} className={`${itemBaseClass} ${balanceClass} min-w-0`}>
-                            <FactBlock data={fact} className="h-full" />
+                          <div key={fact.id || index} className={`${itemBaseClass} min-w-0`}>
+                            <FactBlock data={fact} className="h-full" index={index} />
                           </div>
                         );
                       })}
@@ -451,11 +441,11 @@ export default function AuthorityPageContent({
             );
             const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
             return (
-              <section key={blockKey} id={textBlockId} className="py-12 md:py-24">
+              <section key={blockKey} id={textBlockId} className="py-16 md:py-28">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden mb-10 max-w-4xl mx-auto relative hover:shadow-xl transition-all duration-300">
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden mb-14 max-w-5xl mx-auto relative hover:shadow-xl transition-all duration-300">
                     <div className="h-1.5 bg-gradient-to-r from-[#00875A] via-[#00875A] to-[#FF8B00]"></div>
-                    <div className="p-6 md:p-10">
+                    <div className="p-8 md:p-12">
                       <div className="absolute top-8 right-8 md:top-12 md:right-12 opacity-10 pointer-events-none">
                         <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -463,7 +453,7 @@ export default function AuthorityPageContent({
                           <path d="M2 12L12 17L22 12" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                      <div className={`space-y-8 relative z-10 text-${block.alignment || 'left'}`}>
+                      <div className={`space-y-10 relative z-10 text-${block.alignment || 'left'}`}>
                         <ReactMarkdown
                           className="prose prose-headings:text-[#091E42] prose-headings:font-bold prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4 prose-h2:text-2xl prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-xl prose-h3:mt-4 prose-h3:mb-2 prose-a:text-[#00875A] prose-a:no-underline hover:prose-a:underline prose-strong:text-[#091E42] prose-strong:font-semibold prose-em:text-gray-700 prose-p:leading-relaxed prose-p:text-base prose-p:my-6 max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-blockquote:border-l-4 prose-blockquote:border-[#00875A] prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-md"
                           remarkPlugins={[remarkGfm, remarkBreaks]}
@@ -548,11 +538,11 @@ export default function AuthorityPageContent({
           case 'page-blocks.feature-grid': {
             const features = Array.isArray(block.features) ? block.features : [];
             return (
-              <section key={blockKey} className="py-12 md:py-24 bg-[#F8FAFC]">
+              <section key={blockKey} className="py-16 md:py-28 bg-[#F8FAFC]">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   {features.length > 0 ? (
                     <>
-                      <div className="text-center mb-10 md:mb-12">
+                      <div className="text-center mb-12 md:mb-14">
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#091E42] mb-3 md:mb-4">
                           {block.title || (features.length > 0 ? `De ${features.length} stappen` : featureGridTitleFallback)}
                         </h2>
@@ -564,7 +554,7 @@ export default function AuthorityPageContent({
                         )}
                       </div>
                       <div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8"
                         data-testid={featureGridTestId}
                       >
                         {features.map((feature: any, index: number) => {
@@ -584,7 +574,7 @@ export default function AuthorityPageContent({
                                 ? 'lg:col-start-4'
                                 : '';
                           const card = (
-                            <div className="h-full rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm">
+                            <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 md:p-7 shadow-sm">
                               <div className="flex items-start justify-between gap-4">
                                 <div>
                                   <span className="inline-flex items-center rounded-full bg-[#00875A]/10 text-[#00875A] px-3 py-1 text-xs font-semibold uppercase tracking-widest">
@@ -602,7 +592,7 @@ export default function AuthorityPageContent({
                                   />
                                 </div>
                               </div>
-                              <div className="mt-4 text-gray-600">
+                              <div className="mt-5 text-gray-600">
                                 <ReactMarkdown
                                   remarkPlugins={[remarkGfm, remarkBreaks]}
                                   className="prose prose-sm max-w-none text-gray-600"
@@ -642,7 +632,7 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.faq-section':
             return (
-              <section key={blockKey} className="py-12 md:py-24 bg-white">
+              <section key={blockKey} className="py-16 md:py-28 bg-white">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="max-w-4xl mx-auto">
                     <FaqSection items={block.items} />

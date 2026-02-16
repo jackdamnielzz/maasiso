@@ -6,6 +6,7 @@ import { FactBlock as FactBlockType } from '@/lib/types';
 interface FactBlockProps {
   data: FactBlockType;
   className?: string;
+  index?: number;
 }
 
 type SourceItem = {
@@ -77,40 +78,62 @@ function normalizeSources(source: FactBlockType['source']): SourceItem[] {
   return rawValues.map(toSourceItem).filter((item): item is SourceItem => item !== null);
 }
 
-export function FactBlock({ data, className = '' }: FactBlockProps) {
+function formatFactIndex(index: number): string {
+  return String(index + 1).padStart(2, '0');
+}
+
+export function FactBlock({ data, className = '', index }: FactBlockProps) {
   if (!data || (!data.label && !data.value)) {
     return null;
   }
 
   const sources = normalizeSources(data.source);
+  const factIndex = typeof index === 'number' ? formatFactIndex(index) : null;
 
   return (
     <aside
-      className={`fact-block group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md ${className}`}
+      className={`fact-block group relative h-full overflow-hidden rounded-3xl border border-[#d7e3ef] bg-[linear-gradient(155deg,#ffffff_0%,#f7fbff_58%,#f3faf7_100%)] p-7 md:p-8 shadow-[0_10px_30px_rgba(9,30,66,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(9,30,66,0.12)] ${className}`}
       aria-label="Fact"
       lang="nl"
     >
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#1AA77A] to-[#FF8B00]"></div>
       <div className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-[#00875A]/10 blur-2xl"></div>
       <div className="absolute -left-10 -bottom-12 h-28 w-28 rounded-full bg-[#FF8B00]/10 blur-2xl"></div>
-      <div className="relative flex items-start gap-4">
-        <span className="mt-1 h-3 w-3 rounded-full bg-gradient-to-br from-[#00875A] to-[#FF8B00] shadow-sm"></span>
-        <div>
-          <div className="text-base md:text-lg font-semibold text-[#091E42] leading-snug break-words hyphens-auto">
-            {data.label}
-          </div>
-          <div className="mt-2 text-sm md:text-base text-slate-700 leading-relaxed break-words hyphens-auto">
-            {data.value}
-          </div>
-          {sources.length > 0 ? (
-            <div className="mt-3 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium text-slate-600">
-              <span>Bron: </span>
-              {sources.map((source, index) => (
-                <React.Fragment key={`${source.label}-${index}`}>
-                  {index > 0 ? <span>, </span> : null}
+
+      <div className="relative flex h-full flex-col">
+        <div className="flex items-start justify-between gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[#091E42]/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#091E42]/75">
+            <span className="h-2 w-2 rounded-full bg-[#00875A]"></span>
+            Kernfeit
+          </span>
+          {factIndex ? (
+            <span className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-semibold tracking-[0.18em] text-slate-500">
+              {factIndex}
+            </span>
+          ) : null}
+        </div>
+
+        <h3 className="mt-5 text-lg md:text-xl font-bold leading-tight text-[#091E42] break-words hyphens-auto">
+          {data.label}
+        </h3>
+
+        <p className="mt-5 text-base md:text-[1.12rem] font-medium text-slate-700 leading-relaxed break-words hyphens-auto">
+          {data.value}
+        </p>
+
+        {sources.length > 0 ? (
+          <div className="mt-6 border-t border-slate-200/80 pt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              Bron
+            </p>
+            <p className="mt-1 text-sm text-slate-600 leading-snug break-words">
+              {sources.map((source, sourceIndex) => (
+                <React.Fragment key={`${source.label}-${sourceIndex}`}>
+                  {sourceIndex > 0 ? <span className="text-slate-400"> • </span> : null}
                   {source.isLink && source.href ? (
                     <a
                       href={source.href}
-                      className="text-[#00875A] underline underline-offset-2 hover:text-[#006B47]"
+                      className="text-[#0066cc] underline underline-offset-2 hover:text-[#004F99]"
                     >
                       {source.label}
                     </a>
@@ -119,9 +142,9 @@ export function FactBlock({ data, className = '' }: FactBlockProps) {
                   )}
                 </React.Fragment>
               ))}
-            </div>
-          ) : null}
-        </div>
+            </p>
+          </div>
+        ) : null}
       </div>
     </aside>
   );
