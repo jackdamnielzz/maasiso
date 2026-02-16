@@ -471,6 +471,9 @@ export default function AuthorityPageContent({
             const normalizedTextBlockContent = normalizeExpertQuoteMarkdown(
               String(block.content || '')
             );
+            const iso90012026ChangesHeadingRegex =
+              /(^|\n)\s*#{0,6}\s*wat\s+verandert\s+er\s+in\s+iso\s*9001:?\s*2026\??/i;
+            const isIso90012026ChangesBlock = iso90012026ChangesHeadingRegex.test(normalizedTextBlockContent);
             const sectionImageAnchorRegex =
               /De norm is gebaseerd op\s+7\s+kwaliteitsmanagement\s*principes/i;
             const sectionClausesHeadingRegex =
@@ -488,7 +491,7 @@ export default function AuthorityPageContent({
             let contentBeforeStructureImage = normalizedTextBlockContent;
             let contentFromStructureImage = normalizedTextBlockContent;
 
-            if (clausesAnchorMatch?.index !== undefined && sectionImage?.src) {
+            if (clausesAnchorMatch?.index !== undefined && !isIso90012026ChangesBlock && sectionImage?.src) {
               const contentLines = normalizedTextBlockContent.split('\n');
               const clausesMarkerIndex = contentLines.findIndex((line) => sectionClausesMarkerRegex.test(line));
               const startIndex = clausesMarkerIndex === -1 ? 0 : clausesMarkerIndex + 1;
@@ -515,7 +518,7 @@ export default function AuthorityPageContent({
                 contentFromStructureImage = contentLines.slice(insertionLine).join('\n').trimStart();
               }
             }
-            if (!shouldInjectSectionImage && sectionAnchorMatch?.index !== undefined && sectionImage?.src) {
+            if (!shouldInjectSectionImage && sectionAnchorMatch?.index !== undefined && !isIso90012026ChangesBlock && sectionImage?.src) {
               const searchStart = sectionAnchorMatch.index + sectionAnchorMatch[0].length;
               const headingMatch = normalizedTextBlockContent.slice(searchStart).match(sectionHeadingRegex);
               const sentenceEnd = normalizedTextBlockContent.indexOf('.', searchStart);
@@ -537,7 +540,7 @@ export default function AuthorityPageContent({
             let shouldInjectImplementationDurationImage = false;
             let contentBeforeImplementationDurationImage = normalizedTextBlockContent;
             let contentFromImplementationDurationImage = normalizedTextBlockContent;
-            if (Boolean(implementationDurationImage?.src)) {
+            if (!isIso90012026ChangesBlock && Boolean(implementationDurationImage?.src)) {
               const lines = normalizedTextBlockContent.split('\n');
               const headingLineIndex = lines.findIndex((line) => implementationDurationHeadingRegex.test(line));
               if (headingLineIndex !== -1) {
@@ -554,6 +557,7 @@ export default function AuthorityPageContent({
             const tableLineRegex = /^\s*\|.*\|\s*$/;
             const transitionTimelineTableMarkerRegex = /\btransitie\s*[-–]?\s*timeline\b/i;
             const isTransitionTimelineBlock =
+              !isIso90012026ChangesBlock &&
               Boolean(transitionTimelineImage?.src) &&
               (transitionTimelineHeadingRegex.test(normalizedTextBlockContent) ||
                 transitionTimelineTableMarkerRegex.test(normalizedTextBlockContent));
@@ -614,7 +618,7 @@ export default function AuthorityPageContent({
             let shouldInjectAuditSectionImage = false;
             let contentBeforeAuditSectionImage = normalizedTextBlockContent;
             let contentFromAuditSectionImage = normalizedTextBlockContent;
-            if (isAuditSectionBlock && Boolean(auditSectionImage?.src)) {
+            if (isAuditSectionBlock && !isIso90012026ChangesBlock && Boolean(auditSectionImage?.src)) {
               const lines = normalizedTextBlockContent.split('\n');
               const headingLineIndex = lines.findIndex((line) => auditSectionHeadingRegex.test(line));
               const insertionStart = Math.max(0, headingLineIndex + 1);
@@ -635,7 +639,7 @@ export default function AuthorityPageContent({
             let shouldInjectBenefitsSectionImage = false;
             let contentBeforeBenefitsImage = normalizedTextBlockContent;
             let contentFromBenefitsImage = normalizedTextBlockContent;
-            if (isBenefitsSectionBlock && Boolean(benefitsSectionImage?.src)) {
+            if (isBenefitsSectionBlock && !isIso90012026ChangesBlock && Boolean(benefitsSectionImage?.src)) {
               const lines = normalizedTextBlockContent.split('\n');
               const headingLineIndex = lines.findIndex((line) => benefitsSectionHeadingRegex.test(line));
               const anchorLineIndex = lines.findIndex((line) => benefitsSectionImageAnchorRegex.test(line));
