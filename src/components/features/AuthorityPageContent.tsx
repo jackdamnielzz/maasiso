@@ -402,7 +402,6 @@ export default function AuthorityPageContent({
 }: AuthorityPageContentProps) {
   const { layoutWithoutCta, primaryCta } = collectCtaCandidates(layout);
   const layoutBlocks = groupFactBlocks(layoutWithoutCta);
-  const isIso9001Page = showIso9001LeadSnippet;
   const siteUrl = getCanonicalSiteUrl();
   const breadcrumbSchemaItems = breadcrumbs?.length
     ? breadcrumbs.map((item) => ({
@@ -414,11 +413,7 @@ export default function AuthorityPageContent({
 
   return (
     <main
-      className={
-        isIso9001Page
-          ? 'flex-1 bg-[radial-gradient(140%_90%_at_50%_0%,#e8f3ff_0%,#f8fbff_35%,#ffffff_100%)]'
-          : 'flex-1 bg-gradient-to-b from-blue-50 to-white'
-      }
+      className="flex-1 bg-[radial-gradient(140%_90%_at_50%_0%,#e8f3ff_0%,#f8fbff_35%,#ffffff_100%)]"
       data-testid={testId}
       data-topic={dataTopic}
     >
@@ -426,13 +421,7 @@ export default function AuthorityPageContent({
         <>
           <SchemaMarkup breadcrumbs={{ items: breadcrumbSchemaItems }} />
           {showBreadcrumbs ? (
-            <div
-              className={
-                isIso9001Page
-                  ? 'border-b border-slate-200/90 bg-white/80 backdrop-blur-sm'
-                  : 'bg-white/80 border-b border-slate-200'
-              }
-            >
+            <div className="border-b border-slate-200/90 bg-white/80 backdrop-blur-sm">
               <div className="container-custom px-4 sm:px-6 lg:px-8 py-3">
                 <Breadcrumbs items={breadcrumbs ?? []} />
               </div>
@@ -499,19 +488,12 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.key-takeaways':
             return (
-              <section
-                key={blockKey}
-                className={
-                  isIso9001Page
-                    ? 'bg-gradient-to-b from-white via-[#f8fbff] to-white pt-12 pb-10 md:pt-16 md:pb-14'
-                    : 'pt-12 pb-10 md:pt-16 md:pb-14 bg-white'
-                }
-              >
+              <section key={blockKey} className="bg-gradient-to-b from-white via-[#f8fbff] to-white pt-12 pb-10 md:pt-16 md:pb-14">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <KeyTakeaways
                     items={block.items}
                     className="max-w-5xl mx-auto"
-                    variant={isIso9001Page ? 'iso9001' : 'default'}
+                    variant="iso9001"
                   />
                   {showIso9001LeadSnippet && (
                     <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl border border-[#b9ead8] bg-[linear-gradient(155deg,#f4fff9_0%,#effaf5_58%,#fff7ed_100%)] p-7 text-center shadow-[0_14px_34px_rgba(9,30,66,0.08)]">
@@ -554,14 +536,7 @@ export default function AuthorityPageContent({
               : 'relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10';
             const itemBaseClass = isSingle ? 'w-full max-w-sm' : 'w-full';
             return (
-              <section
-                key={blockKey}
-                className={
-                  isIso9001Page
-                    ? 'bg-gradient-to-b from-[#f8fbff] via-white to-[#f7fcfa] py-14 md:py-24'
-                    : 'py-14 md:py-24 bg-white'
-                }
-              >
+              <section key={blockKey} className="bg-gradient-to-b from-[#f8fbff] via-white to-[#f7fcfa] py-14 md:py-24">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="max-w-4xl mx-auto text-center mb-10 md:mb-12">
                     <h2 className="text-2xl sm:text-3xl font-bold text-[#091E42]">Kernfeiten</h2>
@@ -836,11 +811,10 @@ export default function AuthorityPageContent({
             const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
             const renderedTextBlockIndex = textBlockRenderIndex;
             textBlockRenderIndex += 1;
-            const textBlockToneClass = isIso9001Page
-              ? renderedTextBlockIndex % 2 === 0
+            const textBlockToneClass =
+              renderedTextBlockIndex % 2 === 0
                 ? 'bg-white'
-                : 'bg-gradient-to-b from-[#f7fbff] to-white border-y border-slate-100/80'
-              : '';
+                : 'bg-gradient-to-b from-[#f7fbff] to-white border-y border-slate-100/80';
             const textAlignmentClass =
               block.alignment === 'center'
                 ? 'text-center'
@@ -908,23 +882,14 @@ export default function AuthorityPageContent({
           case 'page-blocks.feature-grid': {
             const features = Array.isArray(block.features) ? block.features : [];
             return (
-              <section
-                key={blockKey}
-                className={
-                  isIso9001Page
-                    ? 'bg-[linear-gradient(180deg,#f5faff_0%,#edf7f4_55%,#f8fbff_100%)] py-16 md:py-28'
-                    : 'py-16 md:py-28 bg-[#F8FAFC]'
-                }
-              >
+              <section key={blockKey} className="bg-[linear-gradient(180deg,#f5faff_0%,#edf7f4_55%,#f8fbff_100%)] py-16 md:py-28">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   {features.length > 0 ? (
                     <>
                       <div className="text-center mb-12 md:mb-14">
-                        {isIso9001Page ? (
-                          <p className="mx-auto mb-4 inline-flex items-center rounded-full border border-[#00875A]/20 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#00875A]">
-                            Implementatieroute
-                          </p>
-                        ) : null}
+                        <p className="mx-auto mb-4 inline-flex items-center rounded-full border border-[#00875A]/20 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#00875A]">
+                          Implementatieroute
+                        </p>
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#091E42] mb-3 md:mb-4">
                           {block.title || (features.length > 0 ? `De ${features.length} stappen` : featureGridTitleFallback)}
                         </h2>
@@ -1015,17 +980,10 @@ export default function AuthorityPageContent({
 
           case 'page-blocks.faq-section':
             return (
-              <section
-                key={blockKey}
-                className={
-                  isIso9001Page
-                    ? 'bg-gradient-to-b from-white via-[#f7fbff] to-white py-16 md:py-28'
-                    : 'py-16 md:py-28 bg-white'
-                }
-              >
+              <section key={blockKey} className="bg-gradient-to-b from-white via-[#f7fbff] to-white py-16 md:py-28">
                 <div className="container-custom px-4 sm:px-6 lg:px-8">
                   <div className="max-w-4xl mx-auto">
-                    <FaqSection items={block.items} variant={isIso9001Page ? 'iso9001' : 'default'} />
+                    <FaqSection items={block.items} variant="iso9001" />
                   </div>
                 </div>
               </section>
