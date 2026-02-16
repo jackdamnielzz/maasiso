@@ -8,6 +8,7 @@ const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_HERO_IMAGE = '/hero-iso9001-pagina.jpg';
 const ISO9001_SECTION_IMAGE = '/iso9001-clausules-4-10.png';
 const ISO9001_IMPLEMENTATION_DURATION_IMAGE = '/dea107c7-1d12-41a0-9349-2e1c8936acc2.jpg';
+const ISO9001_BENEFITS_SECTION_IMAGE = '/dd9e8ce8-66e3-4a59-ba73-aa96c529a3a3.jpg';
 const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
 const DEFAULT_DESCRIPTION =
   'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.';
@@ -38,6 +39,10 @@ export default async function Iso9001Page() {
         sectionImage={{
           src: ISO9001_SECTION_IMAGE,
           alt: 'Clausules 4-10 uit ISO 9001'
+        }}
+        benefitsSectionImage={{
+          src: ISO9001_BENEFITS_SECTION_IMAGE,
+          alt: 'Samenvatting van voordelen van ISO 9001 certificering'
         }}
         implementationDurationImage={{
           src: ISO9001_IMPLEMENTATION_DURATION_IMAGE,

@@ -591,48 +591,38 @@ export default function AuthorityPageContent({
               }
             }
 
+            const benefitsSectionHeadingRegex =
+              /(^|\n)\s*#{1,6}\s*voordelen\s*van\s*iso\s*9001\s*certificering/i;
             const benefitsSectionImageAnchorRegex = /hoger klantvertrouwen/i;
             const isBenefitsSectionBlock =
-              benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent) ||
-              /##\s*voordelen/i.test(normalizedTextBlockContent) ||
-              /voordelen.*iso\s*9001/i.test(normalizedTextBlockContent);
-            const benefitsListItemRegex = /^\s*(?:[-*•]|\d+\.)\s+/;
+              benefitsSectionHeadingRegex.test(normalizedTextBlockContent) ||
+              /voordelen\s*van\s*iso\s*9001/i.test(normalizedTextBlockContent) ||
+              benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent);
+            const markdownHeadingRegex = /^\s*#{1,6}\s+/;
 
             let shouldInjectBenefitsSectionImage = false;
             let contentBeforeBenefitsImage = normalizedTextBlockContent;
             let contentFromBenefitsImage = normalizedTextBlockContent;
             if (isBenefitsSectionBlock && Boolean(benefitsSectionImage?.src)) {
               const lines = normalizedTextBlockContent.split('\n');
-              const markerIndex = lines.findIndex((line) => benefitsSectionImageAnchorRegex.test(line));
-              const startIndex = markerIndex === -1 ? 0 : markerIndex + 1;
-              let bulletCount = 0;
-              let inList = false;
+              const headingLineIndex = lines.findIndex((line) => benefitsSectionHeadingRegex.test(line));
+              const anchorLineIndex = lines.findIndex((line) => benefitsSectionImageAnchorRegex.test(line));
+              const startIndex =
+                headingLineIndex === -1
+                  ? (anchorLineIndex === -1 ? 0 : anchorLineIndex + 1)
+                  : headingLineIndex + 1;
               let insertionLine = lines.length;
 
               for (let lineIndex = startIndex; lineIndex < lines.length; lineIndex += 1) {
-                const line = lines[lineIndex];
-                const isListItem = benefitsListItemRegex.test(line);
-
-                if (isListItem) {
-                  inList = true;
-                  bulletCount += 1;
-                  if (bulletCount >= 4) {
-                    insertionLine = lineIndex + 1;
-                    break;
-                  }
-                  continue;
-                }
-
-                if (inList && line.trim() === '') {
-                  continue;
+                if (markdownHeadingRegex.test(lines[lineIndex])) {
+                  insertionLine = lineIndex;
+                  break;
                 }
               }
 
-              if (inList && bulletCount >= 4) {
-                shouldInjectBenefitsSectionImage = true;
-                contentBeforeBenefitsImage = lines.slice(0, insertionLine).join('\n').trimEnd();
-                contentFromBenefitsImage = lines.slice(insertionLine).join('\n').trimStart();
-              }
+              shouldInjectBenefitsSectionImage = true;
+              contentBeforeBenefitsImage = lines.slice(0, insertionLine).join('\n').trimEnd();
+              contentFromBenefitsImage = lines.slice(insertionLine).join('\n').trimStart();
             }
 
             const shouldInjectImage =
