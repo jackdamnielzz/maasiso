@@ -32,6 +32,10 @@ type AuthorityPageContentProps = {
     src: string;
     alt?: string;
   };
+  auditSectionImage?: {
+    src: string;
+    alt?: string;
+  };
   transitionTimelineImage?: {
     src: string;
     alt?: string;
@@ -303,6 +307,7 @@ export default function AuthorityPageContent({
   sectionImage,
   benefitsSectionImage,
   implementationDurationImage,
+  auditSectionImage,
   transitionTimelineImage,
   testId,
   featureGridTitleFallback = 'De stappen',
@@ -594,11 +599,38 @@ export default function AuthorityPageContent({
             const benefitsSectionHeadingRegex =
               /(^|\n)\s*#{1,6}\s*voordelen\s*van\s*iso\s*9001\s*certificering/i;
             const benefitsSectionImageAnchorRegex = /hoger klantvertrouwen/i;
+            const auditSectionHeadingRegex =
+              /(^|\n)\s*#{1,6}\s*hoe\s+verloopt\s+een\s+iso\s*9001\s+audit\b/i;
             const isBenefitsSectionBlock =
               benefitsSectionHeadingRegex.test(normalizedTextBlockContent) ||
               /voordelen\s*van\s*iso\s*9001/i.test(normalizedTextBlockContent) ||
               benefitsSectionImageAnchorRegex.test(normalizedTextBlockContent);
+            const isAuditSectionBlock =
+              auditSectionHeadingRegex.test(normalizedTextBlockContent) ||
+              /fase\s*1\s+audit/i.test(normalizedTextBlockContent) ||
+              /fase\s*2\s+audit/i.test(normalizedTextBlockContent);
             const markdownHeadingRegex = /^\s*#{1,6}\s+/;
+
+            let shouldInjectAuditSectionImage = false;
+            let contentBeforeAuditSectionImage = normalizedTextBlockContent;
+            let contentFromAuditSectionImage = normalizedTextBlockContent;
+            if (isAuditSectionBlock && Boolean(auditSectionImage?.src)) {
+              const lines = normalizedTextBlockContent.split('\n');
+              const headingLineIndex = lines.findIndex((line) => auditSectionHeadingRegex.test(line));
+              const insertionStart = Math.max(0, headingLineIndex + 1);
+              let insertionLine = lines.length;
+
+              for (let lineIndex = insertionStart; lineIndex < lines.length; lineIndex += 1) {
+                if (markdownHeadingRegex.test(lines[lineIndex])) {
+                  insertionLine = lineIndex;
+                  break;
+                }
+              }
+
+              shouldInjectAuditSectionImage = true;
+              contentBeforeAuditSectionImage = lines.slice(0, insertionLine).join('\n').trimEnd();
+              contentFromAuditSectionImage = lines.slice(insertionLine).join('\n').trimStart();
+            }
 
             let shouldInjectBenefitsSectionImage = false;
             let contentBeforeBenefitsImage = normalizedTextBlockContent;
@@ -628,12 +660,15 @@ export default function AuthorityPageContent({
             const shouldInjectImage =
               shouldInjectSectionImage ||
               shouldInjectImplementationDurationImage ||
+              shouldInjectAuditSectionImage ||
               shouldInjectBenefitsSectionImage ||
               shouldInjectTransitionTimelineImage;
             const imageBlockBefore = shouldInjectSectionImage
               ? contentBeforeStructureImage
               : shouldInjectImplementationDurationImage
               ? contentBeforeImplementationDurationImage
+              : shouldInjectAuditSectionImage
+              ? contentBeforeAuditSectionImage
               : shouldInjectBenefitsSectionImage
               ? contentBeforeBenefitsImage
               : shouldInjectTransitionTimelineImage
@@ -643,6 +678,8 @@ export default function AuthorityPageContent({
               ? contentFromStructureImage
               : shouldInjectImplementationDurationImage
               ? contentFromImplementationDurationImage
+              : shouldInjectAuditSectionImage
+              ? contentFromAuditSectionImage
               : shouldInjectBenefitsSectionImage
               ? contentFromBenefitsImage
               : shouldInjectTransitionTimelineImage
@@ -653,6 +690,8 @@ export default function AuthorityPageContent({
                 ? sectionImage.src
               : shouldInjectImplementationDurationImage
               ? implementationDurationImage?.src || ''
+              : shouldInjectAuditSectionImage
+              ? auditSectionImage?.src || ''
               : shouldInjectBenefitsSectionImage
               ? benefitsSectionImage?.src || ''
               : shouldInjectTransitionTimelineImage
@@ -663,6 +702,8 @@ export default function AuthorityPageContent({
                 ? sectionImage?.alt || 'ISO 9001 structuur afbeelding'
                 : shouldInjectImplementationDurationImage
                 ? implementationDurationImage?.alt || 'ISO 9001 doorlooptijd afbeelding'
+                : shouldInjectAuditSectionImage
+                ? auditSectionImage?.alt || 'ISO 9001 audit afbeelding'
                 : shouldInjectBenefitsSectionImage
                 ? benefitsSectionImage?.alt || 'ISO 9001 voordelen samenvatting'
                 : shouldInjectTransitionTimelineImage

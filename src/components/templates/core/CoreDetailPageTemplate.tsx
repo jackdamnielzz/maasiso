@@ -30,6 +30,10 @@ type CoreDetailPageTemplateProps = {
     src: string;
     alt?: string;
   };
+  auditSectionImage?: {
+    src: string;
+    alt?: string;
+  };
   transitionTimelineImage?: {
     src: string;
     alt?: string;
@@ -713,6 +717,7 @@ export default async function CoreDetailPageTemplate({
   sectionImage,
   benefitsSectionImage,
   implementationDurationImage,
+  auditSectionImage,
   transitionTimelineImage,
 }: CoreDetailPageTemplateProps) {
   const pageData = await getPage(strapiSlug);
@@ -782,6 +787,7 @@ export default async function CoreDetailPageTemplate({
         sectionImage={sectionImage}
         benefitsSectionImage={benefitsSectionImage}
         implementationDurationImage={implementationDurationImage}
+        auditSectionImage={auditSectionImage}
         transitionTimelineImage={transitionTimelineImage}
         breadcrumbs={breadcrumbs}
         showBreadcrumbs={false}
