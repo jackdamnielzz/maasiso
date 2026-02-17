@@ -1,453 +1,278 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { trackEvent } from '@/lib/analytics';
+import {
+  getIso9001CalendlyConfig,
+  openIso9001Calendly,
+  preloadIso9001Calendly,
+} from '@/lib/calendly/iso9001Calendly';
 
-type CompanySize = '' | '1-10' | '10-50' | '50+';
+type ExitIntentFormStatus = 'idle' | 'success' | 'error';
 
-type ExitIntentCloseReason = 'overlay_click' | 'close_button' | 'escape_key';
-
-type ExitFormStatus = 'idle' | 'success' | 'error';
-
-const COSTS_SECTION_ID = 'kosten-sectie';
-const PHONE_NUMBER = '+31 (0)6 23 57 83 44';
-const PHONE_LINK = 'tel:+31623578344';
 const PAGE_PATH = '/iso-certificering/iso-9001/';
-const STICKY_PANEL_CLOSED_KEY = 'sticky_panel_closed';
-const EXIT_INTENT_SHOWN_KEY = 'exit_intent_shown';
-const SIDE_PANEL_CTA = '/contact?source=sticky_panel&utm_medium=sticky_cta&utm_campaign=iso9001_ads_test';
-const BOTTOM_BAR_CTA = '/contact?source=sticky_bottom&utm_medium=sticky_cta&utm_campaign=iso9001_ads_test';
+const PHONE_LINK = 'tel:+31623578344';
+const EXIT_INTENT_STORAGE_KEY = 'iso9001_exit_intent_last_shown_at';
+const EXIT_INTENT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+const HERO_SELECTOR = '.hero-section';
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const companySizeOptions: Array<{ value: CompanySize; label: string }> = [
-  { value: '', label: 'Kies een bereik (optioneel)' },
-  { value: '1-10', label: '1-10' },
-  { value: '10-50', label: '10-50' },
-  { value: '50+', label: '50+' },
-];
-
-const emitAnalyticsEvent = (name: string, params?: Record<string, string | number | boolean>) => {
-  try {
-    trackEvent({
-      name,
-      params,
-    });
-  } catch (error) {
-    console.error('[StickyLeadCapture] analytics event error:', error);
+function isExitIntentRateLimited(): boolean {
+  if (typeof window === 'undefined') {
+    return true;
   }
-};
+
+  try {
+    const rawTimestamp = window.localStorage.getItem(EXIT_INTENT_STORAGE_KEY);
+    if (!rawTimestamp) {
+      return false;
+    }
+
+    const timestamp = Number(rawTimestamp);
+    if (!Number.isFinite(timestamp)) {
+      return false;
+    }
+
+    return Date.now() - timestamp < EXIT_INTENT_COOLDOWN_MS;
+  } catch {
+    return false;
+  }
+}
+
+function markExitIntentShown(): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(EXIT_INTENT_STORAGE_KEY, String(Date.now()));
+  } catch {
+    // noop
+  }
+}
 
 export default function StickyLeadCapture() {
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [hasCostSection, setHasCostSection] = useState(true);
-  const [hasPassedCostSection, setHasPassedCostSection] = useState(false);
-  const [isPanelClosedInSession, setIsPanelClosedInSession] = useState(false);
-  const [hasShownSidePanel, setHasShownSidePanel] = useState(false);
-  const [hasShownBottomBar, setHasShownBottomBar] = useState(false);
-  const [exitFormStatus, setExitFormStatus] = useState<ExitFormStatus>('idle');
-  const [isSubmittingExitForm, setIsSubmittingExitForm] = useState(false);
-  const [exitErrorMessage, setExitErrorMessage] = useState('');
+  const pathname = usePathname();
+  const isIso9001Page = pathname === '/iso-certificering/iso-9001' || pathname === PAGE_PATH;
+  const calendlyConfig = getIso9001CalendlyConfig();
+
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [isStickyVisible, setIsStickyVisible] = useState(false);
+  const [cookieBannerOffset, setCookieBannerOffset] = useState(0);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
-  const [isExitIntentBlocked, setIsExitIntentBlocked] = useState(false);
-  const [hasScrolledPastHalf, setHasScrolledPastHalf] = useState(false);
-  const [isExitTriggeredOnce, setIsExitTriggeredOnce] = useState(false);
-  const [exitFormData, setExitFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companySize: '' as CompanySize,
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState<ExitIntentFormStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [companyName, setCompanyName] = useState('');
 
   const exitModalRef = useRef<HTMLDivElement>(null);
-  const exitFormRef = useRef<HTMLFormElement>(null);
-  const firstExitInputRef = useRef<HTMLInputElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
-  const intersectionCleanupRef = useRef<IntersectionObserver | null>(null);
-  const resizeCleanupRef = useRef<(() => void) | null>(null);
-  const exitIntentDelayRef = useRef<number | null>(null);
-  const autoCloseTimeoutRef = useRef<number | null>(null);
+  const hasTriggeredExitIntentRef = useRef(false);
+  const successCloseTimeoutRef = useRef<number | null>(null);
 
-  const isDesktopPanel = viewportWidth >= 1280;
-  const isMobileBottomBar = viewportWidth > 0 && viewportWidth <= 767;
-  const isExitIntentDesktop = viewportWidth >= 768;
-
-  const shouldRenderSidePanel =
-    isDesktopPanel && hasCostSection && hasPassedCostSection && !isPanelClosedInSession;
-  const shouldRenderBottomBar =
-    isMobileBottomBar && hasCostSection && hasPassedCostSection;
-
-  const getSessionStorageItem = useCallback((key: string): string | null => {
-    try {
-      return window.sessionStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  }, []);
-
-  const setSessionStorageItem = useCallback((key: string, value: string) => {
-    try {
-      window.sessionStorage.setItem(key, value);
-    } catch {
-      // noop
-    }
-  }, []);
-
-  const getFocusableElements = useCallback(() => {
-    if (!exitModalRef.current) return [] as HTMLElement[];
-    return Array.from(
-      exitModalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
-    ).filter((element) => !element.hasAttribute('disabled'));
-  }, []);
-
-  const handleResize = useCallback(() => {
-    setViewportWidth(window.innerWidth);
-  }, []);
-
-  const closeSidePanel = useCallback(() => {
-    setIsPanelClosedInSession(true);
-    setSessionStorageItem(STICKY_PANEL_CLOSED_KEY, '1');
-    emitAnalyticsEvent('sticky_panel_close');
-  }, [setSessionStorageItem]);
-
-  const handleSidePanelPhoneClick = useCallback(() => {
-    emitAnalyticsEvent('sticky_panel_phone_click', {
-      component: 'sticky_panel',
-      phone_number: '31302358344',
+  const openStickyCalendly = useCallback(() => {
+    void openIso9001Calendly('sticky_bar').then((result) => {
+      if (!result.opened && result.fallbackUrl && typeof window !== 'undefined') {
+        window.location.href = result.fallbackUrl;
+      }
     });
   }, []);
 
-  const handleSidePanelCtaClick = useCallback(() => {
-    emitAnalyticsEvent('sticky_panel_cta_click', {
-      component: 'sticky_panel',
-      destination: SIDE_PANEL_CTA,
-    });
-  }, []);
-
-  const handleBottomPlanClick = useCallback(() => {
-    emitAnalyticsEvent('sticky_bottom_plan_click', {
-      component: 'sticky_bottom_bar',
-      destination: BOTTOM_BAR_CTA,
-    });
-  }, []);
-
-  const handleBottomCallClick = useCallback(() => {
-    emitAnalyticsEvent('sticky_bottom_call_click', {
-      component: 'sticky_bottom_bar',
-      phone_number: '31302358344',
+  const handleStickyCallClick = useCallback(() => {
+    trackEvent({
+      name: 'click_call_iso9001',
+      params: {
+        location: 'sticky',
+      },
     });
   }, []);
 
   const openExitIntentModal = useCallback(() => {
+    if (!isDesktop || hasTriggeredExitIntentRef.current || isExitIntentRateLimited()) {
+      return;
+    }
+
+    hasTriggeredExitIntentRef.current = true;
+    markExitIntentShown();
     setIsExitModalOpen(true);
-    setExitFormStatus('idle');
-    setExitErrorMessage('');
-    setExitFormData({
-      name: '',
-      email: '',
-      phone: '',
-      companySize: '',
-    });
-    setSessionStorageItem(EXIT_INTENT_SHOWN_KEY, '1');
-    setIsExitIntentBlocked(true);
-    emitAnalyticsEvent('exit_intent_form_view');
-  }, [setSessionStorageItem]);
+    setFormStatus('idle');
+    setErrorMessage('');
+    setEmail('');
+    setCompanyName('');
+  }, [isDesktop]);
 
-  const closeExitIntentModal = useCallback(
-    (reason: ExitIntentCloseReason) => {
-      setIsExitModalOpen(false);
-      emitAnalyticsEvent('exit_intent_close', { close_label: reason });
-      if (autoCloseTimeoutRef.current) {
-        window.clearTimeout(autoCloseTimeoutRef.current);
-        autoCloseTimeoutRef.current = null;
-      }
-    },
-    []
-  );
+  const closeExitIntentModal = useCallback(() => {
+    setIsExitModalOpen(false);
+  }, []);
 
-  const triggerExitIntent = useCallback(() => {
-    if (!isExitIntentDesktop || isExitIntentBlocked || isExitModalOpen || isExitTriggeredOnce) {
+  useEffect(() => {
+    if (!isIso9001Page) {
       return;
     }
 
-    if (!hasScrolledPastHalf || !hasCostSection) {
+    const preloadOnInteraction = () => {
+      preloadIso9001Calendly();
+    };
+
+    document.addEventListener('pointerdown', preloadOnInteraction, {
+      once: true,
+      passive: true,
+    });
+    document.addEventListener('keydown', preloadOnInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener('pointerdown', preloadOnInteraction);
+      document.removeEventListener('keydown', preloadOnInteraction);
+    };
+  }, [isIso9001Page]);
+
+  useEffect(() => {
+    if (!isIso9001Page || typeof window === 'undefined') {
       return;
     }
 
-    setIsExitTriggeredOnce(true);
-    emitAnalyticsEvent('exit_intent_triggered', {
-      source: 'exit_intent',
-      page: PAGE_PATH,
-    });
+    const updateViewport = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
 
-    if (exitIntentDelayRef.current) {
-      window.clearTimeout(exitIntentDelayRef.current);
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+
+    return () => {
+      window.removeEventListener('resize', updateViewport);
+    };
+  }, [isIso9001Page]);
+
+  useEffect(() => {
+    if (!isIso9001Page || typeof window === 'undefined') {
+      return;
     }
 
-    exitIntentDelayRef.current = window.setTimeout(() => {
-      openExitIntentModal();
-      exitIntentDelayRef.current = null;
-    }, 300);
-  }, [
-    hasCostSection,
-    hasScrolledPastHalf,
-    isExitIntentBlocked,
-    isExitIntentDesktop,
-    isExitModalOpen,
-    isExitTriggeredOnce,
-    openExitIntentModal,
-  ]);
-
-  const handleMouseLeave = useCallback(
-    (event: MouseEvent) => {
-      if (event.clientY > 50) {
+    const updateCookieOffset = () => {
+      const cookieBanner = document.getElementById('cookie-banner');
+      if (!cookieBanner) {
+        setCookieBannerOffset(0);
         return;
       }
 
-      triggerExitIntent();
-    },
-    [triggerExitIntent]
-  );
+      const rect = cookieBanner.getBoundingClientRect();
+      const style = window.getComputedStyle(cookieBanner);
+      const isVisible =
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        rect.height > 0 &&
+        rect.bottom > 0;
 
-  const updateScrollProgress = useCallback(() => {
-    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (documentHeight <= 0) {
-      setHasScrolledPastHalf(false);
+      setCookieBannerOffset(isVisible ? rect.height : 0);
+    };
+
+    updateCookieOffset();
+    window.addEventListener('resize', updateCookieOffset);
+    const mutationObserver = new MutationObserver(updateCookieOffset);
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
+
+    return () => {
+      window.removeEventListener('resize', updateCookieOffset);
+      mutationObserver.disconnect();
+    };
+  }, [isIso9001Page]);
+
+  useEffect(() => {
+    if (!isIso9001Page || typeof window === 'undefined') {
       return;
     }
 
-    const ratio = window.scrollY / documentHeight;
-    setHasScrolledPastHalf(ratio > 0.5);
-  }, []);
-
-  const initCostSectionObserver = useCallback(() => {
-    const costsElement = document.getElementById(COSTS_SECTION_ID);
-    if (!costsElement) {
-      console.warn('[StickyLeadCapture] #kosten-sectie niet gevonden. Sticky componenten blijven uitgeschakeld.');
-      setHasCostSection(false);
+    const heroElement = document.querySelector(HERO_SELECTOR);
+    if (!heroElement) {
+      setIsStickyVisible(false);
       return;
-    }
-
-    if (intersectionCleanupRef.current) {
-      intersectionCleanupRef.current.disconnect();
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const [entry] = entries;
+        const entry = entries[0];
         if (!entry) return;
-        const hasScrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        setHasPassedCostSection(hasScrolledPast);
+        const hasPassedHero = !entry.isIntersecting && entry.boundingClientRect.bottom < 0;
+        setIsStickyVisible(hasPassedHero);
       },
-      {
-        threshold: 0,
-      }
+      { threshold: 0 }
     );
 
-    observer.observe(costsElement);
-    intersectionCleanupRef.current = observer;
-  }, []);
-
-  const updateExitFormField = useCallback(
-    (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = event.target;
-      setExitFormData((current) => {
-        if (name === 'companySize') {
-          return { ...current, companySize: value as CompanySize };
-        }
-        if (name === 'name') {
-          return { ...current, name: value };
-        }
-        if (name === 'email') {
-          return { ...current, email: value };
-        }
-        if (name === 'phone') {
-          return { ...current, phone: value };
-        }
-
-        return current;
-      });
-    },
-    []
-  );
-
-  const handleExitFormSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      setIsSubmittingExitForm(true);
-      setExitFormStatus('idle');
-      setExitErrorMessage('');
-
-      try {
-        const response = await fetch('/api/lead-submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: exitFormData.name.trim(),
-            email: exitFormData.email.trim(),
-            phone: exitFormData.phone.trim(),
-            company_size: exitFormData.companySize || undefined,
-            source: 'exit_intent',
-            page: PAGE_PATH,
-            timestamp: new Date().toISOString(),
-          }),
-        });
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData?.error || 'Er ging iets mis. Probeer het opnieuw of bel ons direct.');
-        }
-
-        setExitFormStatus('success');
-        emitAnalyticsEvent('exit_intent_form_submit', {
-          source: 'exit_intent',
-          page: PAGE_PATH,
-        });
-        emitAnalyticsEvent('generate_lead', {
-          source: 'exit_intent',
-          value: 5000,
-          currency: 'EUR',
-        });
-
-        if (autoCloseTimeoutRef.current) {
-          window.clearTimeout(autoCloseTimeoutRef.current);
-        }
-
-        autoCloseTimeoutRef.current = window.setTimeout(() => {
-          closeExitIntentModal('close_button');
-          autoCloseTimeoutRef.current = null;
-        }, 3000);
-      } catch (error) {
-        setExitFormStatus('error');
-        setExitErrorMessage(
-          error instanceof Error
-            ? error.message
-            : 'Er ging iets mis. Probeer het opnieuw of bel ons direct.'
-        );
-      } finally {
-        setIsSubmittingExitForm(false);
-      }
-    },
-    [closeExitIntentModal, exitFormData]
-  );
-
-  useEffect(() => {
-    setViewportWidth(window.innerWidth);
-    setIsPanelClosedInSession(getSessionStorageItem(STICKY_PANEL_CLOSED_KEY) === '1');
-    setIsExitIntentBlocked(getSessionStorageItem(EXIT_INTENT_SHOWN_KEY) === '1');
-
-    const onResize = () => handleResize();
-    window.addEventListener('resize', onResize);
-    resizeCleanupRef.current = () => {
-      window.removeEventListener('resize', onResize);
-    };
-
-    initCostSectionObserver();
-    updateScrollProgress();
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
-
-    document.addEventListener('mouseleave', handleMouseLeave);
+    observer.observe(heroElement);
 
     return () => {
-      if (resizeCleanupRef.current) {
-        resizeCleanupRef.current();
-      }
-      if (intersectionCleanupRef.current) {
-        intersectionCleanupRef.current.disconnect();
-      }
-      window.removeEventListener('scroll', updateScrollProgress);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      if (exitIntentDelayRef.current) {
-        window.clearTimeout(exitIntentDelayRef.current);
-      }
-      if (autoCloseTimeoutRef.current) {
-        window.clearTimeout(autoCloseTimeoutRef.current);
-      }
+      observer.disconnect();
     };
-  }, [
-    getSessionStorageItem,
-    handleResize,
-    handleMouseLeave,
-    initCostSectionObserver,
-    updateScrollProgress,
-  ]);
+  }, [isIso9001Page]);
 
   useEffect(() => {
-    if (!shouldRenderSidePanel) {
+    if (!isIso9001Page || !isDesktop) {
       return;
     }
 
-    if (!hasShownSidePanel) {
-      setHasShownSidePanel(true);
-      emitAnalyticsEvent('sticky_panel_view', {
-        source: 'sticky_panel',
-        page: PAGE_PATH,
-      });
-    }
-  }, [hasShownSidePanel, shouldRenderSidePanel]);
+    const handleMouseLeave = (event: MouseEvent) => {
+      if (event.clientY > 12 || !isStickyVisible || isExitModalOpen) {
+        return;
+      }
 
-  useEffect(() => {
-    if (!shouldRenderBottomBar) {
-      return;
-    }
+      openExitIntentModal();
+    };
 
-    if (!hasShownBottomBar) {
-      setHasShownBottomBar(true);
-      emitAnalyticsEvent('sticky_bottom_view', {
-        source: 'sticky_bottom',
-        page: PAGE_PATH,
-      });
-    }
-  }, [hasShownBottomBar, shouldRenderBottomBar]);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [isDesktop, isExitModalOpen, isIso9001Page, isStickyVisible, openExitIntentModal]);
 
   useEffect(() => {
     if (!isExitModalOpen) {
       return;
     }
 
-    previouslyFocusedElementRef.current =
-      (document.activeElement as HTMLElement) || null;
-
-    if (firstExitInputRef.current) {
-      firstExitInputRef.current.focus();
-    }
-
+    previouslyFocusedElementRef.current = document.activeElement as HTMLElement;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    firstInputRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        closeExitIntentModal('escape_key');
+        closeExitIntentModal();
         return;
       }
 
-      if (event.key !== 'Tab') {
+      if (event.key !== 'Tab' || !exitModalRef.current) {
         return;
       }
 
-      const focusable = getFocusableElements();
+      const focusable = Array.from(
+        exitModalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      ).filter((element) => !element.hasAttribute('disabled'));
+
       if (focusable.length === 0) {
         event.preventDefault();
         return;
       }
 
-      const firstElement = focusable[0];
-      const lastElement = focusable[focusable.length - 1];
-      const activeElement = document.activeElement;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
 
-      if (event.shiftKey && activeElement === firstElement) {
+      if (event.shiftKey && active === first) {
         event.preventDefault();
-        lastElement.focus();
-        return;
-      }
-
-      if (!event.shiftKey && activeElement === lastElement) {
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
         event.preventDefault();
-        firstElement.focus();
+        first.focus();
       }
     };
 
@@ -456,223 +281,208 @@ export default function StickyLeadCapture() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
+      previouslyFocusedElementRef.current?.focus();
+    };
+  }, [closeExitIntentModal, isExitModalOpen]);
 
-      if (previouslyFocusedElementRef.current) {
-        previouslyFocusedElementRef.current.focus();
-      }
-
-      if (exitFormRef.current) {
-        exitFormRef.current.reset();
+  useEffect(() => {
+    return () => {
+      if (successCloseTimeoutRef.current) {
+        window.clearTimeout(successCloseTimeoutRef.current);
       }
     };
-  }, [closeExitIntentModal, getFocusableElements, isExitModalOpen]);
+  }, []);
+
+  const handleExitIntentSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setIsSubmitting(true);
+      setFormStatus('idle');
+      setErrorMessage('');
+
+      try {
+        const response = await fetch('/api/lead-submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email.trim(),
+            company_name: companyName.trim() || undefined,
+            source: 'iso9001-exit-intent',
+            page: PAGE_PATH,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+
+        const body = await response.json();
+        if (!response.ok) {
+          throw new Error(body?.error || 'Verzenden mislukt. Probeer het opnieuw.');
+        }
+
+        setFormStatus('success');
+        trackEvent({
+          name: 'quickscan_submit_iso9001',
+          params: {
+            source: 'iso9001-exit-intent',
+          },
+        });
+
+        if (successCloseTimeoutRef.current) {
+          window.clearTimeout(successCloseTimeoutRef.current);
+        }
+
+        successCloseTimeoutRef.current = window.setTimeout(() => {
+          setIsExitModalOpen(false);
+          successCloseTimeoutRef.current = null;
+        }, 2200);
+      } catch (error) {
+        setFormStatus('error');
+        setErrorMessage(
+          error instanceof Error ? error.message : 'Verzenden mislukt. Probeer het opnieuw.'
+        );
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [companyName, email]
+  );
+
+  if (!isIso9001Page) {
+    return null;
+  }
 
   return (
     <>
-      {shouldRenderSidePanel ? (
-        <aside
-          id="sticky-lead-side-panel"
-          className="fixed right-8 top-1/2 z-[100] w-64 -translate-y-1/2 transform overflow-hidden rounded-2xl border border-[#d7e4f2] bg-[linear-gradient(160deg,#ffffff_0%,#f7fbff_58%,#eef8f3_100%)] p-6 shadow-[0_18px_40px_rgba(9,30,66,0.16)] backdrop-blur-sm"
-          aria-label="Snelle kennismaking"
-        >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#13a170] to-[#FF8B00]"></div>
-          <button
-            type="button"
-            onClick={closeSidePanel}
-            className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-[#666] transition hover:bg-white/80 hover:text-[#444]"
-            aria-label="Sluit"
-          >
-            ×
-          </button>
-
-          <h2 className="mb-2 mt-2 text-xl font-semibold leading-tight text-[#091E42]">
-            Vrijblijvend kennismaken?
-          </h2>
-          <p className="mb-5 text-sm leading-relaxed text-slate-700">Plan een gesprek of bel:</p>
-
-          <a
-            href={PHONE_LINK}
-            onClick={handleSidePanelPhoneClick}
-            className="mb-4 inline-block text-base font-semibold text-[#0066cc] underline decoration-[#0066cc]/50 underline-offset-4 hover:text-[#0051a3]"
-          >
-            {PHONE_NUMBER}
-          </a>
-
-          <a
-            href={SIDE_PANEL_CTA}
-            onClick={handleSidePanelCtaClick}
-            className="primary-button block w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_26px_rgba(255,139,0,0.38)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
-          >
-            Plan gesprek
-          </a>
-        </aside>
-      ) : null}
-
-      {shouldRenderBottomBar ? (
+      {isStickyVisible ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-[100] border-t border-slate-200/80 bg-white/95 p-4 shadow-[0_-6px_22px_rgba(9,30,66,0.16)] backdrop-blur-sm"
-          style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
-          aria-label="Snelle call-to-action"
+          className="fixed inset-x-0 z-[45] px-3 pb-3 sm:px-4"
+          style={{ bottom: `calc(${cookieBannerOffset}px + env(safe-area-inset-bottom))` }}
+          aria-label="Sticky ISO 9001 call-to-action"
         >
-          <div className="container-custom">
-            <p className="mb-3 text-base font-semibold text-[#091E42]">
-              ISO 9001 vanaf €5.000
-            </p>
-
-            <div className="grid grid-cols-2 gap-3 max-[359px]:grid-cols-1">
-              <a
-                href={BOTTOM_BAR_CTA}
-                onClick={handleBottomPlanClick}
-                className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_8px_22px_rgba(255,139,0,0.33)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
-              >
-                Plan gesprek
-              </a>
-              <a
-                href={PHONE_LINK}
-                onClick={handleBottomCallClick}
-                className="inline-flex h-11 items-center justify-center rounded-lg border border-[#091E42]/80 bg-white px-4 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50"
-              >
-                Bel direct
-              </a>
+          <div className="mx-auto max-w-5xl rounded-2xl border border-slate-200/90 bg-white/95 p-3 shadow-[0_12px_34px_rgba(9,30,66,0.17)] backdrop-blur-sm sm:p-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <p className="text-sm font-semibold text-[#091E42] md:pr-4">
+                Snel schakelen over ISO 9001?
+              </p>
+              <div className="grid grid-cols-2 gap-2 md:min-w-[440px]">
+                {calendlyConfig.hasCalendlyUrl ? (
+                  <button
+                    type="button"
+                    onClick={openStickyCalendly}
+                    className="primary-button h-11 w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center text-sm shadow-[0_10px_22px_rgba(255,139,0,0.31)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
+                  >
+                    Plan 15 min gesprek
+                  </button>
+                ) : (
+                  <a
+                    href={calendlyConfig.fallbackUrl}
+                    className="primary-button inline-flex h-11 w-full items-center justify-center bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center text-sm shadow-[0_10px_22px_rgba(255,139,0,0.31)] hover:from-[#FF9B20] hover:to-[#FF7A00]"
+                  >
+                    Plan 15 min gesprek
+                  </a>
+                )}
+                <a
+                  href={PHONE_LINK}
+                  onClick={handleStickyCallClick}
+                  className="inline-flex h-11 items-center justify-center rounded-lg border border-[#091E42]/40 bg-white px-4 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50"
+                >
+                  Bel direct
+                </a>
+              </div>
             </div>
+            {!calendlyConfig.hasCalendlyUrl ? (
+              <p className="mt-2 text-xs text-slate-600">{calendlyConfig.fallbackHint}</p>
+            ) : null}
           </div>
         </div>
       ) : null}
 
       {isExitModalOpen ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-[2px]"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-8"
           role="presentation"
-          onClick={() => closeExitIntentModal('overlay_click')}
+          onClick={closeExitIntentModal}
         >
           <div
             ref={exitModalRef}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="sticky-exit-intent-title"
-            aria-describedby="sticky-exit-intent-description"
-            className="relative w-[90%] max-w-[500px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
+            aria-labelledby="iso9001-exit-intent-title"
+            aria-describedby="iso9001-exit-intent-description"
+            className="relative w-full max-w-[520px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#13a170] to-[#FF8B00]"></div>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00875A] via-[#14a271] to-[#FF8B00]"></div>
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
-                <h2 id="sticky-exit-intent-title" className="text-2xl font-bold text-[#091E42]">
-                  Wacht nog even...
+                <h2 id="iso9001-exit-intent-title" className="text-xl font-bold text-[#091E42] sm:text-2xl">
+                  Gratis ISO 9001 quickscan (PDF) binnen 24 uur
                 </h2>
-                <p id="sticky-exit-intent-description" className="mt-2 text-sm text-slate-700">
-                  Wil je weten wat ISO 9001 jouw organisatie kost en hoe lang het duurt?
+                <p id="iso9001-exit-intent-description" className="mt-2 text-sm text-slate-700">
+                  Laat je e-mailadres achter, dan ontvang je een praktische quickscan voor jouw situatie.
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => closeExitIntentModal('close_button')}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-[#666] transition hover:bg-slate-100 hover:text-[#444]"
+                onClick={closeExitIntentModal}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
                 aria-label="Sluiten"
               >
                 ×
               </button>
             </div>
 
-            <p className="mb-5 text-sm text-slate-700">
-              Laat je gegevens achter voor een vrijblijvend gesprek binnen 1 werkdag.
-            </p>
-
-            {exitFormStatus === 'success' ? (
+            {formStatus === 'success' ? (
               <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
-                ✅ Bedankt! We nemen binnen 1 werkdag contact met je op.
+                Bedankt. We sturen je quickscan binnen 24 uur.
               </p>
             ) : (
-              <form
-                ref={exitFormRef}
-                onSubmit={handleExitFormSubmit}
-                className="space-y-4"
-              >
+              <form onSubmit={handleExitIntentSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="sticky-exit-intent-name" className="mb-1 block text-sm font-semibold text-[#091E42]">
-                    Naam *
-                  </label>
-                  <input
-                    ref={firstExitInputRef}
-                    id="sticky-exit-intent-name"
-                    name="name"
-                    type="text"
-                    required
-                    value={exitFormData.name}
-                    onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
-                    disabled={isSubmittingExitForm}
-                    autoComplete="name"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="sticky-exit-intent-email" className="mb-1 block text-sm font-semibold text-[#091E42]">
+                  <label htmlFor="iso9001-exit-email" className="mb-1 block text-sm font-semibold text-[#091E42]">
                     E-mail *
                   </label>
                   <input
-                    id="sticky-exit-intent-email"
+                    ref={firstInputRef}
+                    id="iso9001-exit-email"
                     name="email"
                     type="email"
                     required
-                    value={exitFormData.email}
-                    onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
-                    disabled={isSubmittingExitForm}
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    disabled={isSubmitting}
                     autoComplete="email"
+                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
                   />
                 </div>
-
                 <div>
-                  <label htmlFor="sticky-exit-intent-phone" className="mb-1 block text-sm font-semibold text-[#091E42]">
-                    Telefoon *
+                  <label htmlFor="iso9001-exit-company" className="mb-1 block text-sm font-semibold text-[#091E42]">
+                    Bedrijfsnaam (optioneel)
                   </label>
                   <input
-                    id="sticky-exit-intent-phone"
-                    name="phone"
-                    type="tel"
-                    required
-                    value={exitFormData.phone}
-                    onChange={updateExitFormField}
+                    id="iso9001-exit-company"
+                    name="company"
+                    type="text"
+                    value={companyName}
+                    onChange={(event) => setCompanyName(event.target.value)}
+                    disabled={isSubmitting}
+                    autoComplete="organization"
                     className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
-                    disabled={isSubmittingExitForm}
-                    autoComplete="tel"
                   />
                 </div>
-
-                <div>
-                  <label htmlFor="sticky-exit-intent-company-size" className="mb-1 block text-sm font-semibold text-[#091E42]">
-                    Aantal FTE
-                  </label>
-                  <select
-                    id="sticky-exit-intent-company-size"
-                    name="companySize"
-                    value={exitFormData.companySize}
-                    onChange={updateExitFormField}
-                    className="w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] transition focus:border-[#00875A] focus:outline-none focus:ring-2 focus:ring-[#00875A]/20"
-                    disabled={isSubmittingExitForm}
-                  >
-                    {companySizeOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <button
                   type="submit"
-                  disabled={isSubmittingExitForm}
+                  disabled={isSubmitting}
                   className="w-full rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_10px_24px_rgba(255,139,0,0.32)] transition hover:from-[#FF9B20] hover:to-[#FF7A00] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isSubmittingExitForm ? 'Bezig met verzenden...' : 'Ja, plan gesprek'}
+                  {isSubmitting ? 'Bezig met verzenden...' : 'Stuur mijn quickscan'}
                 </button>
-
-                {exitFormStatus === 'error' && (
+                {formStatus === 'error' ? (
                   <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
-                    {exitErrorMessage}
+                    {errorMessage}
                   </p>
-                )}
+                ) : null}
               </form>
             )}
           </div>

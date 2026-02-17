@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-type LeadSource = 'exit_intent' | 'sticky_panel' | 'sticky_bottom';
+type LeadSource = 'exit_intent' | 'sticky_panel' | 'sticky_bottom' | 'iso9001-exit-intent';
 type CompanySize = '1-10' | '10-50' | '50+';
 
 interface LeadSubmitPayload {
-  name: string;
+  name?: string;
   email: string;
-  phone: string;
+  phone?: string;
   company_size?: CompanySize | string;
+  company_name?: string;
   source: LeadSource;
   page: string;
   timestamp: string;
@@ -18,7 +19,12 @@ const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
-const validSources = new Set<LeadSource>(['exit_intent', 'sticky_panel', 'sticky_bottom']);
+const validSources = new Set<LeadSource>([
+  'exit_intent',
+  'sticky_panel',
+  'sticky_bottom',
+  'iso9001-exit-intent',
+]);
 const validCompanySizes = new Set<CompanySize>(['1-10', '10-50', '50+']);
 
 function getClientIp(request: NextRequest): string {
@@ -49,21 +55,14 @@ function isRateLimited(ip: string): boolean {
 }
 
 function validatePayload(body: LeadSubmitPayload): string | null {
-  if (!body?.name || !body?.email || !body?.phone || !body?.source || !body?.page || !body?.timestamp) {
+  if (!body?.email || !body?.source || !body?.page || !body?.timestamp) {
     return 'Alle verplichte velden zijn verplicht.';
   }
 
-  const trimmedName = String(body.name).trim();
+  const isQuickscanLead = body.source === 'iso9001-exit-intent';
+  const trimmedName = String(body.name || '').trim();
   const trimmedEmail = String(body.email).trim();
-  const trimmedPhone = String(body.phone).trim();
-
-  if (!trimmedName || trimmedName.length > 120) {
-    return 'Ongeldige naam.';
-  }
-
-  if (!trimmedPhone || trimmedPhone.length > 40) {
-    return 'Ongeldig telefoonnummer.';
-  }
+  const trimmedPhone = String(body.phone || '').trim();
 
   if (!validSources.has(body.source as LeadSource)) {
     return 'Ongeldige bron voor dit leadformulier.';
@@ -74,8 +73,23 @@ function validatePayload(body: LeadSubmitPayload): string | null {
     return 'Ongeldig e-mailadres.';
   }
 
-  if (body.company_size && !validCompanySizes.has(body.company_size as CompanySize)) {
-    return 'Ongeldige waarde voor aantal FTE.';
+  if (isQuickscanLead) {
+    const trimmedCompanyName = String(body.company_name || '').trim();
+    if (trimmedCompanyName.length > 180) {
+      return 'Bedrijfsnaam is te lang.';
+    }
+  } else {
+    if (!trimmedName || trimmedName.length > 120) {
+      return 'Ongeldige naam.';
+    }
+
+    if (!trimmedPhone || trimmedPhone.length > 40) {
+      return 'Ongeldig telefoonnummer.';
+    }
+
+    if (body.company_size && !validCompanySizes.has(body.company_size as CompanySize)) {
+      return 'Ongeldige waarde voor aantal FTE.';
+    }
   }
 
   if (Number.isNaN(Date.parse(body.timestamp))) {
@@ -122,10 +136,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const sanitizedName = String(body.name).trim();
+  const isQuickscanLead = body.source === 'iso9001-exit-intent';
+  const sanitizedName = String(body.name || '').trim();
   const sanitizedEmail = String(body.email).trim();
-  const sanitizedPhone = String(body.phone).trim();
+  const sanitizedPhone = String(body.phone || '').trim();
   const sanitizedCompanySize = body.company_size ? String(body.company_size).trim() : '';
+  const sanitizedCompanyName = body.company_name ? String(body.company_name).trim() : '';
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.hostinger.com',
@@ -139,16 +155,26 @@ export async function POST(request: NextRequest) {
     logger: false,
   });
 
-  const mailOptions = {
-    from: '"MaasISO Website" <info@maasiso.nl>',
-    to: 'info@maasiso.nl',
-    replyTo: sanitizedEmail,
-    subject: 'Nieuwe lead van website (ISO 9001 exit intent)',
-    text: `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nTelefoon: ${sanitizedPhone}\nAantal FTE: ${sanitizedCompanySize || 'Niet opgegeven'}\nBron: ${body.source}\nPagina: ${body.page}\nTijd: ${body.timestamp}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #091E42;">
-        <h2 style="color: #091E42;">Nieuwe lead via website formulier</h2>
-        <table style="width: 100%; border-collapse: collapse;">
+  const subject = isQuickscanLead
+    ? 'Nieuwe lead van website (ISO 9001 quickscan)'
+    : 'Nieuwe lead van website (ISO 9001 exit intent)';
+
+  const textBody = isQuickscanLead
+    ? `E-mail: ${sanitizedEmail}\nBedrijfsnaam: ${sanitizedCompanyName || 'Niet opgegeven'}\nBron: ${body.source}\nPagina: ${body.page}\nTijd: ${body.timestamp}`
+    : `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nTelefoon: ${sanitizedPhone}\nAantal FTE: ${sanitizedCompanySize || 'Niet opgegeven'}\nBron: ${body.source}\nPagina: ${body.page}\nTijd: ${body.timestamp}`;
+
+  const htmlRows = isQuickscanLead
+    ? `
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee; width: 130px;"><strong>E-mail</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Bedrijfsnaam</strong></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedCompanyName || 'Niet opgegeven'}</td>
+          </tr>
+      `
+    : `
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee; width: 130px;"><strong>Naam</strong></td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedName}</td>
@@ -165,6 +191,19 @@ export async function POST(request: NextRequest) {
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Aantal FTE</strong></td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedCompanySize || 'Niet opgegeven'}</td>
           </tr>
+      `;
+
+  const mailOptions = {
+    from: '"MaasISO Website" <info@maasiso.nl>',
+    to: 'info@maasiso.nl',
+    replyTo: sanitizedEmail,
+    subject,
+    text: textBody,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #091E42;">
+        <h2 style="color: #091E42;">Nieuwe lead via website formulier</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          ${htmlRows}
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Bron</strong></td>
             <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.source}</td>

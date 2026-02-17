@@ -12,6 +12,8 @@ import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import Breadcrumbs, { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
+import { trackEvent } from '@/lib/analytics';
+import { getIso9001CalendlyConfig, openIso9001Calendly } from '@/lib/calendly/iso9001Calendly';
 
 type AuthorityPageContentProps = {
   layout?: NonNullable<Page['layout']>;
@@ -67,6 +69,8 @@ const isDebugLoggingEnabled =
   process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
 const MARKDOWN_HEADING_REGEX = /^#{1,6}\s+/;
 const EXPERT_QUOTE_HEADING_REGEX = /^#{1,6}\s*expertquote\b/i;
+const ISO9001_PHONE_DISPLAY = '+31 6 23 57 83 44';
+const ISO9001_PHONE_LINK = 'tel:+31623578344';
 
 function toNonEmptyString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
@@ -280,6 +284,19 @@ const MARKDOWN_BLOCKQUOTE_CLASS =
   'my-8 border-l-4 border-[#00875A] bg-[#f7fffb] pl-5 pr-4 py-3 italic text-slate-700 rounded-r-xl';
 
 const markdownComponents = {
+  h2: (props: any) => {
+    const { children, ...restProps } = props;
+    const rest = { ...restProps };
+    delete rest.node;
+    const headingText = toTextContent(children).trim().toLowerCase();
+    const isKostenHeading = /wat\s+kost\s+iso\s*9001\s+certificering\??/i.test(headingText);
+
+    return (
+      <h2 id={isKostenHeading ? 'kosten' : rest.id} {...rest}>
+        {children}
+      </h2>
+    );
+  },
   table: (props: any) => {
     const rest = { ...props };
     delete rest.node;
@@ -410,6 +427,46 @@ export default function AuthorityPageContent({
     }))
     : null;
   let textBlockRenderIndex = 0;
+  const calendlyConfig = getIso9001CalendlyConfig();
+
+  const openCalendlyOrFallback = async (source: 'hero' | 'cost_section') => {
+    const result = await openIso9001Calendly(source);
+    if (!result.opened && result.fallbackUrl && typeof window !== 'undefined') {
+      window.location.href = result.fallbackUrl;
+    }
+  };
+
+  const handleHeroCalendlyClick = () => {
+    void openCalendlyOrFallback('hero');
+  };
+
+  const handleHeroCallClick = () => {
+    trackEvent({
+      name: 'click_call_iso9001',
+      params: {
+        location: 'hero',
+      },
+    });
+  };
+
+  const handleCostSectionCalendlyClick = () => {
+    trackEvent({
+      name: 'lead_cta_click_iso9001_costsection',
+      params: {
+        action: 'plan_15_min',
+      },
+    });
+    void openCalendlyOrFallback('cost_section');
+  };
+
+  const handleCostSectionCallClick = () => {
+    trackEvent({
+      name: 'lead_cta_click_iso9001_costsection',
+      params: {
+        action: 'call_direct',
+      },
+    });
+  };
 
   return (
     <main
@@ -449,40 +506,114 @@ export default function AuthorityPageContent({
               block?.title ||
               'Hero afbeelding';
             return (
-              <section key={blockKey} className="hero-section relative overflow-hidden bg-[#091E42]">
-                {heroImageSrc ? (
-                  <>
-                    <Image
-                      src={heroImageSrc}
-                      alt={heroImageAlt}
-                      fill
-                      sizes="100vw"
-                      priority={index === 0}
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#050f24]/85 via-[#091E42]/76 to-[#032545]/76"></div>
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.22),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(0,135,90,0.28),transparent_38%),radial-gradient(circle_at_50%_85%,rgba(255,139,0,0.24),transparent_44%)]"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050f24]/78 via-transparent to-transparent"></div>
-                  </>
-                ) : null}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                  <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-[#00875A] opacity-10 blur-2xl -mr-20 -mt-20 animate-pulse-slow"></div>
-                  <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-[#FF8B00] opacity-10 blur-2xl -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
-                  <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-white opacity-5 blur-xl transform -translate-y-1/2"></div>
-                </div>
-                <div className="container-custom relative z-10">
-                  <div className="mx-auto max-w-4xl rounded-3xl border border-white/20 bg-white/10 px-6 py-8 text-center shadow-[0_18px_45px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-8 md:px-10 md:py-12">
-                    <h1 className="mb-5 text-3xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl md:mb-6 md:text-5xl">
-                      {block.title}
-                    </h1>
-                    {block.subtitle && (
-                      <p className="mx-auto mb-1 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg md:text-xl">
-                        {parseMarkdownBold(String(block.subtitle))}
-                      </p>
-                    )}
+              <React.Fragment key={blockKey}>
+                <section className="hero-section relative overflow-hidden bg-[#091E42]">
+                  {heroImageSrc ? (
+                    <>
+                      <Image
+                        src={heroImageSrc}
+                        alt={heroImageAlt}
+                        fill
+                        sizes="100vw"
+                        priority={index === 0}
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#050f24]/85 via-[#091E42]/76 to-[#032545]/76"></div>
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.22),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(0,135,90,0.28),transparent_38%),radial-gradient(circle_at_50%_85%,rgba(255,139,0,0.24),transparent_44%)]"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050f24]/78 via-transparent to-transparent"></div>
+                    </>
+                  ) : null}
+                  <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-[#00875A] opacity-10 blur-2xl -mr-20 -mt-20 animate-pulse-slow"></div>
+                    <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-[#FF8B00] opacity-10 blur-2xl -ml-20 -mb-20 animate-pulse-slow delay-300"></div>
+                    <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-white opacity-5 blur-xl transform -translate-y-1/2"></div>
                   </div>
-                </div>
-              </section>
+                  <div className="container-custom relative z-10">
+                    <div className="mx-auto max-w-4xl rounded-3xl border border-white/20 bg-white/10 px-6 py-8 text-center shadow-[0_18px_45px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-8 md:px-10 md:py-12">
+                      <h1 className="mb-5 text-3xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl md:mb-6 md:text-5xl">
+                        {block.title}
+                      </h1>
+                      {block.subtitle && (
+                        <p className="mx-auto mb-1 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg md:text-xl">
+                          {parseMarkdownBold(String(block.subtitle))}
+                        </p>
+                      )}
+                      {showIso9001LeadSnippet ? (
+                        <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-white/20 bg-[#091E42]/35 px-5 py-5 text-left shadow-[0_12px_30px_rgba(0,0,0,0.2)] backdrop-blur-sm sm:px-6">
+                          <h2 className="text-xl font-semibold text-white sm:text-2xl">
+                            Plan gratis kennismaking (15 min)
+                          </h2>
+                          <p className="mt-3 text-sm leading-relaxed text-white/90 sm:text-base">
+                            Binnen 30 minuten teruggebeld op werkdagen (09:00-17:00). Buiten kantooruren: volgende werkdag.
+                          </p>
+                          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                            {calendlyConfig.hasCalendlyUrl ? (
+                              <button
+                                type="button"
+                                onClick={handleHeroCalendlyClick}
+                                className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_24px_rgba(255,139,0,0.34)] hover:from-[#FF9B20] hover:to-[#FF7A00] sm:w-auto sm:min-w-[230px]"
+                              >
+                                Plan 15 min gesprek
+                              </button>
+                            ) : (
+                              <a
+                                href={calendlyConfig.fallbackUrl}
+                                className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_24px_rgba(255,139,0,0.34)] hover:from-[#FF9B20] hover:to-[#FF7A00] sm:w-auto sm:min-w-[230px]"
+                              >
+                                Plan 15 min gesprek
+                              </a>
+                            )}
+                            <a
+                              href={ISO9001_PHONE_LINK}
+                              onClick={handleHeroCallClick}
+                              className="inline-flex w-full items-center justify-center rounded-lg border border-white/70 bg-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/25 sm:w-auto sm:min-w-[190px]"
+                            >
+                              Bel direct
+                            </a>
+                          </div>
+                          {!calendlyConfig.hasCalendlyUrl ? (
+                            <p className="mt-3 text-xs text-white/80">{calendlyConfig.fallbackHint}</p>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </section>
+                {showIso9001LeadSnippet ? (
+                  <section className="bg-gradient-to-b from-white via-[#f8fcff] to-white py-10 md:py-14">
+                    <div className="container-custom px-4 sm:px-6 lg:px-8">
+                      <div className="mx-auto max-w-5xl rounded-2xl border border-[#dce9f6] bg-white p-6 shadow-[0_14px_36px_rgba(9,30,66,0.08)] md:p-8">
+                        <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+                          <ul className="space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+                            <li className="flex items-start gap-2">
+                              <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-[#00875A]"></span>
+                              <span><strong>Voor wie:</strong> MKB (1-100+ medewerkers), alle sectoren</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-[#00875A]"></span>
+                              <span><strong>Doorlooptijd:</strong> gemiddeld 3-6 maanden</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-[#00875A]"></span>
+                              <span><strong>Investering:</strong> meestal EUR 5.000-EUR 15.000 (incl. certificering)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-[#00875A]"></span>
+                              <span><strong>Aanpak:</strong> wij begeleiden, certificerende instelling audit</span>
+                            </li>
+                          </ul>
+                          <a
+                            href="#kosten"
+                            className="inline-flex items-center justify-center rounded-lg border border-[#00875A]/35 bg-[#f1fbf6] px-4 py-2.5 text-sm font-semibold text-[#006B47] transition hover:bg-[#e4f7ee]"
+                          >
+                            Bekijk kosten →
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
+              </React.Fragment>
             );
           }
 
@@ -495,31 +626,6 @@ export default function AuthorityPageContent({
                     className="max-w-5xl mx-auto"
                     variant="iso9001"
                   />
-                  {showIso9001LeadSnippet && (
-                    <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-2xl border border-[#b9ead8] bg-[linear-gradient(155deg,#f4fff9_0%,#effaf5_58%,#fff7ed_100%)] p-7 text-center shadow-[0_14px_34px_rgba(9,30,66,0.08)]">
-                      <h3 className="text-lg font-bold text-[#091E42]">
-                        Wil je weten wat ISO 9001 voor jouw organisatie betekent?
-                      </h3>
-                      <p className="mt-3 text-gray-700 leading-relaxed">
-                        Plan een vrijblijvend kennismakingsgesprek. We bellen binnen 1 werkdag terug.
-                      </p>
-                      <p className="mt-4 text-[#091E42]">
-                        <a
-                          href="/contact?source=key_takeaways"
-                          className="font-semibold text-[#00875A] underline decoration-[#00875A]/60 underline-offset-4 hover:text-[#006B47]"
-                        >
-                          Plan gesprek
-                        </a>
-                        {' '}→ Of bel direct:{' '}
-                        <a
-                          href="tel:+31623578344"
-                          className="font-semibold text-[#00875A] underline decoration-[#00875A]/60 underline-offset-4 hover:text-[#006B47]"
-                        >
-                          +31 6 23 57 83 44
-                        </a>
-                      </p>
-                    </div>
-                  )}
                 </div>
               </section>
             );
@@ -808,7 +914,8 @@ export default function AuthorityPageContent({
                 ? transitionTimelineImage?.alt || 'ISO 9001 transitie timeline'
                 : 'ISO 9001 afbeelding';
 
-            const textBlockId = block.id === 'kosten-sectie' ? 'kosten-sectie' : undefined;
+            const isKostenSection = block.id === 'kosten-sectie';
+            const textBlockId = isKostenSection ? 'kosten-sectie' : undefined;
             const renderedTextBlockIndex = textBlockRenderIndex;
             textBlockRenderIndex += 1;
             const textBlockToneClass =
@@ -822,61 +929,103 @@ export default function AuthorityPageContent({
                 ? 'text-right'
                 : 'text-left';
             return (
-              <section key={blockKey} id={textBlockId} className={`py-16 md:py-28 ${textBlockToneClass}`}>
-                <div className="container-custom px-4 sm:px-6 lg:px-8">
-                  <div className="relative mx-auto mb-14 max-w-5xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_20px_50px_rgba(9,30,66,0.08)] transition-all duration-300 hover:shadow-[0_26px_58px_rgba(9,30,66,0.12)]">
-                    <div className="h-2 bg-gradient-to-r from-[#00875A] via-[#14a271] to-[#FF8B00]"></div>
-                    <div className="p-8 md:p-12">
-                      <div className="pointer-events-none absolute top-8 right-8 opacity-10 md:top-12 md:right-12">
-                        <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 17L12 22L22 17" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M2 12L12 17L22 12" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                      <div className={`relative z-10 space-y-10 ${textAlignmentClass}`}>
-                        {shouldInjectImage ? (
-                          <>
-                            <ReactMarkdown
-                              className={MARKDOWN_PROSE_CLASS}
-                              remarkPlugins={[remarkGfm, remarkBreaks]}
-                              components={markdownComponents}
-                            >
-                              {imageBlockBefore}
-                            </ReactMarkdown>
-                            <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_12px_30px_rgba(9,30,66,0.09)]">
-                              <div className="relative aspect-[16/9] w-full">
-                                <Image
-                                  src={sectionImageSrc || ''}
-                                  alt={sectionImageAlt}
-                                  fill
-                                  sizes="(max-width: 1024px) 100vw, 1100px"
-                                  className="object-cover rounded-xl"
-                                />
+              <React.Fragment key={blockKey}>
+                <section id={textBlockId} className={`py-16 md:py-28 ${textBlockToneClass}`}>
+                  <div className="container-custom px-4 sm:px-6 lg:px-8">
+                    <div className="relative mx-auto mb-14 max-w-5xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_20px_50px_rgba(9,30,66,0.08)] transition-all duration-300 hover:shadow-[0_26px_58px_rgba(9,30,66,0.12)]">
+                      <div className="h-2 bg-gradient-to-r from-[#00875A] via-[#14a271] to-[#FF8B00]"></div>
+                      <div className="p-8 md:p-12">
+                        <div className="pointer-events-none absolute top-8 right-8 opacity-10 md:top-12 md:right-12">
+                          <svg className="w-32 h-32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="#091E42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                        <div className={`relative z-10 space-y-10 ${textAlignmentClass}`}>
+                          {shouldInjectImage ? (
+                            <>
+                              <ReactMarkdown
+                                className={MARKDOWN_PROSE_CLASS}
+                                remarkPlugins={[remarkGfm, remarkBreaks]}
+                                components={markdownComponents}
+                              >
+                                {imageBlockBefore}
+                              </ReactMarkdown>
+                              <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_12px_30px_rgba(9,30,66,0.09)]">
+                                <div className="relative aspect-[16/9] w-full">
+                                  <Image
+                                    src={sectionImageSrc || ''}
+                                    alt={sectionImageAlt}
+                                    fill
+                                    sizes="(max-width: 1024px) 100vw, 1100px"
+                                    className="object-cover rounded-xl"
+                                  />
+                                </div>
                               </div>
-                            </div>
+                              <ReactMarkdown
+                                className={MARKDOWN_PROSE_CLASS}
+                                remarkPlugins={[remarkGfm, remarkBreaks]}
+                                components={markdownComponents}
+                              >
+                                {imageBlockAfter}
+                              </ReactMarkdown>
+                            </>
+                          ) : (
                             <ReactMarkdown
                               className={MARKDOWN_PROSE_CLASS}
                               remarkPlugins={[remarkGfm, remarkBreaks]}
                               components={markdownComponents}
                             >
-                              {imageBlockAfter}
+                              {normalizedTextBlockContent}
                             </ReactMarkdown>
-                          </>
-                        ) : (
-                          <ReactMarkdown
-                            className={MARKDOWN_PROSE_CLASS}
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            components={markdownComponents}
-                          >
-                            {normalizedTextBlockContent}
-                          </ReactMarkdown>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
+                {showIso9001LeadSnippet && isKostenSection ? (
+                  <section className="bg-gradient-to-b from-[#f8fbff] to-white pb-12 md:pb-16">
+                    <div className="container-custom px-4 sm:px-6 lg:px-8">
+                      <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[#d8e6f4] bg-white p-6 shadow-[0_16px_38px_rgba(9,30,66,0.08)] md:p-8">
+                        <h3 className="text-xl font-bold leading-tight text-[#091E42] sm:text-2xl">
+                          Wil je weten wat ISO 9001 voor jouw organisatie kost en hoe snel je kunt certificeren?
+                        </h3>
+                        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                          {calendlyConfig.hasCalendlyUrl ? (
+                            <button
+                              type="button"
+                              onClick={handleCostSectionCalendlyClick}
+                              className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_24px_rgba(255,139,0,0.34)] hover:from-[#FF9B20] hover:to-[#FF7A00] sm:w-auto sm:min-w-[230px]"
+                            >
+                              Plan 15 min gesprek
+                            </button>
+                          ) : (
+                            <a
+                              href={calendlyConfig.fallbackUrl}
+                              onClick={handleCostSectionCalendlyClick}
+                              className="primary-button w-full bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] text-center shadow-[0_10px_24px_rgba(255,139,0,0.34)] hover:from-[#FF9B20] hover:to-[#FF7A00] sm:w-auto sm:min-w-[230px]"
+                            >
+                              Plan 15 min gesprek
+                            </a>
+                          )}
+                          <a
+                            href={ISO9001_PHONE_LINK}
+                            onClick={handleCostSectionCallClick}
+                            className="inline-flex w-full items-center justify-center rounded-lg border border-[#091E42]/35 bg-white px-5 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50 sm:w-auto sm:min-w-[190px]"
+                          >
+                            Bel direct
+                          </a>
+                        </div>
+                        {!calendlyConfig.hasCalendlyUrl ? (
+                          <p className="mt-3 text-xs text-slate-600">{calendlyConfig.fallbackHint}</p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
+              </React.Fragment>
             );
 
           case 'page-blocks.feature-grid': {

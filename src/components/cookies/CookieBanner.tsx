@@ -14,7 +14,10 @@ export default function CookieBanner({
   onOpenSettings,
 }: CookieBannerProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+    <div
+      id="cookie-banner"
+      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
+    >
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex-1">
