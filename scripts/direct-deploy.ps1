@@ -91,12 +91,23 @@ npm install -g npm@latest
     
     # Set up environment file
     $buildNumber = "v$(Get-Date -Format 'yyyy.MM.dd.HHmm')"
+    $emailUser = if ($env:EMAIL_USER) { $env:EMAIL_USER } else { 'NielsMaas@MaasISO.onmicrosoft.com' }
+    $emailSmtpHost = if ($env:EMAIL_SMTP_HOST) { $env:EMAIL_SMTP_HOST } else { 'smtp.office365.com' }
+    $emailSmtpPort = if ($env:EMAIL_SMTP_PORT) { $env:EMAIL_SMTP_PORT } else { '587' }
+    $emailFrom = if ($env:EMAIL_FROM) { $env:EMAIL_FROM } else { 'info@maasiso.nl' }
+    $contactEmailTo = if ($env:CONTACT_EMAIL_TO) { $env:CONTACT_EMAIL_TO } else { 'info@maasiso.nl' }
     $envContent = @"
 NEXT_PUBLIC_API_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=$env:STRAPI_TOKEN
 NEXT_PUBLIC_BUILD_NUMBER=$buildNumber
+EMAIL_USER=$emailUser
+EMAIL_PASSWORD=$env:EMAIL_PASSWORD
+EMAIL_SMTP_HOST=$emailSmtpHost
+EMAIL_SMTP_PORT=$emailSmtpPort
+EMAIL_FROM=$emailFrom
+CONTACT_EMAIL_TO=$contactEmailTo
 "@
     Set-Content -Path (Join-Path $tempDir ".env.production") -Value $envContent -NoNewline -Encoding UTF8
     Write-SubStep "Environment configured" -Status "Success"
@@ -187,6 +198,12 @@ NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=\${STRAPI_TOKEN:-__SET_ON_SERVER__}
 NEXT_PUBLIC_BUILD_NUMBER='$buildNumber'
+EMAIL_USER=$emailUser
+EMAIL_PASSWORD=\${EMAIL_PASSWORD:-__SET_ON_SERVER__}
+EMAIL_SMTP_HOST=$emailSmtpHost
+EMAIL_SMTP_PORT=$emailSmtpPort
+EMAIL_FROM=$emailFrom
+CONTACT_EMAIL_TO=$contactEmailTo
 EOL
 
 chmod 600 .env

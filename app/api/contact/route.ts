@@ -30,9 +30,10 @@ const validSubjects = new Set([
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = '';
-const DEFAULT_SMTP_PORT = 465;
-const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
+const DEFAULT_SMTP_HOST = 'smtp.office365.com';
+const DEFAULT_SMTP_PORT = 587;
+const DEFAULT_EMAIL_USER = 'NielsMaas@MaasISO.onmicrosoft.com';
+const DEFAULT_EMAIL_FROM = 'info@maasiso.nl';
 
 function normalizeEnvValue(raw: string | undefined): string {
   return String(raw || '')
@@ -137,6 +138,9 @@ export async function POST(request: NextRequest) {
     )
   );
   const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
+  const emailFrom = normalizeEnvValue(
+    process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM
+  );
   const contactRecipient = normalizeEnvValue(
     process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
   );
@@ -166,6 +170,9 @@ export async function POST(request: NextRequest) {
       user: emailUser,
       pass: emailPassword,
     },
+    tls: {
+      ciphers: 'SSLv3',
+    },
     debug: false,
     logger: false,
   });
@@ -176,7 +183,7 @@ export async function POST(request: NextRequest) {
   const sanitizedMessage = body.message.trim();
 
   const mailOptions = {
-    from: `"MaasISO Website" <${emailUser}>`,
+    from: `"MaasISO Website" <${emailFrom}>`,
     to: contactRecipient,
     replyTo: sanitizedEmail,
     subject: `Contactformulier: ${sanitizedSubject}`,
