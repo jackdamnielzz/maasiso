@@ -44,3 +44,6 @@ secrets/
 
 # credentials (never commit real access details)
 server-access-credentials.md
+
+# monitoring logs
+scripts/contact-monitor-log.txt

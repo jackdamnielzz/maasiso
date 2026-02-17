@@ -1,0 +1,51 @@
+name: Contact Form Health Monitor
+
+on:
+  schedule:
+    # 08:00 NL (07:00 UTC)
+    - cron: '0 7 * * *'
+    # 13:00 NL (12:00 UTC)
+    - cron: '0 12 * * *'
+    # 16:00 NL (15:00 UTC)
+    - cron: '0 15 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test-contact-form:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test contact form API
+        id: test
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Monitor Bot","email":"monitor@maasiso.nl","subject":"ISO 9001","message":"Automatische monitoring test - contactformulier werkt correct. Tijdstip: '"$(date '+%Y-%m-%d %H:%M:%S UTC')"'","acceptTerms":true}' \
+            "https://www.maasiso.nl/api/contact")
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          
+          echo "HTTP Status: $HTTP_STATUS"
+          echo "Response: $BODY"
+          
+          if echo "$BODY" | grep -q '"success":true'; then
+            echo "✅ Contact form is working correctly"
+            echo "status=ok" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Contact form is NOT working!"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Send failure alert
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Contact Form DOWN - ' + new Date().toISOString(),
+              body: `## ⚠️ Contact Form Monitoring Alert\n\nHet contactformulier op https://www.maasiso.nl/contact/ werkt NIET.\n\n**Tijdstip:** ${new Date().toLocaleString('nl-NL', {timeZone: 'Europe/Amsterdam'})}\n\n**Actie vereist:** Controleer de Vercel deployment en Resend API key.\n\n### Snelle checks:\n- [ ] Vercel deployment status: https://vercel.com/dashboard\n- [ ] Resend API key geldig: https://resend.com/api-keys\n- [ ] Recente deploys: controleer GitHub Actions logs`,
+              labels: ['bug', 'monitoring']
+            });
