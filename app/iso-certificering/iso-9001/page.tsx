@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import CoreDetailPageTemplate from '@/components/templates/core/CoreDetailPageTemplate';
 import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
-import StickyLeadCapture from '@/components/marketing/StickyLeadCapture';
 
 const ISO9001_CANONICAL_PATH = '/iso-certificering/iso-9001/';
 const ISO9001_HERO_IMAGE = '/hero-iso9001-pagina.jpg';
@@ -30,31 +29,28 @@ export const revalidate = 0;
 
 export default async function Iso9001Page() {
   return (
-    <>
-      <CoreDetailPageTemplate
-        title="ISO 9001"
-        strapiSlug="iso-9001"
-        hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
-        dataTopic="iso-certificering"
-        heroImage={{ src: ISO9001_HERO_IMAGE, alt: 'ISO 9001 certificering en kwaliteitsmanagement' }}
-        sectionImage={{
-          src: ISO9001_SECTION_IMAGE,
-          alt: 'Clausules 4-10 uit ISO 9001'
-        }}
-        benefitsSectionImage={{
-          src: ISO9001_BENEFITS_SECTION_IMAGE,
-          alt: 'Samenvatting van voordelen van ISO 9001 certificering'
-        }}
-        auditSectionImage={{
-          src: ISO9001_AUDIT_SECTION_IMAGE,
-          alt: 'Hoe verloopt een ISO 9001 audit'
-        }}
-        implementationDurationImage={{
-          src: ISO9001_IMPLEMENTATION_DURATION_IMAGE,
-          alt: 'Hoe lang duurt ISO 9001 implementatie'
-        }}
-      />
-      <StickyLeadCapture />
-    </>
+    <CoreDetailPageTemplate
+      title="ISO 9001"
+      strapiSlug="iso-9001"
+      hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
+      dataTopic="iso-certificering"
+      heroImage={{ src: ISO9001_HERO_IMAGE, alt: 'ISO 9001 certificering en kwaliteitsmanagement' }}
+      sectionImage={{
+        src: ISO9001_SECTION_IMAGE,
+        alt: 'Clausules 4-10 uit ISO 9001'
+      }}
+      benefitsSectionImage={{
+        src: ISO9001_BENEFITS_SECTION_IMAGE,
+        alt: 'Samenvatting van voordelen van ISO 9001 certificering'
+      }}
+      auditSectionImage={{
+        src: ISO9001_AUDIT_SECTION_IMAGE,
+        alt: 'Hoe verloopt een ISO 9001 audit'
+      }}
+      implementationDurationImage={{
+        src: ISO9001_IMPLEMENTATION_DURATION_IMAGE,
+        alt: 'Hoe lang duurt ISO 9001 implementatie'
+      }}
+    />
   );
 }
