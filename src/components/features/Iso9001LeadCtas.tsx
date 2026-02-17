@@ -3,7 +3,6 @@
 import { trackEvent } from '@/lib/analytics';
 import { getIso9001CalendlyConfig, openIso9001Calendly } from '@/lib/calendly/iso9001Calendly';
 
-const PHONE_DISPLAY = '+31 6 23 57 83 44';
 const PHONE_LINK = 'tel:+31623578344';
 
 async function openCalendlyOrFallback(source: 'hero' | 'cost_section') {
@@ -62,10 +61,6 @@ export function Iso9001HeroLeadCta() {
           Bel direct
         </a>
       </div>
-      {!calendlyConfig.hasCalendlyUrl ? (
-        <p className="mt-3 text-xs text-white/80">{calendlyConfig.fallbackHint}</p>
-      ) : null}
-      <p className="mt-2 text-xs text-white/80">{PHONE_DISPLAY}</p>
     </div>
   );
 }
