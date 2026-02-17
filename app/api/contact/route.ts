@@ -141,19 +141,38 @@ export async function POST(request: NextRequest) {
 
   const textBody = `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nOnderwerp: ${sanitizedSubject}\n\nBericht:\n${sanitizedMessage}`;
 
-  const resend = new Resend(process.env.RESEND_API_KEY || '');
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey || resendApiKey === '__SET_ME__') {
+    console.error('[Contact API] RESEND_API_KEY is not configured.');
+    return NextResponse.json(
+      { success: false, message: 'Er is een fout opgetreden bij het versturen. Probeer het later opnieuw.' },
+      { status: 500 }
+    );
+  }
 
-  const { error } = await resend.emails.send({
-    from: `MaasISO Website <${emailFrom}>`,
-    to: [contactRecipient],
-    replyTo: sanitizedEmail,
-    subject: `Contactformulier: ${sanitizedSubject} - van ${sanitizedName}`,
-    html: htmlBody,
-    text: textBody,
-  });
+  const resend = new Resend(resendApiKey);
 
-  if (error) {
-    console.error('[Contact API] Resend error:', error);
+  let sendError: unknown = null;
+  try {
+    const { error } = await resend.emails.send({
+      from: `MaasISO Website <${emailFrom}>`,
+      to: [contactRecipient],
+      replyTo: sanitizedEmail,
+      subject: `Contactformulier: ${sanitizedSubject} - van ${sanitizedName}`,
+      html: htmlBody,
+      text: textBody,
+    });
+    sendError = error ?? null;
+  } catch (err) {
+    console.error('[Contact API] Resend threw an exception:', err);
+    return NextResponse.json(
+      { success: false, message: 'Er is een fout opgetreden bij het versturen. Probeer het later opnieuw.' },
+      { status: 500 }
+    );
+  }
+
+  if (sendError) {
+    console.error('[Contact API] Resend error:', sendError);
     return NextResponse.json(
       { success: false, message: 'Er is een fout opgetreden bij het versturen. Probeer het later opnieuw.' },
       { status: 500 }
