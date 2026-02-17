@@ -30,9 +30,9 @@ const validSubjects = new Set([
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = 'smtp.office365.com';
-const DEFAULT_SMTP_PORT = 587;
-const DEFAULT_EMAIL_USER = 'NielsMaas@MaasISO.onmicrosoft.com';
+const DEFAULT_SMTP_HOST = 'smtp.resend.com';
+const DEFAULT_SMTP_PORT = 465;
+const DEFAULT_EMAIL_USER = 'resend';
 const DEFAULT_EMAIL_FROM = 'info@maasiso.nl';
 
 function normalizeEnvValue(raw: string | undefined): string {
@@ -169,9 +169,6 @@ export async function POST(request: NextRequest) {
     auth: {
       user: emailUser,
       pass: emailPassword,
-    },
-    tls: {
-      ciphers: 'SSLv3',
     },
     debug: false,
     logger: false,

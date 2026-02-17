@@ -91,9 +91,9 @@ npm install -g npm@latest
     
     # Set up environment file
     $buildNumber = "v$(Get-Date -Format 'yyyy.MM.dd.HHmm')"
-    $emailUser = if ($env:EMAIL_USER) { $env:EMAIL_USER } else { 'NielsMaas@MaasISO.onmicrosoft.com' }
-    $emailSmtpHost = if ($env:EMAIL_SMTP_HOST) { $env:EMAIL_SMTP_HOST } else { 'smtp.office365.com' }
-    $emailSmtpPort = if ($env:EMAIL_SMTP_PORT) { $env:EMAIL_SMTP_PORT } else { '587' }
+    $emailUser = if ($env:EMAIL_USER) { $env:EMAIL_USER } else { 'resend' }
+    $emailSmtpHost = if ($env:EMAIL_SMTP_HOST) { $env:EMAIL_SMTP_HOST } else { 'smtp.resend.com' }
+    $emailSmtpPort = if ($env:EMAIL_SMTP_PORT) { $env:EMAIL_SMTP_PORT } else { '465' }
     $emailFrom = if ($env:EMAIL_FROM) { $env:EMAIL_FROM } else { 'info@maasiso.nl' }
     $contactEmailTo = if ($env:CONTACT_EMAIL_TO) { $env:CONTACT_EMAIL_TO } else { 'info@maasiso.nl' }
     $envContent = @"
