@@ -18,9 +18,15 @@ interface LeadSubmitPayload {
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = 'smtp.hostinger.com';
+const DEFAULT_SMTP_HOST = '';
 const DEFAULT_SMTP_PORT = 465;
 const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
+
+interface EmailError {
+  code?: string;
+  name?: string;
+  message?: string;
+}
 
 const validSources = new Set<LeadSource>([
   'exit_intent',
@@ -158,10 +164,19 @@ export async function POST(request: NextRequest) {
     process.env.LEADS_EMAIL_TO || process.env.LEAD_EMAIL_TO || process.env.LEAD_TO || emailUser
   );
 
-  if (!emailPassword) {
-    console.error('[Lead Submit] EMAIL_PASSWORD ontbreekt');
+  if (!emailUser || !emailPassword || !smtpHost) {
+    console.error('[Lead Submit] Ontbrekende SMTP-configuratie', {
+      hasEmailUser: Boolean(emailUser),
+      hasEmailPassword: Boolean(emailPassword),
+      smtpHost,
+      smtpPort,
+    });
     return NextResponse.json(
-      { success: false, error: 'Lead kon niet worden verwerkt. Probeer het later opnieuw.' },
+      {
+        success: false,
+        error:
+          'E-mailinstellingen niet compleet. Controleer EMAIL_USER, EMAIL_PASSWORD en SMTP instellingen.',
+      },
       { status: 500 }
     );
   }
@@ -256,16 +271,31 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'Lead ontvangen' }, { status: 200 });
   } catch (error) {
+    const emailError = error as EmailError;
+    const code = emailError.code;
+
+    let errorMessage = 'Lead kon niet worden verzonden. Probeer het later opnieuw.';
+
+    if (code === 'EAUTH') {
+      errorMessage =
+        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer USER en PASSWORD in TransIP/SMTP.';
+    } else if (code === 'ENOTFOUND') {
+      errorMessage = 'SMTP-host niet gevonden. Controleer SMTP_HOST instelling.';
+    } else if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT') {
+      errorMessage = 'Kan geen verbinding maken met SMTP-server. Controleer host/poort en firewall.';
+    }
+
     console.error('[Lead Submit] Versturen mislukt', {
       emailUser,
       smtpHost,
       smtpPort,
       recipient: leadRecipient,
       source: body.source,
-      error,
+      code,
+      errorMessage: emailError.message,
     });
     return NextResponse.json(
-      { success: false, error: 'Lead kon niet worden verzonden. Probeer het later opnieuw.' },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

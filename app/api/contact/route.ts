@@ -30,7 +30,7 @@ const validSubjects = new Set([
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = 'smtp.hostinger.com';
+const DEFAULT_SMTP_HOST = '';
 const DEFAULT_SMTP_PORT = 465;
 const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
 
@@ -141,10 +141,19 @@ export async function POST(request: NextRequest) {
     process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
   );
 
-  if (!emailPassword) {
-    console.error('[Contact API] EMAIL_PASSWORD ontbreekt');
+  if (!emailUser || !emailPassword || !smtpHost) {
+    console.error('[Contact API] Ontbrekende SMTP-configuratie', {
+      hasEmailUser: Boolean(emailUser),
+      hasEmailPassword: Boolean(emailPassword),
+      smtpHost,
+      smtpPort,
+    });
     return NextResponse.json(
-      { success: false, message: 'Bericht kon niet worden verzonden. Probeer later opnieuw.' },
+      {
+        success: false,
+        message:
+          'E-mailinstellingen niet compleet. Controleer EMAIL_USER, EMAIL_PASSWORD en SMTP instellingen.',
+      },
       { status: 500 }
     );
   }
@@ -211,21 +220,32 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     const emailError = error as EmailError;
+    const code = emailError.code;
+
+    let message =
+      'Er is een fout opgetreden bij het versturen van de e-mail. Probeer het later opnieuw.';
+
+    if (code === 'EAUTH') {
+      message =
+        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer USER en PASSWORD in TransIP/SMTP.';
+    } else if (code === 'ENOTFOUND') {
+      message = 'SMTP-host niet gevonden. Controleer SMTP_HOST instelling.';
+    } else if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT') {
+      message = 'Kan geen verbinding maken met SMTP-server. Controleer host/poort en firewall.';
+    }
+
     console.error('[Contact API] Verzenden mislukt', {
       emailUser,
       smtpHost,
       smtpPort,
       recipient: contactRecipient,
-      code: emailError.code,
+      code,
       name: emailError.name,
-      message: emailError.message,
+      errorMessage: emailError.message,
     });
 
     return NextResponse.json(
-      {
-        success: false,
-        message: 'Er is een fout opgetreden bij het versturen van de e-mail. Probeer het later opnieuw.',
-      },
+      { success: false, message },
       { status: 500 }
     );
   }
