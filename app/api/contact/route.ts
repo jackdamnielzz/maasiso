@@ -30,6 +30,9 @@ const validSubjects = new Set([
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const DEFAULT_SMTP_HOST = 'smtp.hostinger.com';
+const DEFAULT_SMTP_PORT = 465;
+const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -111,7 +114,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!process.env.EMAIL_PASSWORD) {
+  const emailUser = String(
+    process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
+  ).trim();
+  const emailPassword = String(
+    process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
+  ).trim();
+  const smtpHost = String(
+    process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
+  ).trim();
+  const smtpPortRaw = Number(
+    process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || DEFAULT_SMTP_PORT
+  );
+  const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
+  const contactRecipient = String(
+    process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
+  ).trim();
+
+  if (!emailPassword) {
     console.error('[Contact API] EMAIL_PASSWORD ontbreekt');
     return NextResponse.json(
       { success: false, message: 'Bericht kon niet worden verzonden. Probeer later opnieuw.' },
@@ -120,12 +140,12 @@ export async function POST(request: NextRequest) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465,
     auth: {
-      user: 'info@maasiso.nl',
-      pass: process.env.EMAIL_PASSWORD,
+      user: emailUser,
+      pass: emailPassword,
     },
     debug: false,
     logger: false,
@@ -137,8 +157,8 @@ export async function POST(request: NextRequest) {
   const sanitizedMessage = body.message.trim();
 
   const mailOptions = {
-    from: '"MaasISO Website" <info@maasiso.nl>',
-    to: 'info@maasiso.nl',
+    from: `"MaasISO Website" <${emailUser}>`,
+    to: contactRecipient,
     replyTo: sanitizedEmail,
     subject: `Contactformulier: ${sanitizedSubject}`,
     text: `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nOnderwerp: ${sanitizedSubject}\n\nBericht:\n${sanitizedMessage}`,
@@ -182,6 +202,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const emailError = error as EmailError;
     console.error('[Contact API] Verzenden mislukt', {
+      emailUser,
+      smtpHost,
+      smtpPort,
+      recipient: contactRecipient,
       code: emailError.code,
       name: emailError.name,
       message: emailError.message,

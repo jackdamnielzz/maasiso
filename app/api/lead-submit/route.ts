@@ -18,6 +18,9 @@ interface LeadSubmitPayload {
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const DEFAULT_SMTP_HOST = 'smtp.hostinger.com';
+const DEFAULT_SMTP_PORT = 465;
+const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
 
 const validSources = new Set<LeadSource>([
   'exit_intent',
@@ -128,7 +131,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: validationError }, { status: 400 });
   }
 
-  if (!process.env.EMAIL_PASSWORD) {
+  const emailUser = String(
+    process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
+  ).trim();
+  const emailPassword = String(
+    process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
+  ).trim();
+  const smtpHost = String(
+    process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
+  ).trim();
+  const smtpPortRaw = Number(
+    process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || DEFAULT_SMTP_PORT
+  );
+  const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
+  const leadRecipient = String(
+    process.env.LEADS_EMAIL_TO || process.env.LEAD_EMAIL_TO || process.env.LEAD_TO || emailUser
+  ).trim();
+
+  if (!emailPassword) {
     console.error('[Lead Submit] EMAIL_PASSWORD ontbreekt');
     return NextResponse.json(
       { success: false, error: 'Lead kon niet worden verwerkt. Probeer het later opnieuw.' },
@@ -144,12 +164,12 @@ export async function POST(request: NextRequest) {
   const sanitizedCompanyName = body.company_name ? String(body.company_name).trim() : '';
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465,
     auth: {
-      user: 'info@maasiso.nl',
-      pass: process.env.EMAIL_PASSWORD,
+      user: emailUser,
+      pass: emailPassword,
     },
     debug: false,
     logger: false,
@@ -194,8 +214,8 @@ export async function POST(request: NextRequest) {
       `;
 
   const mailOptions = {
-    from: '"MaasISO Website" <info@maasiso.nl>',
-    to: 'info@maasiso.nl',
+    from: `"MaasISO Website" <${emailUser}>`,
+    to: leadRecipient,
     replyTo: sanitizedEmail,
     subject,
     text: textBody,
@@ -226,7 +246,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: 'Lead ontvangen' }, { status: 200 });
   } catch (error) {
-    console.error('[Lead Submit] Versturen mislukt', error);
+    console.error('[Lead Submit] Versturen mislukt', {
+      emailUser,
+      smtpHost,
+      smtpPort,
+      recipient: leadRecipient,
+      source: body.source,
+      error,
+    });
     return NextResponse.json(
       { success: false, error: 'Lead kon niet worden verzonden. Probeer het later opnieuw.' },
       { status: 500 }
