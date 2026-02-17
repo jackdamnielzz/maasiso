@@ -4,26 +4,27 @@
 
 ## Current Focus (2026-02-17)
 
-### Contact Form Email: Office 365 SMTP Configuration ✅
+### Contact Form Email: Resend SMTP ✅
 
-Migrated the contact form email sending from Hostinger SMTP to Office 365 SMTP.
+Switched contact form email from Office 365 to **Resend** SMTP. Office 365 blocked basic auth due to MFA/Security Defaults. Resend provides simple SMTP with the already-verified `maasiso.nl` domain.
 
-**Changes made:**
-- [`app/api/contact/route.ts`](app/api/contact/route.ts:1) — Added `EMAIL_FROM` env var support (auth user differs from display "from" address), added `tls: { ciphers: 'SSLv3' }` for Office 365 compatibility, updated defaults to O365
-- [`.env.local`](.env.local:1) — Full Office 365 credentials (gitignored, has real password)
-- [`.env`](.env:1), [`.env.production`](.env.production:1) — Updated SMTP host/port/user to O365 (password = `__SET_ME__`)
-- [`.env.example`](.env.example:1) — Updated template with O365 settings + `EMAIL_FROM`
-- [`ecosystem.config.js`](ecosystem.config.js:1) — Added all email env vars to PM2 process env
-- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:1) — Added email vars to both `.env.production` (build-time) and server `.env` (runtime)
-- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:1) — Added email vars to `.env.production`
+**Changes made (commit `ed65e69`):**
+- [`app/api/contact/route.ts`](app/api/contact/route.ts:33) — Updated defaults to Resend (`smtp.resend.com:465`, user `resend`), removed `tls: { ciphers: 'SSLv3' }` hack
+- [`.env.local`](.env.local:6) — Resend credentials with real API key (gitignored)
+- [`.env`](.env:6), [`.env.production`](.env.production:6) — Updated to Resend host/port/user (password = `__SET_ME__`)
+- [`.env.example`](.env.example:12) — Updated template with Resend settings (password = `__RESEND_API_KEY__`)
+- [`ecosystem.config.js`](ecosystem.config.js:14) — Updated PM2 email defaults to Resend
+- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:94) — Updated email var defaults to Resend
+- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:27) — Updated email var defaults to Resend
 
 **SMTP Config:**
 | Setting | Value |
 |---------|-------|
-| Host | `smtp.office365.com` |
-| Port | `587` (STARTTLS) |
-| Auth User | `NielsMaas@MaasISO.onmicrosoft.com` |
-| From Address | `info@maasiso.nl` (alias) |
+| Host | `smtp.resend.com` |
+| Port | `465` (SSL) |
+| Auth User | `resend` |
+| Password | Resend API key (`re_...`) |
+| From Address | `info@maasiso.nl` (domain verified in Resend) |
 | To Address | `info@maasiso.nl` |
 
 ---
