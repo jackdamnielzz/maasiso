@@ -30,6 +30,14 @@ const validSources = new Set<LeadSource>([
 ]);
 const validCompanySizes = new Set<CompanySize>(['1-10', '10-50', '50+']);
 
+function normalizeEnvValue(raw: string | undefined): string {
+  return String(raw || '')
+    .replace(/\\r|\\n/g, '')
+    .replace(/[\r\n]/g, '')
+    .replace(/^['"]|['"]$/g, '')
+    .trim();
+}
+
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -131,22 +139,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: validationError }, { status: 400 });
   }
 
-  const emailUser = String(
+  const emailUser = normalizeEnvValue(
     process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
-  ).trim();
-  const emailPassword = String(
+  );
+  const emailPassword = normalizeEnvValue(
     process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
-  ).trim();
-  const smtpHost = String(
+  );
+  const smtpHost = normalizeEnvValue(
     process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
-  ).trim();
+  );
   const smtpPortRaw = Number(
-    process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || DEFAULT_SMTP_PORT
+    normalizeEnvValue(
+      process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || String(DEFAULT_SMTP_PORT)
+    )
   );
   const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
-  const leadRecipient = String(
+  const leadRecipient = normalizeEnvValue(
     process.env.LEADS_EMAIL_TO || process.env.LEAD_EMAIL_TO || process.env.LEAD_TO || emailUser
-  ).trim();
+  );
 
   if (!emailPassword) {
     console.error('[Lead Submit] EMAIL_PASSWORD ontbreekt');

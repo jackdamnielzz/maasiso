@@ -34,6 +34,14 @@ const DEFAULT_SMTP_HOST = 'smtp.hostinger.com';
 const DEFAULT_SMTP_PORT = 465;
 const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
 
+function normalizeEnvValue(raw: string | undefined): string {
+  return String(raw || '')
+    .replace(/\\r|\\n/g, '')
+    .replace(/[\r\n]/g, '')
+    .replace(/^['"]|['"]$/g, '')
+    .trim();
+}
+
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0].trim();
@@ -114,22 +122,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const emailUser = String(
+  const emailUser = normalizeEnvValue(
     process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
-  ).trim();
-  const emailPassword = String(
+  );
+  const emailPassword = normalizeEnvValue(
     process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
-  ).trim();
-  const smtpHost = String(
+  );
+  const smtpHost = normalizeEnvValue(
     process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
-  ).trim();
+  );
   const smtpPortRaw = Number(
-    process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || DEFAULT_SMTP_PORT
+    normalizeEnvValue(
+      process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || String(DEFAULT_SMTP_PORT)
+    )
   );
   const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
-  const contactRecipient = String(
+  const contactRecipient = normalizeEnvValue(
     process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
-  ).trim();
+  );
 
   if (!emailPassword) {
     console.error('[Contact API] EMAIL_PASSWORD ontbreekt');
