@@ -2,7 +2,33 @@
 
 ## Current Status (2026-01-30)
 
-## Current Focus (2026-02-03)
+## Current Focus (2026-02-17)
+
+### Contact Form Email: Office 365 SMTP Configuration ✅
+
+Migrated the contact form email sending from Hostinger SMTP to Office 365 SMTP.
+
+**Changes made:**
+- [`app/api/contact/route.ts`](app/api/contact/route.ts:1) — Added `EMAIL_FROM` env var support (auth user differs from display "from" address), added `tls: { ciphers: 'SSLv3' }` for Office 365 compatibility, updated defaults to O365
+- [`.env.local`](.env.local:1) — Full Office 365 credentials (gitignored, has real password)
+- [`.env`](.env:1), [`.env.production`](.env.production:1) — Updated SMTP host/port/user to O365 (password = `__SET_ME__`)
+- [`.env.example`](.env.example:1) — Updated template with O365 settings + `EMAIL_FROM`
+- [`ecosystem.config.js`](ecosystem.config.js:1) — Added all email env vars to PM2 process env
+- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:1) — Added email vars to both `.env.production` (build-time) and server `.env` (runtime)
+- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:1) — Added email vars to `.env.production`
+
+**SMTP Config:**
+| Setting | Value |
+|---------|-------|
+| Host | `smtp.office365.com` |
+| Port | `587` (STARTTLS) |
+| Auth User | `NielsMaas@MaasISO.onmicrosoft.com` |
+| From Address | `info@maasiso.nl` (alias) |
+| To Address | `info@maasiso.nl` |
+
+---
+
+## Previous Focus (2026-02-03)
 
 ### Architecture Control & Validation Phase (started)
 

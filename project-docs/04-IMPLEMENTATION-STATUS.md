@@ -42,6 +42,18 @@
 - **🎯 Google Analytics & Tag Manager API Access**: 100% ✅
 - **Google Consent Mode v2 Implementation**: 100% ✅
 - **Enhanced Analytics Tracking (Page Views, Scroll, Engagement)**: 100% ✅
+- **Contact Form Email: Office 365 SMTP Configuration**: 100% ✅
+
+## Contact Form Email: Office 365 SMTP (2026-02-17) ✅
+
+Migrated contact form email from Hostinger to Office 365 SMTP. Auth user (`NielsMaas@MaasISO.onmicrosoft.com`) differs from display "from" address (`info@maasiso.nl`) via new `EMAIL_FROM` env var. Added TLS cipher config for O365 compatibility. Updated all env files, PM2 config, and deployment scripts.
+
+**Files changed:**
+- [`app/api/contact/route.ts`](app/api/contact/route.ts:1) — `EMAIL_FROM` support, TLS ciphers, updated defaults
+- [`.env.example`](.env.example:12) — O365 settings template
+- [`ecosystem.config.js`](ecosystem.config.js:14) — Email env vars in PM2 config
+- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:94) — Email vars in build + server env
+- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:27) — Email vars in build env
 
 ## Architecture Control & Validation (2026-02-03)
 

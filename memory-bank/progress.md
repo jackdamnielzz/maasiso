@@ -60,6 +60,11 @@
 - [x] **Automated Verification Script** (2026-01-25) ✅
 - [x] **Final Repository Sync & SEO/Sitemap Implementation** (2026-01-25) ✅
 
+- [x] **Contact Form Email: Office 365 SMTP Configuration** (2026-02-17) ✅
+  - [x] Migrated SMTP from Hostinger (`smtp.hostinger.com:465`) to Office 365 (`smtp.office365.com:587`)
+  - [x] Added `EMAIL_FROM` env var support (auth user ≠ display from address)
+  - [x] Added TLS ciphers for Office 365 compatibility
+  - [x] Updated all env files, ecosystem.config.js, and deploy scripts
 - [x] **Architecture Control & Validation started** (2026-02-03) ✅
   - [x] “Holy” folder created at project root for single source of truth + progress tracking:
     - [`001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md`](001-HEILIG-ARCHITECTUUR/ARCHITECTURE-TOTAL-PICTURE-3-FEB2026.md:1)
