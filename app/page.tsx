@@ -396,7 +396,7 @@ export default function Home() {
               Plan een kennismaking
             </Link>
             <Link
-              href="/iso-selector"
+              href="https://iso-selector.maasiso.nl/"
               className="primary-button text-center sm:min-w-[240px] border-2 border-white bg-transparent text-white hover:bg-white hover:text-[#091E42]"
             >
               Doe de ISO Norm Selector
