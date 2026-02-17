@@ -145,6 +145,17 @@ export async function POST(request: NextRequest) {
     process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
   );
 
+  // Temporary debug logging — remove after verifying SMTP config is correct
+  console.log('[Contact API] SMTP config:', {
+    host: smtpHost,
+    port: smtpPort,
+    user: emailUser,
+    passwordSet: !!emailPassword,
+    passwordLength: emailPassword.length,
+    from: emailFrom,
+    to: contactRecipient,
+  });
+
   if (!emailUser || !emailPassword || !smtpHost) {
     console.error('[Contact API] Ontbrekende SMTP-configuratie', {
       hasEmailUser: Boolean(emailUser),
@@ -231,7 +242,7 @@ export async function POST(request: NextRequest) {
 
     if (code === 'EAUTH') {
       message =
-        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer USER en PASSWORD in TransIP/SMTP.';
+        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer EMAIL_USER en EMAIL_PASSWORD voor Resend SMTP.';
     } else if (code === 'ENOTFOUND') {
       message = 'SMTP-host niet gevonden. Controleer SMTP_HOST instelling.';
     } else if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT') {
