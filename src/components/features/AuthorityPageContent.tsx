@@ -519,7 +519,7 @@ export default function AuthorityPageContent({
                             </li>
                             <li className="flex items-start gap-2">
                               <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-[#00875A]"></span>
-                              <span><strong>Aanpak:</strong> wij begeleiden, certificerende instelling audit</span>
+                              <span><strong>Aanpak:</strong> wij begeleiden; de certificerende instelling voert de audit uit</span>
                             </li>
                           </ul>
                           <a
