@@ -1,6 +1,11 @@
 # Progress - Redesign Cycle (Onze Voordelen & Over Ons)
 
 ## Milestones
+- [x] **Contact Form 500 Bug Fix** (2026-02-17) ✅
+  - [x] Root cause: `RESEND_API_KEY` missing in Vercel env → Resend SDK throws uncaught exception → empty 500 body
+  - [x] Fixed: early key guard + try/catch in `app/api/contact/route.ts` (commit `8db59f3`)
+  - [x] Added `RESEND_API_KEY` to Vercel production env via CLI
+  - [x] Redeployed to Vercel; verified `POST /api/contact` returns `success: true` on live site
 - [x] Update all environment files
 - [x] Next.js 16 Upgrade
 - [x] **Vercel deployment successful** ✅

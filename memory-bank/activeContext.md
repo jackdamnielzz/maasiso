@@ -1,10 +1,23 @@
 # Active Context - SEO/GEO Enhancement Project
 
-## Current Status (2026-01-30)
+## Current Status (2026-02-17)
 
 ## Current Focus (2026-02-17)
 
-### Contact Form Email: Resend Node.js SDK ✅
+### Contact Form Bug Fix: Resend API 500 → Valid JSON ✅ DEPLOYED & VERIFIED
+
+**Problem:** `POST /api/contact` returned HTTP 500 with **empty body** on production → client threw `Unexpected end of JSON input`.
+
+**Root cause:** `RESEND_API_KEY` was not set in Vercel environment variables. The Resend SDK **throws** when given an empty/missing key; that exception was uncaught, so Next.js returned a 500 with no body.
+
+**Fix applied (commit `8db59f3`):**
+- [`app/api/contact/route.ts`](app/api/contact/route.ts) — Added early guard for missing/placeholder `RESEND_API_KEY`, wrapped `resend.emails.send()` in try/catch. All error paths now return valid JSON `{ success: false, message: "..." }`.
+- Added `RESEND_API_KEY` to Vercel project via CLI (`vercel env add RESEND_API_KEY production`).
+- Redeployed to Vercel (`vercel --prod`).
+
+**Verified:** `POST https://www.maasiso.nl/api/contact` returns `{ "success": true, "message": "Uw bericht is succesvol verzonden..." }` ✅
+
+**Previous Focus (2026-02-17): Contact Form Email: Resend Node.js SDK ✅**
 
 Switched contact form email from Resend SMTP (nodemailer) to **Resend Node.js SDK** (direct REST API). SMTP kept failing; SDK uses a simple `RESEND_API_KEY` with no SMTP config needed.
 
@@ -14,18 +27,6 @@ Switched contact form email from Resend SMTP (nodemailer) to **Resend Node.js SD
 - [`.env`](.env), [`.env.production`](.env.production) — `RESEND_API_KEY=__SET_ME__`; removed SMTP vars
 - [`.env.example`](.env.example) — `RESEND_API_KEY=__YOUR_RESEND_API_KEY__`; removed SMTP vars
 - [`ecosystem.config.js`](ecosystem.config.js) — Replaced SMTP vars with `RESEND_API_KEY`
-- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1) — Replaced `EMAIL_PASSWORD`/SMTP vars with `RESEND_API_KEY`
-- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1) — Replaced `EMAIL_PASSWORD`/SMTP vars with `RESEND_API_KEY`
-
-**SMTP Config:**
-| Setting | Value |
-|---------|-------|
-| Host | `smtp.resend.com` |
-| Port | `465` (SSL) |
-| Auth User | `resend` |
-| Password | Resend API key (`re_...`) |
-| From Address | `info@maasiso.nl` (domain verified in Resend) |
-| To Address | `info@maasiso.nl` |
 
 ---
 
