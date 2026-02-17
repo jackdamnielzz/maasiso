@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 interface ContactFormData {
   name: string;
@@ -7,12 +7,6 @@ interface ContactFormData {
   subject: string;
   message: string;
   website?: string; // honeypot
-}
-
-interface EmailError {
-  code?: string;
-  name?: string;
-  message?: string;
 }
 
 const validSubjects = new Set([
@@ -30,18 +24,6 @@ const validSubjects = new Set([
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = 'smtp.resend.com';
-const DEFAULT_SMTP_PORT = 465;
-const DEFAULT_EMAIL_USER = 'resend';
-const DEFAULT_EMAIL_FROM = 'info@maasiso.nl';
-
-function normalizeEnvValue(raw: string | undefined): string {
-  return String(raw || '')
-    .replace(/\\r|\\n/g, '')
-    .replace(/[\r\n]/g, '')
-    .replace(/^['"]|['"]$/g, '')
-    .trim();
-}
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -123,80 +105,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const emailUser = normalizeEnvValue(
-    process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
-  );
-  const emailPassword = normalizeEnvValue(
-    process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
-  );
-  const smtpHost = normalizeEnvValue(
-    process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
-  );
-  const smtpPortRaw = Number(
-    normalizeEnvValue(
-      process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || String(DEFAULT_SMTP_PORT)
-    )
-  );
-  const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
-  const emailFrom = normalizeEnvValue(
-    process.env.EMAIL_FROM || DEFAULT_EMAIL_FROM
-  );
-  const contactRecipient = normalizeEnvValue(
-    process.env.CONTACT_EMAIL_TO || process.env.CONTACT_TO || emailUser
-  );
-
-  // Temporary debug logging — remove after verifying SMTP config is correct
-  console.log('[Contact API] SMTP config:', {
-    host: smtpHost,
-    port: smtpPort,
-    user: emailUser,
-    passwordSet: !!emailPassword,
-    passwordLength: emailPassword.length,
-    from: emailFrom,
-    to: contactRecipient,
-  });
-
-  if (!emailUser || !emailPassword || !smtpHost) {
-    console.error('[Contact API] Ontbrekende SMTP-configuratie', {
-      hasEmailUser: Boolean(emailUser),
-      hasEmailPassword: Boolean(emailPassword),
-      smtpHost,
-      smtpPort,
-    });
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          'E-mailinstellingen niet compleet. Controleer EMAIL_USER, EMAIL_PASSWORD en SMTP instellingen.',
-      },
-      { status: 500 }
-    );
-  }
-
-  const transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: smtpPort,
-    secure: smtpPort === 465,
-    auth: {
-      user: emailUser,
-      pass: emailPassword,
-    },
-    debug: false,
-    logger: false,
-  });
-
   const sanitizedName = body.name.trim();
   const sanitizedEmail = body.email.trim();
   const sanitizedSubject = body.subject.trim();
   const sanitizedMessage = body.message.trim();
 
-  const mailOptions = {
-    from: `"MaasISO Website" <${emailFrom}>`,
-    to: contactRecipient,
-    replyTo: sanitizedEmail,
-    subject: `Contactformulier: ${sanitizedSubject}`,
-    text: `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nOnderwerp: ${sanitizedSubject}\n\nBericht:\n${sanitizedMessage}`,
-    html: `
+  const emailFrom = process.env.EMAIL_FROM || 'info@maasiso.nl';
+  const contactRecipient = process.env.CONTACT_EMAIL_TO || 'info@maasiso.nl';
+
+  const htmlBody = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
   <h2 style="color: #091E42;">Nieuw bericht via contactformulier</h2>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
@@ -220,48 +137,34 @@ export async function POST(request: NextRequest) {
     </div>
   </div>
 </div>
-    `,
-  };
+  `;
 
-  try {
-    await transporter.sendMail(mailOptions);
+  const textBody = `Naam: ${sanitizedName}\nE-mail: ${sanitizedEmail}\nOnderwerp: ${sanitizedSubject}\n\nBericht:\n${sanitizedMessage}`;
 
+  const resend = new Resend(process.env.RESEND_API_KEY || '');
+
+  const { error } = await resend.emails.send({
+    from: `MaasISO Website <${emailFrom}>`,
+    to: [contactRecipient],
+    replyTo: sanitizedEmail,
+    subject: `Contactformulier: ${sanitizedSubject} - van ${sanitizedName}`,
+    html: htmlBody,
+    text: textBody,
+  });
+
+  if (error) {
+    console.error('[Contact API] Resend error:', error);
     return NextResponse.json(
-      {
-        success: true,
-        message: 'Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.',
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    const emailError = error as EmailError;
-    const code = emailError.code;
-
-    let message =
-      'Er is een fout opgetreden bij het versturen van de e-mail. Probeer het later opnieuw.';
-
-    if (code === 'EAUTH') {
-      message =
-        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer EMAIL_USER en EMAIL_PASSWORD voor Resend SMTP.';
-    } else if (code === 'ENOTFOUND') {
-      message = 'SMTP-host niet gevonden. Controleer SMTP_HOST instelling.';
-    } else if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT') {
-      message = 'Kan geen verbinding maken met SMTP-server. Controleer host/poort en firewall.';
-    }
-
-    console.error('[Contact API] Verzenden mislukt', {
-      emailUser,
-      smtpHost,
-      smtpPort,
-      recipient: contactRecipient,
-      code,
-      name: emailError.name,
-      errorMessage: emailError.message,
-    });
-
-    return NextResponse.json(
-      { success: false, message },
+      { success: false, message: 'Er is een fout opgetreden bij het versturen. Probeer het later opnieuw.' },
       { status: 500 }
     );
   }
+
+  return NextResponse.json(
+    {
+      success: true,
+      message: 'Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.',
+    },
+    { status: 200 }
+  );
 }

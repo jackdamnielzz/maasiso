@@ -4,18 +4,18 @@
 
 ## Current Focus (2026-02-17)
 
-### Contact Form Email: Resend SMTP ✅
+### Contact Form Email: Resend Node.js SDK ✅
 
-Switched contact form email from Office 365 to **Resend** SMTP. Office 365 blocked basic auth due to MFA/Security Defaults. Resend provides simple SMTP with the already-verified `maasiso.nl` domain.
+Switched contact form email from Resend SMTP (nodemailer) to **Resend Node.js SDK** (direct REST API). SMTP kept failing; SDK uses a simple `RESEND_API_KEY` with no SMTP config needed.
 
-**Changes made (commit `ed65e69`):**
-- [`app/api/contact/route.ts`](app/api/contact/route.ts:33) — Updated defaults to Resend (`smtp.resend.com:465`, user `resend`), removed `tls: { ciphers: 'SSLv3' }` hack
-- [`.env.local`](.env.local:6) — Resend credentials with real API key (gitignored)
-- [`.env`](.env:6), [`.env.production`](.env.production:6) — Updated to Resend host/port/user (password = `__SET_ME__`)
-- [`.env.example`](.env.example:12) — Updated template with Resend settings (password = `__RESEND_API_KEY__`)
-- [`ecosystem.config.js`](ecosystem.config.js:14) — Updated PM2 email defaults to Resend
-- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:94) — Updated email var defaults to Resend
-- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:27) — Updated email var defaults to Resend
+**Changes made:**
+- [`app/api/contact/route.ts`](app/api/contact/route.ts) — Removed nodemailer entirely; uses `new Resend(process.env.RESEND_API_KEY)` with `resend.emails.send()`. All rate limiting, honeypot, validation, and HTML template kept intact.
+- [`.env.local`](.env.local) — `RESEND_API_KEY=re_KvDm2aKm_...` (real key, gitignored); removed SMTP vars
+- [`.env`](.env), [`.env.production`](.env.production) — `RESEND_API_KEY=__SET_ME__`; removed SMTP vars
+- [`.env.example`](.env.example) — `RESEND_API_KEY=__YOUR_RESEND_API_KEY__`; removed SMTP vars
+- [`ecosystem.config.js`](ecosystem.config.js) — Replaced SMTP vars with `RESEND_API_KEY`
+- [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1) — Replaced `EMAIL_PASSWORD`/SMTP vars with `RESEND_API_KEY`
+- [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1) — Replaced `EMAIL_PASSWORD`/SMTP vars with `RESEND_API_KEY`
 
 **SMTP Config:**
 | Setting | Value |

@@ -19,14 +19,11 @@ try {
         throw "Missing STRAPI_TOKEN in local environment. Set it before deployment."
     }
 
-    if (-not $env:EMAIL_PASSWORD) {
-        throw "Missing EMAIL_PASSWORD in local environment. Set it before deployment."
+    if (-not $env:RESEND_API_KEY) {
+        throw "Missing RESEND_API_KEY in local environment. Set it before deployment."
     }
     
     # Ensure production environment variables are set
-    $emailUser = if ($env:EMAIL_USER) { $env:EMAIL_USER } else { 'resend' }
-    $emailSmtpHost = if ($env:EMAIL_SMTP_HOST) { $env:EMAIL_SMTP_HOST } else { 'smtp.resend.com' }
-    $emailSmtpPort = if ($env:EMAIL_SMTP_PORT) { $env:EMAIL_SMTP_PORT } else { '465' }
     $emailFrom = if ($env:EMAIL_FROM) { $env:EMAIL_FROM } else { 'info@maasiso.nl' }
     $contactEmailTo = if ($env:CONTACT_EMAIL_TO) { $env:CONTACT_EMAIL_TO } else { 'info@maasiso.nl' }
     $envContent = @"
@@ -34,10 +31,7 @@ NEXT_PUBLIC_API_URL=https://www.maasiso.nl
 NEXT_PUBLIC_BACKEND_URL=http://153.92.223.23:1337
 NEXT_PUBLIC_SITE_URL=https://www.maasiso.nl
 STRAPI_TOKEN=$env:STRAPI_TOKEN
-EMAIL_USER=$emailUser
-EMAIL_PASSWORD=$env:EMAIL_PASSWORD
-EMAIL_SMTP_HOST=$emailSmtpHost
-EMAIL_SMTP_PORT=$emailSmtpPort
+RESEND_API_KEY=$env:RESEND_API_KEY
 EMAIL_FROM=$emailFrom
 CONTACT_EMAIL_TO=$contactEmailTo
 "@
