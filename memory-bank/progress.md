@@ -140,6 +140,7 @@
   - [x] **VERIFIED**: relatedPosts display correctly in both bottom section AND sidebar
 
 ## Recent Changes
+- UPDATED: Contact form monitor workflow schedule set to **05:45 / 11:00 / 15:00 UTC** (06:45 / 12:00 / 16:00 NL wintertime/CET).
 - COMPLETED: Spectacular overhaul of Over Niels Maas profile page with hero gradients, expertise grid, dynamic publications, and personal values (2026-01-27).
 - COMPLETED: Overrode Niels Maas title to "Senior Consultant" on the profile page to remove Lead Auditor wording in [`app/over-niels-maas/page.tsx`](app/over-niels-maas/page.tsx).
 - COMPLETED: Niels Maas author profile link now points to `/over-niels-maas` in [`src/components/features/AuthorBox.tsx`](src/components/features/AuthorBox.tsx).

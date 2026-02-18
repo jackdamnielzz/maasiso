@@ -55,6 +55,10 @@ Switched contact form email from Office 365 to **Resend** SMTP. Office 365 block
 - [`scripts/direct-deploy.ps1`](scripts/direct-deploy.ps1:94) — Updated email var defaults to Resend
 - [`scripts/quick-deploy.ps1`](scripts/quick-deploy.ps1:27) — Updated email var defaults to Resend
 
+## Contact Form Monitor Schedule (2026-02-18) ✅
+
+- Updated GitHub Actions schedule in [`.github/workflows/contact-form-monitor.yml`](.github/workflows/contact-form-monitor.yml:1) to **05:45 / 11:00 / 15:00 UTC** (maps to **06:45 / 12:00 / 16:00 NL** in winter/CET).
+
 ## Architecture Control & Validation (2026-02-03)
 
 - Page-by-page validation process started (strict compare vs definitive architecture).

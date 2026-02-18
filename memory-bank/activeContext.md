@@ -6,6 +6,10 @@
 
 ### Contact Form Bug Fix: Resend API 500 → Valid JSON ✅ DEPLOYED & VERIFIED
 
+### Contact Form Monitor Schedule (GitHub Actions)
+
+Updated [`.github/workflows/contact-form-monitor.yml`](.github/workflows/contact-form-monitor.yml:1) schedule to run at **06:45 / 12:00 / 16:00 NL wintertime (CET)** using simple UTC cron: **05:45 / 11:00 / 15:00 UTC** (accepts 1h summer shift).
+
 **Problem:** `POST /api/contact` returned HTTP 500 with **empty body** on production → client threw `Unexpected end of JSON input`.
 
 **Root cause:** `RESEND_API_KEY` was not set in Vercel environment variables. The Resend SDK **throws** when given an empty/missing key; that exception was uncaught, so Next.js returned a 500 with no body.

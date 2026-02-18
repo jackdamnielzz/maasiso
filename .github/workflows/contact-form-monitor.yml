@@ -2,10 +2,10 @@ name: Contact Form Health Monitor
 
 on:
   schedule:
-    # 08:00 NL (07:00 UTC)
-    - cron: '0 7 * * *'
-    # 13:00 NL (12:00 UTC)
-    - cron: '0 12 * * *'
+    # 06:45 NL (05:45 UTC)
+    - cron: '45 5 * * *'
+    # 12:00 NL (11:00 UTC)
+    - cron: '0 11 * * *'
     # 16:00 NL (15:00 UTC)
     - cron: '0 15 * * *'
   workflow_dispatch:  # Allow manual trigger
