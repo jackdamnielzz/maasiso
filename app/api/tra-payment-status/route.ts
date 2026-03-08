@@ -17,6 +17,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Free discount codes generate a local ID (not a Mollie payment)
+    if (paymentId.startsWith('free_')) {
+      return NextResponse.json({
+        status: 'paid',
+        paid: true,
+        email: null,
+      });
+    }
+
     const payment = await mollieClient.payments.get(paymentId);
 
     return NextResponse.json({

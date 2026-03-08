@@ -162,10 +162,6 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
   const sidebarPosts: RelatedPost[] = post.relatedPosts || [];
   const processedContent = preprocessContent(post.content);
   const enableDownloadCta = post.slug === DOWNLOAD_CTA_TARGET_SLUG;
-  const downloadLinkCandidate = React.useMemo(
-    () => (enableDownloadCta ? findFirstDownloadLink(processedContent) : null),
-    [enableDownloadCta, processedContent]
-  );
 
   let hasAssignedDownloadAnchor = false;
 
@@ -278,7 +274,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
                       Direct uw Taak Risico Analyse opstellen
                     </span>
                     <span className="mt-2 block text-sm text-blue-100">
-                      Automatische Kinney &amp; Wiruth-scores &bull; Professioneel PDF-rapport &bull; Eenmalig &euro;19
+                      Automatische Kinney &amp; Wiruth-scores &bull; Professioneel PDF-rapport &bull; Eenmalig &euro;22,99 incl. BTW
                     </span>
                   </div>
                   <svg className="h-8 w-8 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

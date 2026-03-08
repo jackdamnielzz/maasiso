@@ -20,6 +20,34 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
   const [email, setEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountApplied, setDiscountApplied] = useState<{ percentOff: number; label: string; priceInclBtw: number } | null>(null);
+  const [discountError, setDiscountError] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) return;
+    setDiscountError('');
+    setDiscountApplied(null);
+    setIsValidating(true);
+    try {
+      const res = await fetch('/api/tra-validate-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: discountCode }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setDiscountApplied({ percentOff: data.percentOff, label: data.label, priceInclBtw: data.priceInclBtw });
+      } else {
+        setDiscountError(data.error || 'Ongeldige code');
+      }
+    } catch {
+      setDiscountError('Kon code niet controleren');
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   const handlePurchase = async () => {
     if (!email || !email.includes('@')) {
@@ -34,7 +62,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
       const res = await fetch('/api/tra-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, discountCode: discountApplied ? discountCode : undefined }),
       });
 
       const data = await res.json();
@@ -44,8 +72,16 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
         return;
       }
 
-      if (data.checkoutUrl) {
-        // Redirect to Mollie checkout
+      if (data.free) {
+        // 100% discount — skip Mollie, go straight to bedankt page
+        if (data.paymentId) {
+          localStorage.setItem('maasiso-tra-payment-id', data.paymentId);
+        }
+        window.location.href = '/tools/risicoscore-calculator/bedankt';
+      } else if (data.checkoutUrl) {
+        if (data.paymentId) {
+          localStorage.setItem('maasiso-tra-payment-id', data.paymentId);
+        }
         window.location.href = data.checkoutUrl;
       } else {
         setError('Geen betaallink ontvangen. Probeer het opnieuw.');
@@ -99,9 +135,9 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
             </div>
             <div className="text-right">
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold">&euro;19</span>
+                <span className="text-3xl font-bold">&euro;22,99</span>
               </div>
-              <p className="text-xs text-white/70">Introductieprijs (excl. BTW)</p>
+              <p className="text-xs text-white/70">&euro;19 excl. BTW (incl. 21% BTW)</p>
             </div>
           </div>
         </div>
@@ -152,7 +188,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
             </div>
           </div>
 
-          {/* Email input + Buy button */}
+          {/* Email input + Discount code + Buy button */}
           <div className="space-y-3">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[#091E42] mb-1">
@@ -166,6 +202,44 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
                 placeholder="uw@email.nl"
                 className="w-full px-4 py-2.5 border border-[#d8e2f0] rounded-lg text-[#091E42] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/50 focus:border-[#FF8B00]"
               />
+            </div>
+
+            {/* Discount code */}
+            <div>
+              <label htmlFor="discount" className="block text-xs text-gray-500 mb-1">
+                Kortingscode (optioneel)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="discount"
+                  type="text"
+                  value={discountCode}
+                  onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(''); setDiscountApplied(null); }}
+                  placeholder="Voer code in"
+                  className="flex-1 px-3 py-2 border border-[#d8e2f0] rounded-lg text-sm text-[#091E42] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/50 focus:border-[#FF8B00]"
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyDiscount}
+                  disabled={isValidating || !discountCode.trim()}
+                  className="px-4 py-2 text-sm font-medium bg-gray-100 text-[#091E42] rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                >
+                  {isValidating ? '...' : 'Toepassen'}
+                </button>
+              </div>
+              {discountError && (
+                <p className="text-xs text-red-500 mt-1">{discountError}</p>
+              )}
+              {discountApplied && (
+                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#00875A] font-medium">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {discountApplied.percentOff === 100
+                    ? 'Kortingscode toegepast — gratis!'
+                    : `${discountApplied.percentOff}% korting toegepast — €${discountApplied.priceInclBtw.toFixed(2).replace('.', ',')} incl. BTW`}
+                </div>
+              )}
             </div>
 
             {error && (
@@ -184,14 +258,27 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Betaling wordt aangemaakt...
+                  {discountApplied?.percentOff === 100 ? 'Rapport wordt klaargemaakt...' : 'Betaling wordt aangemaakt...'}
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  Afrekenen &mdash; &euro;19
+                  {discountApplied?.percentOff === 100 ? (
+                    <>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Gratis downloaden
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      {discountApplied
+                        ? `Afrekenen — €${discountApplied.priceInclBtw.toFixed(2).replace('.', ',')} incl. BTW`
+                        : <>Afrekenen &mdash; &euro;22,99 incl. BTW</>}
+                    </>
+                  )}
                 </>
               )}
             </button>
@@ -242,7 +329,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
                   MaasISO TRA-tool
                   <span className="ml-1.5 inline-block text-[10px] font-bold bg-[#FF8B00] text-white px-1.5 py-0.5 rounded">BESTE KEUZE</span>
                 </td>
-                <td className="px-3 py-3 text-center font-bold text-[#FF8B00]">&euro;19</td>
+                <td className="px-3 py-3 text-center font-bold text-[#FF8B00]">&euro;22,99</td>
                 <td className="px-3 py-3 text-center font-semibold text-[#00875A]">15-30 min</td>
                 <td className="px-3 py-3 text-center">
                   <span className="text-[#00875A] font-semibold">Professioneel</span>
@@ -322,7 +409,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
           <div>
             <h4 className="font-semibold text-[#091E42]">Is het een abonnement?</h4>
             <p className="text-gray-600 mt-0.5">
-              Nee. U betaalt eenmalig &euro;19 per rapport. Geen verborgen kosten, geen abonnement.
+              Nee. U betaalt eenmalig &euro;22,99 incl. BTW (&euro;19 excl. BTW) per rapport. Geen verborgen kosten, geen abonnement.
             </p>
           </div>
           <div>
