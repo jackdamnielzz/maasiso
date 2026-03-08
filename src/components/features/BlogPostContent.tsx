@@ -263,20 +263,32 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
             <TldrBlock items={tldrItems} className="mb-8" />
           )}
 
-          {downloadLinkCandidate && (
-            <div className="mb-10">
+          {post.slug === DOWNLOAD_CTA_TARGET_SLUG && (
+            <div className="mb-12 mt-2">
               <a
-                href={`#${DOWNLOAD_ANCHOR_ID}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#0052CC] px-6 py-3 text-[1rem] font-semibold text-white no-underline shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0747A6] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0065FF]"
+                href="/tools/risicoscore-calculator/"
+                className="group relative block w-full rounded-xl bg-gradient-to-r from-[#0052CC] to-[#0747A6] p-6 text-white no-underline shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0065FF]"
               >
-                Direct naar de download
-                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 14a1 1 0 01-1-1V6.414L6.707 8.707a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 11-1.414 1.414L11 6.414V13a1 1 0 01-1 1zM4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <span className="mb-1 block text-sm font-medium uppercase tracking-wider text-blue-200">
+                      Online TRA Calculator
+                    </span>
+                    <span className="block text-xl font-bold sm:text-2xl">
+                      Direct uw Taak Risico Analyse opstellen
+                    </span>
+                    <span className="mt-2 block text-sm text-blue-100">
+                      Automatische Kinney &amp; Wiruth-scores &bull; Professioneel PDF-rapport &bull; Eenmalig &euro;19
+                    </span>
+                  </div>
+                  <svg className="h-8 w-8 flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path
+                      fillRule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
               </a>
             </div>
           )}
