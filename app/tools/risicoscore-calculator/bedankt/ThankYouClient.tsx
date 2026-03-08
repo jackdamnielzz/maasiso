@@ -23,12 +23,24 @@ function formatTimeLeft(ms: number): string {
 
 export default function ThankYouClient() {
   const searchParams = useSearchParams();
-  const paymentId = searchParams?.get('id') ?? null;
+  const [paymentId, setPaymentId] = useState<string | null>(null);
   const [status, setStatus] = useState<PaymentStatus>('loading');
   const [downloaded, setDownloaded] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [expired, setExpired] = useState(false);
   const pollCount = useRef(0);
+
+  // Resolve paymentId from URL params or localStorage (client-side only)
+  useEffect(() => {
+    const fromUrl = searchParams?.get('id');
+    const fromStorage = localStorage.getItem('maasiso-tra-payment-id');
+    const resolved = fromUrl || fromStorage || null;
+    if (resolved) {
+      setPaymentId(resolved);
+    } else {
+      setStatus('error');
+    }
+  }, [searchParams]);
 
   const startExpiryTimer = useCallback(() => {
     let expiryTime = localStorage.getItem(EXPIRY_KEY);
@@ -67,10 +79,9 @@ export default function ThankYouClient() {
   }, []);
 
   useEffect(() => {
-    if (!paymentId) {
-      setStatus('error');
-      return;
-    }
+    // paymentId starts as null and gets resolved by the other useEffect
+    // Only show error after we've had a chance to read localStorage
+    if (paymentId === null) return;
 
     const checkPayment = async () => {
       try {
