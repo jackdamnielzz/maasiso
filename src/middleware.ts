@@ -6,6 +6,47 @@ const CANONICAL_HOST = 'www.maasiso.nl';
 const APEX_HOST = 'maasiso.nl';
 const CRAWL_CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
 
+// Allowed origins for CSRF validation on form/API endpoints
+const ALLOWED_ORIGINS = new Set([
+  'https://www.maasiso.nl',
+  'https://maasiso.nl',
+  'http://localhost:3000',
+  'http://localhost:3001',
+]);
+
+function addSecurityHeaders(response: NextResponse): void {
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  response.headers.set(
+    'Strict-Transport-Security',
+    'max-age=63072000; includeSubDomains; preload'
+  );
+}
+
+function isOriginAllowed(request: NextRequest): boolean {
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+
+  // Allow requests without origin header (same-origin, curl, server-to-server)
+  if (!origin) return true;
+
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+
+  // Fallback: check referer for known hosts
+  if (referer) {
+    try {
+      const refererHost = new URL(referer).hostname;
+      return refererHost === CANONICAL_HOST || refererHost === APEX_HOST || refererHost === 'localhost';
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
+
 function hasFileExtension(pathname: string): boolean {
   return /\.[a-z0-9]+$/i.test(pathname);
 }
@@ -25,6 +66,16 @@ function ensureTrailingSlash(pathname: string): string {
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // CSRF/Origin validation for mutating API requests
+  if (pathname.startsWith('/api/') && request.method === 'POST') {
+    if (!isOriginAllowed(request)) {
+      return new NextResponse(
+        JSON.stringify({ success: false, error: 'Forbidden' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+  }
   const normalizedPathname = pathname === '/' ? '/' : pathname.replace(/\/+$/g, '');
   const desiredPathname = shouldForceTrailingSlash(normalizedPathname)
     ? ensureTrailingSlash(normalizedPathname)
@@ -181,10 +232,13 @@ export function middleware(request: NextRequest) {
   ) {
     const response = NextResponse.next();
     response.headers.set('Cache-Control', CRAWL_CACHE_CONTROL);
+    addSecurityHeaders(response);
     return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  addSecurityHeaders(response);
+  return response;
 }
 
 export const config = {

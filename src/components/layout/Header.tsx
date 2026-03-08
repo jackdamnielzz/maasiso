@@ -13,12 +13,6 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
   const [isHydrated, setIsHydrated] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Log state changes
-  console.log('[Header] State:', {
-    isHydrated,
-    mobileMenuOpen
-  });
-
   // Create stable callback function that won't be recreated on renders
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen((prevState) => !prevState);
@@ -26,7 +20,6 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
   // Close menu only when navigating to a different page
   useEffect(() => {
-    console.log('[Header] Route changed:', { pathname });
     setMobileMenuOpen(false);
   }, [pathname]);
 
@@ -34,11 +27,8 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
   useEffect(() => {
     if (!isHydrated) {
       setIsHydrated(true);
-      console.log('[Header] Component hydrated:', {
-        pathname
-      });
     }
-  }, [isHydrated, pathname]);
+  }, [isHydrated]);
 
   return (
     <header className="site-header">
@@ -135,8 +125,8 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
           <div className="md:hidden">
             {/* Mobile Menu Button - Separated as its own div for better isolation */}
-            <button 
-              className="p-2 text-white focus:outline-none" 
+            <button
+              className="p-3 -mr-2 text-white focus:outline-none"
               aria-label="Toggle menu"
               aria-expanded={mobileMenuOpen}
               onClick={toggleMobileMenu}
@@ -160,10 +150,10 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}
           >
-            <div className="px-4 py-5 space-y-4">
+            <div className="px-4 py-4 space-y-1">
               <Link
                 href="/iso-certificering"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -172,7 +162,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/informatiebeveiliging"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -181,7 +171,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/avg-wetgeving"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -190,7 +180,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/kennis"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -199,7 +189,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/waarom-maasiso"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -208,7 +198,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/over-ons"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname === '/over-ons' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -217,7 +207,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <Link
                 href="/contact"
-                className={`block text-base hover:text-[#FF8B00] transition-colors duration-200 ${pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'}`}
+                className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact

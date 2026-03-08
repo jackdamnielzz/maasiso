@@ -18,9 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-// Force dynamic rendering to ensure fresh content from Strapi
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// ISR: revalidate every 24 hours
+export const revalidate = 86400;
 
 export default async function Iso27001Page() {
   return (

@@ -65,8 +65,8 @@ function getExcerpt(content: string): string {
   );
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// ISR: revalidate every 30 minutes
+export const revalidate = 1800;
 
 type PageProps = {
   params: Promise<{ slug: string }>;

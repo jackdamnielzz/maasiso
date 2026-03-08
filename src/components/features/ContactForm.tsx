@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { trackFormSubmission } from '@/lib/analytics';
 
 interface FormData {
   name: string;
@@ -74,6 +75,7 @@ export default function ContactForm() {
       }
 
       setSubmitStatus('success');
+      trackFormSubmission('contact_form', true);
       setFormData({
         name: '',
         email: '',
@@ -83,6 +85,7 @@ export default function ContactForm() {
       });
     } catch (error) {
       setSubmitStatus('error');
+      trackFormSubmission('contact_form', false);
       setErrorMessage(error instanceof Error ? error.message : 'Er is iets misgegaan bij het versturen van het formulier.');
     } finally {
       setIsSubmitting(false);
@@ -115,7 +118,7 @@ export default function ContactForm() {
           id="name"
           name="name"
           required
-          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-3 md:py-2 text-base md:text-sm text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.name}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -134,7 +137,7 @@ export default function ContactForm() {
           id="email"
           name="email"
           required
-          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-3 md:py-2 text-base md:text-sm text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.email}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -152,7 +155,7 @@ export default function ContactForm() {
           id="subject"
           name="subject"
           required
-          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-3 md:py-2 text-base md:text-sm text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.subject}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -177,20 +180,20 @@ export default function ContactForm() {
           name="message"
           rows={5}
           required
-          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-2 text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
+          className="mt-1.5 w-full rounded-lg border border-[#d8e2f0] bg-white px-3 py-3 md:py-2 text-base md:text-sm text-[#091E42] shadow-sm focus:border-[#FF8B00] focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/20"
           value={formData.message}
           onChange={handleChange}
           disabled={isSubmitting}
         />
       </div>
 
-      <div className="flex items-start space-x-2">
+      <div className="flex items-start space-x-3">
         <input
           type="checkbox"
           id="acceptTerms"
           name="acceptTerms"
           required
-          className="mt-1"
+          className="mt-1 h-5 w-5 md:h-4 md:w-4"
           checked={formData.acceptTerms}
           onChange={handleChange}
           disabled={isSubmitting}
@@ -208,7 +211,7 @@ export default function ContactForm() {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "w-full rounded-lg px-4 py-2 text-white shadow-sm transition-colors",
+            "w-full rounded-lg px-4 py-3 md:py-2 text-base md:text-sm font-medium text-white shadow-sm transition-colors",
             isSubmitting
               ? "bg-[#FF8B00]/70 cursor-not-allowed"
               : "bg-[#FF8B00] hover:bg-[#FF8B00]/90"

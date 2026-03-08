@@ -152,15 +152,44 @@ export const trackOutboundLink = (url: string, linkText?: string) => {
 
 /**
  * Track form submissions
+ * Uses direct gtag/dataLayer push to ensure the event fires
+ * even if analytics initialization hasn't completed yet.
  */
 export const trackFormSubmission = (formName: string, success: boolean) => {
-  trackEvent({
-    name: 'form_submit',
-    params: {
+  // Always push directly to gtag — don't depend on isInitialized
+  // This is critical for conversion tracking in Google Ads
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'form_submit', {
       form_name: formName,
       success,
+    });
+
+    // Also fire generate_lead (GA4 recommended conversion event)
+    // This is what Google Ads should optimize on
+    if (success) {
+      window.gtag('event', 'generate_lead', {
+        form_name: formName,
+        value: 1,
+        currency: 'EUR',
+      });
     }
-  });
+  }
+
+  // Fallback: also push to dataLayer for GTM
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: 'form_submit',
+      form_name: formName,
+      form_success: success,
+    });
+
+    if (success) {
+      window.dataLayer.push({
+        event: 'generate_lead',
+        form_name: formName,
+      });
+    }
+  }
 };
 
 /**

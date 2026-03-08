@@ -120,12 +120,23 @@ function validatePayload(body: LeadSubmitPayload): string | null {
   return null;
 }
 
+const MAX_BODY_SIZE = 8_192; // 8 KB max for lead form payload
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {
     return NextResponse.json(
       { success: false, error: 'Te veel aanvragen. Probeer het later opnieuw.' },
       { status: 429 }
+    );
+  }
+
+  // Enforce body size limit
+  const contentLength = parseInt(request.headers.get('content-length') || '0', 10);
+  if (contentLength > MAX_BODY_SIZE) {
+    return NextResponse.json(
+      { success: false, error: 'Request te groot.' },
+      { status: 413 }
     );
   }
 
@@ -286,10 +297,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('[Lead Submit] Versturen mislukt', {
-      emailUser,
-      smtpHost,
-      smtpPort,
-      recipient: leadRecipient,
       source: body.source,
       code,
       errorMessage: emailError.message,

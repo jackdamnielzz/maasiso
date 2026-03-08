@@ -10,8 +10,8 @@ import { prefetch } from '@/lib/prefetch';
 import type { BlogPost, Category, Tag } from '@/lib/types';
 import { createSlug } from '@/lib/utils/slugUtils';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// ISR: revalidate every 1 hour
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Blog | MaasISO - ISO Certificering & Informatiebeveiliging',

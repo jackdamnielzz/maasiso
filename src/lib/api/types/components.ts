@@ -49,14 +49,55 @@ export interface RawFeature {
   title: string;
   description: string;
   link: string | null;
-  icon?: any;
+  icon?: Record<string, unknown>;
+}
+
+export interface RawFaqItem {
+  id?: number | string;
+  question?: string;
+  answer?: string;
+  attributes?: {
+    id?: number | string;
+    question?: string;
+    answer?: string;
+  };
+}
+
+export interface RawFaqSectionComponent extends RawStrapiComponent {
+  items?: RawFaqItem[] | { data?: RawFaqItem[] };
+}
+
+export interface RawKeyTakeawayItem {
+  id?: number | string;
+  title?: string;
+  value?: string;
+  attributes?: {
+    id?: number | string;
+    title?: string;
+    value?: string;
+  };
+}
+
+export interface RawKeyTakeawaysComponent extends RawStrapiComponent {
+  items?: RawKeyTakeawayItem[] | { data?: RawKeyTakeawayItem[] };
+}
+
+export interface RawFactBlockComponent extends RawStrapiComponent {
+  label?: string;
+  value?: string;
+  source?: unknown;
+}
+
+export interface RawSourceItem {
+  url?: string;
+  label?: string;
 }
 
 export class APIError extends Error {
   status: number;
-  details?: any;
+  details?: Record<string, unknown>;
 
-  constructor(message: string, status: number, details?: any) {
+  constructor(message: string, status: number, details?: Record<string, unknown>) {
     super(message);
     this.name = 'APIError';
     this.status = status;

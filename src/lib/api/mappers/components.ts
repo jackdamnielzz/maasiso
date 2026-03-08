@@ -1,10 +1,16 @@
-import { 
+import {
   RawStrapiComponent,
   RawHeroComponent,
   RawTextBlockComponent,
   RawButtonComponent,
   RawGalleryComponent,
-  RawFeatureGridComponent
+  RawFeatureGridComponent,
+  RawFaqSectionComponent,
+  RawFaqItem,
+  RawKeyTakeawaysComponent,
+  RawKeyTakeawayItem,
+  RawFactBlockComponent,
+  RawSourceItem
 } from '../types';
 import { mapImage } from './image';
 
@@ -15,13 +21,14 @@ function normalizeFactBlockSource(
 
   if (Array.isArray(rawSource)) {
     const normalized = rawSource
-      .map((item) => {
+      .map((item: unknown) => {
         if (typeof item === 'string') {
           return item.trim();
         }
         if (item && typeof item === 'object') {
-          const maybeUrl = typeof (item as any).url === 'string' ? (item as any).url.trim() : '';
-          const maybeLabel = typeof (item as any).label === 'string' ? (item as any).label.trim() : '';
+          const sourceItem = item as RawSourceItem;
+          const maybeUrl = typeof sourceItem.url === 'string' ? sourceItem.url.trim() : '';
+          const maybeLabel = typeof sourceItem.label === 'string' ? sourceItem.label.trim() : '';
           return maybeUrl || maybeLabel;
         }
         return '';
@@ -46,7 +53,7 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
 
   let isValid = true;
   const componentType = component.__component.split('.')[1];
-  
+
   switch (componentType) {
     case 'hero':
       const heroComponent = component as RawHeroComponent;
@@ -59,35 +66,36 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
         isValid = false;
       }
       break;
-      
+
     case 'feature-grid':
-      console.log('[API Validation] Feature grid component found, considering valid for frontend fallback rendering');
       return true;
     case 'faq-section': {
-      const items = (component as any).items;
-      if (items !== undefined && !Array.isArray(items)) {
+      const faqComponent = component as RawFaqSectionComponent;
+      const faqItems = faqComponent.items;
+      if (faqItems !== undefined && !Array.isArray(faqItems)) {
         console.warn(`[API Validation] FAQ section items is not an array at index ${index}`);
         isValid = false;
       }
       break;
     }
     case 'key-takeaways': {
-      const items = (component as any).items;
-      if (items !== undefined && !Array.isArray(items)) {
+      const ktComponent = component as RawKeyTakeawaysComponent;
+      const ktItems = ktComponent.items;
+      if (ktItems !== undefined && !Array.isArray(ktItems)) {
         console.warn(`[API Validation] Key takeaways items is not an array at index ${index}`);
         isValid = false;
       }
       break;
     }
     case 'fact-block': {
-      const factComponent = component as any;
+      const factComponent = component as RawFactBlockComponent;
       if (!factComponent.label || !factComponent.value) {
         console.warn(`[API Validation] Fact block missing label or value at index ${index}`);
         isValid = false;
       }
       break;
     }
-      
+
     case 'text-block':
       const textBlockComponent = component as RawTextBlockComponent;
       if (!textBlockComponent.content) {
@@ -95,7 +103,7 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
         isValid = false;
       }
       break;
-      
+
     case 'button':
       const buttonComponent = component as RawButtonComponent;
       if (!buttonComponent.text || !buttonComponent.link) {
@@ -103,7 +111,7 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
         isValid = false;
       }
       break;
-      
+
     case 'gallery':
       const galleryComponent = component as RawGalleryComponent;
       if (!galleryComponent.images?.data || galleryComponent.images.data.length === 0) {
@@ -112,7 +120,7 @@ export function validatePageComponent(component: RawStrapiComponent, index: numb
       }
       break;
   }
-  
+
   return isValid;
 }
 
@@ -151,13 +159,6 @@ export function mapComponent(component: RawStrapiComponent) {
 
     case 'page-blocks.feature-grid':
       const featureGridComponent = component as RawFeatureGridComponent;
-      console.log('Feature grid component found:', {
-        id: featureGridComponent.id,
-        hasFeatures: Array.isArray(featureGridComponent.features),
-        featureCount: featureGridComponent.features?.length || 0,
-        firstFeature: featureGridComponent.features?.[0]
-      });
-      
       return {
         ...baseComponent,
         features: Array.isArray(featureGridComponent.features) ? featureGridComponent.features.map(feature => ({
@@ -178,10 +179,11 @@ export function mapComponent(component: RawStrapiComponent) {
         style: buttonComponent.style || 'primary'
       };
     case 'page-blocks.faq-section': {
-      const rawItems = Array.isArray((component as any).items)
-        ? (component as any).items
-        : (component as any).items?.data || [];
-      const items = rawItems.map((item: any) => {
+      const faqComponent = component as RawFaqSectionComponent;
+      const rawFaqItems: RawFaqItem[] = Array.isArray(faqComponent.items)
+        ? faqComponent.items
+        : (faqComponent.items as { data?: RawFaqItem[] })?.data || [];
+      const items = rawFaqItems.map((item: RawFaqItem) => {
         const itemData = item?.attributes || item || {};
         return {
           id: String(item?.id || itemData?.id || ''),
@@ -195,10 +197,11 @@ export function mapComponent(component: RawStrapiComponent) {
       };
     }
     case 'page-blocks.key-takeaways': {
-      const rawItems = Array.isArray((component as any).items)
-        ? (component as any).items
-        : (component as any).items?.data || [];
-      const items = rawItems.map((item: any) => {
+      const ktComponent = component as RawKeyTakeawaysComponent;
+      const rawKtItems: RawKeyTakeawayItem[] = Array.isArray(ktComponent.items)
+        ? ktComponent.items
+        : (ktComponent.items as { data?: RawKeyTakeawayItem[] })?.data || [];
+      const items = rawKtItems.map((item: RawKeyTakeawayItem) => {
         const itemData = item?.attributes || item || {};
         return {
           id: String(item?.id || itemData?.id || ''),
@@ -211,13 +214,15 @@ export function mapComponent(component: RawStrapiComponent) {
         items
       };
     }
-    case 'page-blocks.fact-block':
+    case 'page-blocks.fact-block': {
+      const factComponent = component as RawFactBlockComponent;
       return {
         ...baseComponent,
-        label: (component as any).label || '',
-        value: (component as any).value || '',
-        source: normalizeFactBlockSource((component as any).source)
+        label: factComponent.label || '',
+        value: factComponent.value || '',
+        source: normalizeFactBlockSource(factComponent.source)
       };
+    }
 
     default:
       return baseComponent;

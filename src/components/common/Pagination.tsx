@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { validateUrlParam, createSafeUrl } from '@/lib/validation';
 
@@ -65,13 +65,12 @@ export default function Pagination({ currentPage, totalPages, onHover }: Paginat
     }
   }, [onHover, currentPage, totalPages]);
 
-  // Generate page numbers to display
-  const getPageNumbers = () => {
+  // Generate page numbers to display (memoized to avoid recalculation on every render)
+  const pageNumbers = useMemo(() => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is less than max visible
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
@@ -111,7 +110,7 @@ export default function Pagination({ currentPage, totalPages, onHover }: Paginat
     pages.push(totalPages);
 
     return pages;
-  };
+  }, [currentPage, totalPages]);
 
   return (
     <nav className="flex justify-center mt-8" aria-label="Pagination">
@@ -133,7 +132,7 @@ export default function Pagination({ currentPage, totalPages, onHover }: Paginat
         </li>
 
         {/* Page numbers */}
-        {getPageNumbers().map((page, index) => (
+        {pageNumbers.map((page, index) => (
           <li key={index}>
             {typeof page === 'number' ? (
               <button
