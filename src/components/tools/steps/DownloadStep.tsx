@@ -62,7 +62,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
       const res = await fetch('/api/tra-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, discountCode: discountApplied ? discountCode : undefined }),
+        body: JSON.stringify({ email, discountCode: discountCode.trim() || undefined }),
       });
 
       const data = await res.json();
