@@ -6,7 +6,7 @@ const mollieClient = createMollieClient({
   apiKey: process.env.MOLLIE_API_KEY!,
 });
 
-const PRICE_EXCL_BTW = 0.01; // TEMP: test pricing — revert to 19.00
+const PRICE_EXCL_BTW = 19.00;
 const BTW_RATE = 0.21;
 const PRICE = (PRICE_EXCL_BTW * (1 + BTW_RATE)).toFixed(2); // 22.99 incl. BTW
 const CURRENCY = 'EUR';

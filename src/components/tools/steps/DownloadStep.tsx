@@ -24,9 +24,11 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
   const [discountApplied, setDiscountApplied] = useState<{ percentOff: number; label: string; priceInclBtw: number } | null>(null);
   const [discountError, setDiscountError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const discountLocked = failedAttempts >= 2;
 
   const handleApplyDiscount = async () => {
-    if (!discountCode.trim()) return;
+    if (!discountCode.trim() || discountLocked) return;
     setDiscountError('');
     setDiscountApplied(null);
     setIsValidating(true);
@@ -39,8 +41,16 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
       const data = await res.json();
       if (data.valid) {
         setDiscountApplied({ percentOff: data.percentOff, label: data.label, priceInclBtw: data.priceInclBtw });
+        setFailedAttempts(0);
       } else {
-        setDiscountError(data.error || 'Ongeldige code');
+        const newAttempts = failedAttempts + 1;
+        setFailedAttempts(newAttempts);
+        if (newAttempts >= 2) {
+          setDiscountError('Te veel ongeldige pogingen. Kortingscode invoer is geblokkeerd.');
+          setDiscountCode('');
+        } else {
+          setDiscountError(data.error || 'Ongeldige code');
+        }
       }
     } catch {
       setDiscountError('Kon code niet controleren');
@@ -214,14 +224,15 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
                   id="discount"
                   type="text"
                   value={discountCode}
-                  onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(''); setDiscountApplied(null); }}
-                  placeholder="Voer code in"
-                  className="flex-1 px-3 py-2 border border-[#d8e2f0] rounded-lg text-sm text-[#091E42] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/50 focus:border-[#FF8B00]"
+                  onChange={(e) => { if (!discountLocked) { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(''); setDiscountApplied(null); } }}
+                  placeholder={discountLocked ? 'Geblokkeerd' : 'Voer code in'}
+                  disabled={discountLocked}
+                  className="flex-1 px-3 py-2 border border-[#d8e2f0] rounded-lg text-sm text-[#091E42] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/50 focus:border-[#FF8B00] disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
                 <button
                   type="button"
                   onClick={handleApplyDiscount}
-                  disabled={isValidating || !discountCode.trim()}
+                  disabled={isValidating || !discountCode.trim() || discountLocked}
                   className="px-4 py-2 text-sm font-medium bg-gray-100 text-[#091E42] rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
                 >
                   {isValidating ? '...' : 'Toepassen'}
