@@ -11,10 +11,11 @@ interface TextBlockProps {
 export function TextBlock({ data, className }: TextBlockProps) {
   // Convert markdown to HTML
   const htmlContent = React.useMemo(() => {
-    return marked(data.content || '', {
-      breaks: true, // Enable line breaks
-      gfm: true, // Enable GitHub Flavored Markdown
-    });
+    return marked.parse(data.content || '', {
+      breaks: true,
+      gfm: true,
+      async: false,
+    }) as string;
   }, [data.content]);
 
   return (

@@ -23,7 +23,7 @@ function formatTimeLeft(ms: number): string {
 
 export default function ThankYouClient() {
   const searchParams = useSearchParams();
-  const paymentId = searchParams.get('id');
+  const paymentId = searchParams?.get('id') ?? null;
   const [status, setStatus] = useState<PaymentStatus>('loading');
   const [downloaded, setDownloaded] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
