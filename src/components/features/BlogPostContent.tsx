@@ -194,38 +194,38 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
               {post.title}
             </h1>
             <div className="flex flex-wrap items-center text-[15px] text-[#6B778C] gap-2">
-              {post.publishedAt && (
-                <time dateTime={post.publishedAt} className="flex items-center">
-                  <span className="text-[#6B778C]/80 mr-1">Gepubliceerd:</span>
-                  {new Date(post.publishedAt).toLocaleDateString('nl-NL', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-              )}
-              {/* Show "Laatst bijgewerkt" only if it differs from publishedAt by at least 1 day */}
-              {post.updatedAt && post.publishedAt && (() => {
-                const publishedDate = new Date(post.publishedAt);
-                const updatedDate = new Date(post.updatedAt);
-                const diffInDays = Math.abs(updatedDate.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
-                
-                if (diffInDays >= 1) {
-                  return (
-                    <>
-                      <span className="text-[#091E42]/40">|</span>
-                      <time dateTime={post.updatedAt} className="flex items-center">
-                        <span className="text-[#6B778C]/80 mr-1">Bijgewerkt:</span>
-                        {updatedDate.toLocaleDateString('nl-NL', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </time>
-                    </>
-                  );
-                }
-                return null;
+              {(() => {
+                const pubDate = post.publicationDate || post.publishedAt;
+                if (!pubDate) return null;
+                return (
+                  <time dateTime={pubDate} className="flex items-center">
+                    <span className="text-[#6B778C]/80 mr-1">Gepubliceerd:</span>
+                    {new Date(pubDate).toLocaleDateString('nl-NL', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                );
+              })()}
+              {/* Always show last updated date — prefer manual lastUpdatedDate, fallback to updatedAt */}
+              {(() => {
+                const dateStr = post.lastUpdatedDate || post.updatedAt;
+                if (!dateStr) return null;
+                const updatedDate = new Date(dateStr);
+                return (
+                  <>
+                    <span className="text-[#091E42]/40">|</span>
+                    <time dateTime={dateStr} className="flex items-center">
+                      <span className="text-[#6B778C]/80 mr-1">Bijgewerkt:</span>
+                      {updatedDate.toLocaleDateString('nl-NL', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  </>
+                );
               })()}
               {post.author && (
                 <>

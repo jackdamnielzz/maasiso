@@ -82,6 +82,10 @@
       "required": true,
       "description": "Original publish date for schema.org"
     },
+    "lastUpdatedDate": {
+      "type": "datetime",
+      "description": "Manual last-updated date. Only set when content is meaningfully updated."
+    },
     "tldr": {
       "type": "component",
       "repeatable": true,

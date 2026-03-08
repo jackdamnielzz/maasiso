@@ -57,6 +57,7 @@ export interface BaseContent {
   updatedAt: string;
   publishedAt?: string;
   publicationDate?: string;
+  lastUpdatedDate?: string;
 }
 
 /**

@@ -125,7 +125,7 @@ export async function generateMetadata(
         siteName: 'MaasISO',
         url: `/kennis/blog/${blogPost.slug || resolvedParams.slug}`,
         publishedTime: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
-        modifiedTime: blogPost.updatedAt,
+        modifiedTime: blogPost.lastUpdatedDate || blogPost.updatedAt,
         authors:
           typeof blogPost.author === 'string'
             ? [blogPost.author]
@@ -215,7 +215,7 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
             description:
               blogPost.seoDescription || blogPost.excerpt || getExcerpt(blogPost.content),
             datePublished: blogPost.publicationDate || blogPost.publishedAt || blogPost.createdAt,
-            dateModified: blogPost.updatedAt,
+            dateModified: blogPost.lastUpdatedDate || blogPost.updatedAt,
             author: {
               name: authorName,
               id: authorId,

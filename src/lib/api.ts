@@ -304,6 +304,7 @@ function mapBlogPost(data: any | null): BlogPost | null {
     updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
     publishedAt: data.publishedAt,
     publicationDate: data.publicationDate,
+    lastUpdatedDate: data.lastUpdatedDate,
 
     // SEO fields
     seoTitle: data.seoTitle || data.title || 'Untitled',
