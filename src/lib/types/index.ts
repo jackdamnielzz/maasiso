@@ -109,6 +109,7 @@ export interface BlogPost extends BaseModel {
 
   // Dates
   publicationDate?: string;
+  lastUpdatedDate?: string;
 
   // Components
   tldr?: TldrItem[];
