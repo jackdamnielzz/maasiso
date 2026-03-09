@@ -65,11 +65,19 @@ export default function BlogCard({ post }: BlogCardProps) {
           <p>
             Aangemaakt: {new Date(post.publicationDate || post.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
-          {post.lastUpdatedDate && post.lastUpdatedDate !== post.publicationDate && (
-            <p>
-              Laatst bijgewerkt: {new Date(post.lastUpdatedDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </p>
-          )}
+          {(() => {
+            const updateDate = post.lastUpdatedDate || post.updatedAt;
+            const createDate = post.publicationDate || post.createdAt;
+            if (!updateDate) return null;
+            const updateDay = new Date(updateDate).toDateString();
+            const createDay = new Date(createDate).toDateString();
+            if (updateDay === createDay) return null;
+            return (
+              <p>
+                Laatst bijgewerkt: {new Date(updateDate).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            );
+          })()}
         </div>
       </div>
     </div>
