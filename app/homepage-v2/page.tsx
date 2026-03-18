@@ -25,6 +25,10 @@ export const metadata: Metadata = {
     siteName: "MaasISO",
     type: "website",
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const keyTakeaways = [
@@ -385,7 +389,8 @@ const keyTakeawayItems = keyTakeaways.map((item, index) => ({
   value: item.waarde,
 }));
 
-export default function Home() {
+
+export default function HomepageV2() {
   return (
     <div className="relative isolate overflow-hidden bg-[#f3f6fb] text-[#091E42]">
       <Script
