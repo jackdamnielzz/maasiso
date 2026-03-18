@@ -53,7 +53,8 @@
       "Bash(ADMIN_TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwic2Vzc2lvbklkIjoiOWM4OGIyNGJhM2YxNGI4NGNmMGNlMmZhYjU0YWI0ZDQiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzY5NDQzNzYzLCJleHAiOjE3Njk0NDU1NjN9.qAotmB-aCXe1IVnwUrKEzw573jRXT6aeQqXZg49kAHw\")",
       "Bash(__NEW_LINE_a1ef6cb22635e4c7__ echo \"=== BLOG POST SCHEMA CHECK ===\")",
       "Bash(__NEW_LINE_60da400ac90d3ff4__ curl -s \"https://peaceful-insight-production.up.railway.app/content-type-builder/content-types/api::blog-post.blog-post\" -H \"Authorization: Bearer $ADMIN_TOKEN\")",
-      "Bash(__NEW_LINE_d72aec3db3f5eaa2__ curl -s \"https://peaceful-insight-production.up.railway.app/content-type-builder/content-types/api::blog-post.blog-post\" -H \"Authorization: Bearer $ADMIN_TOKEN\")"
+      "Bash(__NEW_LINE_d72aec3db3f5eaa2__ curl -s \"https://peaceful-insight-production.up.railway.app/content-type-builder/content-types/api::blog-post.blog-post\" -H \"Authorization: Bearer $ADMIN_TOKEN\")",
+      "bash"
     ]
   }
 }

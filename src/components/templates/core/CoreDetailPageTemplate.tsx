@@ -2,9 +2,11 @@ import { getPage } from '@/lib/api';
 import AuthorityPageContent from '@/components/features/AuthorityPageContent';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
 import PageSchemaRenderer from '@/components/seo/PageSchemaRenderer';
+import RelatedServices from '@/components/ui/RelatedServices';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
 import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
+import { getRelatedServices } from '@/config/related-services';
 
 type CoreDetailPageTemplateProps = {
   title: string;
@@ -777,6 +779,8 @@ export default async function CoreDetailPageTemplate({
       .filter((item: { question: string; answer: string }) => item.question && item.answer)
     : [];
 
+  const relatedServices = getRelatedServices(strapiSlug);
+
   return (
     <>
       <PageSchemaRenderer page={pageData} canonicalUrl={detailUrl} faqQuestions={faqQuestions} />
@@ -793,6 +797,11 @@ export default async function CoreDetailPageTemplate({
         showBreadcrumbs={false}
         dataTopic={dataTopic}
         showIso9001LeadSnippet={strapiSlug === 'iso-9001'}
+        afterContent={
+          relatedServices.length > 0 ? (
+            <RelatedServices services={relatedServices} />
+          ) : null
+        }
       />
     </>
   );

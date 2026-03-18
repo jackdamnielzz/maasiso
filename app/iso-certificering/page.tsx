@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
 
 export const metadata: Metadata = {
-  title: 'ISO-certificering | Overzicht en begeleiding | MaasISO',
+  title: 'ISO-certificering voor MKB: Kosten, Normen & Begeleiding | MaasISO',
   description:
-    'Overzicht van ISO-certificering bij MaasISO. Ontdek ISO 9001, ISO 14001, ISO 45001 en ISO 16175 en kies de norm die bij uw organisatie past.',
+    'Welke ISO-certificering past bij uw bedrijf? Vergelijk ISO 9001, ISO 14001, ISO 45001 en ISO 16175 op kosten, eisen en doorlooptijd. Persoonlijke begeleiding door een ervaren consultant.',
   alternates: {
     canonical: '/iso-certificering',
   },

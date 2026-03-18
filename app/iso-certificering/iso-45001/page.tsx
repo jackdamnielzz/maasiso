@@ -4,9 +4,9 @@ import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
 const ISO45001_CANONICAL_PATH = '/iso-certificering/iso-45001';
-const DEFAULT_TITLE = 'ISO 45001 | MaasISO';
+const DEFAULT_TITLE = 'ISO 45001 Certificering: Kosten, Eisen & Arbo-management | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'ISO 45001 advies en begeleiding voor gezond en veilig werken. MaasISO helpt u pragmatisch op weg.';
+  'ISO 45001 certificering voor gezond en veilig werken. Wat kost het? Welke eisen zijn er? Praktische begeleiding bij arbomanagement voor MKB-bedrijven.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('iso-45001');

@@ -201,6 +201,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/informatiebeveiliging',
     '/informatiebeveiliging/iso-27001',
     '/informatiebeveiliging/bio',
+    '/informatiebeveiliging/nis2',
     '/iso-certificering',
     '/iso-certificering/iso-9001/',
     '/iso-certificering/iso-14001',

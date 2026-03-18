@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function OverNielsMaasPage() {
   const author = await getAuthorBySlug('niels-maas');
-  const profileImagePath = '/images/niels.png';
+  const profileImagePath = '/images/niels.jpg';
   const profileImageAbsoluteUrl = `https://www.maasiso.nl${profileImagePath}`;
 
   const displayCredentials = 'Senior consultant';

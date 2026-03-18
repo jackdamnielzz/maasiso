@@ -9,9 +9,9 @@ const ISO9001_SECTION_IMAGE = '/iso9001-clausules-4-10.png';
 const ISO9001_IMPLEMENTATION_DURATION_IMAGE = '/dea107c7-1d12-41a0-9349-2e1c8936acc2.jpg';
 const ISO9001_BENEFITS_SECTION_IMAGE = '/dd9e8ce8-66e3-4a59-ba73-aa96c529a3a3.jpg';
 const ISO9001_AUDIT_SECTION_IMAGE = '/2f4d7977-bf5a-438f-a452-7cd40e810128.png';
-const DEFAULT_TITLE = 'ISO 9001 Certificering | MaasISO';
+const DEFAULT_TITLE = 'ISO 9001 Certificering: Kosten, Eisen & Begeleiding | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'ISO 9001 certificering en kwaliteitsmanagement met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 9001 certificering.';
+  'Wat kost ISO 9001 certificering? Transparant kostenoverzicht, duidelijke eisen en stapsgewijze begeleiding voor MKB. Van nulmeting tot certificaat in 3-6 maanden. Vraag een vrijblijvend gesprek aan.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('iso-9001');

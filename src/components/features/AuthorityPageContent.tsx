@@ -48,6 +48,7 @@ type AuthorityPageContentProps = {
   showBreadcrumbs?: boolean;
   dataTopic?: string;
   showIso9001LeadSnippet?: boolean;
+  afterContent?: React.ReactNode;
 };
 
 type LayoutBlock = NonNullable<Page['layout']>[number] & Record<string, any>;
@@ -413,6 +414,7 @@ export default function AuthorityPageContent({
   showBreadcrumbs = true,
   dataTopic,
   showIso9001LeadSnippet = false,
+  afterContent,
 }: AuthorityPageContentProps) {
   const { layoutWithoutCta, primaryCta } = collectCtaCandidates(layout);
   const layoutBlocks = groupFactBlocks(layoutWithoutCta);
@@ -1026,6 +1028,7 @@ export default function AuthorityPageContent({
             return null;
         }
       })}
+      {afterContent}
       {primaryCta ? (
         <section
           className="relative overflow-hidden bg-[radial-gradient(120%_95%_at_50%_0%,#13325d_0%,#091E42_48%,#08162e_100%)] py-14 text-white md:py-24"

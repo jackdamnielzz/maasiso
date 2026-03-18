@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
 
 export const metadata: Metadata = {
-  title: 'Informatiebeveiliging | ISO 27001 & BIO | MaasISO',
+  title: 'Informatiebeveiliging: ISO 27001, NIS2 & BIO Begeleiding | MaasISO',
   description:
-    'Overzicht van informatiebeveiliging bij MaasISO. Ontdek ISO 27001 en BIO en kies de norm die bij uw organisatie past.',
+    'Informatiebeveiliging voor uw organisatie. Vergelijk ISO 27001, NIS2 en BIO op kosten, eisen en aanpak. Van nulmeting tot certificering met pragmatische begeleiding.',
   alternates: {
     canonical: '/informatiebeveiliging',
   },
@@ -17,6 +17,13 @@ const cards = [
       'Norm voor het inrichten en verbeteren van een managementsysteem voor informatiebeveiliging met duidelijke eisen en auditcriteria.',
     href: '/informatiebeveiliging/iso-27001',
     linkLabel: 'ISO 27001',
+  },
+  {
+    title: 'NIS2 – Cyberbeveiligingswet',
+    description:
+      'Europese richtlijn met verplichte cyberbeveiligingsmaatregelen voor essentiële en belangrijke entiteiten. Vanaf 2026 verankerd in de Nederlandse Cyberbeveiligingswet.',
+    href: '/informatiebeveiliging/nis2',
+    linkLabel: 'NIS2',
   },
   {
     title: 'BIO – Baseline Informatiebeveiliging Overheid',

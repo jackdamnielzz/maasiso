@@ -1,0 +1,707 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║         MAASISO.NL — VOLLEDIGE WEBSITE ANALYSE RAPPORT            ║
+║                    Datum: 8 maart 2026                             ║
+║          Periode: afgelopen 90 dagen (tenzij anders vermeld)       ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+
+======================================================================
+  DEEL A: GOOGLE ANALYTICS 4 — DIEPTE-ANALYSE
+======================================================================
+
+
+--- A1. VERKEER & TRENDS ---
+
+▸ OVERZICHT LAATSTE 30 DAGEN:
+  Sessies:                  267
+  Gebruikers:               142
+  Nieuwe gebruikers:        134
+  Engagement rate:          67.4%
+  Gem. sessieduur:          6m 30s
+  Pagina's/sessie:          4.52
+  Bounce rate:              32.6%
+  Paginaweergaven:          1.207
+
+▸ OVERZICHT LAATSTE 90 DAGEN:
+  Sessies:                  354
+  Gebruikers:               171
+  Nieuwe gebruikers:        165
+  Engagement rate:          67.5%
+  Gem. sessieduur:          7m 2s
+  Pagina's/sessie:          5.04
+  Bounce rate:              32.5%
+  Paginaweergaven:          1.783
+
+▸ VERKEERSBRONNEN (90 dagen):
+Kanaal          | Sessies  | Gebruikers  | Engagement  | Gem. duur  | Bounce  | Key Events  
+----------------+----------+-------------+-------------+------------+---------+-------------
+Organic Search  | 196      | 117         | 67.9%       | 4m 14s     | 32.1%   | 154         
+Referral        | 75       | 5           | 78.7%       | 13m 55s    | 21.3%   | 14          
+Direct          | 52       | 26          | 67.3%       | 8m 54s     | 32.7%   | 11          
+Paid Search     | 23       | 23          | 34.8%       | 40s        | 65.2%   | 0           
+Unassigned      | 9        | 6           | 44.4%       | 15m 20s    | 55.6%   | 2           
+
+▸ SESSIES PER DAG VAN DE WEEK:
+Dag        | Sessies  | Engagement  
+-----------+----------+-------------
+Tuesday    | 89       | 65.2%       
+Monday     | 74       | 71.6%       
+Thursday   | 58       | 70.7%       
+Friday     | 53       | 60.4%       
+Wednesday  | 46       | 56.5%       
+Sunday     | 22       | 86.4%       
+Saturday   | 15       | 86.7%       
+
+▸ PIEKUREN (top 5):
+Uur    | Sessies  
+-------+----------
+13:00  | 43       
+11:00  | 38       
+14:00  | 33       
+15:00  | 33       
+12:00  | 29       
+9:00   | 24       
+16:00  | 23       
+10:00  | 21       
+
+▸ TOP STEDEN (90 dagen):
+Stad            | Sessies  | Gebruikers  | Engagement  
+----------------+----------+-------------+-------------
+Lelystad        | 144      | 12          | 76.4%       
+(not set)       | 25       | 22          | 32.0%       
+Amsterdam       | 25       | 20          | 64.0%       
+Rotterdam       | 13       | 12          | 61.5%       
+Groningen       | 10       | 3           | 60.0%       
+Antwerp         | 7        | 5           | 14.3%       
+The Hague       | 6        | 5           | 50.0%       
+Willemstad      | 5        | 2           | 60.0%       
+Nijmegen        | 4        | 3           | 50.0%       
+Doetinchem      | 3        | 1           | 66.7%       
+Hellevoetsluis  | 3        | 1           | 66.7%       
+Madrid          | 3        | 1           | 33.3%       
+Oosterhout      | 3        | 2           | 66.7%       
+Ridderkerk      | 3        | 2           | 100.0%      
+Veenendaal      | 3        | 3           | 66.7%       
+
+▸ APPARATEN:
+Apparaat  | Sessies  | Gebruikers  | Engagement  | Gem. duur  | Bounce  
+----------+----------+-------------+-------------+------------+---------
+desktop   | 323      | 143         | 70.0%       | 7m 33s     | 30.0%   
+mobile    | 39       | 32          | 51.3%       | 1m 16s     | 48.7%   
+
+
+--- A2. PAGINA-PRESTATIES ---
+
+▸ TOP 20 PAGINA'S OP PAGINAWEERGAVEN:
+Pagina                                             | Weergaven  | Sessies  | Engagement  | Gem. duur  | Bounce  
+---------------------------------------------------+------------+----------+-------------+------------+---------
+/                                                  | 267        | 132      | 81.8%       | 2m 58s     | 18.2%   
+/iso-certificering/iso-9001/                       | 157        | 52       | 71.2%       | 5m 37s     | 28.8%   
+/contact/                                          | 106        | 26       | 92.3%       | 3m 34s     | 7.7%    
+/informatiebeveiliging/iso-27001                   | 106        | 16       | 87.5%       | 9m 36s     | 12.5%   
+/iso-certificering/iso-9001                        | 106        | 14       | 92.9%       | 9m 58s     | 7.1%    
+/blog/taak-risico-analyse-voorbeeld-excel          | 99         | 22       | 63.6%       | 5m 25s     | 36.4%   
+/iso-certificering                                 | 99         | 37       | 91.9%       | 1m 3s      | 8.1%    
+/iso-certificering/                                | 69         | 35       | 94.3%       | 29s        | 5.7%    
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/  | 47         | 42       | 78.6%       | 2m 21s     | 21.4%   
+/iso-27001                                         | 44         | 9        | 100.0%      | 8m 15s     | 0.0%    
+/iso-14001                                         | 35         | 7        | 100.0%      | 5m 29s     | 0.0%    
+/informatiebeveiliging                             | 31         | 18       | 94.4%       | 1m 12s     | 5.6%    
+/iso-certificering/iso-14001/                      | 30         | 10       | 90.0%       | 4m 41s     | 10.0%   
+/kennis/blog/                                      | 29         | 10       | 90.0%       | 6m 12s     | 10.0%   
+/over-ons                                          | 27         | 20       | 95.0%       | 2m 12s     | 5.0%    
+/diensten                                          | 24         | 9        | 100.0%      | 31s        | 0.0%    
+/iso-certificering/iso-45001/                      | 24         | 6        | 100.0%      | 10m 18s    | 0.0%    
+/avg-wetgeving/avg                                 | 23         | 9        | 88.9%       | 1m 29s     | 11.1%   
+/iso-9001                                          | 20         | 10       | 100.0%      | 4m 37s     | 0.0%    
+/waarom-maasiso                                    | 20         | 16       | 87.5%       | 1m 0s      | 12.5%   
+
+▸ TOP LANDING PAGES:
+Landing page                                        | Sessies  | Gebruikers  | Engagement  | Bounce  | Key Events  
+----------------------------------------------------+----------+-------------+-------------+---------+-------------
+/                                                   | 100      | 34          | 84.0%       | 16.0%   | 88          
+(not set)                                           | 49       | 34          | 2.0%        | 98.0%   | 0           
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/   | 34       | 29          | 82.4%       | 17.6%   | 68          
+/iso-certificering/iso-9001/                        | 22       | 18          | 54.5%       | 45.5%   | 1           
+/blog/taak-risico-analyse-voorbeeld-excel           | 12       | 11          | 75.0%       | 25.0%   | 6           
+/kennis/blog/directiebeoordeling-iso-9001-voorbeel  | 9        | 9           | 88.9%       | 11.1%   | 0           
+/blog/directiebeoordeling-iso-9001-voorbeeld        | 8        | 7           | 62.5%       | 37.5%   | 0           
+/kennis/blog/avg-beeldmateriaal-toestemming/        | 8        | 7           | 87.5%       | 12.5%   | 0           
+/kennis/blog/beleidsverklaring-iso-9001/            | 7        | 7           | 28.6%       | 71.4%   | 0           
+/kennis/blog/leveranciersbeoordeling-iso-9001/      | 7        | 7           | 71.4%       | 28.6%   | 0           
+/iso-certificering                                  | 6        | 3           | 100.0%      | 0.0%    | 0           
+/kennis/blog/iso-27001-checklist-augustus-2025/     | 5        | 5           | 100.0%      | 0.0%    | 0           
+/iso-certificering/                                 | 4        | 2           | 75.0%       | 25.0%   | 0           
+/iso-certificering/iso-9001                         | 4        | 4           | 100.0%      | 0.0%    | 0           
+/kennis/blog/iso-9001-checklist-complete-gids/      | 4        | 2           | 100.0%      | 0.0%    | 2           
+/kennis/blog/wat-is-een-isms/                       | 4        | 4           | 75.0%       | 25.0%   | 0           
+/blog/context-van-de-organisatie-iso-9001           | 3        | 2           | 100.0%      | 0.0%    | 0           
+/blog/wat-is-een-isms                               | 3        | 3           | 33.3%       | 66.7%   | 0           
+/informatiebeveiliging/iso-27001                    | 3        | 1           | 66.7%       | 33.3%   | 0           
+/iso-certificering/iso-9001/?gtm_latency=1          | 3        | 3           | 0.0%        | 100.0%  | 0           
+
+▸ SLECHTST PRESTERENDE PAGINA'S (hoog bounce, min 5 weergaven):
+Pagina                                              | Weergaven  | Bounce  | Engagement  | Gem. duur  
+----------------------------------------------------+------------+---------+-------------+------------
+/kennis/blog/beleidsverklaring-iso-9001/            | 11         | 61.5%   | 38.5%       | 3m 57s     
+/blog/directiebeoordeling-iso-9001-voorbeeld        | 11         | 50.0%   | 50.0%       | 2m 55s     
+/kennis/blog/iso-9001-checklist-compleet-overzicht  | 10         | 50.0%   | 50.0%       | 36m 11s    
+/kennis/blog/leveranciersbeoordeling-iso-9001/      | 8          | 50.0%   | 50.0%       | 2m 14s     
+/kennis/blog/directiebeoordeling-iso-9001-voorbeel  | 11         | 42.9%   | 57.1%       | 2m 20s     
+/blog/taak-risico-analyse-voorbeeld-excel           | 99         | 36.4%   | 63.6%       | 5m 25s     
+/informatiebeveiliging/iso-27001/                   | 19         | 36.4%   | 63.6%       | 25s        
+/informatiebeveiliging/bio/                         | 8          | 33.3%   | 66.7%       | 48s        
+/iso-certificering/iso-9001/                        | 157        | 28.8%   | 71.2%       | 5m 37s     
+/over-ons/                                          | 18         | 28.6%   | 71.4%       | 25s        
+/iso-16175                                          | 10         | 25.0%   | 75.0%       | 1m 41s     
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/   | 47         | 21.4%   | 78.6%       | 2m 21s     
+/iso-certificering/iso-45001                        | 5          | 20.0%   | 80.0%       | 3s         
+/                                                   | 267        | 18.2%   | 81.8%       | 2m 58s     
+/iso-certificering/iso-16175/                       | 19         | 16.7%   | 83.3%       | 7m 58s     
+
+
+--- A3. CONTENT & BLOG ANALYSE ---
+
+▸ BLOG PAGINA'S PRESTATIES:
+Blog pagina                                        | Weergaven  | Sessies  | Engagement  | Gem. duur  | Bounce  
+---------------------------------------------------+------------+----------+-------------+------------+---------
+/blog/taak-risico-analyse-voorbeeld-excel          | 99         | 22       | 63.6%       | 5m 25s     | 36.4%   
+/blog/directiebeoordeling-iso-9001-voorbeeld       | 11         | 10       | 50.0%       | 2m 55s     | 50.0%   
+/blog                                              | 9          | 6        | 100.0%      | 4m 37s     | 0.0%    
+/blog/context-van-de-organisatie-iso-9001          | 5          | 3        | 100.0%      | 10m 3s     | 0.0%    
+/blog/wat-is-een-isms                              | 3          | 4        | 25.0%       | 1m 42s     | 75.0%   
+/blog/interne-audit-iso-9001-voorbeeld             | 2          | 1        | 100.0%      | 11m 48s    | 0.0%    
+/blog/iso-27001-eisen                              | 2          | 2        | 100.0%      | 1m 28s     | 0.0%    
+/blog/iso-9001-klimaatverandering                  | 2          | 1        | 100.0%      | 5m 31s     | 0.0%    
+/blog/beleidsverklaring-iso-9001                   | 1          | 1        | 100.0%      | 11m 47s    | 0.0%    
+/blog/interne-audit-iso-9001-verbeterinstrument    | 1          | 1        | 100.0%      | 32s        | 0.0%    
+/blog/isms-betekenis                               | 1          | 1        | 100.0%      | 5s         | 0.0%    
+/blog/iso-27001-checklist-augustus-2025            | 1          | 1        | 100.0%      | 21s        | 0.0%    
+/blog/iso-9001-checklist-implementatie             | 1          | 1        | 100.0%      | 3s         | 0.0%    
+/blog/iso-9001-normvereisten-gids                  | 1          | 1        | 100.0%      | 29s        | 0.0%    
+/blog/iso-certificering-gratis-tool-norm-selector  | 1          | 1        | 100.0%      | 32s        | 0.0%    
+/blog/kwaliteitsdoelstellingen-iso-9001            | 1          | 1        | 100.0%      | 21s        | 0.0%    
+/blog/kwaliteitshandboek-iso-9001                  | 1          | 1        | 0.0%        | 2s         | 100.0%  
+/blog/leveranciersbeoordeling-iso-9001             | 1          | 1        | 100.0%      | 4m 18s     | 0.0%    
+/blog/waarde-interne-auditor-iso-9001              | 0          | 1        | 0.0%        | 1m 46s     | 100.0%  
+
+▸ BLOG TRAFFIC PER MAAND:
+Maand   | Weergaven  | Sessies  | Gebruikers  
+--------+------------+----------+-------------
+202601  | 97         | 12       | 6           
+202602  | 46         | 38       | 27          
+
+
+--- A4. CONVERSIES & FORMULIER ---
+
+▸ EVENTS OVERZICHT (top 20):
+Event                     | Aantal  | Gebruikers  
+--------------------------+---------+-------------
+page_view                 | 1.783   | 166         
+user_engagement           | 812     | 169         
+click                     | 709     | 45          
+scroll                    | 655     | 72          
+session_start             | 351     | 169         
+first_visit               | 165     | 165         
+ads_conversion_Contact_1  | 93      | 9           
+file_download             | 92      | 21          
+form_start                | 19      | 6           
+
+▸ KEY EVENTS PER VERKEERSBRON:
+Kanaal          | Sessies  | Key Events  | Conversieratio  
+----------------+----------+-------------+-----------------
+Organic Search  | 196      | 154         | 78.6%           
+Referral        | 75       | 14          | 18.7%           
+Direct          | 52       | 11          | 21.2%           
+Unassigned      | 9        | 2           | 22.2%           
+Paid Search     | 23       | 0           | 0.0%            
+
+▸ KEY EVENTS PER LANDING PAGE:
+Landing page                                        | Sessies  | Key Events  | Conversieratio  
+----------------------------------------------------+----------+-------------+-----------------
+/                                                   | 100      | 88          | 88.0%           
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/   | 34       | 68          | 200.0%          
+/kennis/blog/iso-9001-checklist-compleet-overzicht  | 1        | 11          | 1100.0%         
+/blog/taak-risico-analyse-voorbeeld-excel           | 12       | 6           | 50.0%           
+/contact/?source=iso9001-calendly-fallback          | 1        | 4           | 400.0%          
+/kennis/blog/iso-9001-checklist-complete-gids/      | 4        | 2           | 50.0%           
+/iso-certificering/iso-9001/                        | 22       | 1           | 4.5%            
+/contact/                                           | 1        | 1           | 100.0%          
+(not set)                                           | 49       | 0           | 0.0%            
+/kennis/blog/directiebeoordeling-iso-9001-voorbeel  | 9        | 0           | 0.0%            
+/blog/directiebeoordeling-iso-9001-voorbeeld        | 8        | 0           | 0.0%            
+/kennis/blog/avg-beeldmateriaal-toestemming/        | 8        | 0           | 0.0%            
+/kennis/blog/beleidsverklaring-iso-9001/            | 7        | 0           | 0.0%            
+/kennis/blog/leveranciersbeoordeling-iso-9001/      | 7        | 0           | 0.0%            
+/iso-certificering                                  | 6        | 0           | 0.0%            
+
+
+--- A5. GEBRUIKERSGEDRAG ---
+
+▸ NIEUWE VS TERUGKERENDE BEZOEKERS:
+Type         | Sessies  | Gebruikers  | Engagement  | Gem. duur  | Bounce  | Key Events  
+-------------+----------+-------------+-------------+------------+---------+-------------
+Terugkerend  | 177      | 37          | 66.7%       | 10m 16s    | 33.3%   | 104         
+Nieuw        | 170      | 170         | 71.8%       | 3m 57s     | 28.2%   | 77          
+(not set)    | 8        | 7           | 0.0%        | 0s         | 100.0%  | 0           
+
+▸ ENGAGEMENT PER VERKEERSBRON:
+Kanaal          | Sessies  | Engagement  | Engaged sess.  | Gem. duur  | Pag/sessie  
+----------------+----------+-------------+----------------+------------+-------------
+Organic Search  | 196      | 67.9%       | 133            | 4m 14s     | 2.19        
+Referral        | 75       | 78.7%       | 59             | 13m 55s    | 10.91       
+Direct          | 52       | 67.3%       | 35             | 8m 54s     | 7.94        
+Paid Search     | 23       | 34.8%       | 8              | 40s        | 1.00        
+Unassigned      | 9        | 44.4%       | 4              | 15m 20s    | 11.11       
+
+▸ TOP BRON/MEDIUM:
+Bron / Medium                        | Sessies  | Gebruikers  | Engagement  | Bounce  | Key Events  
+-------------------------------------+----------+-------------+-------------+---------+-------------
+google / organic                     | 117      | 60          | 69.2%       | 30.8%   | 134         
+bing / organic                       | 72       | 51          | 66.7%       | 33.3%   | 16          
+(direct) / (none)                    | 52       | 26          | 67.3%       | 32.7%   | 11          
+typingmind.com / referral            | 36       | 2           | 88.9%       | 11.1%   | 0           
+google / cpc                         | 23       | 23          | 34.8%       | 65.2%   | 0           
+chatgpt.com / referral               | 22       | 1           | 77.3%       | 22.7%   | 0           
+tagassistant.google.com / referral   | 15       | 3           | 60.0%       | 40.0%   | 14          
+(not set)                            | 5        | 5           | 0.0%        | 100.0%  | 0           
+(not set) / sticky_cta               | 4        | 1           | 100.0%      | 0.0%    | 2           
+nl.search.yahoo.com / referral       | 4        | 3           | 75.0%       | 25.0%   | 4           
+duckduckgo / organic                 | 2        | 2           | 0.0%        | 100.0%  | 0           
+copilot.com / referral               | 1        | 1           | 0.0%        | 100.0%  | 0           
+ecosia.org / organic                 | 1        | 1           | 100.0%      | 0.0%    | 0           
+euc-word-edit.officeapps.live.com /  | 1        | 1           | 100.0%      | 0.0%    | 0           
+
+
+======================================================================
+  DEEL B: GOOGLE SEARCH CONSOLE — SEO ANALYSE
+======================================================================
+
+
+--- B1. ZOEKPRESTATIES OVERZICHT ---
+
+▸ LAATSTE 28 DAGEN:
+  Clicks:                   118
+  Impressies:               24.459
+  CTR:                      0.5%
+  Gemiddelde positie:       43.1
+
+▸ LAATSTE 90 DAGEN:
+  Clicks:                   121
+  Impressies:               25.585
+  CTR:                      0.5%
+  Gemiddelde positie:       43.1
+
+▸ TREND (28d vs vorige 28d):
+  Clicks:      118 vs 3 (+3833.3%)
+  Impressies:  24459 vs 1126 (+2072.2%)
+  CTR:         0.5% vs 0.3% (+0.22pp)
+  Positie:     43.1 vs 44.2 (-1.1)
+
+
+--- B2. KEYWORD ANALYSE ---
+
+▸ TOP 50 ZOEKWOORDEN OP CLICKS:
+Zoekwoord                                  | Clicks  | Impressies  | CTR     | Positie  
+-------------------------------------------+---------+-------------+---------+----------
+directiebeoordeling iso 9001 voorbeeld     | 5       | 27          | 18.5%   | 10.1     
+leveranciersbeoordeling iso 9001           | 3       | 30          | 10.0%   | 1.3      
+risico analyse voorbeeld excel             | 3       | 37          | 8.1%    | 7.5      
+directiebeoordeling voorbeeld              | 2       | 30          | 6.7%    | 6.6      
+taak risico analyse excel                  | 2       | 21          | 9.5%    | 1.9      
+taak risico analyse voorbeeld excel        | 2       | 9           | 22.2%   | 2.0      
+tra formulier excel                        | 2       | 14          | 14.3%   | 1.2      
+tra voorbeeld                              | 2       | 100         | 2.0%    | 11.3     
+format tra                                 | 1       | 2           | 50.0%   | 3.0      
+heb je er nog meer                         | 1       | 1           | 100.0%  | 2.0      
+iso 27001:2022                             | 1       | 1           | 100.0%  | 132.0    
+iso 9001 consultant                        | 1       | 50          | 2.0%    | 11.6     
+iso 9001 leveranciersbeoordeling           | 1       | 59          | 1.7%    | 1.4      
+taak risico analyse voorbeeld              | 1       | 221         | 0.5%    | 10.5     
+"iso 9001"                                 | 0       | 2           | 0.0%    | 8.0      
+14001 iso 9001                             | 0       | 3           | 0.0%    | 86.0     
+16175                                      | 0       | 1           | 0.0%    | 11.0     
+27001 certificatie kosten                  | 0       | 32          | 0.0%    | 15.0     
+27001 certificering                        | 0       | 27          | 0.0%    | 67.6     
+27001 iso                                  | 0       | 8           | 0.0%    | 78.4     
+27001 iso 2018                             | 0       | 1           | 0.0%    | 90.0     
+27001 risicoanalyse                        | 0       | 3           | 0.0%    | 84.3     
+27001 risicoanalyses                       | 0       | 2           | 0.0%    | 80.5     
+45001 iso                                  | 0       | 6           | 0.0%    | 72.3     
+45001 ohsas                                | 0       | 6           | 0.0%    | 51.7     
+6 grondslagen avg                          | 0       | 3           | 0.0%    | 28.0     
+9001 certificering                         | 0       | 18          | 0.0%    | 64.4     
+9001 iso                                   | 0       | 17          | 0.0%    | 63.5     
+9001 iso norm                              | 0       | 1           | 0.0%    | 75.0     
+9001 iso verplicht                         | 0       | 20          | 0.0%    | 59.5     
+aanleverlijst audit                        | 0       | 15          | 0.0%    | 6.9      
+advies iso 9001                            | 0       | 7           | 0.0%    | 69.1     
+adviesbureau iso 9001                      | 0       | 33          | 0.0%    | 62.6     
+amendement changement climatique iso 9001  | 0       | 1           | 0.0%    | 74.0     
+amendement iso 9001                        | 0       | 2           | 0.0%    | 43.5     
+annex a iso 27001 excel                    | 0       | 23          | 0.0%    | 56.7     
+art 6 avg                                  | 0       | 1           | 0.0%    | 48.0     
+artikel 6 avg                              | 0       | 1           | 0.0%    | 28.0     
+audit 9001                                 | 0       | 16          | 0.0%    | 37.2     
+audit begeleiding                          | 0       | 2           | 0.0%    | 78.5     
+audit checklist for iso 9001               | 0       | 5           | 0.0%    | 47.2     
+audit checklist iso 9001                   | 0       | 93          | 0.0%    | 22.0     
+audit interne iso 50001                    | 0       | 1           | 0.0%    | 63.0     
+audit interne iso 9001                     | 0       | 1           | 0.0%    | 79.0     
+audit iso                                  | 0       | 34          | 0.0%    | 69.8     
+audit iso 45001                            | 0       | 1           | 0.0%    | 100.0    
+audit iso 9001                             | 0       | 220         | 0.0%    | 44.7     
+audit iso 9001 checklist                   | 0       | 57          | 0.0%    | 26.1     
+audit verslag                              | 0       | 4           | 0.0%    | 31.8     
+audit verslag schrijven                    | 0       | 2           | 0.0%    | 47.5     
+
+▸ QUICK WINS — Veel impressies, lage CTR (<3%):
+Zoekwoord                         | Impressies  | Clicks  | CTR   | Positie  
+----------------------------------+-------------+---------+-------+----------
+taak risico analyse voorbeeld     | 221         | 1       | 0.5%  | 10.5     
+iso 9001 directiebeoordeling      | 199         | 0       | 0.0%  | 4.7      
+directiebeoordeling iso 9001      | 121         | 0       | 0.0%  | 3.1      
+iso 9001 kwaliteitshandboek       | 106         | 0       | 0.0%  | 15.5     
+tra voorbeeld                     | 100         | 2       | 2.0%  | 11.3     
+iso 9001 handboek                 | 96          | 0       | 0.0%  | 18.9     
+isms betekenis                    | 86          | 0       | 0.0%  | 19.3     
+interne audit checklist           | 63          | 0       | 0.0%  | 19.2     
+iso 9001 leveranciersbeoordeling  | 59          | 1       | 1.7%  | 1.4      
+beleidsverklaring                 | 53          | 0       | 0.0%  | 2.0      
+iso 9001 consultant               | 50          | 1       | 2.0%  | 11.6     
+contextanalyse iso 9001           | 47          | 0       | 0.0%  | 14.7     
+directiebeoordeling               | 47          | 0       | 0.0%  | 18.8     
+iso 9001 audit vragen             | 46          | 0       | 0.0%  | 11.8     
+interne audit iso 9001 voorbeeld  | 41          | 0       | 0.0%  | 2.3      
+iso 9001 beleidsverklaring        | 41          | 0       | 0.0%  | 2.4      
+iso 9001 klanttevredenheid        | 40          | 0       | 0.0%  | 18.4     
+iso 9001 en duurzaamheid          | 35          | 0       | 0.0%  | 14.6     
+iso 9001 interne audit checklist  | 34          | 0       | 0.0%  | 7.1      
+27001 certificatie kosten         | 32          | 0       | 0.0%  | 15.0     
+interne audit voorbeeld           | 31          | 0       | 0.0%  | 15.5     
+checklist interne audit           | 28          | 0       | 0.0%  | 15.3     
+consultants iso 9001              | 25          | 0       | 0.0%  | 19.5     
+interne audit vragenlijst         | 24          | 0       | 0.0%  | 17.5     
+
+▸ BIJNA TOP 3 — Positie 4-10 (kans om te stijgen):
+Zoekwoord                         | Positie  | Clicks  | Impressies  | CTR   
+----------------------------------+----------+---------+-------------+-------
+iso 9001 directiebeoordeling      | 4.7      | 0       | 199         | 0.0%  
+directiebeoordeling voorbeeld     | 6.6      | 2       | 30          | 6.7%  
+aanleverlijst audit               | 6.9      | 0       | 15          | 0.0%  
+iso 9001 interne audit checklist  | 7.1      | 0       | 34          | 0.0%  
+risico analyse voorbeeld excel    | 7.5      | 3       | 37          | 8.1%  
+
+▸ BIJNA PAGINA 1 — Positie 11-20:
+Zoekwoord                    | Positie  | Impressies  | Clicks  | CTR   
+-----------------------------+----------+-------------+---------+-------
+iso 9001 kwaliteitshandboek  | 15.5     | 106         | 0       | 0.0%  
+tra voorbeeld                | 11.3     | 100         | 2       | 2.0%  
+iso 9001 handboek            | 18.9     | 96          | 0       | 0.0%  
+isms betekenis               | 19.3     | 86          | 0       | 0.0%  
+interne audit checklist      | 19.2     | 63          | 0       | 0.0%  
+iso 9001 consultant          | 11.6     | 50          | 1       | 2.0%  
+contextanalyse iso 9001      | 14.7     | 47          | 0       | 0.0%  
+directiebeoordeling          | 18.8     | 47          | 0       | 0.0%  
+iso 9001 audit vragen        | 11.8     | 46          | 0       | 0.0%  
+iso 9001 klanttevredenheid   | 18.4     | 40          | 0       | 0.0%  
+iso 9001 en duurzaamheid     | 14.6     | 35          | 0       | 0.0%  
+27001 certificatie kosten    | 15.0     | 32          | 0       | 0.0%  
+interne audit voorbeeld      | 15.5     | 31          | 0       | 0.0%  
+checklist interne audit      | 15.3     | 28          | 0       | 0.0%  
+consultants iso 9001         | 19.5     | 25          | 0       | 0.0%  
+interne audit vragenlijst    | 17.5     | 24          | 0       | 0.0%  
+iso consultant               | 12.2     | 16          | 0       | 0.0%  
+
+▸ HOGE CTR ZOEKWOORDEN (>10%, min 5 clicks):
+Zoekwoord                               | CTR    | Clicks  | Impressies  | Positie  
+----------------------------------------+--------+---------+-------------+----------
+directiebeoordeling iso 9001 voorbeeld  | 18.5%  | 5       | 27          | 10.1     
+
+▸ ZOEKWOORDEN GEGROEPEERD PER THEMA:
+  ISO 9001: 168 zoekwoorden, 10 clicks, 6.991 impressies
+    - "directiebeoordeling iso 9001 voorbeeld" (clicks: 5, pos: 10.1)
+    - "leveranciersbeoordeling iso 9001" (clicks: 3, pos: 1.3)
+    - "iso 9001 consultant" (clicks: 1, pos: 11.6)
+    - "iso 9001 leveranciersbeoordeling" (clicks: 1, pos: 1.4)
+    - ""iso 9001"" (clicks: 0, pos: 8.0)
+  ISO 27001: 105 zoekwoorden, 1 clicks, 3.321 impressies
+    - "iso 27001:2022" (clicks: 1, pos: 132.0)
+    - "27001 certificatie kosten" (clicks: 0, pos: 15.0)
+    - "27001 certificering" (clicks: 0, pos: 67.6)
+    - "27001 iso" (clicks: 0, pos: 78.4)
+    - "27001 iso 2018" (clicks: 0, pos: 90.0)
+  ISO 14001: 33 zoekwoorden, 0 clicks, 963 impressies
+    - "beleidsverklaring veiligheid gezondheid en milieu" (clicks: 0, pos: 2.0)
+    - "checklist iso 14001" (clicks: 0, pos: 24.2)
+    - "eisen iso 14001" (clicks: 0, pos: 79.1)
+    - "iso 14001 2026" (clicks: 0, pos: 83.8)
+    - "iso 14001 accreditering" (clicks: 0, pos: 52.0)
+  ISO 45001: 32 zoekwoorden, 0 clicks, 907 impressies
+    - "45001 iso" (clicks: 0, pos: 72.3)
+    - "45001 ohsas" (clicks: 0, pos: 51.7)
+    - "audit iso 45001" (clicks: 0, pos: 100.0)
+    - "interne audit iso 45001" (clicks: 0, pos: 69.8)
+    - "iso 45001" (clicks: 0, pos: 77.9)
+  ISO certificering (algemeen): 44 zoekwoorden, 0 clicks, 847 impressies
+    - "begeleiding bij certificering" (clicks: 0, pos: 62.2)
+    - "betekenis iso" (clicks: 0, pos: 56.3)
+    - "certificaat iso" (clicks: 0, pos: 79.7)
+    - "ciio maatstaf certificering / certificaat" (clicks: 0, pos: 75.0)
+    - "ciso verplicht" (clicks: 0, pos: 80.8)
+  Audit: 31 zoekwoorden, 0 clicks, 511 impressies
+    - "aanleverlijst audit" (clicks: 0, pos: 6.9)
+    - "audit begeleiding" (clicks: 0, pos: 78.5)
+    - "audit interne iso 50001" (clicks: 0, pos: 63.0)
+    - "audit iso" (clicks: 0, pos: 69.8)
+    - "audit verslag" (clicks: 0, pos: 31.8)
+  Risico: 7 zoekwoorden, 8 clicks, 334 impressies
+    - "risico analyse voorbeeld excel" (clicks: 3, pos: 7.5)
+    - "taak risico analyse excel" (clicks: 2, pos: 1.9)
+    - "taak risico analyse voorbeeld excel" (clicks: 2, pos: 2.0)
+    - "taak risico analyse voorbeeld" (clicks: 1, pos: 10.5)
+    - "avg risico analyse mkb" (clicks: 0, pos: 36.2)
+  AVG/Privacy: 17 zoekwoorden, 0 clicks, 70 impressies
+    - "6 grondslagen avg" (clicks: 0, pos: 28.0)
+    - "art 6 avg" (clicks: 0, pos: 48.0)
+    - "artikel 6 avg" (clicks: 0, pos: 28.0)
+    - "avg beeldmateriaal toestemming" (clicks: 0, pos: 1.3)
+    - "avg camerabeelden" (clicks: 0, pos: 98.5)
+  ISMS: 11 zoekwoorden, 0 clicks, 356 impressies
+    - "isms" (clicks: 0, pos: 77.7)
+    - "isms 2014" (clicks: 0, pos: 80.3)
+    - "isms 2015" (clicks: 0, pos: 65.3)
+    - "isms betekenis" (clicks: 0, pos: 19.3)
+    - "isms certification" (clicks: 0, pos: 87.6)
+  BIO: 20 zoekwoorden, 0 clicks, 588 impressies
+    - "bio beveiliging" (clicks: 0, pos: 94.0)
+    - "bio bir" (clicks: 0, pos: 2.0)
+    - "bio certificering" (clicks: 0, pos: 77.7)
+    - "bio compliance" (clicks: 0, pos: 79.9)
+    - "bio compliant" (clicks: 0, pos: 92.8)
+  MKB: 1 zoekwoorden, 0 clicks, 1 impressies
+    - "iso certificering voor mkb" (clicks: 0, pos: 1.0)
+  Overig: 31 zoekwoorden, 8 clicks, 371 impressies
+    - "directiebeoordeling voorbeeld" (clicks: 2, pos: 6.6)
+    - "tra formulier excel" (clicks: 2, pos: 1.2)
+    - "tra voorbeeld" (clicks: 2, pos: 11.3)
+    - "format tra" (clicks: 1, pos: 3.0)
+    - "heb je er nog meer" (clicks: 1, pos: 2.0)
+
+
+--- B3. PAGINA-ANALYSE VANUIT SEARCH ---
+
+▸ TOP PAGINA'S OP ORGANISCHE CLICKS:
+Pagina                                                   | Clicks  | Impressies  | CTR    | Positie  
+---------------------------------------------------------+---------+-------------+--------+----------
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/        | 26      | 1.757       | 1.5%   | 20.9     
+/kennis/blog/directiebeoordeling-iso-9001-voorbeeld/     | 12      | 678         | 1.8%   | 13.5     
+/                                                        | 9       | 177         | 5.1%   | 18.4     
+/kennis/blog/leveranciersbeoordeling-iso-9001/           | 9       | 458         | 2.0%   | 16.4     
+https://maasiso.nl/blog/directiebeoordeling-iso-9001-vo  | 7       | 127         | 5.5%   | 9.7      
+https://maasiso.nl/blog/taak-risico-analyse-voorbeeld-e  | 6       | 404         | 1.5%   | 13.3     
+/informatiebeveiliging/iso-27001/                        | 5       | 1.590       | 0.3%   | 40.7     
+/kennis/blog/context-van-de-organisatie-iso-9001/        | 4       | 347         | 1.2%   | 19.5     
+/kennis/blog/iso-27001-checklist-augustus-2025/          | 4       | 863         | 0.5%   | 52.4     
+/kennis/blog/interne-audit-iso-9001-voorbeeld/           | 3       | 1.680       | 0.2%   | 40.4     
+https://maasiso.nl/                                      | 2       | 101         | 2.0%   | 22.3     
+https://maasiso.nl/blog/iso-9001-handboek-gids           | 2       | 662         | 0.3%   | 46.2     
+https://maasiso.nl/blog/iso-9001-klimaatverandering      | 2       | 103         | 1.9%   | 15.0     
+https://maasiso.nl/blog/leveranciersbeoordeling-iso-900  | 2       | 197         | 1.0%   | 13.4     
+https://maasiso.nl/over-niels-maas                       | 2       | 8           | 25.0%  | 7.0      
+/kennis/blog/avg-beeldmateriaal-toestemming/             | 2       | 212         | 0.9%   | 15.0     
+/kennis/blog/beleidsverklaring-iso-9001/                 | 2       | 477         | 0.4%   | 44.7     
+/kennis/blog/directiebeoordeling-iso-9001/               | 2       | 263         | 0.8%   | 28.6     
+/kennis/blog/iso-9001-checklist-complete-gids/           | 2       | 916         | 0.2%   | 38.5     
+https://maasiso.nl/bio                                   | 1       | 697         | 0.1%   | 82.0     
+https://maasiso.nl/blog/avg-beeldmateriaal-toestemming/  | 1       | 40          | 2.5%   | 8.8      
+https://maasiso.nl/blog/beleidsverklaring-iso-9001       | 1       | 211         | 0.5%   | 20.7     
+https://maasiso.nl/blog/directiebeoordeling-iso-9001     | 1       | 27          | 3.7%   | 33.4     
+https://maasiso.nl/blog/informatiebeheer-iso-16175       | 1       | 23          | 4.3%   | 34.1     
+https://maasiso.nl/blog/iso-27001-checklist-augustus-20  | 1       | 835         | 0.1%   | 50.7     
+
+▸ PAGINA'S MET VEEL IMPRESSIES MAAR WEINIG CLICKS (CTR-optimalisatie):
+Pagina                                                   | Impressies  | Clicks  | CTR   | Positie  
+---------------------------------------------------------+-------------+---------+-------+----------
+/kennis/blog/taak-risico-analyse-voorbeeld-excel/        | 1.757       | 26      | 1.5%  | 20.9     
+/kennis/blog/interne-audit-iso-9001-voorbeeld/           | 1.680       | 3       | 0.2%  | 40.4     
+/iso-certificering/iso-9001/                             | 1.639       | 0       | 0.0%  | 53.2     
+/informatiebeveiliging/iso-27001/                        | 1.590       | 5       | 0.3%  | 40.7     
+https://maasiso.nl/iso-certificering/iso-9001            | 1.473       | 0       | 0.0%  | 60.5     
+https://maasiso.nl/blog/kosten-certificering-iso-9001-h  | 1.427       | 0       | 0.0%  | 46.1     
+https://maasiso.nl/iso-27001                             | 1.059       | 0       | 0.0%  | 53.1     
+https://maasiso.nl/informatiebeveiliging/iso-27001       | 978         | 0       | 0.0%  | 70.1     
+/kennis/blog/iso-9001-checklist-complete-gids/           | 916         | 2       | 0.2%  | 38.5     
+/kennis/blog/iso-27001-checklist-augustus-2025/          | 863         | 4       | 0.5%  | 52.4     
+https://maasiso.nl/blog/iso-27001-checklist-augustus-20  | 835         | 1       | 0.1%  | 50.7     
+https://maasiso.nl/blog/iso-9001-audit-voorbereiding-be  | 820         | 0       | 0.0%  | 63.5     
+https://maasiso.nl/blog/wat-is-procesmanagement          | 808         | 1       | 0.1%  | 37.1     
+https://maasiso.nl/bio                                   | 697         | 1       | 0.1%  | 82.0     
+/kennis/blog/directiebeoordeling-iso-9001-voorbeeld/     | 678         | 12      | 1.8%  | 13.5     
+
+
+--- B4. CONTENT GAP ANALYSE ---
+
+▸ ZOEKWOORDEN ZONDER DEDICATED CONTENT:
+  (Zoekwoorden met impressies waar geen specifieke pagina voor bestaat)
+
+Zoekwoord            | Impressies  | Huidige pagina  | Positie  
+---------------------+-------------+-----------------+----------
+iso 9001 consultant  | 52          | /               | 14.3     
+
+
+--- B5. DEVICE & LAND BREAKDOWN (GSC) ---
+
+▸ APPARATEN (zoekverkeer):
+Apparaat  | Clicks  | Impressies  | CTR   | Positie  
+----------+---------+-------------+-------+----------
+DESKTOP   | 113     | 22.338      | 0.5%  | 43.8     
+MOBILE    | 7       | 3.187       | 0.2%  | 39.1     
+TABLET    | 1       | 60          | 1.7%  | 7.5      
+
+▸ LANDEN:
+Land  | Clicks  | Impressies  | CTR    | Positie  
+------+---------+-------------+--------+----------
+nld   | 98      | 23.751      | 0.4%   | 44.3     
+bel   | 14      | 795         | 1.8%   | 34.5     
+cuw   | 2       | 4           | 50.0%  | 3.3      
+sur   | 2       | 62          | 3.2%   | 4.6      
+che   | 1       | 3           | 33.3%  | 23.7     
+deu   | 1       | 35          | 2.9%   | 15.6     
+ita   | 1       | 10          | 10.0%  | 16.7     
+per   | 1       | 4           | 25.0%  | 54.0     
+usa   | 1       | 266         | 0.4%   | 10.5     
+abw   | 0       | 3           | 0.0%   | 3.0      
+
+
+======================================================================
+  DEEL C: GECOMBINEERDE INZICHTEN & AANBEVELINGEN
+======================================================================
+
+
+--- C1. CONTENT STRATEGIE AANBEVELINGEN ---
+
+Op basis van de data hierboven, hier de concrete aanbevelingen:
+
+▸ BLOGPOST-IDEEEN OP BASIS VAN ZOEKDATA:
+
+  PRIORITEIT 1 — Direct maken (hoge impact):
+  1. Blogpost over "taak risico analyse voorbeeld"
+     → 221 impressies, positie 10.5, 1 clicks
+     → Potentie: met dedicated content van positie 11 naar top 5
+  2. Blogpost over "iso 9001 kwaliteitshandboek"
+     → 106 impressies, positie 15.5, 0 clicks
+     → Potentie: met dedicated content van positie 15 naar top 5
+  3. Blogpost over "tra voorbeeld"
+     → 100 impressies, positie 11.3, 2 clicks
+     → Potentie: met dedicated content van positie 11 naar top 5
+  4. Blogpost over "iso 9001 handboek"
+     → 96 impressies, positie 18.9, 0 clicks
+     → Potentie: met dedicated content van positie 19 naar top 5
+  5. Blogpost over "isms betekenis"
+     → 86 impressies, positie 19.3, 0 clicks
+     → Potentie: met dedicated content van positie 19 naar top 5
+  6. Blogpost over "interne audit checklist"
+     → 63 impressies, positie 19.2, 0 clicks
+     → Potentie: met dedicated content van positie 19 naar top 5
+  7. Blogpost over "iso 9001 consultant"
+     → 50 impressies, positie 11.6, 1 clicks
+     → Potentie: met dedicated content van positie 12 naar top 5
+  8. Blogpost over "contextanalyse iso 9001"
+     → 47 impressies, positie 14.7, 0 clicks
+     → Potentie: met dedicated content van positie 15 naar top 5
+  9. Blogpost over "directiebeoordeling"
+     → 47 impressies, positie 18.8, 0 clicks
+     → Potentie: met dedicated content van positie 19 naar top 5
+  10. Blogpost over "iso 9001 audit vragen"
+     → 46 impressies, positie 11.8, 0 clicks
+     → Potentie: met dedicated content van positie 12 naar top 5
+
+  PRIORITEIT 2 — Bestaande content optimaliseren:
+  1. /kennis/blog/taak-risico-analyse-voorbeeld-excel/
+     → CTR: 1.5%, 1757 impressies — title/meta verbeteren
+  2. /kennis/blog/interne-audit-iso-9001-voorbeeld/
+     → CTR: 0.2%, 1680 impressies — title/meta verbeteren
+  3. /iso-certificering/iso-9001/
+     → CTR: 0.0%, 1639 impressies — title/meta verbeteren
+  4. /informatiebeveiliging/iso-27001/
+     → CTR: 0.3%, 1590 impressies — title/meta verbeteren
+  5. https://maasiso.nl/iso-certificering/iso-9001
+     → CTR: 0.0%, 1473 impressies — title/meta verbeteren
+
+
+--- C2. QUICK WINS ---
+
+▸ TITLE/META DESCRIPTION OPTIMALISATIES:
+  Pagina's met veel impressies maar lage CTR — verbeter title tags en meta descriptions:
+  1. /kennis/blog/taak-risico-analyse-voorbeeld-excel/ — CTR 1.5% bij 1757 impressies
+  2. /kennis/blog/interne-audit-iso-9001-voorbeeld/ — CTR 0.2% bij 1680 impressies
+  3. /iso-certificering/iso-9001/ — CTR 0.0% bij 1639 impressies
+  4. /informatiebeveiliging/iso-27001/ — CTR 0.3% bij 1590 impressies
+  5. https://maasiso.nl/iso-certificering/iso-9001 — CTR 0.0% bij 1473 impressies
+  6. https://maasiso.nl/blog/kosten-certificering-iso-9001-hoe-opgebouwd — CTR 0.0% bij 1427 impressies
+  7. https://maasiso.nl/iso-27001 — CTR 0.0% bij 1059 impressies
+  8. https://maasiso.nl/informatiebeveiliging/iso-27001 — CTR 0.0% bij 978 impressies
+
+▸ ZOEKWOORDEN DIE SNEL NAAR TOP 3 KUNNEN:
+  1. "iso 9001 directiebeoordeling" — positie 4.7, 0 clicks
+     → Actie: content uitbreiden, interne links toevoegen, title optimaliseren
+  2. "directiebeoordeling voorbeeld" — positie 6.6, 2 clicks
+     → Actie: content uitbreiden, interne links toevoegen, title optimaliseren
+  3. "aanleverlijst audit" — positie 6.9, 0 clicks
+     → Actie: content uitbreiden, interne links toevoegen, title optimaliseren
+  4. "iso 9001 interne audit checklist" — positie 7.1, 0 clicks
+     → Actie: content uitbreiden, interne links toevoegen, title optimaliseren
+  5. "risico analyse voorbeeld excel" — positie 7.5, 3 clicks
+     → Actie: content uitbreiden, interne links toevoegen, title optimaliseren
+
+
+--- C3. LANGE TERMIJN KANSEN ---
+
+▸ THEMA-CLUSTERS VOOR AUTORITEIT:
+
+  ISO 9001: 168 zoekwoorden, 6.991 impressies
+  → Maak een pillar page + ondersteunende blogposts
+    - "iso 9001 checklist" (373 impr, pos 37.3)
+    - "checklist iso 9001" (310 impr, pos 31.8)
+    - "iso 9001 certificering kosten" (295 impr, pos 26.7)
+    - "iso 9001 eisen" (290 impr, pos 72.7)
+    - "iso 9001 certificering" (260 impr, pos 89.4)
+
+  ISO 27001: 104 zoekwoorden, 3.210 impressies
+  → Maak een pillar page + ondersteunende blogposts
+    - "iso 27001 checklist" (388 impr, pos 68.6)
+    - "iso 27001 certificering kosten" (345 impr, pos 23.9)
+    - "iso 27001 certificaat" (230 impr, pos 60.6)
+    - "iso 27001 eisen" (219 impr, pos 62.2)
+    - "iso 27001 kosten" (201 impr, pos 22.5)
+
+  ISO 14001: 35 zoekwoorden, 969 impressies
+  → Maak een pillar page + ondersteunende blogposts
+    - "checklist iso 14001" (156 impr, pos 24.2)
+    - "iso 14001 kosten" (124 impr, pos 27.3)
+    - "iso 14001 gecertificeerde bedrijven" (94 impr, pos 63.0)
+    - "iso 14001 eisen" (87 impr, pos 80.9)
+    - "iso 14001 certificering kosten" (80 impr, pos 25.7)
+
+  ISO 45001: 31 zoekwoorden, 905 impressies
+  → Maak een pillar page + ondersteunende blogposts
+    - "iso 45001 certificering" (164 impr, pos 70.9)
+    - "iso 45001 kosten" (150 impr, pos 39.6)
+    - "iso 45001 certificering kosten" (113 impr, pos 45.6)
+    - "iso 45001 checklist nederlands" (100 impr, pos 65.0)
+    - "iso 45001 betekenis" (62 impr, pos 84.3)
+
+▸ GOOGLE ADS AANBEVELINGEN:
+  - Huidige bounce rate van Google Ads verkeer is waarschijnlijk hoog
+  - Controleer in GA4 de "Paid Search" engagement metrics hierboven
+  - Switch primaire conversie-actie van ads_conversion_Contact_1 naar generate_lead
+  - Overweeg specifieke landing pages per advertentiegroep te maken
+
+▸ INTERN VERKEER FILTEREN:
+  - Stel een IP-filter in voor Lelystad om eigen bezoeken uit te sluiten
+  - Dit geeft zuiverder data voor toekomstige analyses
+
+══════════════════════════════════════════════════════════════════════
+  EINDE RAPPORT — Gegenereerd op 8-3-2026
+══════════════════════════════════════════════════════════════════════

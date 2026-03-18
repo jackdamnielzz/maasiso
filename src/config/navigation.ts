@@ -110,6 +110,10 @@ export const navigationConfig: NavigationConfig = {
           href: '/informatiebeveiliging/iso-27001',
         },
         {
+          label: 'NIS2 Compliance',
+          href: '/informatiebeveiliging/nis2',
+        },
+        {
           label: 'AVG/GDPR Compliance',
           href: '/avg-wetgeving/avg',
         },

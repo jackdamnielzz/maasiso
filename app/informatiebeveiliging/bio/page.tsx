@@ -4,9 +4,9 @@ import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
 const BIO_CANONICAL_PATH = '/informatiebeveiliging/bio';
-const DEFAULT_TITLE = 'BIO Certificering | MaasISO';
+const DEFAULT_TITLE = 'BIO (Baseline Informatiebeveiliging Overheid): Begeleiding & Advies | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'BIO certificering en informatiebeveiliging met MaasISO. Professionele begeleiding voor uw organisatie naar BIO certificering.';
+  'BIO-compliance voor overheidsorganisaties. Van BIR naar BIO: praktische begeleiding bij implementatie, gap-analyse en naleving van de Baseline Informatiebeveiliging Overheid.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('bio');

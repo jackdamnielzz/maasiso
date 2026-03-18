@@ -4,9 +4,9 @@ import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
 const ISO16175_CANONICAL_PATH = '/iso-certificering/iso-16175';
-const DEFAULT_TITLE = 'ISO 16175 Certificering | MaasISO';
+const DEFAULT_TITLE = 'ISO 16175: Informatiebeheer & Documentmanagement | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'ISO 16175 certificering en documentbeheer met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 16175 certificering.';
+  'ISO 16175 voor informatiebeheer en documentmanagement. Begeleiding bij implementatie voor overheidsorganisaties en bedrijven die grip willen op hun informatiehuishouding.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('iso-16175');

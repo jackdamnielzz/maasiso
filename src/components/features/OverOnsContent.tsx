@@ -179,7 +179,7 @@ export default function OverOnsContent() {
                   <div className="absolute -inset-4 bg-gradient-to-r from-[#00875A] to-[#FF8B00] rounded-[2rem] opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
                   <div className="relative aspect-[4/5] bg-[#091E42] rounded-[2rem] overflow-hidden shadow-2xl">
                     <Image
-                      src="/images/niels.png"
+                      src="/images/niels.jpg"
                       alt="Niels Maas - Senior consultant en oprichter van MaasISO"
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"

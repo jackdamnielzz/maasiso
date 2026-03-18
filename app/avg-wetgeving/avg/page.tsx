@@ -4,9 +4,9 @@ import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
 const AVG_CANONICAL_PATH = '/avg-wetgeving/avg';
-const DEFAULT_TITLE = 'AVG & Privacy | MaasISO';
+const DEFAULT_TITLE = 'AVG Compliance: Privacy & GDPR Begeleiding voor MKB | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'AVG en privacy compliance met MaasISO. Professionele begeleiding voor uw organisatie bij het implementeren van AVG-richtlijnen en privacybeleid.';
+  'AVG/GDPR compliance voor uw organisatie. Van verwerkingsregister tot privacybeleid: praktische begeleiding bij het voldoen aan de AVG. Inclusief risicoanalyse en DPIA.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('avg');

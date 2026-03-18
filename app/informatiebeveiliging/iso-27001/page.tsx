@@ -4,9 +4,9 @@ import { getPage } from '@/lib/api';
 import { buildDetailPageMetadata } from '@/lib/seo/pageMetadata';
 
 const ISO27001_CANONICAL_PATH = '/informatiebeveiliging/iso-27001';
-const DEFAULT_TITLE = 'ISO 27001 Certificering | MaasISO';
+const DEFAULT_TITLE = 'ISO 27001 Certificering: Kosten, Stappenplan & Advies | MaasISO';
 const DEFAULT_DESCRIPTION =
-  'ISO 27001 certificering en informatiebeveiliging met MaasISO. Professionele begeleiding voor uw organisatie naar ISO 27001 certificering.';
+  'Wat kost ISO 27001 certificering? Compleet overzicht van kosten, doorlooptijd en eisen. Van nulmeting tot audit: pragmatische begeleiding voor MKB door een ervaren consultant.';
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageData = await getPage('iso-27001');
