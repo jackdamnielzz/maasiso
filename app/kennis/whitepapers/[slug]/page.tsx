@@ -65,6 +65,22 @@ export async function generateMetadata(
       description,
       type: 'article',
       url: `/kennis/whitepapers/${canonicalSlug}`,
+      siteName: 'MaasISO',
+      locale: 'nl_NL',
+      images: [
+        {
+          url: '/images/maasisohome.png',
+          width: 1200,
+          height: 630,
+          alt: whitepaper.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${whitepaper.title} | Whitepaper | MaasISO`,
+      description,
+      images: ['/images/maasisohome.png'],
     },
   };
 }

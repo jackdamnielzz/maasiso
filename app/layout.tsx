@@ -48,6 +48,28 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  openGraph: {
+    title: "MaasISO | ISO Certificering en Informatiebeveiliging",
+    description: "Professionele begeleiding bij ISO certificering en informatiebeveiliging. Specialisten in ISO 9001, ISO 27001 en AVG/GDPR compliance.",
+    url: '/',
+    siteName: 'MaasISO',
+    type: 'website',
+    locale: 'nl_NL',
+    images: [
+      {
+        url: '/images/maasisohome.png',
+        width: 1200,
+        height: 630,
+        alt: 'MaasISO - ISO Certificering en Informatiebeveiliging',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "MaasISO | ISO Certificering en Informatiebeveiliging",
+    description: "Professionele begeleiding bij ISO certificering en informatiebeveiliging. Specialisten in ISO 9001, ISO 27001 en AVG/GDPR compliance.",
+    images: ['/images/maasisohome.png'],
+  },
 };
 
 export default function RootLayout({

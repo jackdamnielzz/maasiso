@@ -9,5 +9,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Cookie Beleid | MaasISO',
     description: 'Lees meer over hoe wij cookies gebruiken om uw ervaring te verbeteren.',
+    images: [
+      {
+        url: '/images/maasisohome.png',
+        width: 1200,
+        height: 630,
+        alt: 'MaasISO - Cookie Beleid',
+      },
+    ],
   },
 };

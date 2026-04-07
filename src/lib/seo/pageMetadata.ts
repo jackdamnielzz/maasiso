@@ -50,8 +50,24 @@ export function buildDetailPageMetadata({
       url: normalizedCanonicalPath,
       title,
       description,
+      siteName: 'MaasISO',
+      locale: 'nl_NL',
+      images: [
+        {
+          url: '/images/maasisohome.png',
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
       ...(openGraphType === 'article' && publishedDate ? { publishedTime: publishedDate } : {}),
       ...(modifiedDate ? { modifiedTime: modifiedDate } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/images/maasisohome.png'],
     },
   };
 
