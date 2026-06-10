@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { validateDiscountCode } from '@/lib/tools/discount-codes';
+import { createFreeToken } from '@/lib/tools/tra-free-token';
 
 const mollieClient = createMollieClient({
   apiKey: process.env.MOLLIE_API_KEY!,
@@ -13,7 +14,7 @@ const CURRENCY = 'EUR';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, discountCode } = await request.json();
+    const { email, discountCode, projectName } = await request.json();
 
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return NextResponse.json(
@@ -26,10 +27,9 @@ export async function POST(request: NextRequest) {
     const discount = discountCode ? validateDiscountCode(discountCode) : null;
 
     if (discount && discount.percentOff === 100) {
-      // Free — skip Mollie entirely
-      const freePaymentId = `free_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      // Free — skip Mollie entirely; ondertekend token i.p.v. raadbaar id
       return NextResponse.json({
-        paymentId: freePaymentId,
+        paymentId: createFreeToken(email),
         free: true,
       });
     }
@@ -58,6 +58,9 @@ export async function POST(request: NextRequest) {
       metadata: {
         email,
         product: 'tra-report',
+        ...(typeof projectName === 'string' && projectName.trim()
+          ? { projectName: projectName.trim().slice(0, 120) }
+          : {}),
         ...(discount ? { discountCode: discount.code, percentOff: discount.percentOff } : {}),
       },
     };

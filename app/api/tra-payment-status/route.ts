@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
+import { verifyFreeToken } from '@/lib/tools/tra-free-token';
 
 const mollieClient = createMollieClient({
   apiKey: process.env.MOLLIE_API_KEY!,
@@ -17,12 +18,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Free discount codes generate a local ID (not a Mollie payment)
+    // Free discount codes generate a signed local token (not a Mollie payment)
     if (paymentId.startsWith('free_')) {
+      const token = verifyFreeToken(paymentId);
+      if (!token.valid) {
+        return NextResponse.json(
+          { error: 'Ongeldig betalingskenmerk' },
+          { status: 403 }
+        );
+      }
       return NextResponse.json({
         status: 'paid',
         paid: true,
-        email: null,
+        email: token.email,
+        amount: '0.00',
       });
     }
 
@@ -32,6 +41,7 @@ export async function GET(request: NextRequest) {
       status: payment.status,
       paid: payment.status === 'paid',
       email: (payment.metadata as { email?: string })?.email || null,
+      amount: payment.amount?.value ?? null,
     });
   } catch (error) {
     console.error('Payment status check failed:', error);

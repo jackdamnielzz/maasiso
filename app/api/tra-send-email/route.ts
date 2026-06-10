@@ -1,91 +1,120 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-import { generateInvoicePdf } from '@/lib/tools/generate-invoice-pdf';
+import { createMollieClient } from '@mollie/api-client';
+import { verifyFreeToken } from '@/lib/tools/tra-free-token';
+import { sendTraConfirmationEmail } from '@/lib/tools/send-tra-confirmation';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const mollieClient = createMollieClient({
+  apiKey: process.env.MOLLIE_API_KEY!,
+});
 
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const current = rateLimitStore.get(ip);
+
+  if (!current || current.resetAt <= now) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  current.count += 1;
+  rateLimitStore.set(ip, current);
+  return false;
+}
+
+type TraMetadata = {
+  email?: string;
+  projectName?: string;
+  confirmationEmailSentAt?: string;
+};
+
+// Fallback-levering vanaf de bedankt-pagina. De Mollie-webhook is het primaire pad;
+// deze route dekt de gratis kortingsflow (geen Mollie-betaling, dus geen webhook) en
+// gevallen waarin de webhook nog niet gedraaid heeft. De paymentId wordt altijd
+// server-side geverifieerd; het ontvangstadres komt uit de betaling zelf, nooit uit de body.
 export async function POST(request: NextRequest) {
   try {
-    const { email, paymentId, projectName } = await request.json();
-
-    if (!email || !paymentId) {
-      return NextResponse.json({ error: 'Email en paymentId zijn verplicht' }, { status: 400 });
+    if (isRateLimited(getClientIp(request))) {
+      return NextResponse.json(
+        { error: 'Te veel verzoeken. Probeer het later opnieuw.' },
+        { status: 429 }
+      );
     }
 
-    const fromAddress = process.env.RESEND_VERIFIED_DOMAIN
-      ? `MaasISO <${process.env.EMAIL_FROM || 'info@maasiso.nl'}>`
-      : 'MaasISO <onboarding@resend.dev>';
+    const { paymentId, projectName } = await request.json();
 
-    // Generate invoice PDF
-    const today = new Date().toISOString().split('T')[0];
-    const invoiceBuffer = generateInvoicePdf({
+    if (!paymentId || typeof paymentId !== 'string') {
+      return NextResponse.json({ error: 'paymentId is verplicht' }, { status: 400 });
+    }
+
+    const projectNameSafe = typeof projectName === 'string' ? projectName.slice(0, 120) : undefined;
+
+    // Gratis kortingsflow: ondertekend token bevat het e-mailadres
+    if (paymentId.startsWith('free_')) {
+      const token = verifyFreeToken(paymentId);
+      if (!token.valid || !token.email) {
+        return NextResponse.json({ error: 'Ongeldig betalingskenmerk' }, { status: 403 });
+      }
+      await sendTraConfirmationEmail({
+        email: token.email,
+        paymentId,
+        projectName: projectNameSafe,
+        amountInclBtw: 0,
+      });
+      console.log(`[TRA] Bevestigingsmail verstuurd (gratis flow) voor ${paymentId}`);
+      return NextResponse.json({ sent: true });
+    }
+
+    // Mollie-betaling: status én e-mailadres server-side verifiëren
+    const payment = await mollieClient.payments.get(paymentId);
+
+    if (payment.status !== 'paid') {
+      return NextResponse.json({ error: 'Betaling is niet voltooid' }, { status: 403 });
+    }
+
+    const metadata = (payment.metadata ?? {}) as TraMetadata;
+
+    if (metadata.confirmationEmailSentAt) {
+      // Webhook was eerder — niet dubbel mailen
+      return NextResponse.json({ sent: true, alreadySent: true });
+    }
+
+    if (!metadata.email) {
+      return NextResponse.json({ error: 'Geen e-mailadres bekend bij deze betaling' }, { status: 422 });
+    }
+
+    await sendTraConfirmationEmail({
+      email: metadata.email,
       paymentId,
-      email,
-      projectName,
-      date: today,
+      projectName: metadata.projectName ?? projectNameSafe,
+      amountInclBtw: payment.amount?.value ? parseFloat(payment.amount.value) : undefined,
     });
+    console.log(`[TRA] Bevestigingsmail + factuur verstuurd voor ${paymentId} naar ${metadata.email}`);
 
-    const invoiceFilename = `Factuur-MaasISO-TRA-${today}.pdf`;
+    try {
+      await mollieClient.payments.update(paymentId, {
+        metadata: { ...metadata, confirmationEmailSentAt: new Date().toISOString() },
+      });
+    } catch (updateError) {
+      console.error(`[TRA] Metadata-update mislukt voor ${paymentId} (e-mail is wel verstuurd):`, updateError);
+    }
 
-    const result = await resend.emails.send({
-      from: fromAddress,
-      replyTo: 'info@maasiso.nl',
-      to: email,
-      subject: `Uw TRA-rapport: ${projectName || 'Taak Risico Analyse'} - MaasISO`,
-      attachments: [
-        {
-          filename: invoiceFilename,
-          content: Buffer.from(invoiceBuffer),
-        },
-      ],
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background-color: #091E42; padding: 24px; border-radius: 8px 8px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 20px;">Uw TRA-rapport is klaar</h1>
-          </div>
-          <div style="background-color: #f8f9fa; padding: 24px; border: 1px solid #d8e2f0; border-top: none; border-radius: 0 0 8px 8px;">
-            <p style="color: #333; margin-top: 0;">Bedankt voor uw aankoop! Uw Taak Risico Analyse rapport voor <strong>${projectName || 'uw project'}</strong> is succesvol gegenereerd.</p>
-
-            <p style="color: #333;">Het PDF-rapport is direct gedownload naar uw apparaat.</p>
-
-            <div style="background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px 16px; margin: 12px 0;">
-              <p style="color: #2e7d32; margin: 0; font-size: 13px; font-weight: bold;">Factuur bijgevoegd</p>
-              <p style="color: #388e3c; margin: 4px 0 0 0; font-size: 12px;">Uw factuur (${invoiceFilename}) is als PDF-bijlage aan deze e-mail toegevoegd. Bedrag: &euro;22,99 incl. BTW.</p>
-            </div>
-
-            <div style="background-color: #FFF3E0; border: 1px solid #FFE0B2; border-radius: 8px; padding: 12px 16px; margin: 12px 0;">
-              <p style="color: #E65100; margin: 0; font-size: 13px; font-weight: bold;">Belangrijk: sla uw PDF veilig op</p>
-              <p style="color: #BF360C; margin: 4px 0 0 0; font-size: 12px;">Uw rapportgegevens worden niet door ons opgeslagen. De downloadlink is 24 uur geldig. Wij kunnen het rapport naderhand niet opnieuw aanleveren.</p>
-            </div>
-
-            <div style="background-color: white; border: 1px solid #d8e2f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-              <h3 style="color: #091E42; margin-top: 0; font-size: 14px;">Uw rapport bevat:</h3>
-              <ul style="color: #666; font-size: 13px; padding-left: 20px;">
-                <li>Werkstappen &amp; gevaren overzicht</li>
-                <li>Risico-prioriteitenlijst</li>
-                <li>Actieplan met invulvelden</li>
-                <li>Gedetailleerde gevarenbladen</li>
-                <li>5x5 Risicomatrix</li>
-                <li>Conclusie &amp; aanbevelingen</li>
-                <li>Kinney &amp; Wiruth bijlage</li>
-              </ul>
-            </div>
-
-            <p style="color: #333;">Heeft u vragen over uw rapport of hulp nodig bij uw risicobeoordeling? Neem gerust <a href="https://www.maasiso.nl/contact?source=tra-email" style="color: #FF8B00;">contact</a> met ons op.</p>
-
-            <p style="color: #999; font-size: 12px; margin-bottom: 0;">
-              Betalingskenmerk: ${paymentId}<br>
-              Dit is een automatisch gegenereerd bericht van MaasISO.
-            </p>
-          </div>
-        </div>
-      `,
-    });
-
-    console.log('Email sent successfully with invoice:', result);
     return NextResponse.json({ sent: true });
   } catch (error) {
-    console.error('Email sending failed:', error);
-    return NextResponse.json({ error: 'E-mail verzenden mislukt', details: String(error) }, { status: 500 });
+    console.error('[TRA-ALERT] Email sending failed:', error);
+    return NextResponse.json({ error: 'E-mail verzenden mislukt' }, { status: 500 });
   }
 }

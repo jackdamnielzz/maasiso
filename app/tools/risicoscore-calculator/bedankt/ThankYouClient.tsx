@@ -26,6 +26,7 @@ export default function ThankYouClient() {
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [status, setStatus] = useState<PaymentStatus>('loading');
   const [downloaded, setDownloaded] = useState(false);
+  const [reportMissing, setReportMissing] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [expired, setExpired] = useState(false);
   const pollCount = useRef(0);
@@ -92,7 +93,7 @@ export default function ThankYouClient() {
           setStatus('paid');
           startExpiryTimer();
           downloadPdf();
-          sendEmail(data.email);
+          sendEmail();
         } else if (data.status === 'failed' || data.status === 'canceled' || data.status === 'expired') {
           setStatus('failed');
         } else {
@@ -115,35 +116,40 @@ export default function ThankYouClient() {
     if (expired) return;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
+      if (!saved) {
+        setReportMissing(true);
+        return;
+      }
       const state = JSON.parse(saved) as { report: TRAReport };
       if (state.report) {
         generateTRAPdf(state.report);
         setDownloaded(true);
+        setReportMissing(false);
+      } else {
+        setReportMissing(true);
       }
     } catch (err) {
       console.error('PDF generation failed:', err);
+      setReportMissing(true);
     }
   };
 
-  const sendEmail = async (email: string | null) => {
-    if (!email || !paymentId) {
-      console.warn('sendEmail skipped — missing email or paymentId:', { email, paymentId });
-      return;
-    }
+  // Het ontvangstadres wordt server-side uit de betaling/het token gehaald
+  const sendEmail = async () => {
+    if (!paymentId) return;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       const projectName = saved ? JSON.parse(saved)?.report?.project?.name : '';
       const res = await fetch('/api/tra-send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, paymentId, projectName }),
+        body: JSON.stringify({ paymentId, projectName }),
       });
       const data = await res.json();
       if (!res.ok) {
         console.error('Email API error:', data);
       } else {
-        console.log('Confirmation email sent to:', email);
+        console.log('Confirmation email sent for payment:', paymentId);
       }
     } catch (err) {
       console.error('Email sending failed:', err);
@@ -233,12 +239,27 @@ export default function ThankYouClient() {
       </div>
       <h1 className="text-2xl font-bold text-[#091E42] mb-2">Bedankt voor uw aankoop!</h1>
       <p className="text-gray-600 mb-8">
-        Uw TRA-rapport is gedownload. U ontvangt ook een bevestiging per e-mail.
+        {reportMissing
+          ? 'Uw betaling is gelukt. U ontvangt een bevestiging per e-mail.'
+          : 'Uw TRA-rapport is gedownload. U ontvangt ook een bevestiging per e-mail.'}
       </p>
 
       {/* Download button with timer */}
       <div className="mb-8">
-        {expired ? (
+        {reportMissing ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 text-left max-w-md mx-auto">
+            <p className="text-amber-800 font-medium mb-1">Rapport niet gevonden in deze browser</p>
+            <p className="text-sm text-amber-700">
+              Het rapport wordt om privacyredenen alleen in de browser bewaard waarin u de
+              calculator heeft ingevuld. Open deze pagina in die browser om uw PDF te downloaden,
+              of neem{' '}
+              <a href="/contact/?source=tra-rapport-kwijt" className="text-[#FF8B00] font-medium hover:underline">
+                contact
+              </a>{' '}
+              met ons op onder vermelding van uw betalingskenmerk — dan lossen we het samen op.
+            </p>
+          </div>
+        ) : expired ? (
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-6">
             <div className="w-12 h-12 mx-auto mb-3 bg-gray-200 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

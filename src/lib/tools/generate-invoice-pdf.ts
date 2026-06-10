@@ -16,12 +16,11 @@ interface InvoiceData {
   email: string;
   projectName?: string;
   date: string; // e.g. "2026-03-08"
+  amountInclBtw?: number; // werkelijk betaald bedrag (kortingscodes); default volle prijs
 }
 
-const PRICE_EXCL_BTW = 19.0;
+const DEFAULT_PRICE_INCL_BTW = 22.99;
 const BTW_PERCENTAGE = 21;
-const BTW_AMOUNT = Math.round(PRICE_EXCL_BTW * (BTW_PERCENTAGE / 100) * 100) / 100; // 3.99
-const PRICE_INCL_BTW = Math.round((PRICE_EXCL_BTW + BTW_AMOUNT) * 100) / 100; // 22.99
 
 function generateInvoiceNumber(paymentId: string, date: string): string {
   // Format: TRA-YYYYMMDD-XXXX (last 4 chars of payment ID)
@@ -40,6 +39,10 @@ function formatCurrency(amount: number): string {
 }
 
 export function generateInvoicePdf(data: InvoiceData): ArrayBuffer {
+  const priceInclBtw = data.amountInclBtw ?? DEFAULT_PRICE_INCL_BTW;
+  const priceExclBtw = Math.round((priceInclBtw / (1 + BTW_PERCENTAGE / 100)) * 100) / 100;
+  const btwAmount = Math.round((priceInclBtw - priceExclBtw) * 100) / 100;
+
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = 210;
   const margin = 20;
@@ -186,8 +189,8 @@ export function generateInvoicePdf(data: InvoiceData): ArrayBuffer {
   doc.setFontSize(8);
   doc.setTextColor(...hexToRgb(NAVY));
   doc.text('1', margin + 104, y + 7);
-  doc.text(formatCurrency(PRICE_EXCL_BTW), margin + 120, y + 7);
-  doc.text(formatCurrency(PRICE_EXCL_BTW), margin + contentWidth - 4, y + 7, { align: 'right' });
+  doc.text(formatCurrency(priceExclBtw), margin + 120, y + 7);
+  doc.text(formatCurrency(priceExclBtw), margin + contentWidth - 4, y + 7, { align: 'right' });
   y += 16;
 
   // Separator
@@ -202,14 +205,14 @@ export function generateInvoicePdf(data: InvoiceData): ArrayBuffer {
   doc.setTextColor(...hexToRgb(GRAY));
   doc.text('Subtotaal excl. BTW', margin + 90, y);
   doc.setTextColor(...hexToRgb(NAVY));
-  doc.text(formatCurrency(PRICE_EXCL_BTW), margin + contentWidth - 4, y, { align: 'right' });
+  doc.text(formatCurrency(priceExclBtw), margin + contentWidth - 4, y, { align: 'right' });
   y += 6;
 
   // BTW
   doc.setTextColor(...hexToRgb(GRAY));
   doc.text(`BTW ${BTW_PERCENTAGE}%`, margin + 90, y);
   doc.setTextColor(...hexToRgb(NAVY));
-  doc.text(formatCurrency(BTW_AMOUNT), margin + contentWidth - 4, y, { align: 'right' });
+  doc.text(formatCurrency(btwAmount), margin + contentWidth - 4, y, { align: 'right' });
   y += 6;
 
   // Separator before total
@@ -223,7 +226,7 @@ export function generateInvoicePdf(data: InvoiceData): ArrayBuffer {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...hexToRgb(NAVY));
   doc.text('Totaal incl. BTW', margin + 90, y);
-  doc.text(formatCurrency(PRICE_INCL_BTW), margin + contentWidth - 4, y, { align: 'right' });
+  doc.text(formatCurrency(priceInclBtw), margin + contentWidth - 4, y, { align: 'right' });
   y += 15;
 
   // ── Payment confirmation box ──
