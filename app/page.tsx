@@ -7,7 +7,6 @@ import { DienstenMinimal } from "@/components/home-minimal/DienstenMinimal";
 import { WaaromMinimal } from "@/components/home-minimal/WaaromMinimal";
 import { AanpakMinimal } from "@/components/home-minimal/AanpakMinimal";
 import { KostenMinimal } from "@/components/home-minimal/KostenMinimal";
-import { TestimonialsMinimal } from "@/components/home-minimal/TestimonialsMinimal";
 import { KennisMinimal } from "@/components/home-minimal/KennisMinimal";
 import { FaqMinimal } from "@/components/home-minimal/FaqMinimal";
 import { CtaMinimal } from "@/components/home-minimal/CtaMinimal";
@@ -115,30 +114,6 @@ const kernfeiten = [
     accent: "",
     bg: "",
     text: "",
-  },
-] as const;
-
-const testimonials = [
-  {
-    quote: "Dankzij MaasISO hebben we in 5 maanden onze ISO 9001 certificering behaald. De pragmatische aanpak en duidelijke communicatie maakten het hele proces een stuk minder spannend dan verwacht.",
-    author: "Jan de Vries",
-    role: "Directeur",
-    company: "TechFlow B.V.",
-    location: "Amsterdam",
-  },
-  {
-    quote: "De overstap naar ISO 27001 leek ontmoedigend, maar met Niels aan onze zijde ging het verrassend soepel. Het team voelde zich betrokken en de audit verliep vlekkeloos.",
-    author: "Maria Janssen",
-    role: "CISO",
-    company: "SecureNet Solutions",
-    location: "Utrecht",
-  },
-  {
-    quote: "Wat me het meest opviel was de praktische insteek. Geen overbodige documentatie, maar direct bruikbare templates en heldere richtlijnen. Absoluut aan te raden voor elk MKB.",
-    author: "Peter Bakker",
-    role: "Operationeel Manager",
-    company: "LogiStack",
-    location: "Rotterdam",
   },
 ] as const;
 
@@ -264,9 +239,6 @@ export default function HomeMinimal() {
 
       {/* Aanpak */}
       <AanpakMinimal />
-
-      {/* Testimonials */}
-      <TestimonialsMinimal testimonials={testimonials} />
 
       {/* Kosten */}
       <KostenMinimal kostenTabel={kostenTabel} />
