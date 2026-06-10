@@ -79,16 +79,15 @@ describe('BlogCard', () => {
     // Check title
     expect(screen.getByText('Test Blog Post')).toBeInTheDocument();
 
-    // Check date
-    expect(screen.getByText('26 januari 2024')).toBeInTheDocument();
+    // Check date (gerenderd als "Aangemaakt: <datum>")
+    expect(screen.getByText(/26 januari 2024/)).toBeInTheDocument();
 
-    // Check excerpt (first line of content)
-    expect(screen.getByText('Test content with')).toBeInTheDocument();
+    // Check excerpt (komt uit excerpt of seoDescription, niet meer uit content)
+    expect(screen.getByText('Test SEO Description')).toBeInTheDocument();
 
-    // Check "Read more" link
-    const link = screen.getByText('Lees meer');
-    expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/kennis/blog/test-blog-post');
+    // De titel is de link naar het artikel
+    const titleLink = screen.getByText('Test Blog Post').closest('a');
+    expect(titleLink).toHaveAttribute('href', '/kennis/blog/test-blog-post');
   });
 
   describe('BlogCard Performance', () => {
@@ -98,15 +97,14 @@ describe('BlogCard', () => {
     });
 
     it('memoizes excerpt generation', async () => {
-      const longContent = 'First paragraph\n'.repeat(1000);
       const post = {
         ...mockPost,
-        content: longContent
+        excerpt: 'First paragraph'
       };
 
       const { rerender } = render(<BlogCard post={post} />);
 
-      // Initial render should show first paragraph
+      // Initial render should show the excerpt
       expect(screen.getByText('First paragraph')).toBeInTheDocument();
 
       // Force re-render with same content
@@ -194,12 +192,9 @@ describe('BlogCard', () => {
     // Check title still renders
     expect(screen.getByText('Minimal Post')).toBeInTheDocument();
 
-    // Check content excerpt still works
-    expect(screen.getByText('Test content')).toBeInTheDocument();
-
-    // Verify link still works
-    const link = screen.getByText('Lees meer');
-    expect(link.closest('a')).toHaveAttribute('href', '/kennis/blog/minimal-post');
+    // Verify link still works (titel is de link; zonder excerpt/seoDescription geen samenvatting)
+    const titleLink = screen.getByText('Minimal Post').closest('a');
+    expect(titleLink).toHaveAttribute('href', '/kennis/blog/minimal-post');
   });
 
   it('handles numeric IDs correctly', () => {

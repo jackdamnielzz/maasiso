@@ -67,7 +67,7 @@
     "@typescript-eslint/parser": "^8.24.0",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
-    "eslint": "^8.56.0",
+    "eslint": "^9.39.4",
     "eslint-config-next": "^16.1.4",
     "googleapis": "^171.0.0",
     "graphql-request": "^7.1.2",

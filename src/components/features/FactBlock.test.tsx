@@ -16,7 +16,7 @@ describe('FactBlock', () => {
 
     expect(screen.getByText('Aantal certificaten')).toBeInTheDocument();
     expect(screen.getByText('1,1 miljoen')).toBeInTheDocument();
-    expect(screen.getByText('Bron:', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('Bron')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'ISO' })).toHaveAttribute('href', 'https://www.iso.org/standard/62542.html');
     expect(screen.getByRole('link', { name: 'NEN' })).toHaveAttribute('href', 'https://www.nen.nl/');
   });

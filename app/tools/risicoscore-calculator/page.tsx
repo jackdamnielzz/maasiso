@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import TRACalculator from '@/components/tools/TRACalculator';
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default function RisicoscoreCalculatorPage() {
       {/* Breadcrumb */}
       <div className="max-w-6xl mx-auto px-4 pt-24 pb-2">
         <nav className="text-sm text-gray-500">
-          <a href="/" className="hover:text-[#091E42] transition-colors">Home</a>
+          <Link href="/" className="hover:text-[#091E42] transition-colors">Home</Link>
           <span className="mx-2">/</span>
           <span className="text-[#091E42]">TRA Risicoscore Calculator</span>
         </nav>

@@ -56,8 +56,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const { isKeyboardUser } = useAccessibility();
     const inputVariant = error ? 'error' : variant;
     
-    // Generate unique IDs if not provided
-    const inputId = id || React.useId();
+    // Generate unique IDs if not provided (useId altijd aanroepen — hooks mogen niet conditioneel zijn)
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
     const errorId = `${inputId}-error`;
     const helpTextId = `${inputId}-help`;
 

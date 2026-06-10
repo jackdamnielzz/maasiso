@@ -54,7 +54,8 @@ describe('BlogPostContent', () => {
 
     expect(screen.getByText('Test Blog Post')).toBeInTheDocument();
     expect(screen.getByText('Terug naar Blog')).toBeInTheDocument();
-    expect(screen.getByText('26 januari 2024')).toBeInTheDocument();
+    // Datum verschijnt bij zowel "Gepubliceerd:" als "Bijgewerkt:"
+    expect(screen.getAllByText('26 januari 2024').length).toBeGreaterThan(0);
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Geen gerelateerde artikelen beschikbaar.')).toBeInTheDocument();
     expect(screen.getByTestId('scroll-to-top')).toBeInTheDocument();
@@ -64,15 +65,16 @@ describe('BlogPostContent', () => {
     expect(featuredImage).toHaveAttribute('src', '/api/proxy/assets/uploads/test-image.jpg');
   });
 
-  it('toont bijgewerkt-datum alleen wanneer verschil minimaal 1 dag is', () => {
+  it('toont bijgewerkt-datum, met voorrang voor handmatige lastUpdatedDate', () => {
     const { rerender } = render(<BlogPostContent post={basePost} />);
-    expect(screen.queryByText('Bijgewerkt:')).not.toBeInTheDocument();
+    // Bijgewerkt wordt altijd getoond (lastUpdatedDate of fallback updatedAt)
+    expect(screen.getByText('Bijgewerkt:')).toBeInTheDocument();
 
     rerender(
       <BlogPostContent
         post={{
           ...basePost,
-          updatedAt: '2024-01-28T20:30:00.000Z'
+          lastUpdatedDate: '2024-01-28T20:30:00.000Z'
         }}
       />
     );

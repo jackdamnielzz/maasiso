@@ -16,11 +16,12 @@ export default function TagList({
   articleCounts = {},
   className = ''
 }: TagListProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   if (!Array.isArray(tags) || tags.length === 0) {
     return null;
   }
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleTagClick = (tagId: string) => {
     const params = new URLSearchParams(searchParams?.toString() || '');

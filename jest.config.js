@@ -21,6 +21,8 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^remark-gfm$': '<rootDir>/src/__tests__/mocks/remarkGfmMock.js',
+    '^react-markdown$': '<rootDir>/src/__tests__/mocks/reactMarkdownMock.js',
+    '^remark-breaks$': '<rootDir>/src/__tests__/mocks/remarkGfmMock.js',
   },
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',

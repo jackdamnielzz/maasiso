@@ -79,7 +79,9 @@ describe('normalizeIso9001Layout', () => {
       'Stap 5 - Certificering',
     ]);
 
-    expect(warnSpy).toHaveBeenCalled();
+    // Tekstblokken zonder bekende kop vallen tegenwoordig in de 'other'-categorie
+    // en worden vóór de FAQ geplaatst zonder warning
+    expect(warnSpy).not.toHaveBeenCalled();
     warnSpy.mockRestore();
   });
 });
