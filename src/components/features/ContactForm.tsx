@@ -11,6 +11,7 @@ interface FormData {
   subject: string;
   message: string;
   acceptTerms: boolean;
+  website: string; // honeypot — alleen bots vullen dit in
 }
 
 // Subject options for the dropdown
@@ -33,7 +34,8 @@ export default function ContactForm() {
     email: '',
     subject: '',
     message: '',
-    acceptTerms: false
+    acceptTerms: false,
+    website: ''
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,7 +83,8 @@ export default function ContactForm() {
         email: '',
         subject: '',
         message: '',
-        acceptTerms: false
+        acceptTerms: false,
+        website: ''
       });
     } catch (error) {
       setSubmitStatus('error');
@@ -94,6 +97,19 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Honeypot: onzichtbaar voor mensen; de API negeert inzendingen waar dit veld gevuld is */}
+      <div className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          type="text"
+          id="website"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={formData.website}
+          onChange={handleChange}
+        />
+      </div>
       {submitStatus === 'success' && (
         <div role="status" className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
           Bedankt voor uw bericht! We nemen zo snel mogelijk contact met u op.

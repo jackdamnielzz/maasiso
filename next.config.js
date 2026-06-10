@@ -32,25 +32,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         pathname: '/**'
-      },
-      {
-        protocol: 'http',
-        hostname: '153.92.223.23',
-        port: '1337',
-        pathname: '/**'
-      },
-      {
-        protocol: 'https',
-        hostname: '153.92.223.23',
-        port: '1337',
-        pathname: '/**'
       }
     ],
     unoptimized: false,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    formats: ['image/webp'],
-    minimumCacheTTL: 30, // Reduced from 60 to 30 seconds
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400, // 1 dag — bij 30s hertransformeerde de optimizer continu
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
   },

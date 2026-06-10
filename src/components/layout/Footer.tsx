@@ -55,6 +55,11 @@ export default function Footer() {
                   E-learning
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/risicoscore-calculator/" className="text-gray-400 hover:text-white">
+                  TRA Risicoscore Calculator
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -62,10 +67,14 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="text-gray-400">
-                <span>Tel: {COMPANY_DETAILS.phoneDisplay}</span>
+                <a href={`tel:${COMPANY_DETAILS.phoneHref}`} className="hover:text-white">
+                  Tel: {COMPANY_DETAILS.phoneDisplay}
+                </a>
               </li>
               <li className="text-gray-400">
-                <span>Email: {COMPANY_DETAILS.email}</span>
+                <a href={`mailto:${COMPANY_DETAILS.email}`} className="hover:text-white">
+                  Email: {COMPANY_DETAILS.email}
+                </a>
               </li>
               <li className="text-gray-400">
                 <span>
