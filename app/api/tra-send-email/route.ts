@@ -3,9 +3,13 @@ import { createMollieClient } from '@mollie/api-client';
 import { verifyFreeToken } from '@/lib/tools/tra-free-token';
 import { sendTraConfirmationEmail } from '@/lib/tools/send-tra-confirmation';
 
-const mollieClient = createMollieClient({
-  apiKey: process.env.MOLLIE_API_KEY!,
-});
+// Lazy aanmaken: createMollieClient gooit bij een ontbrekende key, en tijdens
+// een build zonder env vars (CI) wordt deze module wel geladen maar niet aangeroepen.
+function getMollieClient() {
+  return createMollieClient({
+    apiKey: process.env.MOLLIE_API_KEY!,
+  });
+}
 
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Mollie-betaling: status én e-mailadres server-side verifiëren
-    const payment = await mollieClient.payments.get(paymentId);
+    const payment = await getMollieClient().payments.get(paymentId);
 
     if (payment.status !== 'paid') {
       return NextResponse.json({ error: 'Betaling is niet voltooid' }, { status: 403 });
@@ -105,7 +109,7 @@ export async function POST(request: NextRequest) {
     console.log(`[TRA] Bevestigingsmail + factuur verstuurd voor ${paymentId} naar ${metadata.email}`);
 
     try {
-      await mollieClient.payments.update(paymentId, {
+      await getMollieClient().payments.update(paymentId, {
         metadata: { ...metadata, confirmationEmailSentAt: new Date().toISOString() },
       });
     } catch (updateError) {

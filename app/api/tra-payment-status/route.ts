@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { verifyFreeToken } from '@/lib/tools/tra-free-token';
 
-const mollieClient = createMollieClient({
-  apiKey: process.env.MOLLIE_API_KEY!,
-});
+// Lazy aanmaken: createMollieClient gooit bij een ontbrekende key, en tijdens
+// een build zonder env vars (CI) wordt deze module wel geladen maar niet aangeroepen.
+function getMollieClient() {
+  return createMollieClient({
+    apiKey: process.env.MOLLIE_API_KEY!,
+  });
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,7 +39,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const payment = await mollieClient.payments.get(paymentId);
+    const payment = await getMollieClient().payments.get(paymentId);
 
     return NextResponse.json({
       status: payment.status,

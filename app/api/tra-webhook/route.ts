@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMollieClient } from '@mollie/api-client';
 import { sendTraConfirmationEmail } from '@/lib/tools/send-tra-confirmation';
 
-const mollieClient = createMollieClient({
-  apiKey: process.env.MOLLIE_API_KEY!,
-});
+// Lazy aanmaken: createMollieClient gooit bij een ontbrekende key, en tijdens
+// een build zonder env vars (CI) wordt deze module wel geladen maar niet aangeroepen.
+function getMollieClient() {
+  return createMollieClient({
+    apiKey: process.env.MOLLIE_API_KEY!,
+  });
+}
 
 type TraMetadata = {
   email?: string;
@@ -23,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No payment ID' }, { status: 400 });
     }
 
-    const payment = await mollieClient.payments.get(paymentId);
+    const payment = await getMollieClient().payments.get(paymentId);
 
     if (payment.status !== 'paid') {
       return NextResponse.json({ received: true });
@@ -51,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     // Markeer als verstuurd zodat de bedankt-pagina niet dubbel mailt (best effort)
     try {
-      await mollieClient.payments.update(paymentId, {
+      await getMollieClient().payments.update(paymentId, {
         metadata: { ...metadata, confirmationEmailSentAt: new Date().toISOString() },
       });
     } catch (updateError) {

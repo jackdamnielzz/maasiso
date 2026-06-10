@@ -3,9 +3,13 @@ import { createMollieClient } from '@mollie/api-client';
 import { validateDiscountCode } from '@/lib/tools/discount-codes';
 import { createFreeToken } from '@/lib/tools/tra-free-token';
 
-const mollieClient = createMollieClient({
-  apiKey: process.env.MOLLIE_API_KEY!,
-});
+// Lazy aanmaken: createMollieClient gooit bij een ontbrekende key, en tijdens
+// een build zonder env vars (CI) wordt deze module wel geladen maar niet aangeroepen.
+function getMollieClient() {
+  return createMollieClient({
+    apiKey: process.env.MOLLIE_API_KEY!,
+  });
+}
 
 const PRICE_EXCL_BTW = 19.00;
 const BTW_RATE = 0.21;
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest) {
       ? `TRA Risicoscore Rapport - MaasISO (${discount.label})`
       : 'TRA Risicoscore Rapport - MaasISO';
 
-    const paymentData: Parameters<typeof mollieClient.payments.create>[0] = {
+    const paymentData: Parameters<ReturnType<typeof getMollieClient>['payments']['create']>[0] = {
       amount: {
         currency: CURRENCY,
         value: finalPrice,
@@ -69,7 +73,7 @@ export async function POST(request: NextRequest) {
       paymentData.webhookUrl = `${siteUrl}/api/tra-webhook`;
     }
 
-    const payment = await mollieClient.payments.create(paymentData);
+    const payment = await getMollieClient().payments.create(paymentData);
 
     return NextResponse.json({
       paymentId: payment.id,
