@@ -14,7 +14,7 @@ export function TestimonialsMinimal({ testimonials }: TestimonialsMinimalProps) 
   return (
     <section className="bg-gray-900 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-gray-500">
+        <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
           Clientervaringen
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">
@@ -29,7 +29,7 @@ export function TestimonialsMinimal({ testimonials }: TestimonialsMinimalProps) 
               </blockquote>
               <div className="mt-6">
                 <p className="text-sm font-medium text-white">{item.author}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   {item.role}, {item.company}
                 </p>
               </div>
@@ -47,7 +47,7 @@ export function TestimonialsMinimal({ testimonials }: TestimonialsMinimalProps) 
           </blockquote>
           <div className="mt-8 text-center">
             <p className="text-sm font-medium text-white">Niels Maas</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-400">
               Senior consultant & oprichter, MaasISO
             </p>
           </div>

@@ -13,7 +13,7 @@ export function KostenMinimal({ kostenTabel }: KostenMinimalProps) {
   return (
     <section id="kosten" className="bg-gray-50 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
+        <p className="text-xs font-medium uppercase tracking-widest text-gray-500">
           Investering
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl">
@@ -28,16 +28,16 @@ export function KostenMinimal({ kostenTabel }: KostenMinimalProps) {
         <div className="mt-14 overflow-hidden rounded-xl border border-gray-200 bg-white">
           {/* Header */}
           <div className="grid grid-cols-4 gap-4 border-b border-gray-100 px-6 py-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Traject
             </p>
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Organisatie
             </p>
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Investering
             </p>
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Doorlooptijd
             </p>
           </div>

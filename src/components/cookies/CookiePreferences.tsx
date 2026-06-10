@@ -1,13 +1,49 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { CookieConsent, CookieCategory } from '@/lib/cookies/types';
+import { CookieConsent } from '@/lib/cookies/types';
 
 interface CookiePreferencesProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (preferences: CookieConsent) => void;
   initialPreferences: CookieConsent;
+}
+
+interface ToggleProps {
+  label: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange?: () => void;
+}
+
+// Echte <label> om de sr-only checkbox: muisklikken op de zichtbare toggle
+// bedienen de checkbox, en screenreaders horen wélke categorie het is.
+function CookieToggle({ label, checked, disabled = false, onChange }: ToggleProps) {
+  return (
+    <label className="relative inline-block cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+        aria-label={label}
+        className="sr-only peer"
+      />
+      <span
+        aria-hidden="true"
+        className={`block w-11 h-6 rounded-full transition-colors
+          ${checked ? 'bg-blue-600' : 'bg-gray-200'}
+          ${disabled ? 'cursor-not-allowed' : ''}
+          peer-focus-visible:outline-none peer-focus-visible:ring-4 peer-focus-visible:ring-blue-300`}
+      >
+        <span
+          className={`absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform
+            ${checked ? 'translate-x-full' : 'translate-x-0'}`}
+        />
+      </span>
+    </label>
+  );
 }
 
 export default function CookiePreferences({
@@ -21,6 +57,15 @@ export default function CookiePreferences({
   useEffect(() => {
     setPreferences(initialPreferences);
   }, [initialPreferences]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
 
   const handleToggle = (category: keyof CookieConsent) => {
     if (category === 'functional') return; // Functional cookies cannot be disabled
@@ -42,16 +87,21 @@ export default function CookiePreferences({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cookie-preferences-title"
+        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Cookie-instellingen</h2>
+            <h2 id="cookie-preferences-title" className="text-2xl font-bold text-gray-900">Cookie-instellingen</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-500 focus:outline-none"
+              className="text-gray-500 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
             >
               <span className="sr-only">Sluiten</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -64,15 +114,7 @@ export default function CookiePreferences({
                 <h3 className="text-lg font-semibold text-gray-900">Functionele cookies</h3>
                 <p className="text-gray-600">Noodzakelijk voor de basisfunctionaliteit van de website</p>
               </div>
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={true}
-                  disabled
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-blue-600 rounded-full peer"></div>
-              </div>
+              <CookieToggle label="Functionele cookies (altijd aan)" checked disabled />
             </div>
 
             {/* Analytical Cookies */}
@@ -81,25 +123,11 @@ export default function CookiePreferences({
                 <h3 className="text-lg font-semibold text-gray-900">Analytische cookies</h3>
                 <p className="text-gray-600">Helpen ons te begrijpen hoe bezoekers onze website gebruiken</p>
               </div>
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={preferences.analytical}
-                  onChange={() => handleToggle('analytical')}
-                  className="sr-only peer"
-                />
-                <div 
-                  className={`w-11 h-6 rounded-full peer cursor-pointer
-                    ${preferences.analytical ? 'bg-blue-600' : 'bg-gray-200'}
-                    peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300`}
-                  onClick={() => handleToggle('analytical')}
-                >
-                  <div 
-                    className={`absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform
-                      ${preferences.analytical ? 'translate-x-full' : 'translate-x-0'}`}
-                  />
-                </div>
-              </div>
+              <CookieToggle
+                label="Analytische cookies"
+                checked={preferences.analytical}
+                onChange={() => handleToggle('analytical')}
+              />
             </div>
 
             {/* Marketing Cookies */}
@@ -108,25 +136,11 @@ export default function CookiePreferences({
                 <h3 className="text-lg font-semibold text-gray-900">Marketing cookies</h3>
                 <p className="text-gray-600">Worden gebruikt voor gepersonaliseerde advertenties</p>
               </div>
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={preferences.marketing}
-                  onChange={() => handleToggle('marketing')}
-                  className="sr-only peer"
-                />
-                <div 
-                  className={`w-11 h-6 rounded-full peer cursor-pointer
-                    ${preferences.marketing ? 'bg-blue-600' : 'bg-gray-200'}
-                    peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300`}
-                  onClick={() => handleToggle('marketing')}
-                >
-                  <div 
-                    className={`absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform
-                      ${preferences.marketing ? 'translate-x-full' : 'translate-x-0'}`}
-                  />
-                </div>
-              </div>
+              <CookieToggle
+                label="Marketing cookies"
+                checked={preferences.marketing}
+                onChange={() => handleToggle('marketing')}
+              />
             </div>
 
             {/* Third Party Cookies */}
@@ -135,25 +149,11 @@ export default function CookiePreferences({
                 <h3 className="text-lg font-semibold text-gray-900">Cookies van derden</h3>
                 <p className="text-gray-600">Maken integratie met externe diensten mogelijk</p>
               </div>
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={preferences.thirdParty}
-                  onChange={() => handleToggle('thirdParty')}
-                  className="sr-only peer"
-                />
-                <div 
-                  className={`w-11 h-6 rounded-full peer cursor-pointer
-                    ${preferences.thirdParty ? 'bg-blue-600' : 'bg-gray-200'}
-                    peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300`}
-                  onClick={() => handleToggle('thirdParty')}
-                >
-                  <div 
-                    className={`absolute left-[2px] top-[2px] w-5 h-5 bg-white rounded-full transition-transform
-                      ${preferences.thirdParty ? 'translate-x-full' : 'translate-x-0'}`}
-                  />
-                </div>
-              </div>
+              <CookieToggle
+                label="Cookies van derden"
+                checked={preferences.thirdParty}
+                onChange={() => handleToggle('thirdParty')}
+              />
             </div>
           </div>
 

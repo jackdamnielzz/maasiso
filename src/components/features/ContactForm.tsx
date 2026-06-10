@@ -95,13 +95,13 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {submitStatus === 'success' && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
+        <div role="status" className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
           Bedankt voor uw bericht! We nemen zo snel mogelijk contact met u op.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
           {errorMessage}
         </div>
       )}
@@ -211,7 +211,7 @@ export default function ContactForm() {
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "w-full rounded-lg px-4 py-3 md:py-2 text-base md:text-sm font-medium text-white shadow-sm transition-colors",
+            "w-full rounded-lg px-4 py-3 md:py-2 text-base md:text-sm font-semibold text-[#091E42] shadow-sm transition-colors",
             isSubmitting
               ? "bg-[#FF8B00]/70 cursor-not-allowed"
               : "bg-[#FF8B00] hover:bg-[#FF8B00]/90"

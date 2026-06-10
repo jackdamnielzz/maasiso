@@ -66,7 +66,7 @@ export function AanpakMinimal() {
                 index === 0 ? "md:border-l-0 md:pl-0" : ""
               } ${index === 3 ? "lg:border-l-0 lg:pl-0" : ""}`}
             >
-              <span className="text-xs font-medium text-gray-300">
+              <span className="text-xs font-medium text-gray-500">
                 {step.number}
               </span>
               <h3 className="mt-3 text-base font-semibold text-gray-900">
@@ -75,7 +75,7 @@ export function AanpakMinimal() {
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
                 {step.description}
               </p>
-              <p className="mt-4 text-xs text-gray-400">{step.duration}</p>
+              <p className="mt-4 text-xs text-gray-500">{step.duration}</p>
             </div>
           ))}
         </div>

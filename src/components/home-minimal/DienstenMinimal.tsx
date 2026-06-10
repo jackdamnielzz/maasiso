@@ -37,15 +37,15 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
                 <p className="text-lg font-semibold text-gray-900">{item.norm}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Focus</p>
+                <p className="text-sm text-gray-500">Focus</p>
                 <p className="mt-1 text-gray-600">{item.focus}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Doorlooptijd</p>
+                <p className="text-sm text-gray-500">Doorlooptijd</p>
                 <p className="mt-1 text-gray-600">{item.duur}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Investering</p>
+                <p className="text-sm text-gray-500">Investering</p>
                 <p className="mt-1 font-medium text-gray-900">{item.kosten}</p>
               </div>
             </div>
@@ -73,7 +73,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
               Inclusief risicoanalyse, Statement of Applicability en
               ISMS-inrichting.
             </p>
-            <p className="mt-3 text-xs text-gray-400">
+            <p className="mt-3 text-xs text-gray-500">
               96.709 actieve ISO 27001 certificaten wereldwijd in 2024. In
               Nederland zijn 1.568 organisaties gecertificeerd.
             </p>
@@ -94,7 +94,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
               verwerkingsregister en privacybeleid tot DPIA&apos;s,
               verwerkersovereenkomsten en de rol van externe FG.
             </p>
-            <p className="mt-3 text-xs text-gray-400">
+            <p className="mt-3 text-xs text-gray-500">
               Boetes tot &euro;20 miljoen of 4% van de wereldwijde jaaromzet
               (art. 83 AVG).
             </p>

@@ -217,6 +217,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
                 placeholder="uw@email.nl"
+                aria-invalid={Boolean(error)}
                 className="w-full px-4 py-2.5 border border-[#d8e2f0] rounded-lg text-[#091E42] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8B00]/50 focus:border-[#FF8B00]"
               />
             </div>
@@ -261,14 +262,14 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600">{error}</p>
+              <p role="alert" className="text-sm text-red-600">{error}</p>
             )}
 
             <button
               type="button"
               onClick={handlePurchase}
               disabled={isProcessing}
-              className="w-full py-3.5 bg-[#FF8B00] text-white font-bold rounded-lg hover:bg-[#e67e00] disabled:opacity-60 transition-colors text-lg flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-[#FF8B00] text-[#091E42] font-bold rounded-lg hover:bg-[#e67e00] disabled:opacity-60 transition-colors text-lg flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>

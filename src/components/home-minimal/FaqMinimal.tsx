@@ -17,7 +17,7 @@ export function FaqMinimal({ faqItems }: FaqMinimalProps) {
   return (
     <section id="faq" className="bg-gray-50 py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
+        <p className="text-xs font-medium uppercase tracking-widest text-gray-500">
           Veelgestelde vragen
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl">
@@ -31,13 +31,16 @@ export function FaqMinimal({ faqItems }: FaqMinimalProps) {
                 onClick={() =>
                   setOpenIndex(openIndex === index ? null : index)
                 }
+                aria-expanded={openIndex === index}
+                aria-controls={`faq-antwoord-${index}`}
                 className="flex w-full items-center justify-between py-5 text-left"
               >
                 <span className="pr-8 text-base font-medium text-gray-900">
                   {item.vraag}
                 </span>
                 <span
-                  className={`shrink-0 text-gray-400 transition-transform duration-200 ${
+                  aria-hidden="true"
+                  className={`shrink-0 text-gray-500 transition-transform duration-200 ${
                     openIndex === index ? "rotate-45" : ""
                   }`}
                 >
@@ -57,10 +60,11 @@ export function FaqMinimal({ faqItems }: FaqMinimalProps) {
                 </span>
               </button>
               <div
+                id={`faq-antwoord-${index}`}
                 className={`overflow-hidden transition-all duration-200 ${
                   openIndex === index
                     ? "max-h-[500px] pb-5 opacity-100"
-                    : "max-h-0 opacity-0"
+                    : "invisible max-h-0 opacity-0"
                 }`}
               >
                 <p className="text-sm leading-relaxed text-gray-500">

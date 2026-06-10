@@ -11,7 +11,7 @@ export function WaaromMinimal({ items }: WaaromMinimalProps) {
   return (
     <section id="waarom" className="bg-gray-50 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
+        <p className="text-xs font-medium uppercase tracking-widest text-gray-500">
           Waarom MaasISO
         </p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl">

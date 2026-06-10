@@ -21,7 +21,7 @@ export function HeroMinimal({ keyTakeaways }: HeroMinimalProps) {
         {/* Clean heading */}
         <h1 className="mt-6 max-w-4xl text-4xl font-semibold leading-[1.15] tracking-tight text-gray-900 md:text-6xl lg:text-7xl">
           ISO-certificering voor MKB-bedrijven,{" "}
-          <span className="text-gray-400">pragmatisch en transparant.</span>
+          <span className="text-gray-500">pragmatisch en transparant.</span>
         </h1>
 
         {/* Subtitle */}
@@ -52,7 +52,7 @@ export function HeroMinimal({ keyTakeaways }: HeroMinimalProps) {
         </div>
 
         {/* Minimal trust line */}
-        <div className="mt-16 flex flex-wrap gap-x-8 gap-y-3 text-sm text-gray-400">
+        <div className="mt-16 flex flex-wrap gap-x-8 gap-y-3 text-sm text-gray-500">
           <span>100% slagingspercentage</span>
           <span>15+ jaar ervaring</span>
           <span>Onafhankelijk advies</span>

@@ -23,6 +23,16 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  // Sluit het mobiele menu met Escape (toetsenbordtoegankelijkheid)
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileMenuOpen]);
+
   // Handle initial hydration
   useEffect(() => {
     if (!isHydrated) {
@@ -117,7 +127,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
             {/* ISO Selector Button */}
             <Link
               href="/iso-selector/"
-              className="text-[13px] font-semibold text-white px-3 py-2 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
+              className="text-[13px] font-semibold text-[#091E42] px-3 py-2 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
             >
               ISO-Selector
             </Link>
@@ -126,9 +136,10 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
           <div className="md:hidden">
             {/* Mobile Menu Button - Separated as its own div for better isolation */}
             <button
-              className="p-3 -mr-2 text-white focus:outline-none"
-              aria-label="Toggle menu"
+              className="p-3 -mr-2 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8B00] rounded"
+              aria-label={mobileMenuOpen ? 'Menu sluiten' : 'Menu openen'}
               aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
               onClick={toggleMobileMenu}
               type="button"
               id="mobile-menu-button"
@@ -145,7 +156,8 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
           </div>
 
           {/* Mobile Menu */}
-          <div 
+          <div
+            id="mobile-menu"
             className={`absolute top-20 left-0 right-0 bg-[#091E42] shadow-lg md:hidden z-50 transition-all duration-300 ${
               mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}

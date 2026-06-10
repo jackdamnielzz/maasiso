@@ -223,7 +223,7 @@ export default function HomeMinimal() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-12 md:grid-cols-2">
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
+              <p className="text-xs font-medium uppercase tracking-widest text-gray-500">
                 Over ons
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl">

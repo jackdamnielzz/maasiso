@@ -48,7 +48,7 @@ export function FeatureGrid({ data, className }: FeatureGridProps) {
                   ) : (
                     <Icon
                       url={getFeatureIconUrl(feature.title)!}
-                      alt={`Icon for ${feature.title}`}
+                      alt={`Pictogram voor ${feature.title}`}
                       className="text-[#00875A] transition-all duration-300 group-hover:scale-110"
                     />
                   )}

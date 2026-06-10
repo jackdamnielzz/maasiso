@@ -41,7 +41,7 @@ export function CtaMinimal() {
         </div>
 
         {/* Trust */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
           <span>100% slagingspercentage</span>
           <span>15+ jaar ervaring</span>
           <span>Vrijblijvend gesprek</span>
@@ -50,7 +50,7 @@ export function CtaMinimal() {
 
         {/* Contact */}
         <div className="mt-16 border-t border-gray-100 pt-10">
-          <p className="text-sm text-gray-400">Of neem direct contact op</p>
+          <p className="text-sm text-gray-500">Of neem direct contact op</p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-6">
             <a
               href="mailto:info@maasiso.nl"
