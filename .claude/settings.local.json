@@ -54,7 +54,8 @@
       "Bash(__NEW_LINE_a1ef6cb22635e4c7__ echo \"=== BLOG POST SCHEMA CHECK ===\")",
       "Bash(__NEW_LINE_60da400ac90d3ff4__ curl -s \"https://peaceful-insight-production.up.railway.app/content-type-builder/content-types/api::blog-post.blog-post\" -H \"Authorization: Bearer $ADMIN_TOKEN\")",
       "Bash(__NEW_LINE_d72aec3db3f5eaa2__ curl -s \"https://peaceful-insight-production.up.railway.app/content-type-builder/content-types/api::blog-post.blog-post\" -H \"Authorization: Bearer $ADMIN_TOKEN\")",
-      "bash"
+      "Bash(curl -s \"https://peaceful-insight-production.up.railway.app/api/pages?filters%5Bslug%5D%5B%24eq%5D=bio&populate%5B0%5D=layout&populate%5B1%5D=layout.features&populate%5B2%5D=layout.items\" -H \"Authorization: Bearer 9a79caf1f32052a4546a18a75f56c931eb596f3e1c2d1d2a0709dad53456d606529e7ed117855448d82b375591937710d70b6e25ca2b3259f6bd8d688225caa80cd0fbfc711c2eaba0364315649b0cd30ccebd5f704897710c3ab147a3254e8b51f6f339b9392a16554503a2e61e05a16765ca2cf80aa5945dc2b39a68c1ab5b\")",
+      "Read(//tmp/**)"
     ]
   }
 }

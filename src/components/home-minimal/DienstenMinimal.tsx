@@ -54,7 +54,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
 
         <div className="mt-10">
           <Link
-            href="/iso-certificering"
+            href="/iso-certificering/"
             className="text-sm font-medium text-[#0057B8] hover:underline"
           >
             Bekijk alle ISO-certificeringen &rarr;
@@ -78,7 +78,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
               Nederland zijn 1.568 organisaties gecertificeerd.
             </p>
             <Link
-              href="/informatiebeveiliging"
+              href="/informatiebeveiliging/"
               className="mt-4 inline-block text-sm font-medium text-[#0057B8] hover:underline"
             >
               Meer over informatiebeveiliging &rarr;
@@ -99,7 +99,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
               (art. 83 AVG).
             </p>
             <Link
-              href="/avg-wetgeving"
+              href="/avg-wetgeving/"
               className="mt-4 inline-block text-sm font-medium text-[#0057B8] hover:underline"
             >
               Meer over AVG compliance &rarr;
@@ -116,7 +116,7 @@ export function DienstenMinimal({ dienstentabel }: DienstenMinimalProps) {
               ISO 27001 dekt circa 70-80% van de NIS2 Artikel 21-verplichtingen.
             </p>
             <Link
-              href="/informatiebeveiliging/nis2"
+              href="/informatiebeveiliging/nis2/"
               className="mt-4 inline-block text-sm font-medium text-[#0057B8] hover:underline"
             >
               Meer over NIS2 &rarr;

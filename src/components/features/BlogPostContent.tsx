@@ -170,7 +170,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ post, tldrItem
       <div className="container-custom pt-32 pb-12 flex flex-col lg:flex-row gap-12">
         <article className="flex-1 lg:px-6 relative z-0 transform-gpu">
           <Link
-            href="/kennis/blog"
+            href="/kennis/blog/"
             className="inline-flex items-center text-[#0052CC] hover:text-[#0065FF] mb-8 mt-4 group transition-colors duration-200"
           >
             <svg

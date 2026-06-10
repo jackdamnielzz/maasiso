@@ -28,6 +28,7 @@ export default async function AvgPage() {
       strapiSlug="avg"
       hub={{ title: 'AVG & Wetgeving', href: '/avg-wetgeving' }}
       dataTopic="avg-wetgeving"
+      serviceOffers={{ priceCurrency: 'EUR', minPrice: '3000', maxPrice: '10000' }}
     />
   );
 }

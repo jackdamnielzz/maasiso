@@ -21,7 +21,7 @@ export function CtaSectionV2() {
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
             <Link
-              href="/contact"
+              href="/contact/"
               className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#FF8B00] px-8 py-4 text-base font-bold text-white shadow-[0_4px_24px_rgba(255,139,0,0.4)] transition-all duration-300 hover:bg-[#E67E00] hover:shadow-[0_6px_32px_rgba(255,139,0,0.5)] hover:-translate-y-0.5 sm:min-w-[240px]"
             >
               Plan een kennismaking

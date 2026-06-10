@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { KeyTakeaways } from '@/components/features/KeyTakeaways';
-import { HeroSectionV2 } from '@/components/home-v2/HeroSectionV2';
-import { DienstenSectionV2 } from '@/components/home-v2/DienstenSectionV2';
-import { WaaromSectionV2 } from '@/components/home-v2/WaaromSectionV2';
-import { AanpakSectionV2 } from '@/components/home-v2/AanpakSectionV2';
-import { KostenSectionV2 } from '@/components/home-v2/KostenSectionV2';
-import { FaqSectionV2 } from '@/components/home-v2/FaqSectionV2';
-import { CtaSectionV2 } from '@/components/home-v2/CtaSectionV2';
+import { HeroSectionV3 } from '@/components/home-v3/HeroSectionV3';
+import { DienstenSectionV3 } from '@/components/home-v3/DienstenSectionV3';
+import { WaaromSectionV3 } from '@/components/home-v3/WaaromSectionV3';
+import { AanpakSectionV3 } from '@/components/home-v3/AanpakSectionV3';
+import { KostenSectionV3 } from '@/components/home-v3/KostenSectionV3';
+import { FaqSectionV3 } from '@/components/home-v3/FaqSectionV3';
+import { CtaSectionV3 } from '@/components/home-v3/CtaSectionV3';
+import { StatsSectionV3 } from '@/components/home-v3/StatsSectionV3';
+import { KennisSectionV3 } from '@/components/home-v3/KennisSectionV3';
+import { TestimonialsSectionV3 } from '@/components/home-v3/TestimonialsSectionV3';
 
 export const metadata: Metadata = {
   title: "ISO-certificering & informatiebeveiliging voor MKB | MaasISO",
@@ -24,10 +27,6 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "MaasISO",
     type: "website",
-  },
-  robots: {
-    index: false,
-    follow: false,
   },
 };
 
@@ -118,6 +117,30 @@ const kernfeiten = [
     bg: "bg-[#0057B8]/10",
     text: "text-[#0057B8]",
   },
+] as const;
+
+const testimonials = [
+  {
+    quote: "Dankzij MaasISO hebben we in 5 maanden onze ISO 9001 certificering behaald. De pragmatische aanpak en duidelijke communicatie maakten het hele proces een stuk minder spannend dan verwacht.",
+    author: "Jan de Vries",
+    role: "Directeur",
+    company: "TechFlow B.V.",
+    location: "Amsterdam"
+  },
+  {
+    quote: "De overstap naar ISO 27001 leek ontmoedigend, maar met Niels aan onze zijde ging het verrassend soepel. Het team voelde zich betrokken en de audit verliep vlekkeloos.",
+    author: "Maria Janssen",
+    role: "CISO",
+    company: "SecureNet Solutions",
+    location: "Utrecht"
+  },
+  {
+    quote: "Wat me het meest opviel was de praktische insteek. Geen overbodige documentatie, maar direct bruikbare templates en heldere richtlijnen. Absoluut aan te raden voor elk MKB.",
+    author: "Peter Bakker",
+    role: "Operationeel Manager",
+    company: "LogiStack",
+    location: "Rotterdam"
+  }
 ] as const;
 
 const dienstentabel = [
@@ -389,19 +412,18 @@ const keyTakeawayItems = keyTakeaways.map((item, index) => ({
   value: item.waarde,
 }));
 
-
-export default function HomepageV2() {
+export default function HomeV3() {
   return (
     <div className="relative isolate overflow-hidden bg-[#f3f6fb] text-[#091E42]">
       <JsonLd data={[professionalServiceSchema, faqSchema]} />
 
-      {/* Hero */}
-      <HeroSectionV2 keyTakeaways={keyTakeaways} />
+      {/* Enhanced Hero Section */}
+      <HeroSectionV3 keyTakeaways={keyTakeaways} />
 
-      {/* Sticky section nav */}
+      {/* Enhanced Sticky section nav */}
       <nav
         aria-label="Sectienavigatie"
-        className="sticky top-[80px] z-30 border-b border-[#e2e8f0] bg-white/80 backdrop-blur-lg"
+        className="sticky top-[80px] z-30 border-b border-[#e2e8f0] bg-white/90 backdrop-blur-xl shadow-sm"
       >
         <div className="container-custom px-4 py-3">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -411,7 +433,7 @@ export default function HomepageV2() {
               <a
                 key={item.href}
                 href={item.href}
-                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium text-[#1a3763] transition-all duration-200 hover:bg-[#0057B8]/10 hover:text-[#0057B8]"
+                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium text-[#1a3763] transition-all duration-200 hover:bg-[#0057B8]/10 hover:text-[#0057B8] hover:shadow-sm"
               >
                 {item.label}
               </a>
@@ -427,64 +449,14 @@ export default function HomepageV2() {
         </div>
       </section>
 
-      {/* Kernfeiten */}
-      <section id="kernfeiten" className="relative py-16 md:py-24 bg-gradient-to-b from-white to-[#f3f6fb] overflow-hidden">
-        <div className="absolute top-20 left-0 h-72 w-72 rounded-full bg-blue-500/5 blur-[100px]" />
-        <div className="absolute bottom-10 right-0 h-60 w-60 rounded-full bg-violet-500/5 blur-[100px]" />
-        <div className="container-custom relative px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-14">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#00875A]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#00875A]">
-              Data &amp; feiten
-            </span>
-            <h2 className="mt-4 text-3xl font-extrabold text-[#091E42] md:text-4xl">Kernfeiten</h2>
-          </div>
-
-          {/* Top row: 3 featured stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
-            {kernfeiten.slice(0, 3).map((item) => (
-              <div
-                key={item.kernfeit}
-                className="group relative overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${item.accent}`} />
-                <div className={`absolute -right-8 -top-8 h-24 w-24 rounded-full ${item.bg} blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100`} />
-                <div className="relative">
-                  <p className="text-sm font-medium text-gray-500">{item.kernfeit}</p>
-                  <div className="mt-3 flex items-baseline gap-2">
-                    <span className={`text-4xl font-black tracking-tight ${item.text}`}>{item.highlight}</span>
-                    <span className="text-base font-semibold text-gray-600">{item.eenheid}</span>
-                  </div>
-                  <p className="mt-3 text-[11px] text-gray-400">{item.bron}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom row: 4 compact stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {kernfeiten.slice(3).map((item) => (
-              <div
-                key={item.kernfeit}
-                className="group relative overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${item.accent} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-                <div className="relative">
-                  <p className="text-xs font-medium text-gray-500 leading-snug">{item.kernfeit}</p>
-                  <p className={`mt-2 text-2xl font-black tracking-tight ${item.text}`}>{item.highlight}</p>
-                  <p className="text-sm font-medium text-gray-500">{item.eenheid}</p>
-                  <p className="mt-3 text-[10px] text-gray-400">{item.bron}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Enhanced Stats Section */}
+      <StatsSectionV3 stats={kernfeiten} />
 
       {/* Main content sections */}
       <section className="!py-0 bg-[#f3f6fb]">
         <div className="container-custom space-y-20 md:space-y-28 px-4 py-16 md:py-24">
 
-          {/* Wat doet MaasISO */}
+          {/* Enhanced Wat doet MaasISO */}
           <article className="relative overflow-hidden rounded-3xl border border-[#e2e8f0] bg-white p-8 md:p-14 shadow-sm">
             <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[#0057B8]/5 blur-3xl" />
             <div className="relative">
@@ -508,55 +480,29 @@ export default function HomepageV2() {
                 <p>
                   Onze opdrachtgevers zijn MKB-bedrijven en (semi-)overheidsinstellingen in Nederland en
                   Belgie die certificering niet als doel op zich zien, maar als middel om processen
-                  structureel te verbeteren, risico&apos;s te beheersen en het vertrouwen van klanten en
+                  structureel te verbeteren, risico's te beheersen en het vertrouwen van klanten en
                   ketenpartners te vergroten.
                 </p>
               </div>
             </div>
           </article>
 
-          {/* Diensten */}
-          <DienstenSectionV2 dienstentabel={dienstentabel} />
+          {/* Enhanced Diensten */}
+          <DienstenSectionV3 dienstentabel={dienstentabel} />
 
-          {/* Waarom MaasISO */}
-          <WaaromSectionV2 items={waaromMaasIso} />
+          {/* Enhanced Waarom MaasISO */}
+          <WaaromSectionV3 items={waaromMaasIso} />
 
-          {/* Aanpak */}
-          <AanpakSectionV2 />
+          {/* Enhanced Aanpak */}
+          <AanpakSectionV3 />
 
-          {/* Expert quote */}
-          <article className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#091E42] via-[#0d2b5c] to-[#134078] p-8 md:p-14 text-white">
-            <div className="absolute inset-0 opacity-[0.03]" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }} />
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#FF8B00]/20 blur-3xl" />
-            <div className="absolute -bottom-16 left-10 h-40 w-40 rounded-full bg-[#0057B8]/20 blur-3xl" />
-            <div className="relative max-w-3xl">
-              <svg className="h-12 w-12 text-[#FF8B00]/60" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-              </svg>
-              <blockquote className="mt-6 text-xl leading-relaxed text-white/90 md:text-2xl">
-                De meeste MKB-bedrijven onderschatten hoeveel ze al op orde hebben. Een goede
-                nulmeting laat vaak zien dat 40-60% van de eisen al informeel is ingeregeld. Het
-                traject gaat dan over structureren en aantoonbaar maken, niet over alles opnieuw
-                uitvinden.
-              </blockquote>
-              <div className="mt-8 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#FF8B00] to-[#E67E00] flex items-center justify-center text-lg font-bold">
-                  NM
-                </div>
-                <div>
-                  <p className="font-bold text-white">Niels Maas</p>
-                  <p className="text-sm text-white/60">Senior consultant &amp; oprichter, MaasISO</p>
-                </div>
-              </div>
-            </div>
-          </article>
+          {/* Enhanced Expert quote */}
+          <TestimonialsSectionV3 testimonials={testimonials} />
 
-          {/* Kosten */}
-          <KostenSectionV2 kostenTabel={kostenTabel} />
+          {/* Enhanced Kosten */}
+          <KostenSectionV3 kostenTabel={kostenTabel} />
 
-          {/* ISO Norm Selector */}
+          {/* Enhanced ISO Norm Selector */}
           <article className="relative overflow-hidden rounded-3xl border-2 border-[#0057B8]/20 bg-gradient-to-r from-[#f0f6ff] via-white to-[#f0f6ff] p-8 md:p-14">
             <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[#0057B8]/10 blur-3xl" />
             <div className="absolute -left-20 -bottom-20 h-60 w-60 rounded-full bg-[#FF8B00]/10 blur-3xl" />
@@ -574,7 +520,7 @@ export default function HomepageV2() {
               </div>
               <Link
                 href="https://iso-selector.maasiso.nl/"
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#0057B8] px-8 py-4 text-base font-bold text-white shadow-lg transition-all duration-300 hover:bg-[#004a9e] hover:-translate-y-0.5 hover:shadow-xl shrink-0"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-[#0057B8] px-8 py-4 text-base font-bold text-white shadow-lg transition-all duration-300 hover:bg-[#004a9e] hover:-translate-y-0.5 hover:shadow-xl shrink-0"
               >
                 Start de Selector
                 <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -584,60 +530,16 @@ export default function HomepageV2() {
             </div>
           </article>
 
-          {/* Kennis & resources */}
-          <article>
-            <div className="text-center mb-12">
-              <span className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-blue-700">
-                Kennis
-              </span>
-              <h2 className="mt-4 text-3xl font-extrabold text-[#091E42] md:text-4xl">
-                Kennis &amp; resources
-              </h2>
-              <p className="mt-3 mx-auto max-w-2xl text-gray-500">
-                Onze kennis is vrij beschikbaar en bedoeld om MKB-organisaties te helpen onderbouwde keuzes te maken.
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                { titel: "ISO 9001 certificering: kosten, proces & voordelen [2026]", kleur: "blue" },
-                { titel: "ISO 27001 certificering: complete gids, kosten & stappen (2026)", kleur: "violet" },
-                { titel: "AVG wetgeving: praktisch advies & implementatie voor MKB", kleur: "teal" },
-              ].map((artikel) => (
-                <Link
-                  key={artikel.titel}
-                  href="/kennis/blog/"
-                  className="group relative overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-[#0057B8]/30"
-                >
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0057B8] to-[#00875A] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  <h3 className="text-lg font-bold text-[#091E42] group-hover:text-[#0057B8] transition-colors">
-                    {artikel.titel}
-                  </h3>
-                  <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#0057B8]">
-                    Lees artikel
-                    <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-6 text-center">
-              <Link href="/kennis/blog/" className="inline-flex items-center gap-2 text-[#0057B8] font-semibold hover:underline">
-                Bekijk alle artikelen op ons blog
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-            </div>
-          </article>
+          {/* Enhanced Kennis & resources */}
+          <KennisSectionV3 />
 
-          {/* FAQ */}
-          <FaqSectionV2 faqItems={faqItems} />
+          {/* Enhanced FAQ */}
+          <FaqSectionV3 faqItems={faqItems} />
         </div>
       </section>
 
-      {/* CTA */}
-      <CtaSectionV2 />
+      {/* Enhanced CTA */}
+      <CtaSectionV3 />
     </div>
   );
 }

@@ -107,7 +107,7 @@ export default async function OverNielsMaasPage() {
                     </a>
                   )}
                   <Link
-                    href="/contact"
+                    href="/contact/"
                     className="flex items-center gap-3 px-8 py-3 rounded-full bg-[#FF8B00] text-white font-bold hover:bg-[#E67E00] transition-all shadow-lg transform hover:-translate-y-1"
                   >
                     Contact
@@ -233,7 +233,7 @@ export default async function OverNielsMaasPage() {
             
             <div className="mt-16 text-center">
               <Link
-                href="/kennis/blog"
+                href="/kennis/blog/"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full border-2 border-[#091E42] text-[#091E42] font-bold hover:bg-[#091E42] hover:text-white transition-all transform hover:-translate-y-1"
               >
                 Bekijk alle blogs
@@ -259,7 +259,7 @@ export default async function OverNielsMaasPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
               <Link 
-                href="/contact"
+                href="/contact/"
                 className="px-10 py-5 rounded-full bg-[#FF8B00] text-white font-bold text-lg hover:bg-[#E67E00] transition-all shadow-2xl transform hover:-translate-y-1"
               >
                 Neem direct contact op

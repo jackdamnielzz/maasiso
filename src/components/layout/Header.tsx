@@ -45,7 +45,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
           <div className="hidden md:flex items-center gap-3">
             <div className="flex items-center">
               <Link
-                href="/iso-certificering"
+                href="/iso-certificering/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -53,7 +53,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 ISO-certificering
               </Link>
               <Link
-                href="/informatiebeveiliging"
+                href="/informatiebeveiliging/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -61,7 +61,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Informatiebeveiliging
               </Link>
               <Link
-                href="/avg-wetgeving"
+                href="/avg-wetgeving/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -70,7 +70,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
               </Link>
               <div className="group relative">
                 <Link
-                  href="/kennis"
+                  href="/kennis/"
                   className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                     pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
                   }`}
@@ -80,7 +80,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 <div className="pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 translate-y-1 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
                   <div className="min-w-[160px] rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
                     <Link
-                      href="/kennis/blog"
+                      href="/kennis/blog/"
                       className="block rounded-lg px-3 py-2 text-[13px] font-medium text-[#091E42] transition-colors duration-200 hover:bg-slate-50 hover:text-[#FF8B00]"
                     >
                       Blog
@@ -89,7 +89,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 </div>
               </div>
               <Link
-                href="/waarom-maasiso"
+                href="/waarom-maasiso/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -97,7 +97,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Waarom MaasISO
               </Link>
               <Link
-                href="/over-ons"
+                href="/over-ons/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname === '/over-ons' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -105,7 +105,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Over ons
               </Link>
               <Link
-                href="/contact"
+                href="/contact/"
                 className={`relative text-[13px] leading-none whitespace-nowrap px-3 py-2 transition-colors duration-200 hover:text-[#FF8B00] after:content-[''] after:absolute after:right-0 after:top-1/2 after:h-3 after:w-px after:-translate-y-1/2 after:bg-[#FF8B00] after:opacity-35 last:after:hidden ${
                   pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -116,7 +116,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
 
             {/* ISO Selector Button */}
             <Link
-              href="/iso-selector"
+              href="/iso-selector/"
               className="text-[13px] font-semibold text-white px-3 py-2 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
             >
               ISO-Selector
@@ -152,7 +152,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
           >
             <div className="px-4 py-4 space-y-1">
               <Link
-                href="/iso-certificering"
+                href="/iso-certificering/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/iso-certificering') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -161,7 +161,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 ISO-certificering
               </Link>
               <Link
-                href="/informatiebeveiliging"
+                href="/informatiebeveiliging/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/informatiebeveiliging') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -170,7 +170,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Informatiebeveiliging
               </Link>
               <Link
-                href="/avg-wetgeving"
+                href="/avg-wetgeving/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/avg-wetgeving') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -179,7 +179,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 AVG & Wetgeving
               </Link>
               <Link
-                href="/kennis"
+                href="/kennis/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname?.startsWith('/kennis') ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -188,7 +188,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Kennis
               </Link>
               <Link
-                href="/waarom-maasiso"
+                href="/waarom-maasiso/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname === '/waarom-maasiso' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -197,7 +197,7 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Waarom MaasISO
               </Link>
               <Link
-                href="/over-ons"
+                href="/over-ons/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${
                   pathname === '/over-ons' ? 'text-[#FF8B00]' : 'text-white'
                 }`}
@@ -206,17 +206,17 @@ export default function Header({ className = '' }: HeaderProps): ReactElement {
                 Over ons
               </Link>
               <Link
-                href="/contact"
+                href="/contact/"
                 className={`block text-base py-2 hover:text-[#FF8B00] transition-colors duration-200 ${pathname === '/contact' ? 'text-[#FF8B00]' : 'text-white'}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact
               </Link>
-              
+
               {/* ISO Selector Mobile */}
               <div className="pt-4 mt-4 border-t border-gray-700">
                 <Link
-                  href="/iso-selector"
+                  href="/iso-selector/"
                   className="block text-center text-base font-medium text-white px-4 py-3 rounded-lg bg-gradient-to-r from-[#FF8B00] to-[#FF6B00] hover:from-[#FF9B20] hover:to-[#FF7B10] transition-all duration-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >

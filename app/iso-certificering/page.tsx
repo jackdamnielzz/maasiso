@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'ISO-certificering voor MKB: Kosten, Normen & Begeleiding | MaasISO',
@@ -41,8 +42,29 @@ const isoPages = [
   }
 ];
 
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'ISO-certificering voor MKB',
+  description:
+    'Overzicht van ISO-certificeringen: ISO 9001, ISO 14001, ISO 45001 en ISO 16175. Vergelijk kosten, eisen en doorlooptijd.',
+  url: 'https://www.maasiso.nl/iso-certificering/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: isoPages.map((page, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: page.title,
+      description: page.description,
+      url: `https://www.maasiso.nl${page.href}/`,
+    })),
+  },
+};
+
 export default function IsoCertificeringHubPage() {
   return (
+    <>
+    <JsonLd data={itemListSchema} />
     <CoreHubPageTemplate
       visualVariant="iso-premium"
       title="ISO-certificering"
@@ -61,5 +83,6 @@ export default function IsoCertificeringHubPage() {
       cardsHeading="Onderwerpen binnen ISO-certificering"
       dataTopic="iso-certificering"
     />
+    </>
   );
 }

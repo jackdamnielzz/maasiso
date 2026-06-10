@@ -40,7 +40,7 @@ export default function BedanktPage({ searchParams }: BedanktPageProps) {
                 Terug naar ISO 9001
               </Link>
               <Link
-                href="/contact"
+                href="/contact/"
                 className="inline-flex items-center justify-center rounded-lg border border-[#091E42]/30 bg-white px-5 py-3 text-sm font-semibold text-[#091E42] transition hover:bg-slate-50 sm:min-w-[220px]"
               >
                 Naar contact

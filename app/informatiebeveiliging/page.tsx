@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Informatiebeveiliging: ISO 27001, NIS2 & BIO Begeleiding | MaasISO',
@@ -34,8 +35,29 @@ const cards = [
   },
 ];
 
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Informatiebeveiliging',
+  description:
+    'Overzicht van informatiebeveiliging: ISO 27001, NIS2 en BIO. Vergelijk kosten, eisen en aanpak.',
+  url: 'https://www.maasiso.nl/informatiebeveiliging/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: cards.map((card, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: card.title,
+      description: card.description,
+      url: `https://www.maasiso.nl${card.href}/`,
+    })),
+  },
+};
+
 export default function InformatiebeveiligingHubPage() {
   return (
+    <>
+    <JsonLd data={itemListSchema} />
     <CoreHubPageTemplate
       visualVariant="iso-premium"
       title="Informatiebeveiliging"
@@ -50,5 +72,6 @@ export default function InformatiebeveiligingHubPage() {
       ctas={[{ label: 'Plan een kennismaking', href: '/contact', variant: 'primary' }]}
       dataTopic="informatiebeveiliging"
     />
+    </>
   );
 }

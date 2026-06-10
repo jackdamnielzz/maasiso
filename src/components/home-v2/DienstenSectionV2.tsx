@@ -98,7 +98,7 @@ export function DienstenSectionV2({ dienstentabel }: DienstenSectionV2Props) {
 
       <div className="mt-6 text-center">
         <Link
-          href="/iso-certificering"
+          href="/iso-certificering/"
           className="inline-flex items-center gap-2 text-[#0057B8] font-semibold hover:underline"
         >
           Bekijk alle ISO-certificeringen
@@ -128,7 +128,7 @@ export function DienstenSectionV2({ dienstentabel }: DienstenSectionV2Props) {
             actieve certificaten (bron: ISO Survey 2024). In Nederland zijn inmiddels 1.568
             organisaties gecertificeerd.
           </p>
-          <Link href="/informatiebeveiliging" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-violet-600 hover:underline">
+          <Link href="/informatiebeveiliging/" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-violet-600 hover:underline">
             Meer over informatiebeveiliging
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           </Link>
@@ -151,7 +151,7 @@ export function DienstenSectionV2({ dienstentabel }: DienstenSectionV2Props) {
             De AVG kent boetes tot EUR 20 miljoen of 4% van de wereldwijde jaaromzet. In de
             praktijk zien wij dat MKB-bedrijven struikelen over de uitvoering.
           </p>
-          <Link href="/avg-wetgeving" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-teal-600 hover:underline">
+          <Link href="/avg-wetgeving/" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-teal-600 hover:underline">
             Meer over AVG &amp; wetgeving
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           </Link>
@@ -171,7 +171,7 @@ export function DienstenSectionV2({ dienstentabel }: DienstenSectionV2Props) {
             gecertificeerd zijn, hebben circa 70-80% van deze maatregelen al aantoonbaar
             geimplementeerd.
           </p>
-          <Link href="/informatiebeveiliging/iso-27001" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:underline">
+          <Link href="/informatiebeveiliging/iso-27001/" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:underline">
             Meer over NIS2 en ISO 27001
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           </Link>

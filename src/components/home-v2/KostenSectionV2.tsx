@@ -70,7 +70,7 @@ export function KostenSectionV2({ kostenTabel }: KostenSectionV2Props) {
 
       <div className="mt-6 text-center">
         <Link
-          href="/iso-certificering"
+          href="/iso-certificering/"
           className="inline-flex items-center gap-2 text-[#0057B8] font-semibold hover:underline"
         >
           Bekijk gedetailleerde kostenoverzichten per norm

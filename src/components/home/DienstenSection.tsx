@@ -52,7 +52,7 @@ export function DienstenSection({ dienstentabel }: DienstenSectionProps) {
       </div>
       <p className="mt-4">
         <Link
-          href="/iso-certificering"
+          href="/iso-certificering/"
           className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
         >
           Bekijk alle ISO-certificeringen
@@ -76,7 +76,7 @@ export function DienstenSection({ dienstentabel }: DienstenSectionProps) {
           </p>
           <p className="mt-4">
             <Link
-              href="/informatiebeveiliging"
+              href="/informatiebeveiliging/"
               className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
             >
               Bekijk informatiebeveiliging
@@ -100,7 +100,7 @@ export function DienstenSection({ dienstentabel }: DienstenSectionProps) {
           </p>
           <p className="mt-4">
             <Link
-              href="/avg-wetgeving"
+              href="/avg-wetgeving/"
               className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
             >
               Bekijk AVG &amp; wetgeving
@@ -121,7 +121,7 @@ export function DienstenSection({ dienstentabel }: DienstenSectionProps) {
           </p>
           <p className="mt-4">
             <Link
-              href="/informatiebeveiliging/iso-27001"
+              href="/informatiebeveiliging/iso-27001/"
               className="inline-flex items-center font-semibold text-[#0057B8] hover:underline"
             >
               Lees meer over NIS2 en ISO 27001

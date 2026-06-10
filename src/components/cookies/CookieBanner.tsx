@@ -28,7 +28,7 @@ export default function CookieBanner({
               noodzakelijk zijn voor de werking van de website.
             </p>
             <a
-              href="/privacy-policy"
+              href="/privacy-policy/"
               className="text-blue-600 hover:text-blue-700 text-sm mt-2 inline-block"
             >
               Lees meer over ons cookiebeleid

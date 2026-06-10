@@ -149,7 +149,7 @@ export default function WhitepaperDownloadModal({
             />
             <label htmlFor="acceptTerms" className="text-sm text-[#091E42]">
               Ik ga akkoord met de{' '}
-              <Link href="/terms-and-conditions" className="text-[#FF8B00] hover:underline">
+              <Link href="/terms-and-conditions/" className="text-[#FF8B00] hover:underline">
                 algemene voorwaarden
               </Link> *
             </label>

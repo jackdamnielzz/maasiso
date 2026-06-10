@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import CoreHubPageTemplate from '@/components/templates/core/CoreHubPageTemplate';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'AVG & Wetgeving | Overzicht en begeleiding | MaasISO',
@@ -20,8 +21,29 @@ const cards = [
   },
 ];
 
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'AVG & Wetgeving',
+  description:
+    'Overzicht van AVG & privacywetgeving bij MaasISO. AVG aanpak, kosten, stappen en veelgestelde vragen.',
+  url: 'https://www.maasiso.nl/avg-wetgeving/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: cards.map((card, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: card.title,
+      description: card.description,
+      url: `https://www.maasiso.nl${card.href}/`,
+    })),
+  },
+};
+
 export default function AvgWetgevingHubPage() {
   return (
+    <>
+    <JsonLd data={itemListSchema} />
     <CoreHubPageTemplate
       visualVariant="iso-premium"
       title="AVG & Wetgeving"
@@ -36,5 +58,6 @@ export default function AvgWetgevingHubPage() {
       ctas={[{ label: 'Plan een kennismaking', href: '/contact', variant: 'primary' }]}
       dataTopic="avg-wetgeving"
     />
+    </>
   );
 }

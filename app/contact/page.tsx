@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import ContactForm from '@/components/features/ContactForm';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { COMPANY_DETAILS } from '@/config/company';
 
 export const metadata: Metadata = {
@@ -37,9 +38,36 @@ const faqs = [
   },
 ];
 
+const contactPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact - MaasISO',
+  description:
+    'Neem contact op met MaasISO voor vragen over ISO-certificering, informatiebeveiliging en compliance.',
+  url: 'https://www.maasiso.nl/contact/',
+  mainEntity: {
+    '@type': 'Organization',
+    '@id': 'https://www.maasiso.nl/#organization',
+  },
+};
+
+const contactFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.vraag,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.antwoord,
+    },
+  })),
+};
+
 export default function ContactPage() {
   return (
     <main className="bg-[#f3f6fb] text-[#091E42]">
+      <JsonLd data={[contactPageSchema, contactFaqSchema]} />
       <CoreBreadcrumbBar
         items={[
           { label: 'Home', href: '/' },
@@ -122,13 +150,13 @@ export default function ContactPage() {
               <h3 className="text-lg font-semibold">Meer starten?</h3>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/iso-selector"
+                  href="/iso-selector/"
                   className="primary-button text-center sm:min-w-[220px]"
                 >
                   Doe de ISO Norm Selector
                 </Link>
                 <Link
-                  href="/over-ons"
+                  href="/over-ons/"
                   className="inline-flex items-center justify-center rounded-lg border border-[#dce5f1] px-5 py-3 font-semibold text-[#091E42] transition hover:border-[#FF8B00] hover:text-[#FF8B00]"
                 >
                   Wie is MaasISO?

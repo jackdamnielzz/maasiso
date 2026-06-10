@@ -20,7 +20,7 @@ export default function HomeContent() {
               gemaakt voor het MKB.
             </p>
             <Link 
-              href="/contact" 
+              href="/contact/" 
               className="primary-button"
             >
               Vraag Een Gratis Consult Aan
@@ -73,7 +73,7 @@ export default function HomeContent() {
                 <h3 className="text-xl font-bold mb-4">{service.title}</h3>
                 <p className="text-gray-600 mb-6">{service.description}</p>
                 <Link 
-                  href="/iso-certificering" 
+                  href="/iso-certificering/" 
                   className="text-[#00875A] font-medium hover:text-[#006C48]"
                 >
                   Lees meer
@@ -147,7 +147,7 @@ export default function HomeContent() {
           <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
             Wilt u weten hoe we u kunnen helpen? Neem contact op voor een gratis gesprek over kwaliteit en veiligheid.
           </p>
-          <Link href="/contact" className="primary-button">
+          <Link href="/contact/" className="primary-button">
             Neem Contact Op
           </Link>
         </div>

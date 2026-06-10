@@ -2,9 +2,6 @@ import { render } from '@testing-library/react';
 import SchemaMarkup from './SchemaMarkup';
 
 describe('SchemaMarkup', () => {
-  const extractGraphNodes = (payload: any) =>
-    Array.isArray(payload?.['@graph']) ? payload['@graph'] : [payload];
-
   it('renders a provided primary schema payload', () => {
     const { container } = render(
       <SchemaMarkup
@@ -26,7 +23,7 @@ describe('SchemaMarkup', () => {
     expect(scripts[0].name).toBe('Testpagina');
   });
 
-  it('renders Service and FAQPage JSON-LD payloads in a single script', () => {
+  it('renders Service and FAQPage as separate script tags', () => {
     const { container } = render(
       <SchemaMarkup
         service={{
@@ -53,17 +50,18 @@ describe('SchemaMarkup', () => {
       JSON.parse(node.textContent || '{}')
     );
 
-    expect(scripts).toHaveLength(1);
+    // Each schema type should be in its own script tag
+    expect(scripts).toHaveLength(2);
 
-    const nodes = extractGraphNodes(scripts[0]);
-    const serviceSchema = nodes.find((script: any) => script['@type'] === 'Service');
-    const faqSchema = nodes.find((script: any) => script['@type'] === 'FAQPage');
+    const serviceSchema = scripts.find((s: any) => s['@type'] === 'Service');
+    const faqSchema = scripts.find((s: any) => s['@type'] === 'FAQPage');
 
     expect(serviceSchema).toBeDefined();
     expect(serviceSchema.name).toBe('ISO 9001 certificering');
     expect(serviceSchema.url).toBe('https://www.maasiso.nl/iso-certificering/iso-9001');
     expect(serviceSchema.areaServed).toBe('NL');
-    expect(serviceSchema.provider['@type']).toBe('Organization');
+    // Provider uses @id reference to avoid duplication
+    expect(serviceSchema.provider['@id']).toBe('https://www.maasiso.nl/#organization');
 
     expect(faqSchema).toBeDefined();
     expect(Array.isArray(faqSchema.mainEntity)).toBe(true);

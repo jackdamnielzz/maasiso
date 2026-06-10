@@ -200,7 +200,7 @@ export default function ContactForm() {
         />
         <label htmlFor="acceptTerms" className="text-sm text-[#243d60]">
           Ik ga akkoord met de{' '}
-          <Link href="/terms-and-conditions" className="font-semibold text-[#FF8B00] hover:underline">
+          <Link href="/terms-and-conditions/" className="font-semibold text-[#FF8B00] hover:underline">
             algemene voorwaarden
           </Link> *
         </label>

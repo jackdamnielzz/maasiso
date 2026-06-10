@@ -10,11 +10,11 @@ export function CtaSection() {
           MaasISO voor uw organisatie kan betekenen.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/contact" className="primary-button text-center sm:min-w-[240px]">
+          <Link href="/contact/" className="primary-button text-center sm:min-w-[240px]">
             Plan een kennismaking
           </Link>
           <Link
-            href="/iso-selector"
+            href="/iso-selector/"
             className="primary-button text-center sm:min-w-[240px] border-2 border-white bg-transparent text-white hover:bg-white hover:text-[#091E42]"
           >
             Doe de ISO Norm Selector

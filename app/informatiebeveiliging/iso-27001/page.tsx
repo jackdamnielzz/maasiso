@@ -28,6 +28,7 @@ export default async function Iso27001Page() {
       strapiSlug="iso-27001"
       hub={{ title: 'Informatiebeveiliging', href: '/informatiebeveiliging' }}
       dataTopic="informatiebeveiliging"
+      serviceOffers={{ priceCurrency: 'EUR', minPrice: '10000', maxPrice: '25000' }}
     />
   );
 }

@@ -248,7 +248,7 @@ export default function ThankYouClient() {
             <p className="text-gray-500 font-medium mb-1">Downloadlink verlopen</p>
             <p className="text-sm text-gray-400">
               De download was 24 uur geldig. Neem{' '}
-              <a href="/contact?source=tra-expired" className="text-[#FF8B00] hover:underline">contact</a>{' '}
+              <a href="/contact/?source=tra-expired" className="text-[#FF8B00] hover:underline">contact</a>{' '}
               op als u uw rapport opnieuw nodig heeft.
             </p>
           </div>
@@ -298,7 +298,7 @@ export default function ThankYouClient() {
           Onze adviseurs helpen u bij het opstellen van een audit-proof TRA, RI&amp;E of VCA-implementatie.
         </p>
         <a
-          href="/contact?source=tra-bedankt"
+          href="/contact/?source=tra-bedankt"
           className="inline-block px-6 py-2.5 bg-[#FF8B00] text-white font-semibold rounded-lg hover:bg-[#e67e00] transition-colors"
         >
           Plan een gratis gesprek

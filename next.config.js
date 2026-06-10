@@ -57,6 +57,19 @@ const nextConfig = {
           exclude: ['error', 'warn']
         }
       : false
+  },
+  async headers() {
+    return [
+      {
+        source: '/kennis/blog',
+        headers: [
+          {
+            key: 'CDN-Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+        ],
+      },
+    ];
   }
 };
 

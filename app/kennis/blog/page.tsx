@@ -5,10 +5,18 @@ import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
 import BlogSidebar from '@/components/features/BlogSidebar';
 import BlogCard from '@/components/features/BlogCard';
 import Pagination from '@/components/common/Pagination';
-import { getBlogPosts } from '@/lib/api';
+import { getBlogPostsOverview } from '@/lib/api';
 import { prefetch } from '@/lib/prefetch';
 import type { BlogPost, Category, Tag } from '@/lib/types';
 import { createSlug } from '@/lib/utils/slugUtils';
+
+/** Lightweight post shape for the overview page – no content, faq, tldr, etc. */
+type BlogPostCard = Pick<BlogPost,
+  | 'id' | 'title' | 'slug' | 'excerpt'
+  | 'featuredImage' | 'featuredImageAltText'
+  | 'publicationDate' | 'createdAt' | 'lastUpdatedDate'
+  | 'tags' | 'seoDescription'
+>;
 
 // ISR: revalidate every 1 hour
 export const revalidate = 3600;
@@ -30,7 +38,7 @@ function getTagSlug(tag: Tag): string {
 
 async function prefetchNextPage(currentPage: number, pageSize: number) {
   const nextPage = currentPage + 1;
-  await prefetch(() => getBlogPosts(nextPage, pageSize));
+  await prefetch(() => getBlogPostsOverview(nextPage, pageSize));
 }
 
 interface BlogPageProps {
@@ -63,7 +71,7 @@ function extractCategories(posts: BlogPost[]): Category[] {
   return Array.from(categoryMap.values());
 }
 
-function filterPosts(posts: BlogPost[], search?: string, category?: string | null): BlogPost[] {
+function filterPosts(posts: BlogPostCard[], search?: string, category?: string | null): BlogPostCard[] {
   return posts.filter((post) => {
     if (category && category !== 'all') {
       const hasCategory = post.tags?.some((tag) => getTagSlug(tag) === category);
@@ -73,14 +81,11 @@ function filterPosts(posts: BlogPost[], search?: string, category?: string | nul
     if (search) {
       const searchLower = search.toLowerCase();
       const titleMatch = post.title.toLowerCase().includes(searchLower);
-      const contentMatch =
-        post.content?.toLowerCase().includes(searchLower) ||
-        (post as unknown as { Content?: string }).Content?.toLowerCase().includes(searchLower) ||
-        false;
-      const summaryMatch = post.summary?.toLowerCase().includes(searchLower) || false;
+      const excerptMatch = post.excerpt?.toLowerCase().includes(searchLower) || false;
+      const descMatch = post.seoDescription?.toLowerCase().includes(searchLower) || false;
       const tagMatch = post.tags?.some((tag) => tag.name.toLowerCase().includes(searchLower)) || false;
 
-      return titleMatch || contentMatch || summaryMatch || tagMatch;
+      return titleMatch || excerptMatch || descMatch || tagMatch;
     }
 
     return true;
@@ -95,7 +100,7 @@ async function BlogContent({ searchParams }: BlogPageProps) {
   const selectedCategory = resolvedParams.category || null;
   const searchQuery = resolvedParams.search;
 
-  const response = await getBlogPosts(1, 100).catch(() => {
+  const response = await getBlogPostsOverview(1, 100).catch(() => {
     throw new Error(
       'Er is een fout opgetreden bij het ophalen van de blog artikelen. ' +
         'Controleer uw internetverbinding en probeer het opnieuw.'
@@ -106,8 +111,23 @@ async function BlogContent({ searchParams }: BlogPageProps) {
     throw new Error('Geen data ontvangen van de server.');
   }
 
+  // Strip to lightweight card data – removes content, faq, tldr, relatedPosts, etc.
+  const cardPosts: BlogPostCard[] = response.posts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    featuredImage: post.featuredImage,
+    featuredImageAltText: post.featuredImageAltText,
+    publicationDate: post.publicationDate,
+    createdAt: post.createdAt,
+    lastUpdatedDate: post.lastUpdatedDate,
+    tags: post.tags,
+    seoDescription: post.seoDescription,
+  }));
+
   const categories = extractCategories(response.posts);
-  const filteredPosts = filterPosts(response.posts, searchQuery, selectedCategory);
+  const filteredPosts = filterPosts(cardPosts, searchQuery, selectedCategory);
 
   const pageSize = 6;
   const startIndex = (currentPage - 1) * pageSize;
@@ -170,9 +190,9 @@ async function BlogContent({ searchParams }: BlogPageProps) {
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {paginatedPosts.map((post: BlogPost) => (
+                  {paginatedPosts.map((post) => (
                     <div key={post.id}>
-                      <BlogCard post={post} />
+                      <BlogCard post={post as BlogPost} />
                     </div>
                   ))}
                 </div>

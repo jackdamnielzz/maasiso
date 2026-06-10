@@ -91,16 +91,11 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howT
       '@type': 'Service',
       name: service.name,
       description: service.description,
-      url: service.url
+      url: service.url,
+      provider: {
+        '@id': 'https://www.maasiso.nl/#organization',
+      },
     };
-
-    if (service.provider?.name && service.provider?.url) {
-      serviceSchema.provider = {
-        '@type': 'Organization',
-        name: service.provider.name,
-        url: service.provider.url
-      };
-    }
 
     if (service.serviceType) {
       serviceSchema.serviceType = service.serviceType;
@@ -177,15 +172,7 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howT
       dateModified: article.dateModified,
       author: authorSchema,
       publisher: {
-        '@type': 'Organization',
-        '@id': article.publisherId,
-        name: 'Maas ISO',
-        logo: {
-          '@type': 'ImageObject',
-          url: 'https://www.maasiso.nl/logo.png',
-          width: 600,
-          height: 60
-        }
+        '@id': 'https://www.maasiso.nl/#organization',
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -216,22 +203,17 @@ const SchemaMarkup: React.FC<SchemaMarkupProps> = ({ primary, service, faq, howT
     return null;
   }
 
-  const payload =
-    schemas.length === 1
-      ? schemas[0]
-      : {
-          '@context': 'https://schema.org',
-          '@graph': schemas.map((schema) => {
-            const { ['@context']: _context, ...node } = schema;
-            return node;
-          }),
-        };
-
+  // Render each schema in its own <script> tag as recommended by Google.
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
-    />
+    <>
+      {schemas.map((schema, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
+    </>
   );
 };
 

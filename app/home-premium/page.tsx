@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   title: "ISO-certificering & informatiebeveiliging voor MKB | MaasISO",
   description:
     "MaasISO is de ISO-consultant voor MKB-bedrijven in Nederland. Pragmatische begeleiding bij ISO 9001, ISO 27001, ISO 14001, AVG compliance en NIS2. Transparante kosten, bewezen resultaten.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   alternates: {
     canonical: "/",
   },
@@ -24,10 +28,6 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "MaasISO",
     type: "website",
-  },
-  robots: {
-    index: false,
-    follow: false,
   },
 };
 
@@ -389,8 +389,7 @@ const keyTakeawayItems = keyTakeaways.map((item, index) => ({
   value: item.waarde,
 }));
 
-
-export default function HomepageV2() {
+export default function Home() {
   return (
     <div className="relative isolate overflow-hidden bg-[#f3f6fb] text-[#091E42]">
       <JsonLd data={[professionalServiceSchema, faqSchema]} />

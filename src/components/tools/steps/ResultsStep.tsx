@@ -159,7 +159,7 @@ export default function ResultsStep({ workSteps, onNext, onBack }: ResultsStepPr
           Onze consultants helpen u bij het opstellen van een professionele TRA, RI&amp;E of VCA-implementatie.
         </p>
         <a
-          href="/contact?source=tra-calculator"
+          href="/contact/?source=tra-calculator"
           className="inline-block px-6 py-2.5 bg-[#FF8B00] text-white font-semibold rounded-lg hover:bg-[#e67e00] transition-colors"
         >
           Plan een gratis gesprek

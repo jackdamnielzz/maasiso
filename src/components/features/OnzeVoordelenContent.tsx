@@ -120,7 +120,7 @@ export default function OnzeVoordelenContent() {
             </ScrollReveal>
             <ScrollReveal className="reveal-up" delay={200}>
               <Link
-                href="/contact"
+                href="/contact/"
                 className="primary-button inline-flex items-center"
               >
                 Neem Contact Op
@@ -373,13 +373,13 @@ export default function OnzeVoordelenContent() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
-                href="/contact"
+                href="/contact/"
                 className="primary-button bg-[#FF8B00] text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-[#ffb347] transition-all duration-300 inline-block"
               >
                 Neem Contact Op
               </Link>
               <Link
-                href="/iso-certificering"
+                href="/iso-certificering/"
                 className="primary-button bg-[#FF8B00] text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-[#ffb347] transition-all duration-300 inline-block"
               >
                 Bekijk Onze Diensten

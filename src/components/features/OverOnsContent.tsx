@@ -107,7 +107,7 @@ export default function OverOnsContent() {
           <ScrollReveal className="reveal-up" delay={400}>
             <div className="mt-12">
               <Link
-                href="/contact"
+                href="/contact/"
                 className="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-[#FF8B00] rounded-full hover:bg-[#E67E00] shadow-[0_10px_40px_rgba(255,139,0,0.3)] hover:shadow-[0_20px_60px_rgba(255,139,0,0.4)] transform hover:-translate-y-1"
               >
                 <span>Maak Kennis</span>
@@ -210,7 +210,7 @@ export default function OverOnsContent() {
                   </p>
                   
                   <Link
-                    href="/over-niels-maas"
+                    href="/over-niels-maas/"
                     className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-[#00875A] rounded-full hover:bg-[#006644] shadow-lg transform hover:-translate-y-1"
                   >
                     <span>Lees meer over Niels</span>
@@ -327,7 +327,7 @@ export default function OverOnsContent() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
               <Link
-                href="/contact"
+                href="/contact/"
                 className="primary-button bg-[#FF8B00] text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-[#ffb347] transition-all duration-300 inline-block"
               >
                 Neem Contact Op

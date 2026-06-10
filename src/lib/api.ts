@@ -905,6 +905,60 @@ export async function getBlogPosts(page = 1, pageSize = 10): Promise<{ posts: Bl
   }
 }
 
+/**
+ * Lightweight version of getBlogPosts for the blog overview page.
+ * Only fetches fields needed for listing (title, slug, excerpt, dates, image, tags).
+ * Excludes heavy fields like content, faq, tldr, relatedPosts, seo fields, etc.
+ */
+export async function getBlogPostsOverview(page = 1, pageSize = 10): Promise<{ posts: BlogPost[]; total: number }> {
+  try {
+    const params = new URLSearchParams({
+      'pagination[page]': String(page),
+      'pagination[pageSize]': String(pageSize),
+      'sort': 'publishedAt:desc',
+      // Only fetch the fields needed for the overview cards
+      'fields[0]': 'title',
+      'fields[1]': 'slug',
+      'fields[2]': 'excerpt',
+      'fields[3]': 'publishedAt',
+      'fields[4]': 'createdAt',
+      'fields[5]': 'publicationDate',
+      'fields[6]': 'lastUpdatedDate',
+      'fields[7]': 'seoDescription',
+      // Populate featured image with formats for thumbnails
+      'populate[featuredImage][fields][0]': 'url',
+      'populate[featuredImage][fields][1]': 'alternativeText',
+      'populate[featuredImage][fields][2]': 'formats',
+      // Populate tags for category filtering
+      'populate[tags][fields][0]': 'name',
+      'populate[tags][fields][1]': 'slug',
+    });
+
+    const data = await fetchWithBaseUrl<StrapiCollectionResponse<BlogPost>>(
+      `/api/blog-posts?${params.toString()}`,
+      {
+        next: { revalidate: 60 },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const posts = data.data
+      .map(post => mapBlogPost(post))
+      .filter((post): post is BlogPost => post !== null);
+
+    return {
+      posts,
+      total: data.meta.pagination?.total || 0
+    };
+  } catch (error) {
+    console.error('Error fetching blog posts overview:', error);
+    return { posts: [], total: 0 };
+  }
+}
+
 export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepapers: StrapiCollectionResponse<Whitepaper>; total: number }> {
   try {
     debugLog('Fetching whitepapers with params:', { page, pageSize });

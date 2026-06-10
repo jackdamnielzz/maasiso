@@ -61,6 +61,12 @@ export default function BlogCard({ post }: BlogCardProps) {
           </h3>
         </Link>
 
+        {(post.excerpt || post.seoDescription) && (
+          <p className="mt-2 text-sm text-[#091E42]/70 line-clamp-2">
+            {post.excerpt || post.seoDescription}
+          </p>
+        )}
+
         <div className="mt-auto pt-4 text-sm text-[#091E42]/60 space-y-1">
           <p>
             Aangemaakt: {new Date(post.publicationDate || post.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}

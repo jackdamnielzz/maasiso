@@ -33,6 +33,7 @@ export default async function Iso9001Page() {
       strapiSlug="iso-9001"
       hub={{ title: 'ISO-certificering', href: '/iso-certificering' }}
       dataTopic="iso-certificering"
+      serviceOffers={{ priceCurrency: 'EUR', minPrice: '5000', maxPrice: '15000' }}
       heroImage={{ src: ISO9001_HERO_IMAGE, alt: 'ISO 9001 certificering en kwaliteitsmanagement' }}
       sectionImage={{
         src: ISO9001_SECTION_IMAGE,

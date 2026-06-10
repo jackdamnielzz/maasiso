@@ -2,17 +2,20 @@ import Link from "next/link";
 
 const artikelen = [
   {
-    titel: "ISO 9001 certificering: kosten, proces & voordelen [2026]",
+    titel: "ISO 9001 Checklist: Complete Gids voor Certificering",
+    slug: "iso-9001-checklist-complete-gids",
     beschrijving:
       "Alles wat u moet weten over ISO 9001 certificering: van kosten en doorlooptijd tot de voordelen voor uw organisatie.",
   },
   {
-    titel: "ISO 27001 certificering: complete gids, kosten & stappen (2026)",
+    titel: "ISO 27001 Checklist: Alles wat u moet weten [2025]",
+    slug: "iso-27001-checklist-augustus-2025",
     beschrijving:
       "Een complete handleiding voor ISO 27001 certificering, inclusief stappenplan en kostenoverzicht.",
   },
   {
-    titel: "AVG wetgeving: praktisch advies & implementatie voor MKB",
+    titel: "AVG en Beeldmateriaal: Toestemming en Privacy Regels",
+    slug: "avg-beeldmateriaal-toestemming",
     beschrijving:
       "Praktische tips voor AVG compliance in MKB-organisaties. Wat moet u regelen en hoe pakt u dat aan?",
   },
@@ -37,7 +40,7 @@ export function KennisMinimal() {
           {artikelen.map((artikel) => (
             <Link
               key={artikel.titel}
-              href="/kennis/blog"
+              href={`/kennis/blog/${artikel.slug}/`}
               className="group block"
             >
               <h3 className="text-base font-semibold text-gray-900 transition-colors group-hover:text-[#0057B8]">
@@ -55,7 +58,7 @@ export function KennisMinimal() {
 
         <div className="mt-12">
           <Link
-            href="/kennis/blog"
+            href="/kennis/blog/"
             className="text-sm font-medium text-[#0057B8] hover:underline"
           >
             Bekijk alle artikelen &rarr;

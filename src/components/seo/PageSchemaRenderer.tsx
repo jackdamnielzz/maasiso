@@ -1,6 +1,7 @@
 import SchemaMarkup from '@/components/ui/SchemaMarkup';
 import type { Page } from '@/lib/types';
 import { buildPagePrimarySchema } from '@/lib/utils/pageSchema';
+import type { ServiceOffers } from '@/lib/utils/pageSchema';
 
 type FaqQuestion = {
   question: string;
@@ -25,10 +26,11 @@ type PageSchemaRendererProps = {
   > | null | undefined;
   canonicalUrl: string;
   faqQuestions?: FaqQuestion[];
+  serviceOffers?: ServiceOffers;
 };
 
-export default function PageSchemaRenderer({ page, canonicalUrl, faqQuestions = [] }: PageSchemaRendererProps) {
-  const primarySchema = buildPagePrimarySchema(page, canonicalUrl);
+export default function PageSchemaRenderer({ page, canonicalUrl, faqQuestions = [], serviceOffers }: PageSchemaRendererProps) {
+  const primarySchema = buildPagePrimarySchema(page, canonicalUrl, serviceOffers);
   const faq =
     faqQuestions.length > 0
       ? {

@@ -20,17 +20,17 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Diensten</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/iso-certificering" className="text-gray-400 hover:text-white">
+                <Link href="/iso-certificering/" className="text-gray-400 hover:text-white">
                   ISO-certificering
                 </Link>
               </li>
               <li>
-                <Link href="/informatiebeveiliging" className="text-gray-400 hover:text-white">
+                <Link href="/informatiebeveiliging/" className="text-gray-400 hover:text-white">
                   Informatiebeveiliging
                 </Link>
               </li>
               <li>
-                <Link href="/avg-wetgeving" className="text-gray-400 hover:text-white">
+                <Link href="/avg-wetgeving/" className="text-gray-400 hover:text-white">
                   AVG & Wetgeving
                 </Link>
               </li>
@@ -41,17 +41,17 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Kennis</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/kennis/blog" className="text-gray-400 hover:text-white">
+                <Link href="/kennis/blog/" className="text-gray-400 hover:text-white">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/kennis/whitepapers" className="text-gray-400 hover:text-white">
+                <Link href="/kennis/whitepapers/" className="text-gray-400 hover:text-white">
                   Whitepapers
                 </Link>
               </li>
               <li>
-                <Link href="/kennis/e-learning" className="text-gray-400 hover:text-white">
+                <Link href="/kennis/e-learning/" className="text-gray-400 hover:text-white">
                   E-learning
                 </Link>
               </li>
@@ -79,17 +79,17 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Juridisch</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy-policy" className="text-gray-400 hover:text-white">
+                <Link href="/privacy-policy/" className="text-gray-400 hover:text-white">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/cookie-policy" className="text-gray-400 hover:text-white">
+                <Link href="/cookie-policy/" className="text-gray-400 hover:text-white">
                   Cookie Beleid
                 </Link>
               </li>
               <li>
-                <Link href="/terms-and-conditions" className="text-gray-400 hover:text-white">
+                <Link href="/terms-and-conditions/" className="text-gray-400 hover:text-white">
                   Algemene Voorwaarden
                 </Link>
               </li>

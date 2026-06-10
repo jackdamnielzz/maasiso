@@ -139,9 +139,16 @@ export function buildPageServiceSchema(
   return schema;
 }
 
+export type ServiceOffers = {
+  priceCurrency: string;
+  minPrice: string;
+  maxPrice: string;
+};
+
 export function buildPagePrimarySchema(
   page: PageSchemaInput | null | undefined,
-  canonicalUrl: string
+  canonicalUrl: string,
+  offers?: ServiceOffers
 ): Record<string, unknown> | undefined {
   if (!page) {
     return undefined;
@@ -164,16 +171,22 @@ export function buildPagePrimarySchema(
       areaServed: serviceSchema.areaServed,
     };
 
-    if (serviceSchema.provider?.name && serviceSchema.provider?.url) {
-      schema.provider = {
-        '@type': 'Organization',
-        name: serviceSchema.provider.name,
-        url: serviceSchema.provider.url,
-      };
-    }
+    // Use @id reference to avoid duplicating the Organization schema
+    schema.provider = {
+      '@id': `${getCanonicalSiteUrl(DEFAULT_PROVIDER_URL)}/#organization`,
+    };
 
     if (serviceSchema.serviceType) {
       schema.serviceType = serviceSchema.serviceType;
+    }
+
+    if (offers) {
+      schema.offers = {
+        '@type': 'AggregateOffer',
+        priceCurrency: offers.priceCurrency,
+        lowPrice: offers.minPrice,
+        highPrice: offers.maxPrice,
+      };
     }
 
     return schema;

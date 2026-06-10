@@ -463,7 +463,7 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
           Onze adviseurs helpen u bij het opstellen van een audit-proof TRA, RI&amp;E of complete VCA-implementatie.
         </p>
         <a
-          href="/contact?source=tra-pdf"
+          href="/contact/?source=tra-pdf"
           className="inline-block px-6 py-2.5 bg-[#FF8B00] text-white font-semibold rounded-lg hover:bg-[#e67e00] transition-colors"
         >
           Plan een gratis gesprek

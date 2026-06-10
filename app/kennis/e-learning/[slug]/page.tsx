@@ -66,13 +66,13 @@ export default async function ELearningDetailPage({ params }: PageProps) {
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/kennis/e-learning"
+                href="/kennis/e-learning/"
                 className="inline-flex items-center rounded-md border border-[#091E42]/20 px-4 py-2 font-medium text-[#091E42] hover:bg-[#091E42]/5"
               >
                 Terug naar e-learning overzicht
               </Link>
               <Link
-                href="/contact"
+                href="/contact/"
                 className="inline-flex items-center rounded-md bg-[#FF8B00] px-5 py-2.5 font-semibold text-white transition-colors hover:bg-[#FF9B20]"
               >
                 Neem contact op

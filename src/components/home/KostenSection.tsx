@@ -48,7 +48,7 @@ export function KostenSection({ kostenTabel }: KostenSectionProps) {
       </p>
       <p className="mt-3">
         <Link
-          href="/iso-certificering"
+          href="/iso-certificering/"
           className="inline-flex items-center text-[#0057B8] font-semibold hover:underline"
         >
           Bekijk gedetailleerde kostenoverzichten per norm

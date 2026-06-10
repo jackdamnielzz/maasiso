@@ -5,6 +5,7 @@ import PageSchemaRenderer from '@/components/seo/PageSchemaRenderer';
 import RelatedServices from '@/components/ui/RelatedServices';
 import type { BreadcrumbItem } from '@/components/ui/Breadcrumbs';
 import type { Page } from '@/lib/types';
+import type { ServiceOffers } from '@/lib/utils/pageSchema';
 import { getCanonicalSiteUrl } from '@/lib/url/canonicalSiteUrl';
 import { getRelatedServices } from '@/config/related-services';
 
@@ -16,6 +17,7 @@ type CoreDetailPageTemplateProps = {
     href: string;
   };
   dataTopic?: string;
+  serviceOffers?: ServiceOffers;
   heroImage?: {
     src: string;
     alt?: string;
@@ -715,6 +717,7 @@ export default async function CoreDetailPageTemplate({
   strapiSlug,
   hub,
   dataTopic,
+  serviceOffers,
   heroImage,
   sectionImage,
   benefitsSectionImage,
@@ -783,7 +786,7 @@ export default async function CoreDetailPageTemplate({
 
   return (
     <>
-      <PageSchemaRenderer page={pageData} canonicalUrl={detailUrl} faqQuestions={faqQuestions} />
+      <PageSchemaRenderer page={pageData} canonicalUrl={detailUrl} faqQuestions={faqQuestions} serviceOffers={serviceOffers} />
       <AuthorityPageContent
         layout={layout}
         heroFallbackImage={pageData.featuredImage}
