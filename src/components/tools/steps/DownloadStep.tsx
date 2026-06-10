@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { TRAReport } from '@/lib/tools/tra-types';
+import { trackBeginCheckout } from '@/lib/analytics';
 
 interface DownloadStepProps {
   report: TRAReport;
@@ -67,6 +68,8 @@ export default function DownloadStep({ report, onBack }: DownloadStepProps) {
 
     setError('');
     setIsProcessing(true);
+
+    trackBeginCheckout(discountApplied?.priceInclBtw ?? 22.99);
 
     try {
       const res = await fetch('/api/tra-payment', {

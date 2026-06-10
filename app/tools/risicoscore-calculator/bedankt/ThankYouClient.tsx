@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { TRAReport } from '@/lib/tools/tra-types';
 import { generateTRAPdf } from '@/lib/tools/generate-tra-pdf';
+import { trackPurchase } from '@/lib/analytics';
 
 const STORAGE_KEY = 'maasiso-tra-calculator';
 const EXPIRY_KEY = 'maasiso-tra-download-expiry';
@@ -91,6 +92,7 @@ export default function ThankYouClient() {
 
         if (data.paid) {
           setStatus('paid');
+          trackPurchase(paymentId, data.amount ? parseFloat(data.amount) : 22.99);
           startExpiryTimer();
           downloadPdf();
           sendEmail();

@@ -192,6 +192,57 @@ export const trackFormSubmission = (formName: string, success: boolean) => {
   }
 };
 
+const TRA_ITEM = {
+  item_id: 'tra-rapport',
+  item_name: 'TRA Risicoscore Rapport',
+  price: 22.99,
+  quantity: 1,
+};
+
+/**
+ * Track start van de TRA-checkout (vlak vóór de Mollie-redirect).
+ * Eén kanaal (gtag óf dataLayer, niet beide) om dubbeltelling te voorkomen.
+ */
+export const trackBeginCheckout = (value: number) => {
+  if (typeof window === 'undefined') return;
+  const payload = {
+    currency: 'EUR',
+    value,
+    items: [{ ...TRA_ITEM, price: value }],
+  };
+  if (window.gtag) {
+    window.gtag('event', 'begin_checkout', payload);
+  } else if (window.dataLayer) {
+    window.dataLayer.push({ event: 'begin_checkout', ecommerce: payload });
+  }
+};
+
+/**
+ * Track een afgeronde TRA-aankoop. Dedupliceert op transaction_id via localStorage
+ * zodat een refresh van de bedankt-pagina geen dubbele omzet meldt.
+ */
+export const trackPurchase = (transactionId: string, value: number) => {
+  if (typeof window === 'undefined') return;
+  const dedupeKey = 'maasiso-tra-purchase-tracked';
+  try {
+    if (window.localStorage.getItem(dedupeKey) === transactionId) return;
+    window.localStorage.setItem(dedupeKey, transactionId);
+  } catch {
+    // localStorage onbeschikbaar (private mode) — liever één event te veel dan geen meting
+  }
+  const payload = {
+    transaction_id: transactionId,
+    currency: 'EUR',
+    value,
+    items: [{ ...TRA_ITEM, price: value }],
+  };
+  if (window.gtag) {
+    window.gtag('event', 'purchase', payload);
+  } else if (window.dataLayer) {
+    window.dataLayer.push({ event: 'purchase', ecommerce: payload });
+  }
+};
+
 /**
  * Track scroll depth
  */
