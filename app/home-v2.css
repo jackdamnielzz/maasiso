@@ -1,0 +1,217 @@
+/*
+ * home-v2 — animatie-utilities voor de ontwerpvariant van de homepage.
+ * Alle classes hebben het hv2- prefix zodat ze de rest van de site niet raken.
+ */
+
+/* ---------- Aurora / gradient-gloed in de hero ---------- */
+@keyframes hv2-aurora {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(4%, -6%, 0) scale(1.08); }
+  66% { transform: translate3d(-5%, 4%, 0) scale(0.95); }
+}
+
+.hv2-aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: hv2-aurora 14s ease-in-out infinite;
+}
+
+/* ---------- Fijn raster op donkere vlakken ---------- */
+.hv2-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.hv2-grid-fade {
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 35%, transparent 100%);
+}
+
+/* ---------- Glas-effect kaarten ---------- */
+.hv2-glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---------- Marquee (normenband) ---------- */
+@keyframes hv2-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.hv2-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+.hv2-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hv2-marquee 36s linear infinite;
+}
+
+.hv2-marquee:hover .hv2-marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Zwevende elementen ---------- */
+@keyframes hv2-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.hv2-float {
+  animation: hv2-float 6s ease-in-out infinite;
+}
+
+.hv2-float-slow {
+  animation: hv2-float 9s ease-in-out infinite;
+}
+
+/* ---------- Oranje gloed op primaire CTA's ---------- */
+.hv2-glow-orange {
+  box-shadow: 0 10px 30px -8px rgba(255, 139, 0, 0.45);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+}
+
+.hv2-glow-orange:hover {
+  box-shadow: 0 16px 40px -8px rgba(255, 139, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.hv2-glow-orange:active {
+  transform: translateY(0);
+}
+
+/* ---------- Shimmer (subtiele lichtstreep over badges/lijnen) ---------- */
+@keyframes hv2-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.hv2-shimmer {
+  background-size: 200% 100%;
+  animation: hv2-shimmer 3.5s linear infinite;
+}
+
+/* ---------- Scroll-indicator in de hero ---------- */
+@keyframes hv2-scroll-dot {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+.hv2-scroll-dot {
+  animation: hv2-scroll-dot 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ---------- Timeline: lijn die zich tekent ---------- */
+.hv2-timeline-line {
+  transform-origin: top;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Pulserende ring (accenten) ---------- */
+@keyframes hv2-pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.hv2-pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid currentColor;
+  animation: hv2-pulse-ring 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ---------- Kaart-spotlight (radial gradient volgt muis via --hv2-x/--hv2-y) ---------- */
+.hv2-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.hv2-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    420px circle at var(--hv2-x, 50%) var(--hv2-y, 50%),
+    rgba(255, 139, 0, 0.08),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.hv2-spotlight:hover::before {
+  opacity: 1;
+}
+
+/* ---------- Gradient-rand op hover ---------- */
+.hv2-gradient-border {
+  position: relative;
+  background-clip: padding-box;
+}
+
+.hv2-gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #FF8B00, #00875A, #091E42);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.hv2-gradient-border:hover::after {
+  opacity: 1;
+}
+
+/* ---------- Onderstreping die zich tekent ---------- */
+.hv2-underline-draw {
+  background-image: linear-gradient(90deg, #FF8B00, #FF8B00);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 3px;
+  transition: background-size 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hv2-underline-draw:hover,
+.hv2-underline-draw.hv2-drawn {
+  background-size: 100% 3px;
+}
+
+/* ---------- Reduced motion: alles statisch ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hv2-aurora-blob,
+  .hv2-marquee-track,
+  .hv2-float,
+  .hv2-float-slow,
+  .hv2-shimmer,
+  .hv2-scroll-dot {
+    animation: none !important;
+  }
+
+  .hv2-pulse-ring::after {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  .hv2-timeline-line {
+    transition: none !important;
+    transform: scaleY(1) !important;
+  }
+}
