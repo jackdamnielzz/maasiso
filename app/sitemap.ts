@@ -195,6 +195,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/contact',
     '/waarom-maasiso',
     '/iso-selector',
+    '/tools/risicoscore-calculator',
     '/privacy-policy',
     '/terms-and-conditions',
     '/cookie-policy',

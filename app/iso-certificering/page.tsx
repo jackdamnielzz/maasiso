@@ -16,28 +16,28 @@ const isoPages = [
     title: 'ISO 9001 - Kwaliteitsmanagement',
     description:
       'Optimaliseer processen, verhoog klanttevredenheid en werk structureel aan continue verbetering.',
-    href: '/iso-certificering/iso-9001',
+    href: '/iso-certificering/iso-9001/',
     linkLabel: 'ISO 9001'
   },
   {
     title: 'ISO 14001 - Milieumanagement',
     description:
       'Beheers milieurisico\'s, benut duurzaamheidskansen en toon aantoonbare milieuprestaties.',
-    href: '/iso-certificering/iso-14001',
+    href: '/iso-certificering/iso-14001/',
     linkLabel: 'ISO 14001'
   },
   {
     title: 'ISO 45001 - Gezond & veilig werken',
     description:
       'Verbeter arbeidsveiligheid en pak risico\'s pragmatisch aan binnen uw organisatie.',
-    href: '/iso-certificering/iso-45001',
+    href: '/iso-certificering/iso-45001/',
     linkLabel: 'ISO 45001'
   },
   {
     title: 'ISO 16175 - Digitaal informatiebeheer',
     description:
       'Creëer grip op digitale documenten, archivering en vindbaarheid met duidelijke richtlijnen.',
-    href: '/iso-certificering/iso-16175',
+    href: '/iso-certificering/iso-16175/',
     linkLabel: 'ISO 16175'
   }
 ];
@@ -56,7 +56,7 @@ const itemListSchema = {
       position: index + 1,
       name: page.title,
       description: page.description,
-      url: `https://www.maasiso.nl${page.href}/`,
+      url: `https://www.maasiso.nl${page.href}`,
     })),
   },
 };
@@ -73,12 +73,12 @@ export default function IsoCertificeringHubPage() {
       scope="ISO-certificering draait om het inrichten en aantonen van een managementsysteem en de toetsing daarop. Dit is iets anders dan juridische naleving (zoals privacywetgeving) of technische beveiligingsmaatregelen; die hebben een eigen invalshoek en pagina’s op deze site."
       breadcrumbs={[
         { label: 'Home', href: '/' },
-        { label: 'ISO-certificering', href: '/iso-certificering' },
+        { label: 'ISO-certificering', href: '/iso-certificering/' },
       ]}
       cards={isoPages}
       ctas={[
-        { label: 'Plan een kennismaking', href: '/contact', variant: 'primary' },
-        { label: 'Doe de ISO-Selector', href: '/iso-selector', variant: 'secondary' },
+        { label: 'Plan een kennismaking', href: '/contact/', variant: 'primary' },
+        { label: 'Doe de ISO-Selector', href: '/iso-selector/', variant: 'secondary' },
       ]}
       cardsHeading="Onderwerpen binnen ISO-certificering"
       dataTopic="iso-certificering"

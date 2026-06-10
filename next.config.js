@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Eén consistent URL-beleid: overal trailing slash, conform middleware en sitemap.
+  // Next past dit ook toe op resolved canonicals/og:urls in de metadata.
+  trailingSlash: true,
   skipTrailingSlashRedirect: true,
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toLocaleString('nl-NL', {

@@ -26,10 +26,10 @@ export default async function OverNielsMaasPage() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: author?.name || 'Niels Maas',
-    url: 'https://www.maasiso.nl/over-niels-maas',
-    '@id': 'https://www.maasiso.nl/over-niels-maas#author',
+    url: 'https://www.maasiso.nl/over-niels-maas/',
+    '@id': 'https://www.maasiso.nl/over-niels-maas/#author',
     jobTitle: 'Senior consultant',
-    worksFor: { '@id': 'https://www.maasiso.nl/#professionalservice' },
+    worksFor: { '@id': 'https://www.maasiso.nl/#organization' },
     description: author?.bio,
     sameAs: author?.linkedIn ? [author.linkedIn] : undefined,
     image: profileImageAbsoluteUrl,
@@ -68,8 +68,8 @@ export default async function OverNielsMaasPage() {
         showVisual={false}
         items={[
           { label: 'Home', href: '/' },
-          { label: 'Over ons', href: '/over-ons' },
-          { label: 'Niels Maas', href: '/over-niels-maas' },
+          { label: 'Over ons', href: '/over-ons/' },
+          { label: 'Niels Maas', href: '/over-niels-maas/' },
         ]}
       />
 

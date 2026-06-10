@@ -13,7 +13,7 @@ import logger from '@/lib/logger';
 import { hasInternalLinkToCorePage } from '@/lib/governance/blogContent';
 import { getBlogPostBySlug } from '@/lib/api';
 
-const DEFAULT_IMAGE = '/placeholder-blog.jpg';
+const DEFAULT_IMAGE = 'https://www.maasiso.nl/placeholder-blog.jpg';
 
 function constructImageUrl(path: string | undefined): string {
   if (!path?.trim()) return DEFAULT_IMAGE;
@@ -174,7 +174,7 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
   }
 
   const readingTime = Math.ceil(blogPost.content.split(/\s+/).length / 200);
-  const canonicalPath = `/kennis/blog/${blogPost.slug || resolvedParams.slug}`;
+  const canonicalPath = `/kennis/blog/${blogPost.slug || resolvedParams.slug}/`;
   const canonicalUrl = `https://www.maasiso.nl${canonicalPath}`;
   const featuredImageUrl = constructImageUrl(blogPost.featuredImage?.url);
 
@@ -182,8 +182,8 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
     typeof blogPost.author === 'string' ? blogPost.author : blogPost.author?.name || 'Niels Maas';
   const authorId =
     typeof blogPost.author === 'object' && blogPost.author?.slug
-      ? `https://www.maasiso.nl/auteurs/${blogPost.author.slug}#person`
-      : 'https://www.maasiso.nl/over-niels-maas#author';
+      ? `https://www.maasiso.nl/auteurs/${blogPost.author.slug}/#person`
+      : 'https://www.maasiso.nl/over-niels-maas/#author';
   const authorJobTitle = typeof blogPost.author === 'object' ? blogPost.author?.credentials : undefined;
   const authorImage = typeof blogPost.author === 'object' ? blogPost.author?.profileImage?.url : undefined;
   const authorSameAs =
@@ -202,8 +202,8 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
       <CoreBreadcrumbBar
         items={[
           { label: 'Home', href: '/' },
-          { label: 'Kennis', href: '/kennis' },
-          { label: 'Blog', href: '/kennis/blog' },
+          { label: 'Kennis', href: '/kennis/' },
+          { label: 'Blog', href: '/kennis/blog/' },
           { label: blogPost.title, href: canonicalPath },
         ]}
       />
@@ -223,7 +223,7 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
               image: authorImage,
               sameAs: authorSameAs,
             },
-            publisherId: 'https://www.maasiso.nl/#professionalservice',
+            publisherId: 'https://www.maasiso.nl/#organization',
             mainEntityOfPage: canonicalUrl,
             image: featuredImageUrl,
           }}
@@ -239,8 +239,8 @@ export default async function KennisBlogPostPage({ params }: PageProps) {
           }
           breadcrumbs={{
             items: [
-              { name: 'Home', item: 'https://www.maasiso.nl' },
-              { name: 'Blog', item: 'https://www.maasiso.nl/kennis/blog' },
+              { name: 'Home', item: 'https://www.maasiso.nl/' },
+              { name: 'Blog', item: 'https://www.maasiso.nl/kennis/blog/' },
               { name: blogPost.title, item: canonicalUrl },
             ],
           }}

@@ -105,8 +105,8 @@ export default async function WhitepaperDetailPage({ params }: PageProps) {
       <CoreBreadcrumbBar
         items={[
           { label: 'Home', href: '/' },
-          { label: 'Kennis', href: '/kennis' },
-          { label: 'Whitepapers', href: '/kennis/whitepapers' },
+          { label: 'Kennis', href: '/kennis/' },
+          { label: 'Whitepapers', href: '/kennis/whitepapers/' },
           { label: whitepaper.title, href: canonicalPath },
         ]}
       />

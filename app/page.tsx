@@ -185,9 +185,10 @@ const faqItems = [
 const professionalServiceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  "@id": "https://www.maasiso.nl/#organization",
   name: "MaasISO",
   description: "Onafhankelijk ISO-consultancybureau gespecialiseerd in ISO 9001, ISO 27001, ISO 14001, AVG compliance en NIS2 begeleiding voor MKB-bedrijven in Nederland en Belgie.",
-  url: "https://www.maasiso.nl",
+  url: "https://www.maasiso.nl/",
   telephone: "+31-6-23578344",
   email: "info@maasiso.nl",
   address: { "@type": "PostalAddress", streetAddress: "Jol 11-41", addressLocality: "Lelystad", postalCode: "8243 EE", addressCountry: "NL" },

@@ -11,16 +11,15 @@ const SITE_URL = 'https://www.maasiso.nl';
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 const ROBOTS_URL = `${SITE_URL}/robots.txt`;
 const SEARCH_URL = `${SITE_URL}/search?q=iso`;
-const ISO9001_TRAILING_SLASH_URL = `${SITE_URL}/iso-certificering/iso-9001/`;
-
+// Sitebreed beleid: alle pagina-URL's eindigen op een trailing slash (zie middleware + trailingSlash in next.config.js)
 const LEGACY_REDIRECTS = [
   ['/diensten/iso-9001-consultancy', '/iso-certificering/iso-9001/'],
-  ['/diensten/gdpr-avg', '/avg-wetgeving/avg'],
-  ['/diensten/bio', '/informatiebeveiliging/bio'],
-  ['/diensten/iso-27001', '/informatiebeveiliging/iso-27001'],
-  ['/diensten/iso-45001', '/iso-certificering/iso-45001'],
+  ['/diensten/gdpr-avg', '/avg-wetgeving/avg/'],
+  ['/diensten/bio', '/informatiebeveiliging/bio/'],
+  ['/diensten/iso-27001', '/informatiebeveiliging/iso-27001/'],
+  ['/diensten/iso-45001', '/iso-certificering/iso-45001/'],
   ['/diensten/iso-9001', '/iso-certificering/iso-9001/'],
-  ['/diensten/iso-14001', '/iso-certificering/iso-14001'],
+  ['/diensten/iso-14001', '/iso-certificering/iso-14001/'],
 ];
 
 const SOFT_404_EXPECTATIONS = [
@@ -133,8 +132,8 @@ function hasWhitespace(value) {
   return value.trim() !== value || /\s/.test(value);
 }
 
-function isAllowedTrailingSlash(url) {
-  return url === `${SITE_URL}/` || url === ISO9001_TRAILING_SLASH_URL;
+function looksLikeFileUrl(url) {
+  return /\.[a-z0-9]+$/i.test(new URL(url).pathname);
 }
 
 async function fetchWithRedirects(url, fetchOptions = {}) {
@@ -386,8 +385,8 @@ async function checkCanonical(url) {
         }
       }
 
-      if (canonicalNormalized.endsWith('/') && !isAllowedTrailingSlash(canonicalNormalized)) {
-        issues.push('Canonical has unexpected trailing slash');
+      if (!canonicalNormalized.endsWith('/') && !looksLikeFileUrl(canonicalNormalized)) {
+        issues.push('Canonical missing trailing slash (site policy: trailing slash everywhere)');
       }
     }
 
