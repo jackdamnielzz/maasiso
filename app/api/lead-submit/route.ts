@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 type LeadSource = 'exit_intent' | 'sticky_panel' | 'sticky_bottom' | 'iso9001-exit-intent';
 type CompanySize = '1-10' | '10-50' | '50+';
@@ -18,14 +18,13 @@ interface LeadSubmitPayload {
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-const DEFAULT_SMTP_HOST = '';
-const DEFAULT_SMTP_PORT = 465;
-const DEFAULT_EMAIL_USER = 'info@maasiso.nl';
 
-interface EmailError {
-  code?: string;
-  name?: string;
-  message?: string;
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 const validSources = new Set<LeadSource>([
@@ -156,60 +155,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: validationError }, { status: 400 });
   }
 
-  const emailUser = normalizeEnvValue(
-    process.env.EMAIL_USER || process.env.SMTP_USER || DEFAULT_EMAIL_USER
-  );
-  const emailPassword = normalizeEnvValue(
-    process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || ''
-  );
-  const smtpHost = normalizeEnvValue(
-    process.env.EMAIL_SMTP_HOST || process.env.SMTP_HOST || DEFAULT_SMTP_HOST
-  );
-  const smtpPortRaw = Number(
-    normalizeEnvValue(
-      process.env.EMAIL_SMTP_PORT || process.env.SMTP_PORT || String(DEFAULT_SMTP_PORT)
-    )
-  );
-  const smtpPort = Number.isFinite(smtpPortRaw) ? smtpPortRaw : DEFAULT_SMTP_PORT;
+  const resendApiKey = normalizeEnvValue(process.env.RESEND_API_KEY);
+  const emailFrom = normalizeEnvValue(process.env.EMAIL_FROM) || 'info@maasiso.nl';
   const leadRecipient = normalizeEnvValue(
-    process.env.LEADS_EMAIL_TO || process.env.LEAD_EMAIL_TO || process.env.LEAD_TO || emailUser
+    process.env.LEADS_EMAIL_TO || process.env.LEAD_EMAIL_TO || process.env.LEAD_TO || emailFrom
   );
 
-  if (!emailUser || !emailPassword || !smtpHost) {
-    console.error('[Lead Submit] Ontbrekende SMTP-configuratie', {
-      hasEmailUser: Boolean(emailUser),
-      hasEmailPassword: Boolean(emailPassword),
-      smtpHost,
-      smtpPort,
-    });
+  if (!resendApiKey || resendApiKey === '__SET_ME__') {
+    console.error('[Lead Submit] RESEND_API_KEY ontbreekt');
     return NextResponse.json(
-      {
-        success: false,
-        error:
-          'E-mailinstellingen niet compleet. Controleer EMAIL_USER, EMAIL_PASSWORD en SMTP instellingen.',
-      },
+      { success: false, error: 'E-mailinstellingen niet compleet.' },
       { status: 500 }
     );
   }
 
   const isQuickscanLead = body.source === 'iso9001-exit-intent';
-  const sanitizedName = String(body.name || '').trim();
+  const sanitizedName = escapeHtml(String(body.name || '').trim());
   const sanitizedEmail = String(body.email).trim();
-  const sanitizedPhone = String(body.phone || '').trim();
-  const sanitizedCompanySize = body.company_size ? String(body.company_size).trim() : '';
-  const sanitizedCompanyName = body.company_name ? String(body.company_name).trim() : '';
+  const sanitizedPhone = escapeHtml(String(body.phone || '').trim());
+  const sanitizedCompanySize = escapeHtml(body.company_size ? String(body.company_size).trim() : '');
+  const sanitizedCompanyName = escapeHtml(body.company_name ? String(body.company_name).trim() : '');
+  const sanitizedPage = escapeHtml(String(body.page).trim());
+  const sanitizedTimestamp = escapeHtml(String(body.timestamp).trim());
 
-  const transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: smtpPort,
-    secure: smtpPort === 465,
-    auth: {
-      user: emailUser,
-      pass: emailPassword,
-    },
-    debug: false,
-    logger: false,
-  });
+  const resend = new Resend(resendApiKey);
+
+  const sanitizedEmailHtml = escapeHtml(sanitizedEmail);
 
   const subject = isQuickscanLead
     ? 'Nieuwe lead van website (ISO 9001 quickscan)'
@@ -223,7 +194,7 @@ export async function POST(request: NextRequest) {
     ? `
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee; width: 130px;"><strong>E-mail</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmailHtml}">${sanitizedEmailHtml}</a></td>
           </tr>
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Bedrijfsnaam</strong></td>
@@ -237,7 +208,7 @@ export async function POST(request: NextRequest) {
           </tr>
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>E-mail</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmail}">${sanitizedEmail}</a></td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${sanitizedEmailHtml}">${sanitizedEmailHtml}</a></td>
           </tr>
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Telefoon</strong></td>
@@ -249,60 +220,50 @@ export async function POST(request: NextRequest) {
           </tr>
       `;
 
-  const mailOptions = {
-    from: `"MaasISO Website" <${emailUser}>`,
-    to: leadRecipient,
-    replyTo: sanitizedEmail,
-    subject,
-    text: textBody,
-    html: `
+  const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #091E42;">
         <h2 style="color: #091E42;">Nieuwe lead via website formulier</h2>
         <table style="width: 100%; border-collapse: collapse;">
           ${htmlRows}
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Bron</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.source}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(body.source)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Pagina</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.page}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedPage}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Tijdstip</strong></td>
-            <td style="padding: 8px; border-bottom: 1px solid #eee;">${body.timestamp}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">${sanitizedTimestamp}</td>
           </tr>
         </table>
       </div>
-    `,
-  };
+    `;
 
   try {
-    await transporter.sendMail(mailOptions);
+    const { error } = await resend.emails.send({
+      from: `MaasISO Website <${emailFrom}>`,
+      to: [leadRecipient],
+      replyTo: sanitizedEmail,
+      subject,
+      text: textBody,
+      html: htmlBody,
+    });
+
+    if (error) {
+      console.error('[Lead Submit] Resend error:', { source: body.source, error });
+      return NextResponse.json(
+        { success: false, error: 'Lead kon niet worden verzonden. Probeer het later opnieuw.' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true, message: 'Lead ontvangen' }, { status: 200 });
   } catch (error) {
-    const emailError = error as EmailError;
-    const code = emailError.code;
-
-    let errorMessage = 'Lead kon niet worden verzonden. Probeer het later opnieuw.';
-
-    if (code === 'EAUTH') {
-      errorMessage =
-        'SMTP-authenticatie mislukt (inloggegevens fout). Controleer USER en PASSWORD in TransIP/SMTP.';
-    } else if (code === 'ENOTFOUND') {
-      errorMessage = 'SMTP-host niet gevonden. Controleer SMTP_HOST instelling.';
-    } else if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT') {
-      errorMessage = 'Kan geen verbinding maken met SMTP-server. Controleer host/poort en firewall.';
-    }
-
-    console.error('[Lead Submit] Versturen mislukt', {
-      source: body.source,
-      code,
-      errorMessage: emailError.message,
-    });
+    console.error('[Lead Submit] Versturen mislukt', { source: body.source, error });
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: 'Lead kon niet worden verzonden. Probeer het later opnieuw.' },
       { status: 500 }
     );
   }

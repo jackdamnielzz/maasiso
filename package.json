@@ -51,7 +51,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.14.1",
     "@types/node-fetch": "^2.6.12",
-    "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@types/unist": "^3.0.3",
@@ -81,22 +81,18 @@
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "vitest": "^3.0.9",
-    "web-vitals": "^4.2.4",
-    "zod": "^3.24.2"
+    "vitest": "^3.0.9"
   },
   "dependencies": {
     "@mollie/api-client": "^4.4.0",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/pg": "^8.16.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "critters": "^0.0.23",
     "dotenv": "^16.4.7",
     "jspdf": "^4.2.0",
     "marked": "^15.0.7",
-    "next": "^16.1.4",
-    "nodemailer": "^6.10.0",
+    "next": "16.2.9",
     "pg": "^8.17.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -107,6 +103,8 @@
     "resend": "^6.9.2",
     "swr": "^2.3.3",
     "tailwind-merge": "^2.6.0",
-    "uuid": "^11.0.5"
+    "uuid": "^11.0.5",
+    "web-vitals": "^4.2.4",
+    "zod": "^3.25.76"
   }
 }
