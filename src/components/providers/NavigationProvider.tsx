@@ -1,11 +1,17 @@
 'use client';
 
-import { Suspense, createContext, useContext } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { createContext, useContext } from 'react';
+import { usePathname } from 'next/navigation';
+
+// BELANGRIJK: geen useSearchParams in deze provider. Hij omhult de hele app
+// vanuit de root-layout; useSearchParams op dit niveau dwong elke statische
+// pagina naar volledige client-side rendering (BAILOUT_TO_CLIENT_SIDE_RENDERING),
+// waardoor crawlers zonder JavaScript — alle AI-zoekmachines — een lege pagina
+// zagen. Componenten die query-parameters nodig hebben roepen useSearchParams
+// zelf aan, binnen een eigen <Suspense>-boundary.
 
 interface NavigationContextType {
   pathname: string | null;
-  searchParams: URLSearchParams | null;
 }
 
 interface NavigationProviderProps {
@@ -14,29 +20,15 @@ interface NavigationProviderProps {
 
 const NavigationContext = createContext<NavigationContextType>({
   pathname: null,
-  searchParams: null
 });
 
-function NavigationContent({ children }: NavigationProviderProps) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  return (
-    <NavigationContext.Provider value={{ pathname, searchParams }}>
-      <Suspense fallback={null}>
-        {children}
-      </Suspense>
-    </NavigationContext.Provider>
-  );
-}
-
 export function NavigationProvider({ children }: NavigationProviderProps) {
+  const pathname = usePathname();
+
   return (
-    <Suspense fallback={null}>
-      <NavigationContent>
-        {children}
-      </NavigationContent>
-    </Suspense>
+    <NavigationContext.Provider value={{ pathname }}>
+      {children}
+    </NavigationContext.Provider>
   );
 }
 

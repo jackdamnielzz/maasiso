@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useNavigation } from '@/components/providers/NavigationProvider';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getWhitepapers } from '@/lib/api';
 import { Whitepaper } from '@/lib/types';
 import WhitepaperCard from './WhitepaperCard';
@@ -15,8 +15,38 @@ interface WhitepaperData {
   };
 }
 
-export default function WhitepaperClientWrapper() {
-  const { searchParams } = useNavigation();
+function WhitepaperLoadingSkeleton() {
+  return (
+    <main className="flex-1">
+      <section className="hero-section">
+        <div className="container-custom">
+          <div className="text-center animate-pulse">
+            <div className="h-12 bg-gray-700 rounded w-3/4 mx-auto mb-6"></div>
+            <div className="h-6 bg-gray-700 rounded w-1/2 mx-auto"></div>
+          </div>
+        </div>
+      </section>
+      <section className="bg-gray-50 py-16">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-lg p-4 animate-pulse">
+                <div className="h-48 bg-gray-200 rounded mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function WhitepaperPageContent() {
+  // Lokaal binnen een eigen Suspense — niet via de globale NavigationProvider,
+  // anders dwingt useSearchParams de hele pagina naar client-side rendering
+  const searchParams = useSearchParams();
   const [data, setData] = useState<WhitepaperData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,31 +89,7 @@ export default function WhitepaperClientWrapper() {
   }, [searchParams]);
 
   if (loading) {
-    return (
-      <main className="flex-1">
-        <section className="hero-section">
-          <div className="container-custom">
-            <div className="text-center animate-pulse">
-              <div className="h-12 bg-gray-700 rounded w-3/4 mx-auto mb-6"></div>
-              <div className="h-6 bg-gray-700 rounded w-1/2 mx-auto"></div>
-            </div>
-          </div>
-        </section>
-        <section className="bg-gray-50 py-16">
-          <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-lg p-4 animate-pulse">
-                  <div className="h-48 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
-    );
+    return <WhitepaperLoadingSkeleton />;
   }
 
   return (
@@ -196,5 +202,13 @@ export default function WhitepaperClientWrapper() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function WhitepaperClientWrapper() {
+  return (
+    <Suspense fallback={<WhitepaperLoadingSkeleton />}>
+      <WhitepaperPageContent />
+    </Suspense>
   );
 }

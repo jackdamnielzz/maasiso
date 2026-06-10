@@ -1,15 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useNavigation } from '@/components/providers/NavigationProvider';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { searchV2 } from '@/lib/api';
 import { SearchParamsV2, SearchScope, SearchResultsV2 } from '@/lib/types';
 import { validateSearchQuery, validateUrlParam } from '@/lib/validation';
 import { SearchResults } from './SearchResults';
 import SearchAnalytics from './SearchAnalytics';
 
-export default function SearchPageClientWrapper() {
-  const { searchParams } = useNavigation();
+function SearchLoadingSkeleton() {
+  return (
+    <main className="container mx-auto px-4 py-8 mt-[72px]">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-64 mb-4"></div>
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function SearchPageContent() {
+  // Lokaal binnen een eigen Suspense — niet via de globale NavigationProvider,
+  // anders dwingt useSearchParams de hele pagina naar client-side rendering
+  const searchParams = useSearchParams();
   const [data, setData] = useState<SearchResultsV2 | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -166,5 +182,13 @@ export default function SearchPageClientWrapper() {
         />
       )}
     </main>
+  );
+}
+
+export default function SearchPageClientWrapper() {
+  return (
+    <Suspense fallback={<SearchLoadingSkeleton />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
