@@ -4,9 +4,8 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import TableOfContents from './TableOfContents';
 
-const ReactMarkdown = dynamic(() => import('react-markdown'), {
-  ssr: false
-});
+// Server-side renderen: content moet in de initiële HTML staan (LCP/SEO)
+const ReactMarkdown = dynamic(() => import('react-markdown'));
 
 interface MarkdownContentProps {
   content: string;

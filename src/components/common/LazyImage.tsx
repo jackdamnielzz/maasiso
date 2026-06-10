@@ -30,7 +30,9 @@ export default function LazyImage({
   onLoad,
   onError
 }: LazyImageProps) {
-  const [isLoading, setIsLoading] = useState(true);
+  // Priority-afbeeldingen (LCP) direct zichtbaar renderen: de fade-in via
+  // client-side onLoad zou het beeld onzichtbaar houden tot na hydration.
+  const [isLoading, setIsLoading] = useState(!priority);
   const [isInView, setIsInView] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -116,11 +118,6 @@ export default function LazyImage({
     loading: priority ? ('eager' as const) : ('lazy' as const),
     decoding: 'async' as const,
     fetchPriority: priority ? ('high' as const) : ('auto' as const),
-    // Add preload 'as' attribute for priority images
-    ...(priority && {
-      rel: 'preload' as const,
-      as: 'image' as const,
-    })
   }), [src, alt, width, height, fill, priority, imageClass, sizes, quality]);
 
   return (

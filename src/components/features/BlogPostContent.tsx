@@ -139,9 +139,8 @@ const findFirstDownloadLink = (content: string): DownloadLinkCandidate | null =>
   return null;
 };
 
-const ReactMarkdown = dynamic(() => import('react-markdown'), {
-  ssr: false
-});
+// Server-side renderen: de artikeltekst moet in de initiële HTML staan (LCP/SEO)
+const ReactMarkdown = dynamic(() => import('react-markdown'));
 
 function preprocessContent(content: string): string {
   const contentWithoutTitle = content

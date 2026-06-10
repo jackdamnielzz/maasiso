@@ -20,7 +20,6 @@ const BlogCard = dynamic(() => import('./BlogCard'), {
       </CardContent>
     </Card>
   ),
-  ssr: false // Disable server-side rendering for blog cards
 });
 
 export default BlogCard;
