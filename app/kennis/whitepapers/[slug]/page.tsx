@@ -2,6 +2,7 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import CoreBreadcrumbBar from '@/components/templates/core/CoreBreadcrumbBar';
+import WhitepaperDetailDownload from '@/components/features/WhitepaperDetailDownload';
 import { getWhitepaperBySlug } from '@/lib/api';
 
 // ISR: revalidate every 30 minutes
@@ -131,14 +132,11 @@ export default async function WhitepaperDetailPage({ params }: PageProps) {
 
           {downloadUrl ? (
             <div className="mt-10">
-              <Link
-                href={downloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-lg bg-[#FF8B00] px-6 py-3 font-semibold text-white transition-colors hover:bg-[#FF9B20]"
-              >
-                Download PDF
-              </Link>
+              <WhitepaperDetailDownload
+                whitepaperTitle={whitepaper.title}
+                whitepaperVersion={whitepaper.version}
+                downloadUrl={downloadUrl}
+              />
             </div>
           ) : (
             <p className="mt-10 rounded-lg border border-dashed border-[#091E42]/20 bg-white p-4 text-[#091E42]/70">

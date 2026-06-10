@@ -20,9 +20,11 @@ export default function WhitepaperCard({ whitepaper }: WhitepaperCardProps) {
     .replace(/\s+/g, ' ') // Replace multiple spaces with single space
     .trim();
 
-  // Get the full download URL if available
+  // Get the full download URL if available (Strapi v5 kan al een absolute URL leveren)
   const downloadUrl = whitepaper.downloadLink
-    ? `${clientEnv.apiUrl}${whitepaper.downloadLink}`
+    ? whitepaper.downloadLink.startsWith('http')
+      ? whitepaper.downloadLink
+      : `${clientEnv.apiUrl}${whitepaper.downloadLink}`
     : '';
 
   const handleDownloadClick = (e: React.MouseEvent) => {

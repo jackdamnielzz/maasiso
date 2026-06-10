@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { clientEnv } from '@/lib/config/client-env';
 import Link from 'next/link';
 
 interface WhitepaperDownloadModalProps {
@@ -36,6 +35,12 @@ export default function WhitepaperDownloadModal({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+
+  const handleClose = () => {
+    setIsDownloaded(false);
+    onClose();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,21 +51,16 @@ export default function WhitepaperDownloadModal({
       const success = await onSubmit(formData);
 
       if (success) {
-        // Show success message
-        alert('Bedankt voor uw interesse! De whitepaper wordt nu gedownload.');
-
-        // Trigger download in a new tab
-        const fullUrl = `${clientEnv.apiUrl}${downloadUrl}`;
+        // Trigger download in a new tab (downloadUrl is al absoluut)
         const link = document.createElement('a');
-        link.href = fullUrl;
+        link.href = downloadUrl;
         link.target = '_blank';
         link.download = '';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        // Close modal
-        onClose();
+        setIsDownloaded(true);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -71,10 +71,35 @@ export default function WhitepaperDownloadModal({
 
   if (!isOpen) return null;
 
+  if (isDownloaded) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div role="dialog" aria-modal="true" aria-labelledby="whitepaper-download-success" className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+          <h2 id="whitepaper-download-success" className="text-2xl font-bold text-[#091E42] mb-3">
+            Bedankt voor uw interesse!
+          </h2>
+          <p role="status" className="text-[#091E42]/70 mb-6">
+            De whitepaper wordt gedownload. Lukt de download niet?{' '}
+            <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="text-[#FF8B00] hover:underline">
+              Klik dan hier
+            </a>.
+          </p>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-6 py-2 bg-[#091E42] text-white rounded-md hover:bg-[#0a2550] transition-colors"
+          >
+            Sluiten
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-        <h2 className="text-2xl font-bold text-[#091E42] mb-4">
+      <div role="dialog" aria-modal="true" aria-labelledby="whitepaper-download-title" className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+        <h2 id="whitepaper-download-title" className="text-2xl font-bold text-[#091E42] mb-4">
           Download {whitepaperTitle}
         </h2>
         <p className="text-[#091E42]/70 mb-6">

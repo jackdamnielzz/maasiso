@@ -375,7 +375,8 @@ function mapWhitepaper(data: any | null): Whitepaper | null {
     description: data.description || '',
     version: data.version || '1.0',
     author: data.author || '',
-    downloadLink: data.file?.data?.attributes?.url || '',
+    // Strapi v5 levert een plat object (file.url); v4-vorm als fallback
+    downloadLink: data.file?.url || data.file?.data?.attributes?.url || '',
     createdAt: data.createdAt,
     updatedAt: data.updatedAt || data.publishedAt || data.createdAt,
     publishedAt: data.publishedAt
@@ -983,7 +984,8 @@ export async function getWhitepapers(page = 1, pageSize = 10): Promise<{ whitepa
 
     const whitepapers = {
       data: data.data.map(item => {
-        const mappedWhitepaper = mapWhitepaper(item.attributes);
+        // Strapi v5 levert platte objecten; v4-vorm (attributes) als fallback
+        const mappedWhitepaper = mapWhitepaper(item.attributes || item);
         return mappedWhitepaper ? { id: item.id, attributes: mappedWhitepaper } : null;
       }).filter((item): item is StrapiData<Whitepaper> => item !== null),
       meta: data.meta
