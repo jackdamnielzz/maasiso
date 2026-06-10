@@ -47,3 +47,33 @@ server-access-credentials.md
 
 # monitoring logs
 scripts/contact-monitor-log.txt
+
+# losse werk-/wegwerpbestanden in de projectroot (horen niet in de repo)
+/*.png
+/*.jpg
+/*.jpeg
+/*.pdf
+/*.docx
+/*.log
+/*.txt
+!/robots.txt
+/01
+/_extracted_content.txt
+/jest-results*.json
+/analyse-*.json
+/avg-article.json
+/diensten_refresh_response.json
+/refresh-diensten*.json
+/feature-*-test.json
+/maasiso.nl.fixed
+/nginx.conf*
+/frontend-nginx.conf.tmp
+/install.cmd
+/setup-ssh.ps1
+/build_docx.py
+/extract_docx.py
+/googlef78cfa1c1eaa484b (1).html
+/html5up-hyperspace/
+/my-rooflow-project/
+/images/
+seo-report.json
