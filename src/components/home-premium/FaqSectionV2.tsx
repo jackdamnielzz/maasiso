@@ -11,7 +11,20 @@ interface FaqSectionV2Props {
   faqItems: readonly FaqItem[];
 }
 
-function FaqAccordion({ item, isOpen, onToggle }: { item: FaqItem; isOpen: boolean; onToggle: () => void }) {
+function FaqAccordion({
+  item,
+  index,
+  isOpen,
+  onToggle,
+}: {
+  item: FaqItem;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const buttonId = `faq-premium-button-${index}`;
+  const panelId = `faq-premium-panel-${index}`;
+
   return (
     <div
       className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
@@ -21,14 +34,18 @@ function FaqAccordion({ item, isOpen, onToggle }: { item: FaqItem; isOpen: boole
       }`}
     >
       <button
+        type="button"
+        id={buttonId}
         onClick={onToggle}
         className="flex w-full items-center justify-between gap-4 p-6 text-left"
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <span className={`text-lg font-semibold transition-colors ${isOpen ? 'text-[#0057B8]' : 'text-[#091E42]'}`}>
           {item.vraag}
         </span>
         <span
+          aria-hidden="true"
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
             isOpen
               ? 'bg-[#0057B8] text-white rotate-180'
@@ -41,6 +58,9 @@ function FaqAccordion({ item, isOpen, onToggle }: { item: FaqItem; isOpen: boole
         </span>
       </button>
       <div
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
         className={`grid transition-all duration-300 ease-in-out ${
           isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         }`}
@@ -75,6 +95,7 @@ export function FaqSectionV2({ faqItems }: FaqSectionV2Props) {
           <FaqAccordion
             key={item.vraag}
             item={item}
+            index={index}
             isOpen={openIndex === index}
             onToggle={() => setOpenIndex(openIndex === index ? null : index)}
           />

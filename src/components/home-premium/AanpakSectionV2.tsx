@@ -1,35 +1,11 @@
-const stappen = [
-  {
-    nummer: 1,
-    titel: "Kennismaking en nulmeting",
-    beschrijving:
-      "Wij starten met een vrijblijvend gesprek en een gap-analyse: waar staat de organisatie nu ten opzichte van de norm? In deze fase brengen wij de huidige processen, documentatie en risico's in kaart.",
-  },
-  {
-    nummer: 2,
-    titel: "Plan van aanpak",
-    beschrijving:
-      "Op basis van de nulmeting stellen wij een concreet plan op met scope, planning, deliverables en kostenindicatie. Geen verrassingen achteraf.",
-  },
-  {
-    nummer: 3,
-    titel: "Implementatie",
-    beschrijving:
-      "Wij begeleiden de organisatie bij het inrichten van het managementsysteem: beleid, procedures, rollen, risicoanalyse en beheersmaatregelen. Altijd afgestemd op wat al aanwezig is.",
-  },
-  {
-    nummer: 4,
-    titel: "Interne audit en management review",
-    beschrijving:
-      "Voordat de certificerende instelling langskomt, toetsen wij intern of het systeem werkt zoals bedoeld. Bevindingen worden opgelost voor de externe audit.",
-  },
-  {
-    nummer: 5,
-    titel: "Externe audit en certificering",
-    beschrijving:
-      "De certificerende instelling voert de audit uit. MaasISO ondersteunt bij de voorbereiding en is beschikbaar tijdens de auditdagen.",
-  },
-] as const;
+import { aanpakStappen } from "@/components/home-v2/data";
+
+/**
+ * Aanpak-sectie (legacy preview-variant). Inhoud komt 1-op-1 uit
+ * aanpakStappen in src/components/home-v2/data.ts — geen eigen herschreven
+ * stappen of weggelaten doorlooptijden.
+ */
+const stappen = aanpakStappen;
 
 export function AanpakSectionV2() {
   return (
@@ -39,7 +15,7 @@ export function AanpakSectionV2() {
           Onze aanpak
         </span>
         <h2 className="mt-4 text-3xl font-extrabold text-[#091E42] md:text-4xl">
-          In 5 stappen naar certificering
+          In {stappen.length} stappen naar certificering
         </h2>
       </div>
 
@@ -50,11 +26,11 @@ export function AanpakSectionV2() {
 
         <div className="space-y-6 md:space-y-0">
           {stappen.map((stap, index) => (
-            <div key={stap.nummer} className="relative md:pl-24 md:pb-12 last:md:pb-0">
+            <div key={stap.number} className="relative md:pl-24 md:pb-12 last:md:pb-0">
               {/* Timeline dot - desktop */}
               <div className="absolute left-[18px] top-2 z-10 hidden md:flex">
                 <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-white shadow-[0_0_0_4px_#f3f6fb,0_0_0_5px_#d6deea]">
-                  <span className="text-lg font-extrabold text-[#091E42]">{stap.nummer}</span>
+                  <span className="text-lg font-extrabold text-[#091E42]">{Number(stap.number)}</span>
                 </div>
               </div>
 
@@ -63,21 +39,31 @@ export function AanpakSectionV2() {
                 {/* Mobile number */}
                 <div className="flex items-center gap-4 md:hidden">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#091E42] to-[#0d2b5c] text-sm font-bold text-white shadow-md">
-                    {stap.nummer}
+                    {Number(stap.number)}
                   </div>
                   <h3 className="text-lg font-bold text-[#091E42]">
-                    {stap.titel}
+                    {stap.title}
                   </h3>
                 </div>
 
                 {/* Desktop title */}
                 <h3 className="hidden md:block text-xl font-bold text-[#091E42]">
-                  Stap {stap.nummer} — {stap.titel}
+                  Stap {Number(stap.number)} — {stap.title}
                 </h3>
 
                 <p className="mt-3 leading-relaxed text-gray-600">
-                  {stap.beschrijving}
+                  {stap.description}
                 </p>
+
+                {/* Doorlooptijd */}
+                {index < stappen.length - 1 && (
+                  <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Doorlooptijd: {stap.duration}
+                  </p>
+                )}
 
                 {/* Progress indicator */}
                 {index < stappen.length - 1 && (

@@ -62,8 +62,7 @@ export function KostenSectionV2({ kostenTabel }: KostenSectionV2Props) {
         </div>
         <div className="border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-4">
           <p className="text-sm text-gray-500">
-            Alle bedragen zijn inclusief begeleiding. Kosten voor de certificerende instelling en
-            eventuele tooling zijn apart vermeld op de betreffende normpagina&apos;s.
+            Alle bedragen zijn inclusief consultancy en certificatie-audit.
           </p>
         </div>
       </div>

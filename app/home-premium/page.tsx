@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { KeyTakeaways } from '@/components/features/KeyTakeaways';
-import { HeroSectionV2 } from '@/components/home-v2/HeroSectionV2';
-import { DienstenSectionV2 } from '@/components/home-v2/DienstenSectionV2';
-import { WaaromSectionV2 } from '@/components/home-v2/WaaromSectionV2';
-import { AanpakSectionV2 } from '@/components/home-v2/AanpakSectionV2';
-import { KostenSectionV2 } from '@/components/home-v2/KostenSectionV2';
-import { FaqSectionV2 } from '@/components/home-v2/FaqSectionV2';
-import { CtaSectionV2 } from '@/components/home-v2/CtaSectionV2';
+import { HeroSectionV2 } from '@/components/home-premium/HeroSectionV2';
+import { DienstenSectionV2 } from '@/components/home-premium/DienstenSectionV2';
+import { WaaromSectionV2 } from '@/components/home-premium/WaaromSectionV2';
+import { AanpakSectionV2 } from '@/components/home-premium/AanpakSectionV2';
+import { KostenSectionV2 } from '@/components/home-premium/KostenSectionV2';
+import { FaqSectionV2 } from '@/components/home-premium/FaqSectionV2';
+import { CtaSectionV2 } from '@/components/home-premium/CtaSectionV2';
+import { kennisArtikelen } from '@/components/home-v2/data';
 
 export const metadata: Metadata = {
   title: "ISO-certificering & informatiebeveiliging voor MKB | MaasISO",
@@ -108,15 +109,6 @@ const kernfeiten = [
     accent: "from-amber-500 to-orange-500",
     bg: "bg-amber-500/10",
     text: "text-amber-600",
-  },
-  {
-    kernfeit: "Kosten ISO 9001 (MKB)",
-    highlight: "€5k-€15k",
-    eenheid: "investering",
-    bron: "MaasISO marktanalyse 2026",
-    accent: "from-[#0057B8] to-[#00875A]",
-    bg: "bg-[#0057B8]/10",
-    text: "text-[#0057B8]",
   },
 ] as const;
 
@@ -459,8 +451,8 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Bottom row: 4 compact stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Bottom row: 3 compact stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
             {kernfeiten.slice(3).map((item) => (
               <div
                 key={item.kernfeit}
@@ -498,11 +490,10 @@ export default function Home() {
                   informatiebeveiliging en privacy compliance.
                 </p>
                 <p>
-                  Wij zijn geen certificerende instelling. Het verschil is belangrijk: een consultant
-                  begeleidt de implementatie van het managementsysteem; een certificerende instelling
-                  (zoals Kiwa, TUV, DNV of LRQA) voert de onafhankelijke audit uit en kent het
-                  certificaat toe. Door deze scheiding garanderen wij objectief advies zonder
-                  belangenverstrengeling.
+                  Wij zijn geen certificerende instelling. Een consultant begeleidt de implementatie
+                  van het managementsysteem; een certificerende instelling (zoals Kiwa, TUV, DNV of
+                  LRQA) voert de onafhankelijke audit uit en kent het certificaat toe. Door deze
+                  scheiding garanderen wij objectief advies zonder belangenverstrengeling.
                 </p>
                 <p>
                   Onze opdrachtgevers zijn MKB-bedrijven en (semi-)overheidsinstellingen in Nederland en
@@ -597,20 +588,19 @@ export default function Home() {
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {[
-                { titel: "ISO 9001 certificering: kosten, proces & voordelen [2026]", kleur: "blue" },
-                { titel: "ISO 27001 certificering: complete gids, kosten & stappen (2026)", kleur: "violet" },
-                { titel: "AVG wetgeving: praktisch advies & implementatie voor MKB", kleur: "teal" },
-              ].map((artikel) => (
+              {kennisArtikelen.map((artikel) => (
                 <Link
-                  key={artikel.titel}
-                  href="/kennis/blog/"
+                  key={artikel.slug}
+                  href={`/kennis/blog/${artikel.slug}/`}
                   className="group relative overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-[#0057B8]/30"
                 >
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0057B8] to-[#00875A] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   <h3 className="text-lg font-bold text-[#091E42] group-hover:text-[#0057B8] transition-colors">
                     {artikel.titel}
                   </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">
+                    {artikel.beschrijving}
+                  </p>
                   <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#0057B8]">
                     Lees artikel
                     <svg className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
