@@ -6,7 +6,7 @@ import { REMOVED_PATHS } from '@/config/removed-urls';
 export const revalidate = 3600;
 const isDebugLoggingEnabled =
   process.env.NODE_ENV !== 'production' || process.env.MAASISO_DEBUG === '1';
-const STATIC_LASTMOD_FALLBACK = '2026-02-03T00:00:00.000Z';
+const STATIC_LASTMOD_FALLBACK = '2026-06-11T00:00:00.000Z';
 
 function getStableLastModifiedDate(): Date {
   const configured = process.env.SITEMAP_STATIC_LASTMOD || STATIC_LASTMOD_FALLBACK;

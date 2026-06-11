@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { dienstentabel, faqItems } from "@/components/home-v2/data";
 import { HeroV2 } from "@/components/home-v2/HeroV2";
 import { NormenMarquee } from "@/components/home-v2/NormenMarquee";
 import { OverV2 } from "@/components/home-v2/OverV2";
@@ -45,27 +46,55 @@ const professionalServiceSchema = {
   "@type": "ProfessionalService",
   "@id": "https://www.maasiso.nl/#organization",
   name: "MaasISO",
-  description: "Onafhankelijk ISO-consultancybureau gespecialiseerd in ISO 9001, ISO 27001, ISO 14001, AVG compliance en NIS2 begeleiding voor MKB-bedrijven in Nederland en Belgie.",
+  description: "Onafhankelijk ISO-consultancybureau gespecialiseerd in ISO 9001, ISO 27001, ISO 14001, AVG compliance en NIS2 begeleiding voor MKB-bedrijven in Nederland en België.",
   url: "https://www.maasiso.nl/",
+  logo: "https://www.maasiso.nl/apple-touch-icon.png",
+  image: "https://www.maasiso.nl/images/maasisohome.png",
   telephone: "+31-6-23578344",
   email: "info@maasiso.nl",
+  priceRange: "€3.000 - €25.000",
   address: { "@type": "PostalAddress", streetAddress: "Jol 11-41", addressLocality: "Lelystad", postalCode: "8243 EE", addressCountry: "NL" },
   areaServed: [{ "@type": "Country", name: "Netherlands" }, { "@type": "Country", name: "Belgium" }],
   serviceType: ["ISO Certification Consulting", "Information Security Consulting", "GDPR Compliance Consulting"],
   founder: { "@type": "Person", name: "Niels Maas", jobTitle: "Senior Consultant & Oprichter" },
   knowsAbout: ["ISO 9001", "ISO 27001", "ISO 14001", "ISO 45001", "ISO 16175", "GDPR", "AVG", "NIS2", "BIO"],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "ISO-certificeringstrajecten voor MKB",
+    itemListElement: dienstentabel.map((dienst) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: `${dienst.norm} certificeringsbegeleiding`,
+        description: `Begeleiding bij ${dienst.norm} (${dienst.focus.toLowerCase()}) voor MKB-organisaties. Doorlooptijd: ${dienst.duur}.`,
+        url: `https://www.maasiso.nl${dienst.href}`,
+        provider: { "@id": "https://www.maasiso.nl/#organization" },
+        areaServed: ["NL", "BE"],
+      },
+      ...(dienst.prijsMin && dienst.prijsMax
+        ? {
+            priceSpecification: {
+              "@type": "PriceSpecification",
+              minPrice: dienst.prijsMin,
+              maxPrice: dienst.prijsMax,
+              priceCurrency: "EUR",
+            },
+          }
+        : {}),
+    })),
+  },
 };
 
+// FAQ-schema wordt gegenereerd uit dezelfde bron als de zichtbare FAQ-sectie
+// (data.ts), zodat schema en pagina-inhoud nooit uit elkaar lopen.
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    { "@type": "Question", name: "Wat doet een ISO-consultant?", acceptedAnswer: { "@type": "Answer", text: "Een ISO-consultant begeleidt organisaties bij het implementeren van een managementsysteem dat voldoet aan een ISO-norm." } },
-    { "@type": "Question", name: "Wat kost ISO-certificering voor een klein bedrijf?", acceptedAnswer: { "@type": "Answer", text: "Voor MKB-bedrijven met 1-10 medewerkers liggen de kosten voor ISO 9001 certificering gemiddeld tussen EUR 5.000 en EUR 8.000." } },
-    { "@type": "Question", name: "Hoe lang duurt een ISO-certificeringstraject?", acceptedAnswer: { "@type": "Answer", text: "De gemiddelde doorlooptijd voor MKB-organisaties ligt tussen 3 en 9 maanden." } },
-    { "@type": "Question", name: "Is ISO-certificering verplicht?", acceptedAnswer: { "@type": "Answer", text: "ISO-certificering is in Nederland niet wettelijk verplicht. Wel wordt certificering steeds vaker gevraagd door klanten, ketenpartners en in aanbestedingen." } },
-    { "@type": "Question", name: "Wat is NIS2 en hoe verhoudt het zich tot ISO 27001?", acceptedAnswer: { "@type": "Answer", text: "NIS2 stelt beveiligingseisen voor essentiele en belangrijke entiteiten in de EU. ISO 27001 gecertificeerde organisaties hebben circa 70-80% van de NIS2 Artikel 21-maatregelen al aantoonbaar geimplementeerd." } },
-  ],
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.vraag,
+    acceptedAnswer: { "@type": "Answer", text: item.antwoord },
+  })),
 };
 
 export default function Home() {

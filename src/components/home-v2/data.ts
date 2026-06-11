@@ -9,20 +9,20 @@ export const heroCopy = {
   titelRegel1: "ISO-certificering voor MKB-bedrijven,",
   titelAccent: "pragmatisch en transparant.",
   subtitel:
-    "MaasISO begeleidt MKB-bedrijven in Nederland en Belgie bij ISO-certificering, informatiebeveiliging en AVG compliance. Als onafhankelijk consultant helpen wij van nulmeting tot succesvolle audit.",
+    "MaasISO begeleidt MKB-bedrijven in Nederland en België bij ISO-certificering, informatiebeveiliging en AVG compliance. Als onafhankelijk consultant helpen wij van nulmeting tot succesvolle audit.",
   trustItems: ["100% slagingspercentage", "15+ jaar ervaring", "Onafhankelijk advies"],
 } as const;
 
 export const overOnsParagrafen = [
   "MaasISO is een onafhankelijk ISO-consultancybureau gevestigd in Lelystad, gespecialiseerd in het begeleiden van MKB-bedrijven bij certificeringstrajecten, informatiebeveiliging en privacy compliance.",
-  "Wij zijn geen certificerende instelling. Een consultant begeleidt de implementatie van het managementsysteem; een certificerende instelling (zoals Kiwa, TUV, DNV of LRQA) voert de onafhankelijke audit uit en kent het certificaat toe. Door deze scheiding garanderen wij objectief advies zonder belangenverstrengeling.",
-  "Onze opdrachtgevers zijn MKB-bedrijven en (semi-)overheidsinstellingen in Nederland en Belgie die certificering niet als doel op zich zien, maar als middel om processen structureel te verbeteren, risico's te beheersen en het vertrouwen van klanten en ketenpartners te vergroten.",
+  "Wij zijn geen certificerende instelling. Een consultant begeleidt de implementatie van het managementsysteem; een certificerende instelling (zoals Kiwa, TÜV, DNV of LRQA) voert de onafhankelijke audit uit en kent het certificaat toe. Door deze scheiding garanderen wij objectief advies zonder belangenverstrengeling.",
+  "Onze opdrachtgevers zijn MKB-bedrijven en (semi-)overheidsinstellingen in Nederland en België die certificering niet als doel op zich zien, maar als middel om processen structureel te verbeteren, risico's te beheersen en het vertrouwen van klanten en ketenpartners te vergroten.",
 ] as const;
 
 export const keyTakeaways = [
   {
     onderwerp: "ISO 9001 certificering",
-    waarde: "Gemiddeld 3-6 maanden doorlooptijd, investering vanaf EUR 5.000 voor MKB",
+    waarde: "Gemiddeld 3-6 maanden doorlooptijd, investering vanaf €5.000 voor MKB",
   },
   {
     onderwerp: "ISO 27001 certificering",
@@ -30,7 +30,7 @@ export const keyTakeaways = [
   },
   {
     onderwerp: "AVG compliance",
-    waarde: "Boetes tot EUR 20 miljoen of 4% jaaromzet bij niet-naleving",
+    waarde: "Boetes tot €20 miljoen of 4% jaaromzet bij niet-naleving",
   },
   {
     onderwerp: "NIS2/Cyberbeveiligingswet",
@@ -89,11 +89,11 @@ export const kernfeiten: readonly Kernfeit[] = [
 ] as const;
 
 export const dienstentabel = [
-  { norm: "ISO 9001", focus: "Kwaliteitsmanagement", duur: "3-6 maanden", kosten: "EUR 5.000-EUR 15.000", href: "/iso-9001/" },
-  { norm: "ISO 27001", focus: "Informatiebeveiliging", duur: "3-9 maanden", kosten: "EUR 18.000-EUR 25.000", href: "/iso-27001/" },
-  { norm: "ISO 14001", focus: "Milieumanagement", duur: "3-6 maanden", kosten: "EUR 4.000-EUR 10.000", href: "/iso-14001/" },
-  { norm: "ISO 45001", focus: "Gezond & veilig werken", duur: "3-6 maanden", kosten: "Op aanvraag", href: "/iso-certificering/" },
-  { norm: "ISO 16175", focus: "Digitaal informatiebeheer", duur: "Op aanvraag", kosten: "Op aanvraag", href: "/iso-certificering/" },
+  { norm: "ISO 9001", focus: "Kwaliteitsmanagement", duur: "3-6 maanden", kosten: "€5.000-€15.000", prijsMin: 5000, prijsMax: 15000, href: "/iso-9001/" },
+  { norm: "ISO 27001", focus: "Informatiebeveiliging", duur: "3-9 maanden", kosten: "€18.000-€25.000", prijsMin: 18000, prijsMax: 25000, href: "/iso-27001/" },
+  { norm: "ISO 14001", focus: "Milieumanagement", duur: "3-6 maanden", kosten: "€4.000-€10.000", prijsMin: 4000, prijsMax: 10000, href: "/iso-14001/" },
+  { norm: "ISO 45001", focus: "Gezond & veilig werken", duur: "3-6 maanden", kosten: "Op aanvraag", prijsMin: null, prijsMax: null, href: "/iso-certificering/" },
+  { norm: "ISO 16175", focus: "Digitaal informatiebeheer", duur: "Op aanvraag", kosten: "Op aanvraag", prijsMin: null, prijsMax: null, href: "/iso-certificering/" },
 ] as const;
 
 export const extraDiensten = [
@@ -116,7 +116,7 @@ export const extraDiensten = [
   {
     titel: "NIS2 & Cyberbeveiligingswet",
     beschrijving:
-      "Met de NIS2-richtlijn wordt aantoonbare informatiebeveiliging voor essentiele en belangrijke entiteiten een wettelijke verplichting. ISO 27001 dekt circa 70-80% van de NIS2 Artikel 21-verplichtingen.",
+      "Met de NIS2-richtlijn wordt aantoonbare informatiebeveiliging voor essentiële en belangrijke entiteiten een wettelijke verplichting. ISO 27001 dekt circa 70-80% van de NIS2 Artikel 21-verplichtingen.",
     feit: "",
     href: "/informatiebeveiliging/nis2/",
     linkLabel: "Meer over NIS2",
@@ -155,7 +155,7 @@ export const aanpakStappen = [
   {
     number: "04",
     title: "Interne audit",
-    description: "We voeren een interne audit uit om te controleren of alles correct is geimplementeerd.",
+    description: "We voeren een interne audit uit om te controleren of alles correct is geïmplementeerd.",
     duration: "1-2 weken",
   },
   {
@@ -173,12 +173,12 @@ export const aanpakStappen = [
 ] as const;
 
 export const kostenTabel = [
-  { traject: "ISO 9001", grootte: "1-10 FTE", investering: "EUR 5.000-EUR 8.000", duur: "3-4 maanden" },
-  { traject: "ISO 9001", grootte: "10-50 FTE", investering: "EUR 8.000-EUR 15.000", duur: "4-6 maanden" },
-  { traject: "ISO 27001", grootte: "1-10 FTE", investering: "EUR 10.000-EUR 18.000", duur: "3-6 maanden" },
-  { traject: "ISO 27001", grootte: "10-50 FTE", investering: "EUR 18.000-EUR 25.000", duur: "6-9 maanden" },
-  { traject: "ISO 14001", grootte: "MKB", investering: "EUR 4.000-EUR 10.000", duur: "3-6 maanden" },
-  { traject: "AVG compliance", grootte: "MKB", investering: "EUR 3.000-EUR 10.000", duur: "4-12 weken" },
+  { traject: "ISO 9001", grootte: "1-10 FTE", investering: "€5.000-€8.000", duur: "3-4 maanden" },
+  { traject: "ISO 9001", grootte: "10-50 FTE", investering: "€8.000-€15.000", duur: "4-6 maanden" },
+  { traject: "ISO 27001", grootte: "1-10 FTE", investering: "€10.000-€18.000", duur: "3-6 maanden" },
+  { traject: "ISO 27001", grootte: "10-50 FTE", investering: "€18.000-€25.000", duur: "6-9 maanden" },
+  { traject: "ISO 14001", grootte: "MKB", investering: "€4.000-€10.000", duur: "3-6 maanden" },
+  { traject: "AVG compliance", grootte: "MKB", investering: "€3.000-€10.000", duur: "4-12 weken" },
 ] as const;
 
 export const kennisArtikelen = [
@@ -204,14 +204,14 @@ export const kennisArtikelen = [
 
 export const faqItems = [
   { vraag: "Wat doet een ISO-consultant?", antwoord: "Een ISO-consultant begeleidt organisaties bij het implementeren van een managementsysteem dat voldoet aan een ISO-norm. De consultant helpt bij de nulmeting, documentatie, implementatie en auditvoorbereiding. Een consultant geeft zelf geen certificaat af; dat doet de onafhankelijke certificerende instelling." },
-  { vraag: "Wat kost ISO-certificering voor een klein bedrijf?", antwoord: "Voor MKB-bedrijven met 1-10 medewerkers liggen de kosten voor ISO 9001 certificering gemiddeld tussen EUR 5.000 en EUR 8.000. Voor ISO 27001 tussen EUR 10.000 en EUR 18.000. Deze bedragen zijn inclusief consultancy en certificatie-audit." },
+  { vraag: "Wat kost ISO-certificering voor een klein bedrijf?", antwoord: "Voor MKB-bedrijven met 1-10 medewerkers liggen de kosten voor ISO 9001 certificering gemiddeld tussen €5.000 en €8.000. Voor ISO 27001 tussen €10.000 en €18.000. Deze bedragen zijn inclusief consultancy en certificatie-audit." },
   { vraag: "Hoe lang duurt een ISO-certificeringstraject?", antwoord: "De gemiddelde doorlooptijd voor MKB-organisaties ligt tussen 3 en 9 maanden, afhankelijk van de norm, de organisatiegrootte en de mate waarin processen al zijn vastgelegd." },
-  { vraag: "Wat is het verschil tussen een consultant en een certificeerder?", antwoord: "Een consultant begeleidt de implementatie van het managementsysteem. Een certificerende instelling (zoals Kiwa, TUV, DNV of LRQA) voert de onafhankelijke audit uit en verleent het certificaat. MaasISO is een consultant: wij begeleiden, maar certificeren niet zelf." },
+  { vraag: "Wat is het verschil tussen een consultant en een certificeerder?", antwoord: "Een consultant begeleidt de implementatie van het managementsysteem. Een certificerende instelling (zoals Kiwa, TÜV, DNV of LRQA) voert de onafhankelijke audit uit en verleent het certificaat. MaasISO is een consultant: wij begeleiden, maar certificeren niet zelf." },
   { vraag: "Is ISO-certificering verplicht?", antwoord: "ISO-certificering is in Nederland niet wettelijk verplicht. Wel wordt certificering steeds vaker gevraagd door klanten, ketenpartners en in aanbestedingen. Met de invoering van de NIS2-richtlijn (Cyberbeveiligingswet) wordt aantoonbare informatiebeveiliging voor bepaalde sectoren wel een wettelijke verplichting." },
   { vraag: "Welke ISO-norm past bij mijn organisatie?", antwoord: "Dat hangt af van uw sector, klanten en doelstellingen. ISO 9001 is de meest universele norm (kwaliteitsmanagement). ISO 27001 richt zich op informatiebeveiliging. ISO 14001 op milieumanagement. Gebruik onze gratis ISO Norm Selector voor een persoonlijk advies." },
   { vraag: "Kan ik meerdere ISO-normen combineren?", antwoord: "Ja. ISO-normen zijn gebaseerd op dezelfde Harmonized Structure, waardoor ze goed integreerbaar zijn in een managementsysteem. Dit bespaart dubbel werk, vereenvoudigt audits en verlaagt kosten. MaasISO heeft ruime ervaring met integrale trajecten." },
-  { vraag: "Wat is NIS2 en hoe verhoudt het zich tot ISO 27001?", antwoord: "NIS2 (de Cyberbeveiligingswet) stelt beveiligingseisen voor essentiele en belangrijke entiteiten in de EU. ISO 27001 gecertificeerde organisaties hebben circa 70-80% van de NIS2 Artikel 21-maatregelen al aantoonbaar geimplementeerd. ISO 27001 is daarmee het meest directe pad naar NIS2 compliance." },
-  { vraag: "Werkt MaasISO ook buiten Nederland?", antwoord: "MaasISO bedient organisaties in Nederland en Belgie/Vlaanderen." },
+  { vraag: "Wat is NIS2 en hoe verhoudt het zich tot ISO 27001?", antwoord: "NIS2 (de Cyberbeveiligingswet) stelt beveiligingseisen voor essentiële en belangrijke entiteiten in de EU. ISO 27001 gecertificeerde organisaties hebben circa 70-80% van de NIS2 Artikel 21-maatregelen al aantoonbaar geïmplementeerd. ISO 27001 is daarmee het meest directe pad naar NIS2 compliance." },
+  { vraag: "Werkt MaasISO ook buiten Nederland?", antwoord: "MaasISO bedient organisaties in Nederland en België/Vlaanderen." },
   { vraag: "Hoe neem ik contact op?", antwoord: "Neem contact op via info@maasiso.nl of bel +31 (0)6 2357 8344 voor een vrijblijvend kennismakingsgesprek. U kunt ook direct een afspraak inplannen via onze contactpagina." },
 ] as const;
 

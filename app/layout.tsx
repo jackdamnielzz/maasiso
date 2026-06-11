@@ -128,7 +128,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               "@type": "Organization",
               "@id": "https://www.maasiso.nl/#organization",
               "name": "MaasISO",
-              "url": "https://www.maasiso.nl",
+              "url": "https://www.maasiso.nl/",
               "logo": "https://www.maasiso.nl/apple-touch-icon.png",
               "image": "https://www.maasiso.nl/apple-touch-icon.png",
               "contactPoint": [
