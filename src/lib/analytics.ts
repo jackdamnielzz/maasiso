@@ -153,17 +153,16 @@ export const trackOutboundLink = (url: string, linkText?: string) => {
 /**
  * Track form submissions.
  * Pushes exactly one dataLayer event per submission. GTM (container
- * GTM-556J8S8K) turns a `form_submit` push into one GA4 generate_lead
- * (and one contact_form_submit). Failures are pushed as form_error so they
- * never count as a lead.
- * No direct gtag() event calls: those were picked up by GTM as well and
- * made one submission count multiple times.
+ * GTM-556J8S8K) turns `contact_lead` into one GA4 generate_lead.
+ * Deliberately not named `form_submit`: GA4 enhanced measurement fires its
+ * own automatic form_submit on every submit attempt (also failed ones).
+ * Failures are pushed as form_error so they never count as a lead.
  */
 export const trackFormSubmission = (formName: string, success: boolean) => {
   if (typeof window === 'undefined') return;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
-    event: success ? 'form_submit' : 'form_error',
+    event: success ? 'contact_lead' : 'form_error',
     form_name: formName,
   });
 };
