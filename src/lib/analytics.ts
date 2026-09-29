@@ -151,45 +151,21 @@ export const trackOutboundLink = (url: string, linkText?: string) => {
 };
 
 /**
- * Track form submissions
- * Uses direct gtag/dataLayer push to ensure the event fires
- * even if analytics initialization hasn't completed yet.
+ * Track form submissions.
+ * Pushes exactly one dataLayer event per submission. GTM (container
+ * GTM-556J8S8K) turns a `form_submit` push into one GA4 generate_lead
+ * (and one contact_form_submit). Failures are pushed as form_error so they
+ * never count as a lead.
+ * No direct gtag() event calls: those were picked up by GTM as well and
+ * made one submission count multiple times.
  */
 export const trackFormSubmission = (formName: string, success: boolean) => {
-  // Always push directly to gtag — don't depend on isInitialized
-  // This is critical for conversion tracking in Google Ads
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'form_submit', {
-      form_name: formName,
-      success,
-    });
-
-    // Also fire generate_lead (GA4 recommended conversion event)
-    // This is what Google Ads should optimize on
-    if (success) {
-      window.gtag('event', 'generate_lead', {
-        form_name: formName,
-        value: 1,
-        currency: 'EUR',
-      });
-    }
-  }
-
-  // Fallback: also push to dataLayer for GTM
-  if (typeof window !== 'undefined' && window.dataLayer) {
-    window.dataLayer.push({
-      event: 'form_submit',
-      form_name: formName,
-      form_success: success,
-    });
-
-    if (success) {
-      window.dataLayer.push({
-        event: 'generate_lead',
-        form_name: formName,
-      });
-    }
-  }
+  if (typeof window === 'undefined') return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: success ? 'form_submit' : 'form_error',
+    form_name: formName,
+  });
 };
 
 const TRA_ITEM = {
